@@ -12,12 +12,17 @@ class PackController extends Controller
         $request->validate([
             'batch' => 'required|string|size:7',
             'seri' => 'required|string',
+            'exclude_hcs_id' => 'nullable|integer',
         ]);
 
-        $packs = Pack::where('batch', $request->batch)
-            ->where('seri', $request->seri)
-            ->select('pack_number', 'supplier')
-            ->get();
+        $query = Pack::where('batch', $request->batch)
+            ->where('seri', $request->seri);
+
+        if ($request->filled('exclude_hcs_id')) {
+            $query->where('hcs_receiving_id', '!=', $request->exclude_hcs_id);
+        }
+
+        $packs = $query->select('pack_number', 'supplier')->get();
 
         return response()->json($packs);
     }

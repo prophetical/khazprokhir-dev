@@ -21,10 +21,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/profile', [ProfileController::class , 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class , 'destroy'])->name('profile.destroy');
 
-    // HCS Receiving Routes (restricted to sortir for creation)
+    // HCS Receiving Routes (restricted to sortir for creation/editing/deleting)
     Route::middleware('role:sortir')->group(function () {
             Route::get('/hcs-receiving/create', [\App\Http\Controllers\HcsReceivingController::class , 'create'])->name('hcs-receiving.create');
             Route::post('/hcs-receiving', [\App\Http\Controllers\HcsReceivingController::class , 'store'])->name('hcs-receiving.store');
+            Route::get('/hcs-receiving/{hcs_receiving}/edit', [\App\Http\Controllers\HcsReceivingController::class , 'edit'])->name('hcs-receiving.edit');
+            Route::put('/hcs-receiving/{hcs_receiving}', [\App\Http\Controllers\HcsReceivingController::class , 'update'])->name('hcs-receiving.update');
+            Route::delete('/hcs-receiving/{hcs_receiving}', [\App\Http\Controllers\HcsReceivingController::class , 'destroy'])->name('hcs-receiving.destroy');
         }
         );
 

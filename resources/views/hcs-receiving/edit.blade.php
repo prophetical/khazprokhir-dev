@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Tambah Data HCS Receiving') }}
+            {{ __('Edit Data HCS Receiving: ') . $hcsReceiving->nomor_bon }}
         </h2>
     </x-slot>
 
@@ -20,8 +20,9 @@
                         </div>
                     @endif
 
-                    <form id="hcs-form" action="{{ route('hcs-receiving.store') }}" method="POST">
+                    <form id="hcs-form" action="{{ route('hcs-receiving.update', $hcsReceiving->id) }}" method="POST">
                         @csrf
+                        @method('PUT')
                         
                         <div class="flex flex-col lg:flex-row gap-8">
                             
@@ -31,32 +32,32 @@
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div>
                                         <x-input-label for="nomor_bon" value="Nomor Bon" />
-                                        <x-text-input id="nomor_bon" name="nomor_bon" type="text" class="mt-1 block w-full" value="{{ old('nomor_bon') }}" required />
+                                        <x-text-input id="nomor_bon" name="nomor_bon" type="text" class="mt-1 block w-full bg-gray-100" value="{{ old('nomor_bon', $hcsReceiving->nomor_bon) }}" readonly required />
                                     </div>
 
                                     <div>
                                         <x-input-label for="tanggal_penerimaan" value="Tanggal Penerimaan" />
-                                        <x-text-input id="tanggal_penerimaan" name="tanggal_penerimaan" type="date" class="mt-1 block w-full" value="{{ old('tanggal_penerimaan') }}" required />
+                                        <x-text-input id="tanggal_penerimaan" name="tanggal_penerimaan" type="date" class="mt-1 block w-full" value="{{ old('tanggal_penerimaan', $hcsReceiving->tanggal_penerimaan) }}" required />
                                     </div>
 
                                     <div>
                                         <x-input-label for="pecahan" value="Pecahan" />
                                         <select id="pecahan" name="pecahan" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
                                             <option value="">Pilih Pecahan</option>
-                                            <option value="S">S - 1.000</option>
-                                            <option value="T">T - 2.000</option>
-                                            <option value="U">U - 5.000</option>
-                                            <option value="V">V - 10.000</option>
-                                            <option value="W">W - 20.000</option>
-                                            <option value="X">X - 50.000</option>
-                                            <option value="Y">Y - 100.000</option>
+                                            <option value="S" {{ old('pecahan', $hcsReceiving->pecahan) == 'S' ? 'selected' : '' }}>S - 1.000</option>
+                                            <option value="T" {{ old('pecahan', $hcsReceiving->pecahan) == 'T' ? 'selected' : '' }}>T - 2.000</option>
+                                            <option value="U" {{ old('pecahan', $hcsReceiving->pecahan) == 'U' ? 'selected' : '' }}>U - 5.000</option>
+                                            <option value="V" {{ old('pecahan', $hcsReceiving->pecahan) == 'V' ? 'selected' : '' }}>V - 10.000</option>
+                                            <option value="W" {{ old('pecahan', $hcsReceiving->pecahan) == 'W' ? 'selected' : '' }}>W - 20.000</option>
+                                            <option value="X" {{ old('pecahan', $hcsReceiving->pecahan) == 'X' ? 'selected' : '' }}>X - 50.000</option>
+                                            <option value="Y" {{ old('pecahan', $hcsReceiving->pecahan) == 'Y' ? 'selected' : '' }}>Y - 100.000</option>
                                         </select>
                                     </div>
 
                                     <div>
                                         <x-input-label for="jumlah_display" value="Jumlah Bilyet" />
-                                        <input id="jumlah_display" type="tel" class="mt-1 block w-full text-right font-mono border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" value="{{ old('jumlahDisplay') }}" required />
-                                        <input type="hidden" id="jumlah_original" name="jumlah" value="{{ old('jumlah', 0) }}">
+                                        <input id="jumlah_display" type="tel" class="mt-1 block w-full text-right font-mono border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" value="{{ old('jumlahDisplay', number_format($hcsReceiving->jumlah, 0, ',', '.')) }}" required />
+                                        <input type="hidden" id="jumlah_original" name="jumlah" value="{{ old('jumlah', $hcsReceiving->jumlah) }}">
                                         <p class="text-xs text-gray-500 mt-1">Dibutuhkan <span id="packs_needed_display" class="font-bold text-indigo-600">0</span> packs.</p>
                                     </div>
 
@@ -64,49 +65,49 @@
                                         <x-input-label for="gilir" value="Gilir" />
                                         <select id="gilir" name="gilir" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
                                             <option value="">Pilih Gilir</option>
-                                            <option value="Gilir 1">Gilir 1</option>
-                                            <option value="Gilir 2">Gilir 2</option>
-                                            <option value="Gilir 3">Gilir 3</option>
+                                            <option value="Gilir 1" {{ old('gilir', $hcsReceiving->gilir) == 'Gilir 1' ? 'selected' : '' }}>Gilir 1</option>
+                                            <option value="Gilir 2" {{ old('gilir', $hcsReceiving->gilir) == 'Gilir 2' ? 'selected' : '' }}>Gilir 2</option>
+                                            <option value="Gilir 3" {{ old('gilir', $hcsReceiving->gilir) == 'Gilir 3' ? 'selected' : '' }}>Gilir 3</option>
                                         </select>
                                     </div>
 
                                     <div>
                                         <x-input-label for="mesin" value="Mesin" />
-                                        <x-text-input id="mesin" name="mesin" type="text" class="mt-1 block w-full" value="{{ old('mesin') }}" required />
+                                        <x-text-input id="mesin" name="mesin" type="text" class="mt-1 block w-full" value="{{ old('mesin', $hcsReceiving->mesin) }}" required />
                                     </div>
 
                                     <div>
                                         <x-input-label for="supplier" value="Supplier" />
                                         <select id="supplier" name="supplier" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
                                             <option value="">Pilih Supplier</option>
-                                            <option value="Cutpack" {{ old('supplier') == 'Cutpack' ? 'selected' : '' }}>Cutpack</option>
-                                            <option value="Rikyet" {{ old('supplier') == 'Rikyet' ? 'selected' : '' }}>Rikyet</option>
+                                            <option value="Cutpack" {{ old('supplier', $hcsReceiving->supplier) == 'Cutpack' ? 'selected' : '' }}>Cutpack</option>
+                                            <option value="Rikyet" {{ old('supplier', $hcsReceiving->supplier) == 'Rikyet' ? 'selected' : '' }}>Rikyet</option>
                                         </select>
                                     </div>
 
                                     <div>
                                         <x-input-label for="batch" value="Batch (7 digits)" />
-                                        <x-text-input id="batch" name="batch" type="text" maxlength="7" class="mt-1 block w-full font-mono uppercase" value="{{ old('batch') }}" required />
+                                        <x-text-input id="batch" name="batch" type="text" maxlength="7" class="mt-1 block w-full font-mono uppercase bg-gray-100" value="{{ old('batch', $hcsReceiving->batch) }}" readonly required />
                                     </div>
 
                                     <div>
                                         <x-input-label for="seri" value="Seri (Format: AA-BB7)" />
-                                        <x-text-input id="seri" name="seri" type="text" class="mt-1 block w-full font-mono uppercase" placeholder="AA-BB7" value="{{ old('seri') }}" required />
+                                        <x-text-input id="seri" name="seri" type="text" class="mt-1 block w-full font-mono uppercase bg-gray-100" placeholder="AA-BB7" value="{{ old('seri', $hcsReceiving->seri) }}" readonly required />
                                     </div>
 
                                     <div>
                                         <x-input-label for="emisi" value="Emisi (Tahun)" />
-                                        <x-text-input id="emisi" name="emisi" type="number" min="2000" max="2100" class="mt-1 block w-full" value="{{ old('emisi') }}" required />
+                                        <x-text-input id="emisi" name="emisi" type="number" min="2000" max="2100" class="mt-1 block w-full" value="{{ old('emisi', $hcsReceiving->emisi) }}" required />
                                     </div>
                                     
                                     <div class="col-span-1 sm:col-span-2 pt-2">
                                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                             <div class="flex items-center">
-                                                <input id="repass" name="repass" value="repass" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" {{ old('repass') ? 'checked' : '' }}>
+                                                <input id="repass" name="repass" value="repass" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" {{ old('repass', $hcsReceiving->repass) ? 'checked' : '' }}>
                                                 <label for="repass" class="ml-2 block text-sm font-medium text-gray-900 border border-gray-200 px-3 py-1 rounded bg-white">Tandai sebagai Repass</label>
                                             </div>
                                             <button type="submit" class="inline-flex justify-center py-2.5 px-6 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
-                                                Simpan Data
+                                                Update Data
                                             </button>
                                         </div>
                                     </div>
@@ -173,7 +174,9 @@
 
             let jumlahOriginal = parseInt(inputJumlahOriginal.value, 10) || 0;
             let packsNeeded = 0;
-            let selectedPacks = {!! json_encode(array_map('intval', old('packs', []))) !!} || [];
+            let dbPacks = {!! json_encode($hcsReceiving->packs->pluck('pack_number')->toArray()) !!};
+            let oldPacks = {!! json_encode(old('packs', null)) !!};
+            let selectedPacks = oldPacks ? oldPacks.map(Number) : dbPacks;
             let usedPacks = [];
 
             function init() {
@@ -221,7 +224,7 @@
                 const seriVal = inputSeri.value.toUpperCase();
                 
                 if (batchVal.length === 7 && seriVal.length > 0) {
-                    fetch(`/api/packs/used?batch=${batchVal}&seri=${seriVal}`)
+                    fetch(`/api/packs/used?batch=${batchVal}&seri=${seriVal}&exclude_hcs_id={{ $hcsReceiving->id }}`)
                     .then(res => res.json())
                     .then(data => {
                         usedPacks = data.map(p => parseInt(p.pack_number, 10));
