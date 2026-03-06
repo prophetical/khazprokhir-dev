@@ -85,7 +85,7 @@ class HcsReceivingController extends Controller
 
         try {
             $this->service->createReceiving($validated, auth()->id());
-            return redirect()->route('hcs-receiving.index')->with('success', 'Data HCS Receiving berhasil disimpan.');
+            return redirect()->route('hcs-receiving.index')->with('success', 'Data Penerimaan HCS berhasil disimpan.');
         }
         catch (\Exception $e) {
             return back()->withInput()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()]);
@@ -116,7 +116,7 @@ class HcsReceivingController extends Controller
 
         try {
             $this->service->updateReceiving($hcsReceiving, $validated, auth()->id());
-            return redirect()->route('hcs-receiving.index')->with('success', 'Data HCS Receiving berhasil diperbarui.');
+            return redirect()->route('hcs-receiving.index')->with('success', 'Data Penerimaan HCS berhasil diperbarui.');
         }
         catch (\Exception $e) {
             return back()->withInput()->withErrors(['error' => 'Terjadi kesalahan saat memperbarui data: ' . $e->getMessage()]);
@@ -131,7 +131,7 @@ class HcsReceivingController extends Controller
 
         try {
             $this->service->deleteReceiving($hcsReceiving, auth()->id());
-            return redirect()->route('hcs-receiving.index')->with('success', 'Data HCS Receiving berhasil dihapus secara permanen.');
+            return redirect()->route('hcs-receiving.index')->with('success', 'Data Penerimaan HCS berhasil dihapus secara permanen.');
         }
         catch (\Exception $e) {
             return back()->withErrors(['error' => 'Terjadi kesalahan saat menghapus data: ' . $e->getMessage()]);

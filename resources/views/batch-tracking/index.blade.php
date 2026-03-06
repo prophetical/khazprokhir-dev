@@ -88,7 +88,7 @@
                 <!-- History Records -->
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="bg-gray-50 px-6 py-4 border-b">
-                        <h3 class="text-lg font-medium text-gray-900">Riwayat HCS Receiving</h3>
+                        <h3 class="text-lg font-medium text-gray-900">Riwayat Penerimaan HCS</h3>
                     </div>
                     <div class="p-0">
                         <table class="min-w-full divide-y divide-gray-200">
