@@ -87,8 +87,31 @@
         </div>
 
         @stack('scripts')
+        
+        <!-- SweetAlert2 CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
         <script>
             document.addEventListener('DOMContentLoaded', () => {
+                // Global Session Flash Messages Handler
+                @if(session('success'))
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: "{{ session('success') }}",
+                        icon: 'success',
+                        confirmButtonColor: '#4f46e5'
+                    });
+                @endif
+
+                @if(session('error'))
+                    Swal.fire({
+                        title: 'Oops...',
+                        text: "{{ session('error') }}",
+                        icon: 'error',
+                        confirmButtonColor: '#4f46e5'
+                    });
+                @endif
+
                 const scrollContainer = document.getElementById('main-scroll-container');
                 const header = document.getElementById('top-header');
 

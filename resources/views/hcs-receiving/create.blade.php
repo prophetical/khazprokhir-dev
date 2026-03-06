@@ -43,13 +43,9 @@
                                         <x-input-label for="pecahan" value="Pecahan" />
                                         <select id="pecahan" name="pecahan" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
                                             <option value="">Pilih Pecahan</option>
-                                            <option value="S">S - 1.000</option>
-                                            <option value="T">T - 2.000</option>
-                                            <option value="U">U - 5.000</option>
-                                            <option value="V">V - 10.000</option>
-                                            <option value="W">W - 20.000</option>
-                                            <option value="X">X - 50.000</option>
-                                            <option value="Y">Y - 100.000</option>
+                                            @foreach(['S' => '1.000', 'T' => '2.000', 'U' => '5.000', 'V' => '10.000', 'W' => '20.000', 'X' => '50.000', 'Y' => '100.000'] as $key => $label)
+                                                <option value="{{ $key }}" {{ (old('pecahan', request('pecahan')) == $key) ? 'selected' : '' }}>{{ $key }} - {{ $label }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
 
@@ -86,12 +82,12 @@
 
                                     <div>
                                         <x-input-label for="batch" value="Batch (7 digits)" />
-                                        <x-text-input id="batch" name="batch" type="text" maxlength="7" class="mt-1 block w-full font-mono uppercase" value="{{ old('batch') }}" required />
+                                        <x-text-input id="batch" name="batch" type="text" maxlength="7" class="mt-1 block w-full font-mono uppercase" value="{{ old('batch', request('batch')) }}" required />
                                     </div>
 
                                     <div>
                                         <x-input-label for="seri" value="Seri (Format: AA-BB7)" />
-                                        <x-text-input id="seri" name="seri" type="text" class="mt-1 block w-full font-mono uppercase" placeholder="AA-BB7" value="{{ old('seri') }}" required />
+                                        <x-text-input id="seri" name="seri" type="text" class="mt-1 block w-full font-mono uppercase" placeholder="AA-BB7" value="{{ old('seri', request('seri')) }}" required />
                                     </div>
 
                                     <div>
@@ -247,9 +243,19 @@
                         selectedPacks.push(number);
                     } else {
                         if (packsNeeded > 0) {
-                            alert(`Anda hanya dapat memilih ${packsNeeded} packs sesuai dengan jumlah bilyet.`);
+                            Swal.fire({
+                                title: 'Batas Terlampaui',
+                                text: `Anda hanya dapat memilih ${packsNeeded} packs sesuai dengan jumlah bilyet.`,
+                                icon: 'warning',
+                                confirmButtonColor: '#4f46e5'
+                            });
                         } else {
-                            alert(`Silakan masukkan Jumlah Bilyet terlebih dahulu.`);
+                            Swal.fire({
+                                title: 'Perhatian',
+                                text: 'Silakan masukkan Jumlah Bilyet terlebih dahulu.',
+                                icon: 'info',
+                                confirmButtonColor: '#4f46e5'
+                            });
                         }
                     }
                 }
@@ -330,19 +336,34 @@
             form.addEventListener('submit', (e) => {
                 if (packsNeeded === 0 || jumlahOriginal === 0) {
                     e.preventDefault();
-                    alert('Silakan masukkan Jumlah Bilyet yang valid terlebih dahulu.');
+                    Swal.fire({
+                        title: 'Data Tidak Valid',
+                        text: 'Silakan masukkan Jumlah Bilyet yang valid terlebih dahulu.',
+                        icon: 'error',
+                        confirmButtonColor: '#4f46e5'
+                    });
                     return;
                 }
 
                 if (selectedPacks.length === 0) {
                     e.preventDefault();
-                    alert(`Anda belum memilih pack apapun. Silakan pilih ${packsNeeded} pack pada grid di sebelah kanan.`);
+                    Swal.fire({
+                        title: 'Pack Belum Dipilih',
+                        text: `Anda belum memilih pack apapun. Silakan pilih ${packsNeeded} pack pada grid di sebelah kanan.`,
+                        icon: 'warning',
+                        confirmButtonColor: '#4f46e5'
+                    });
                     return;
                 }
 
                 if (selectedPacks.length !== packsNeeded) {
                     e.preventDefault();
-                    alert(`Jumlah packs yang dipilih (${selectedPacks.length}) tidak sesuai dengan jumlah bilyet (${jumlahOriginal}). Dibutuhkan ${packsNeeded} packs.`);
+                    Swal.fire({
+                        title: 'Jumlah Pack Tidak Sesuai',
+                        text: `Jumlah packs yang dipilih (${selectedPacks.length}) tidak sesuai dengan jumlah bilyet (${jumlahOriginal}). Dibutuhkan ${packsNeeded} packs.`,
+                        icon: 'error',
+                        confirmButtonColor: '#4f46e5'
+                    });
                     return;
                 }
             });

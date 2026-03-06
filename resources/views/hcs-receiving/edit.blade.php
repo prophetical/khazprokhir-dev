@@ -248,9 +248,19 @@
                         selectedPacks.push(number);
                     } else {
                         if (packsNeeded > 0) {
-                            alert(`Anda hanya dapat memilih ${packsNeeded} packs sesuai dengan jumlah bilyet.`);
+                            Swal.fire({
+                                title: 'Batas Terlampaui',
+                                text: `Anda hanya dapat memilih ${packsNeeded} packs sesuai dengan jumlah bilyet.`,
+                                icon: 'warning',
+                                confirmButtonColor: '#4f46e5'
+                            });
                         } else {
-                            alert(`Silakan masukkan Jumlah Bilyet terlebih dahulu.`);
+                            Swal.fire({
+                                title: 'Perhatian',
+                                text: 'Silakan masukkan Jumlah Bilyet terlebih dahulu.',
+                                icon: 'info',
+                                confirmButtonColor: '#4f46e5'
+                            });
                         }
                     }
                 }
@@ -322,19 +332,34 @@
             form.addEventListener('submit', (e) => {
                 if (packsNeeded === 0 || jumlahOriginal === 0) {
                     e.preventDefault();
-                    alert('Silakan masukkan Jumlah Bilyet yang valid terlebih dahulu.');
+                    Swal.fire({
+                        title: 'Data Tidak Valid',
+                        text: 'Silakan masukkan Jumlah Bilyet yang valid terlebih dahulu.',
+                        icon: 'error',
+                        confirmButtonColor: '#4f46e5'
+                    });
                     return;
                 }
 
                 if (selectedPacks.length === 0) {
                     e.preventDefault();
-                    alert(`Anda belum memilih pack apapun. Silakan pilih ${packsNeeded} pack pada grid di sebelah kanan.`);
+                    Swal.fire({
+                        title: 'Pack Belum Dipilih',
+                        text: `Anda belum memilih pack apapun. Silakan pilih ${packsNeeded} pack pada grid di sebelah kanan.`,
+                        icon: 'warning',
+                        confirmButtonColor: '#4f46e5'
+                    });
                     return;
                 }
 
                 if (selectedPacks.length !== packsNeeded) {
                     e.preventDefault();
-                    alert(`Jumlah packs yang dipilih (${selectedPacks.length}) tidak sesuai dengan jumlah bilyet (${jumlahOriginal}). Dibutuhkan ${packsNeeded} packs.`);
+                    Swal.fire({
+                        title: 'Jumlah Pack Tidak Sesuai',
+                        text: `Jumlah packs yang dipilih (${selectedPacks.length}) tidak sesuai dengan jumlah bilyet (${jumlahOriginal}). Dibutuhkan ${packsNeeded} packs.`,
+                        icon: 'error',
+                        confirmButtonColor: '#4f46e5'
+                    });
                     return;
                 }
             });
