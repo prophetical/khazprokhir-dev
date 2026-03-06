@@ -210,40 +210,40 @@
 
                                 {{-- ===== MODAL REKAP GRID ===== --}}
                                 <div id="{{ $modalId }}" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                                    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl flex flex-col max-h-[90vh]">
+                                    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[95vh]">
 
                                         {{-- Modal Header --}}
-                                        <div class="flex items-start justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
+                                        <div class="flex items-start justify-between px-5 py-3 border-b border-gray-100 flex-shrink-0">
                                             <div>
-                                                <h4 class="text-base font-bold text-gray-900">Rekap Grid Pack</h4>
-                                                <div class="mt-1 flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-gray-500">
+                                                <h4 class="text-sm font-bold text-gray-900">Rekap Grid Pack</h4>
+                                                <div class="mt-0.5 flex flex-wrap gap-x-3 gap-y-0.5 text-[10px] text-gray-500">
                                                     <span>Batch: <strong class="font-mono text-gray-700">{{ strtoupper($item['batch']) }}</strong></span>
                                                     <span>Seri: <strong class="font-mono text-gray-700">{{ strtoupper($item['seri']) }}</strong></span>
-                                                    <span>Pecahan: <strong class="text-gray-700">{{ $pecahanLabel }}</strong></span>
+                                                    <span>Pec: <strong class="text-gray-700">{{ $pecahan }}</strong></span>
                                                 </div>
                                             </div>
                                             <button type="button" onclick="closeModal('{{ $modalId }}')" class="ml-4 text-gray-400 hover:text-gray-600 transition-colors">
-                                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                             </button>
                                         </div>
 
                                         {{-- Modal Legend --}}
-                                        <div class="px-6 py-2 flex gap-4 text-xs border-b border-gray-100 bg-gray-50/60 flex-shrink-0">
-                                            <span class="flex items-center gap-1.5"><span class="w-4 h-4 rounded bg-blue-200 border border-blue-400 inline-block"></span>Cutpack</span>
-                                            <span class="flex items-center gap-1.5"><span class="w-4 h-4 rounded bg-green-200 border border-green-400 inline-block"></span>Rikyet</span>
-                                            <span class="flex items-center gap-1.5"><span class="w-4 h-4 rounded bg-gray-100 border border-gray-300 inline-block"></span>Belum diinput</span>
+                                        <div class="px-5 py-1.5 flex gap-3 text-[9px] border-b border-gray-100 bg-gray-50/60 flex-shrink-0">
+                                            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-blue-200 border border-blue-400 inline-block"></span>Cutpack</span>
+                                            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-green-200 border border-green-400 inline-block"></span>Rikyet</span>
+                                            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-gray-100 border border-gray-300 inline-block"></span>N/A</span>
                                         </div>
 
                                         {{-- 10×10 Grid — VERTICAL flow: col1=1-10, col2=11-20, … col10=91-100 --}}
-                                        <div class="p-5 overflow-y-auto flex-1">
-                                            <div class="grid gap-1.5" style="grid-template-rows: repeat(10, minmax(0, 1fr)); grid-template-columns: repeat(10, minmax(0, 1fr)); grid-auto-flow: column;">
+                                        <div class="px-4 py-2 overflow-y-auto flex-1">
+                                            <div class="grid gap-0.5" style="grid-template-rows: repeat(10, minmax(0, 1fr)); grid-template-columns: repeat(10, minmax(0, 1fr)); grid-auto-flow: column;">
                                                 @for($p = 1; $p <= 100; $p++)
                                                     @php
                                                         $cell  = $packMap[$p] ?? null;
-                                                        $months = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+                                                        $months = ['','Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
                                                         if ($cell) {
                                                             $carbon    = \Carbon\Carbon::parse($cell['date']);
-                                                            $dateLabel = $carbon->day . ' ' . $months[$carbon->month] . ' ' . $carbon->year . ', ' . $carbon->format('H:i') . ' WIB';
+                                                            $dateLabel = $carbon->day . ' ' . $months[$carbon->month] . ' ' . $carbon->year . ', ' . $carbon->format('H:i');
                                                             $cellClass = $cell['supplier'] === 'Cutpack'
                                                                 ? 'bg-blue-200 border-blue-400 text-blue-900 hover:bg-blue-300'
                                                                 : 'bg-green-200 border-green-400 text-green-900 hover:bg-green-300';
@@ -252,16 +252,16 @@
                                                             $cellClass = 'bg-gray-100 border-gray-300 text-gray-400';
                                                         }
                                                     @endphp
-                                                    <div class="relative group w-full aspect-square flex items-center justify-center rounded-md border-2 font-bold text-xs cursor-default select-none transition-all {{ $cellClass }}">
+                                                    <div class="relative group w-full aspect-square flex items-center justify-center rounded-sm border font-bold text-[9px] cursor-default select-none transition-all {{ $cellClass }}">
                                                         {{ $p }}
                                                         @if($cell)
                                                             <div class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-[70] hidden group-hover:flex flex-col items-center">
-                                                                <div class="bg-gray-900 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-xl text-center leading-snug">
+                                                                <div class="bg-gray-900 text-white text-[9px] rounded-lg px-2 py-1 whitespace-nowrap shadow-xl text-center leading-tight">
                                                                     <div class="font-semibold">Pack {{ $p }}</div>
                                                                     <div class="{{ $cell['supplier'] === 'Cutpack' ? 'text-blue-300' : 'text-green-300' }}">{{ $cell['supplier'] }}</div>
-                                                                    <div class="text-gray-400 text-[10px] mt-0.5">{{ $dateLabel }}</div>
+                                                                    <div class="text-gray-400 text-[8px] mt-0.5">{{ $dateLabel }}</div>
                                                                 </div>
-                                                                <div class="w-2 h-2 bg-gray-900 rotate-45 -mt-1"></div>
+                                                                <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-1"></div>
                                                             </div>
                                                         @endif
                                                     </div>
@@ -275,10 +275,10 @@
                                                 $pRikyet  = collect($packMap)->where('supplier', 'Rikyet')->count();
                                                 $pEmpty   = 100 - $pFilled;
                                             @endphp
-                                            <div class="mt-4 pt-3 border-t border-gray-100 flex flex-wrap gap-x-5 gap-y-1 text-xs text-gray-500">
+                                            <div class="mt-2 pt-1.5 border-t border-gray-100 flex flex-wrap gap-x-3 gap-y-0.5 text-[9px] text-gray-500">
                                                 <span>Terisi: <strong class="text-gray-700">{{ $pFilled }}/100</strong></span>
-                                                @if($pCutpack > 0)<span class="text-blue-600">Cutpack: <strong>{{ $pCutpack }}</strong></span>@endif
-                                                @if($pRikyet > 0)<span class="text-green-600">Rikyet: <strong>{{ $pRikyet }}</strong></span>@endif
+                                                @if($pCutpack > 0)<span class="text-blue-600">Cut: <strong>{{ $pCutpack }}</strong></span>@endif
+                                                @if($pRikyet > 0)<span class="text-green-600">Rik: <strong>{{ $pRikyet }}</strong></span>@endif
                                                 <span>Kosong: <strong>{{ $pEmpty }}</strong></span>
                                             </div>
                                         </div>
