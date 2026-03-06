@@ -8,14 +8,14 @@
     <style>
         @media print {
             .no-print { display: none !important; }
-            body { padding: 0; margin: 0; background: white; }
-            .print-container { width: 100%; border: none; shadow: none; }
+            body { padding: 0 !important; margin: 0 !important; background: white; }
+            .print-container { width: 100% !important; max-width: none !important; border: none !important; shadow: none !important; padding: 0.2cm !important; border-radius: 0 !important; }
             /* Force background colors in print */
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            @page { margin: 1.5cm; }
+            @page { margin: 0.2cm; }
         }
         body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background-color: #f9fafb; }
-        .table-tight th, .table-tight td { padding: 8px 12px; }
+        .table-tight th, .table-tight td { padding: 6px 10px; }
     </style>
 </head>
 <body class="p-4 md:p-10">
@@ -23,7 +23,7 @@
         
         <!-- Action Toolbar (Hidden on Print) -->
         <div class="no-print flex justify-between items-center mb-8 pb-6 border-b border-gray-100">
-            <a href="{{ route('reports.index', ['type' => $type, 'start_date' => $startDate, 'end_date' => $endDate, 'gilir' => $gilir]) }}" class="text-sm font-medium text-gray-500 hover:text-indigo-600 flex items-center transition-colors">
+            <a href="{{ route('reports.index', ['start_date' => $startDate, 'end_date' => $endDate, 'gilir' => $gilir, 'pecahan' => $pecahan ?? '']) }}" class="text-sm font-medium text-gray-500 hover:text-indigo-600 flex items-center transition-colors">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
                 Kembali ke Dashboard
             </a>
@@ -34,14 +34,22 @@
         </div>
 
         <!-- Header Section -->
-        <header class="flex justify-between items-start mb-10">
+        <header class="flex justify-between items-start mb-8">
             <div>
-                <h1 class="text-3xl font-extrabold text-gray-900 mb-1 tracking-tight">LAPORAN PENERIMAAN HCS</h1>
-                <p class="text-gray-500 font-medium">Khazprokhir Management System</p>
-                <div class="mt-4 flex items-center space-x-4 text-sm">
+                <h1 class="text-2xl font-extrabold text-gray-900 mb-1 tracking-tight">LAPORAN PENERIMAAN HCS</h1>
+                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-4">Khazprokhir Management System</p>
+                
+                <!-- Filter Context -->
+                <div class="flex items-center space-x-3 text-xs mb-4">
                     <div class="bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100 flex items-center">
                         <span class="text-gray-400 mr-2">Periode:</span>
-                        <span class="font-bold text-gray-700">{{ \Carbon\Carbon::parse($startDate)->format('d/m/Y') }} – {{ \Carbon\Carbon::parse($endDate)->format('d/m/Y') }}</span>
+                        <span class="font-bold text-gray-700">
+                            @if($startDate && $endDate)
+                                {{ \Carbon\Carbon::parse($startDate)->format('d/m/Y') }} – {{ \Carbon\Carbon::parse($endDate)->format('d/m/Y') }}
+                            @else
+                                Semua Tanggal
+                            @endif
+                        </span>
                     </div>
                     @if($gilir)
                     <div class="bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100 flex items-center">
@@ -49,23 +57,41 @@
                         <span class="font-bold text-indigo-700 uppercase">{{ $gilir }}</span>
                     </div>
                     @endif
+                    @if(isset($pecahan))
+                    <div class="bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100 flex items-center">
+                        <span class="text-emerald-400 mr-2">Pecahan:</span>
+                        <span class="font-bold text-emerald-700 uppercase">{{ $pecahan }}</span>
+                    </div>
+                    @endif
+                </div>
+
+                <!-- Small Global Totals -->
+                <div class="flex items-center gap-2">
+                    <span class="text-[8px] font-bold text-gray-400 uppercase tracking-widest mr-1">Global Total (All-Time):</span>
+                    @php
+                        $pecahanColors = [
+                            'S' => 'text-stone-600', 'T' => 'text-slate-500', 'U' => 'text-orange-500', 
+                            'V' => 'text-purple-600', 'W' => 'text-green-600', 'X' => 'text-blue-600', 'Y' => 'text-red-600'
+                        ];
+                    @endphp
+                    @foreach($globalTotalsPerPecahan as $key => $total)
+                        <div class="flex items-center space-x-1 border-r border-gray-200 pr-2 last:border-0 h-4">
+                            <span class="{{ $pecahanColors[$key] }} font-bold text-[9px]">{{ $key }}</span>
+                            <span class="text-[9px] font-medium text-gray-500">{{ number_format($total, 0, ',', '.') }}</span>
+                        </div>
+                    @endforeach
                 </div>
             </div>
             <div class="text-right">
-                <div class="mb-2">
-                    <span class="inline-block bg-indigo-600 text-white p-2 rounded-xl">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 2v-6m-9 9h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                    </span>
-                </div>
                 <p class="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Dicetak Pada</p>
-                <p class="text-sm font-bold text-gray-700">{{ \Carbon\Carbon::now()->format('d F Y, H:i') }}</p>
+                <p class="text-xs font-bold text-gray-700">{{ \Carbon\Carbon::now()->format('d F Y, H:i') }}</p>
             </div>
         </header>
 
-        <!-- Global Summary Grid -->
-        <div class="mb-10">
-            <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Ringkasan All-Time (Global)</h2>
-            <div class="grid grid-cols-4 lg:grid-cols-4 gap-4">
+        <!-- Filtered Summary Grid -->
+        <div class="mb-8">
+            <h2 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Total Penerimaan (Sesuai Filter)</h2>
+            <div class="grid grid-cols-4 lg:grid-cols-8 gap-3">
                 @php
                     $pecahanMeta = [
                         'S' => ['color' => 'bg-stone-600',   'label' => 'Rp1.000'],
@@ -77,22 +103,22 @@
                         'Y' => ['color' => 'bg-red-600',     'label' => 'Rp100.000'],
                     ];
                 @endphp
-                @foreach($globalTotalsPerPecahan as $key => $total)
-                <div class="border border-gray-100 rounded-xl p-3 flex items-center space-x-3">
-                    <div class="{{ $pecahanMeta[$key]['color'] }} w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                @foreach($filteredTotalsPerPecahan as $key => $total)
+                <div class="border border-gray-100 rounded-xl p-2.5 flex items-center space-x-2 bg-gray-50/30">
+                    <div class="{{ $pecahanMeta[$key]['color'] }} w-7 h-7 rounded-lg flex items-center justify-center text-white font-bold text-[10px]">
                         {{ $key }}
                     </div>
                     <div>
-                        <p class="text-[8px] text-gray-400 uppercase font-bold">{{ $pecahanMeta[$key]['label'] }}</p>
-                        <p class="text-sm font-bold text-gray-800">{{ number_format($total, 0, ',', '.') }}</p>
+                        <p class="text-[7px] text-gray-400 uppercase font-bold">{{ $pecahanMeta[$key]['label'] }}</p>
+                        <p class="text-xs font-bold text-gray-800">{{ number_format($total, 0, ',', '.') }}</p>
                     </div>
                 </div>
                 @endforeach
-                <div class="bg-gray-900 rounded-xl p-3 flex items-center space-x-3">
-                    <div class="bg-white/20 w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-[8px]">ALL</div>
+                <div class="bg-indigo-600 rounded-xl p-2.5 flex items-center space-x-2">
+                    <div class="bg-white/20 w-7 h-7 rounded-lg flex items-center justify-center text-white font-bold text-[8px]">ALL</div>
                     <div>
-                        <p class="text-[8px] text-gray-400 uppercase font-bold">Grand Total</p>
-                        <p class="text-sm font-bold text-white">{{ number_format($globalGrandTotal, 0, ',', '.') }}</p>
+                        <p class="text-[7px] text-indigo-100 uppercase font-bold">Filter Total</p>
+                        <p class="text-xs font-bold text-white">{{ number_format($filteredGrandTotal, 0, ',', '.') }}</p>
                     </div>
                 </div>
             </div>

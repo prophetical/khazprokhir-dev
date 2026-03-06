@@ -12,12 +12,10 @@ class ReportController extends Controller
 {
     public function index(Request $request)
     {
-        $type = $request->input('type', 'daily');
-        $startDate = $request->input('start_date', Carbon::today()->format('Y-m-d'));
-        $endDate = $request->input('end_date', Carbon::today()->format('Y-m-d'));
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
         $gilir = $request->input('gilir');
-
-        $data = collect();
+        $pecahan = $request->input('pecahan');
 
         // Calculate GLOBAL all-time totals for each denomination for the summary cards
         $globalTotalsPerPecahan = collect(['S' => 0, 'T' => 0, 'U' => 0, 'V' => 0, 'W' => 0, 'X' => 0, 'Y' => 0]);
@@ -29,33 +27,36 @@ class ReportController extends Controller
         // Calculate Global Grand Total
         $globalGrandTotal = $globalTotalsPerPecahan->sum();
 
-        if ($type === 'daily') {
-            $query = HcsReceiving::with('user')
-                ->whereBetween('tanggal_penerimaan', [$startDate, $endDate]);
+        $query = HcsReceiving::with('user');
 
-            if ($gilir) {
-                $query->where('gilir', $gilir);
-            }
-
-            $data = $query->orderBy('tanggal_penerimaan', 'desc')
-                ->orderBy('created_at', 'desc')
-                ->get();
-        }
-        elseif ($type === 'denomination') {
-            $data = StockLedger::orderBy('pecahan')->get();
+        if ($startDate && $endDate) {
+            $query->whereBetween('tanggal_penerimaan', [$startDate, $endDate]);
         }
 
-        return view('reports.index', compact('type', 'startDate', 'endDate', 'gilir', 'data', 'globalTotalsPerPecahan', 'globalGrandTotal'));
+        if ($gilir) {
+            $query->where('gilir', $gilir);
+        }
+
+        if ($pecahan) {
+            $query->where('pecahan', $pecahan);
+        }
+
+        $data = $query->orderBy('tanggal_penerimaan', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->paginate(20)
+            ->withQueryString();
+
+        return view('reports.index', compact('startDate', 'endDate', 'gilir', 'pecahan', 'data', 'globalTotalsPerPecahan', 'globalGrandTotal'));
     }
 
     public function export(Request $request)
     {
-        $type = $request->input('type', 'daily');
-        $startDate = $request->input('start_date', Carbon::today()->format('Y-m-d'));
-        $endDate = $request->input('end_date', Carbon::today()->format('Y-m-d'));
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
         $gilir = $request->input('gilir');
+        $pecahan = $request->input('pecahan');
 
-        $filename = "report_{$type}_{$startDate}_to_{$endDate}.csv";
+        $filename = "report_receiving_" . ($startDate ?: 'all') . "_to_" . ($endDate ?: 'all') . ".csv";
         $headers = [
             "Content-type" => "text/csv",
             "Content-Disposition" => "attachment; filename=$filename",
@@ -64,70 +65,57 @@ class ReportController extends Controller
             "Expires" => "0"
         ];
 
-        $callback = function () use ($type, $startDate, $endDate, $gilir) {
+        $callback = function () use ($startDate, $endDate, $gilir, $pecahan) {
             $file = fopen('php://output', 'w');
 
-            if ($type === 'daily') {
-                fputcsv($file, ['Tanggal', 'No Bon', 'Pecahan', 'Jumlah', 'Gilir', 'Mesin', 'Supplier', 'Batch', 'Seri', 'Operator']);
+            fputcsv($file, ['Tanggal', 'No Bon', 'Pecahan', 'Jumlah', 'Gilir', 'Mesin', 'Supplier', 'Batch', 'Seri', 'Operator']);
 
-                $query = HcsReceiving::with('user')
-                    ->whereBetween('tanggal_penerimaan', [$startDate, $endDate]);
+            $query = HcsReceiving::with('user');
 
-                if ($gilir) {
-                    $query->where('gilir', $gilir);
+            if ($startDate && $endDate) {
+                $query->whereBetween('tanggal_penerimaan', [$startDate, $endDate]);
+            }
+
+            if ($gilir) {
+                $query->where('gilir', $gilir);
+            }
+
+            if ($pecahan) {
+                $query->where('pecahan', $pecahan);
+            }
+
+            $query->chunk(100, function ($receivings) use ($file) {
+                    foreach ($receivings as $row) {
+                        fputcsv($file, [
+                            $row->tanggal_penerimaan,
+                            $row->nomor_bon,
+                            $row->pecahan,
+                            $row->jumlah,
+                            $row->gilir,
+                            $row->mesin,
+                            $row->supplier,
+                            $row->batch,
+                            $row->seri,
+                            $row->user->name ?? '-'
+                        ]);
+                    }
                 }
+                );
 
-                $query->chunk(100, function ($receivings) use ($file) {
-                            foreach ($receivings as $row) {
-                                fputcsv($file, [
-                                    $row->tanggal_penerimaan,
-                                    $row->nomor_bon,
-                                    $row->pecahan,
-                                    $row->jumlah,
-                                    $row->gilir,
-                                    $row->mesin,
-                                    $row->supplier,
-                                    $row->batch,
-                                    $row->seri,
-                                    $row->user->name ?? '-'
-                                ]);
-                            }
-                        }
-                        );
-                    }
-                    elseif ($type === 'denomination') {
-                        fputcsv($file, ['Pecahan', 'Batch', 'Seri', 'Total Diterima', 'Total Dipacking']);
-
-                        StockLedger::chunk(100, function ($ledgers) use ($file) {
-                            foreach ($ledgers as $row) {
-                                fputcsv($file, [
-                                    $row->pecahan,
-                                    $row->batch,
-                                    $row->seri,
-                                    $row->total_received,
-                                    $row->total_packed
-                                ]);
-                            }
-                        }
-                        );
-                    }
-
-                    fclose($file);
-                };
+                fclose($file);
+            };
 
         return response()->stream($callback, 200, $headers);
     }
 
     public function print(Request $request)
     {
-        $type = $request->input('type', 'daily');
-        $startDate = $request->input('start_date', Carbon::today()->format('Y-m-d'));
-        $endDate = $request->input('end_date', Carbon::today()->format('Y-m-d'));
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
         $gilir = $request->input('gilir');
+        $pecahan = $request->input('pecahan');
 
-        $data = collect();
-
-        // Global totals for the print header
+        // Global totals (All-time)
         $globalTotalsPerPecahan = collect(['S' => 0, 'T' => 0, 'U' => 0, 'V' => 0, 'W' => 0, 'X' => 0, 'Y' => 0]);
         $totals = HcsReceiving::selectRaw('pecahan, SUM(jumlah) as total')
             ->groupBy('pecahan')
@@ -135,22 +123,36 @@ class ReportController extends Controller
         $globalTotalsPerPecahan = $globalTotalsPerPecahan->merge($totals);
         $globalGrandTotal = $globalTotalsPerPecahan->sum();
 
-        if ($type === 'daily') {
-            $query = HcsReceiving::with('user')
-                ->whereBetween('tanggal_penerimaan', [$startDate, $endDate]);
+        // Filtered totals (Current View)
+        $filteredTotalsPerPecahan = collect(['S' => 0, 'T' => 0, 'U' => 0, 'V' => 0, 'W' => 0, 'X' => 0, 'Y' => 0]);
 
-            if ($gilir) {
-                $query->where('gilir', $gilir);
-            }
+        $query = HcsReceiving::with('user');
+        $totalsQuery = HcsReceiving::selectRaw('pecahan, SUM(jumlah) as total');
 
-            $data = $query->orderBy('tanggal_penerimaan', 'desc')
-                ->orderBy('created_at', 'desc')
-                ->get();
-        }
-        elseif ($type === 'denomination') {
-            $data = StockLedger::orderBy('pecahan')->get();
+        if ($startDate && $endDate) {
+            $query->whereBetween('tanggal_penerimaan', [$startDate, $endDate]);
+            $totalsQuery->whereBetween('tanggal_penerimaan', [$startDate, $endDate]);
         }
 
-        return view('reports.print', compact('type', 'startDate', 'endDate', 'gilir', 'data', 'globalTotalsPerPecahan', 'globalGrandTotal'));
+        if ($gilir) {
+            $query->where('gilir', $gilir);
+            $totalsQuery->where('gilir', $gilir);
+        }
+
+        if ($pecahan) {
+            $query->where('pecahan', $pecahan);
+            $totalsQuery->where('pecahan', $pecahan);
+        }
+
+        $currentTotals = $totalsQuery->groupBy('pecahan')->pluck('total', 'pecahan');
+        $filteredTotalsPerPecahan = $filteredTotalsPerPecahan->merge($currentTotals);
+
+        $data = $query->orderBy('tanggal_penerimaan', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $filteredGrandTotal = $filteredTotalsPerPecahan->sum();
+
+        return view('reports.print', compact('startDate', 'endDate', 'gilir', 'pecahan', 'data', 'globalTotalsPerPecahan', 'globalGrandTotal', 'filteredTotalsPerPecahan', 'filteredGrandTotal'));
     }
 }
