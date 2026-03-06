@@ -16,6 +16,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Reports
     Route::get('/reports', [\App\Http\Controllers\ReportController::class , 'index'])->name('reports.index');
     Route::get('/reports/export', [\App\Http\Controllers\ReportController::class , 'export'])->name('reports.export');
+    Route::get('/reports/print', [\App\Http\Controllers\ReportController::class , 'print'])->name('reports.print');
 
     Route::get('/profile', [ProfileController::class , 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class , 'update'])->name('profile.update');

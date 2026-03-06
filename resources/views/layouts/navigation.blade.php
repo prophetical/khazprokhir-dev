@@ -65,13 +65,13 @@
         <!-- Reports -->
         <a href="{{ route('reports.index') }}" 
            class="flex items-center py-3 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('reports.*') ? 'bg-indigo-50 text-indigo-700 font-semibold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
-           title="{{ __('Reports') }}">
+           title="{{ __('Laporan Penerimaan HCS') }}">
             <div class="shrink-0 w-8 flex justify-center">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 2v-6m-9 9h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
             </div>
-            <span x-show="!sidebarCollapsed" x-transition class="ml-3 whitespace-nowrap overflow-hidden">{{ __('Reports') }}</span>
+            <span x-show="!sidebarCollapsed" x-transition class="ml-3 whitespace-nowrap overflow-hidden">{{ __('Laporan Penerimaan HCS') }}</span>
         </a>
     </div>
 
