@@ -26,63 +26,101 @@
                     </div>
 
                     <!-- Search & Filter Form -->
-                    <div class="bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200">
-                        <form action="{{ route('hcs-receiving.index') }}" method="GET" class="flex flex-col md:flex-row gap-4">
-                            
-                            <!-- Search -->
-                            <div class="flex-1">
-                                <x-input-label for="search" value="Cari Bon / Batch / Seri" />
-                                <x-text-input id="search" name="search" type="text" class="mt-1 block w-full text-sm" value="{{ request('search') }}" placeholder="Ketik kata kunci..." />
+                    <div class="bg-white border border-gray-100 shadow-sm rounded-xl mb-8 overflow-hidden">
+                        <form action="{{ route('hcs-receiving.index') }}" method="GET">
+                            <div class="p-6">
+                                <div class="flex flex-col xl:flex-row gap-5 items-end">
+                                    
+                                    {{-- Primary Search --}}
+                                    <div class="flex-1 w-full">
+                                        <label for="search" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Cari</label>
+                                        <div class="relative group">
+                                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                                <svg class="w-4 h-4 text-gray-400 group-focus-within:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                            </div>
+                                            <input id="search" name="search" type="text" 
+                                                class="pl-10 block w-full border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-lg shadow-sm text-sm py-3 transition-all" 
+                                                value="{{ request('search') }}" placeholder=" " />
+                                        </div>
+                                    </div>
+
+                                    {{-- Denomination & Supplier Group --}}
+                                    <div class="grid grid-cols-2 gap-4 w-full xl:w-auto">
+                                        <div class="w-full xl:w-32">
+                                            <label for="pecahan" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Pecahan</label>
+                                            <select id="pecahan" name="pecahan" class="block w-full border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-lg shadow-sm text-sm py-2.5">
+                                                <option value="">Semua</option>
+                                                @foreach(['S'=>'1.000','T'=>'2.000','U'=>'5.000','V'=>'10.000','W'=>'20.000','X'=>'50.000','Y'=>'100.000'] as $key => $val)
+                                                    <option value="{{ $key }}" {{ request('pecahan') == $key ? 'selected' : '' }}>{{ $key }} - {{ $val }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="w-full xl:w-32">
+                                            <label for="supplier" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Supplier</label>
+                                            <select id="supplier" name="supplier" class="block w-full border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-lg shadow-sm text-sm py-2.5">
+                                                <option value="">Semua</option>
+                                                <option value="Cutpack" {{ request('supplier') == 'Cutpack' ? 'selected' : '' }}>Cutpack</option>
+                                                <option value="Rikyet" {{ request('supplier') == 'Rikyet' ? 'selected' : '' }}>Rikyet</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    {{-- Date Range Group --}}
+                                    <div class="grid grid-cols-2 gap-4 w-full xl:w-auto">
+                                        <div class="w-full xl:w-32">
+                                            <label for="start_date" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Dari</label>
+                                            <input id="start_date" name="start_date" type="date" class="block w-full border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-lg shadow-sm text-sm py-2.5 px-2" value="{{ request('start_date') }}" />
+                                        </div>
+                                        <div class="w-full xl:w-32">
+                                            <label for="end_date" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Sampai</label>
+                                            <input id="end_date" name="end_date" type="date" class="block w-full border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-lg shadow-sm text-sm py-2.5 px-2" value="{{ request('end_date') }}" />
+                                        </div>
+                                    </div>
+
+                                    {{-- Actions --}}
+                                    <div class="flex gap-2 w-full xl:w-auto">
+                                        <button type="submit" class="flex-1 xl:flex-none inline-flex items-center justify-center px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-lg transition-all shadow-md active:scale-95">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg> Cari
+                                        </button>
+                                        @if(request()->anyFilled(['search', 'start_date', 'end_date', 'pecahan', 'supplier']))
+                                            <a href="{{ route('hcs-receiving.index') }}" class="xl:flex-none inline-flex items-center justify-center px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm font-semibold rounded-lg transition-all">
+                                                Reset
+                                            </a>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
 
-                            <!-- Filter: Start Date -->
-                            <div>
-                                <x-input-label for="start_date" value="Dari Tanggal" />
-                                <x-text-input id="start_date" name="start_date" type="date" class="mt-1 block w-full text-sm" value="{{ request('start_date') }}" />
-                            </div>
-
-                            <!-- Filter: End Date -->
-                            <div>
-                                <x-input-label for="end_date" value="Sampai Tanggal" />
-                                <x-text-input id="end_date" name="end_date" type="date" class="mt-1 block w-full text-sm" value="{{ request('end_date') }}" />
-                            </div>
-
-                            <!-- Filter: Pecahan -->
-                            <div>
-                                <x-input-label for="pecahan" value="Pecahan" />
-                                <select id="pecahan" name="pecahan" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm">
-                                    <option value="">Semua</option>
-                                    <option value="S" {{ request('pecahan') == 'S' ? 'selected' : '' }}>S - 1.000</option>
-                                    <option value="T" {{ request('pecahan') == 'T' ? 'selected' : '' }}>T - 2.000</option>
-                                    <option value="U" {{ request('pecahan') == 'U' ? 'selected' : '' }}>U - 5.000</option>
-                                    <option value="V" {{ request('pecahan') == 'V' ? 'selected' : '' }}>V - 10.000</option>
-                                    <option value="W" {{ request('pecahan') == 'W' ? 'selected' : '' }}>W - 20.000</option>
-                                    <option value="X" {{ request('pecahan') == 'X' ? 'selected' : '' }}>X - 50.000</option>
-                                    <option value="Y" {{ request('pecahan') == 'Y' ? 'selected' : '' }}>Y - 100.000</option>
-                                </select>
-                            </div>
-
-                            <!-- Filter: Supplier -->
-                            <div>
-                                <x-input-label for="supplier" value="Supplier" />
-                                <select id="supplier" name="supplier" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm">
-                                    <option value="">Semua</option>
-                                    <option value="Cutpack" {{ request('supplier') == 'Cutpack' ? 'selected' : '' }}>Cutpack</option>
-                                    <option value="Rikyet" {{ request('supplier') == 'Rikyet' ? 'selected' : '' }}>Rikyet</option>
-                                </select>
-                            </div>
-
-                            <!-- Actions -->
-                            <div class="flex items-end gap-2 pt-2 md:pt-0">
-                                <button type="submit" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 h-10 w-full md:w-auto mt-2 md:mt-0 justify-center">
-                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg> Cari
-                                </button>
-                                @if(request()->anyFilled(['search', 'start_date', 'end_date', 'pecahan', 'supplier']))
-                                    <a href="{{ route('hcs-receiving.index') }}" class="inline-flex items-center px-4 py-2 bg-red-100 border border-transparent rounded-md font-semibold text-xs text-red-700 uppercase tracking-widest hover:bg-red-200 focus:bg-red-200 active:bg-red-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150 h-10 w-full md:w-auto mt-2 md:mt-0 justify-center" title="Reset Filters">
-                                        Reset
-                                    </a>
-                                @endif
-                            </div>
+                            {{-- Active Filter Tags --}}
+                            @if(request()->anyFilled(['search', 'start_date', 'end_date', 'pecahan', 'supplier']))
+                                <div class="px-6 pb-6 pt-0 flex flex-wrap gap-2">
+                                    @if(request('search'))
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-100">
+                                            Search: <span class="font-bold ml-1 italic">{{ request('search') }}</span>
+                                        </span>
+                                    @endif
+                                    @if(request('pecahan'))
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
+                                            Pecahan: <span class="font-bold ml-1 uppercase">{{ request('pecahan') }}</span>
+                                        </span>
+                                    @endif
+                                    @if(request('supplier'))
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-100">
+                                            Supplier: <span class="font-bold ml-1">{{ request('supplier') }}</span>
+                                        </span>
+                                    @endif
+                                    @if(request('start_date'))
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-rose-50 text-rose-700 border border-rose-100">
+                                            Mulai: <span class="font-bold ml-1">{{ \Carbon\Carbon::parse(request('start_date'))->translatedFormat('d M Y') }}</span>
+                                        </span>
+                                    @endif
+                                    @if(request('end_date'))
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-rose-50 text-rose-700 border border-rose-100">
+                                            Sampai: <span class="font-bold ml-1">{{ \Carbon\Carbon::parse(request('end_date'))->translatedFormat('d M Y') }}</span>
+                                        </span>
+                                    @endif
+                                </div>
+                            @endif
                         </form>
                     </div>
 

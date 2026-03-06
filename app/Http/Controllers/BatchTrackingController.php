@@ -14,6 +14,7 @@ class BatchTrackingController extends Controller
         $search = $request->input('search');
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
+        $pecahanFilter = $request->input('pecahan');
 
         // Distinct (batch, seri) combos with optional filtering
         $query = HcsReceiving::select('batch', 'seri')->distinct();
@@ -29,6 +30,9 @@ class BatchTrackingController extends Controller
         }
         if ($endDate) {
             $query->whereDate('tanggal_penerimaan', '<=', $endDate);
+        }
+        if ($pecahanFilter) {
+            $query->where('pecahan', $pecahanFilter);
         }
 
         // Paginate 10 combos per page
@@ -55,12 +59,14 @@ class BatchTrackingController extends Controller
                 ->where('batch', $batch)
                 ->where('seri', $seri);
 
-            if ($startDate || $endDate) {
-                $packQuery->whereHas('hcsReceiving', function ($q) use ($startDate, $endDate) {
+            if ($startDate || $endDate || $pecahanFilter) {
+                $packQuery->whereHas('hcsReceiving', function ($q) use ($startDate, $endDate, $pecahanFilter) {
                     if ($startDate)
                         $q->whereDate('tanggal_penerimaan', '>=', $startDate);
                     if ($endDate)
                         $q->whereDate('tanggal_penerimaan', '<=', $endDate);
+                    if ($pecahanFilter)
+                        $q->where('pecahan', $pecahanFilter);
                 });
             }
 
@@ -100,7 +106,7 @@ class BatchTrackingController extends Controller
         }
 
         return view('batch-tracking.index', compact(
-            'trackingData', 'paginator', 'search', 'startDate', 'endDate'
+            'trackingData', 'paginator', 'search', 'startDate', 'endDate', 'pecahanFilter'
         ));
     }
 }

@@ -14,7 +14,7 @@
                     <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                         <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
                         <h3 class="text-sm font-semibold text-gray-700">Cari & Filter</h3>
-                        @if($search || $startDate || $endDate)
+                        @if($search || $startDate || $endDate || $pecahanFilter)
                             <a href="{{ route('batch-tracking.index') }}" class="ml-auto text-xs text-red-500 hover:text-red-700 flex items-center gap-1 transition-colors">
                                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                 Reset Filter
@@ -64,8 +64,38 @@
 
                     </div>
 
+                    {{-- Pecahan Filter Buttons --}}
+                    <input type="hidden" id="pecahan_input" name="pecahan" value="{{ $pecahanFilter }}">
+                    <div class="px-6 pb-4 flex flex-wrap items-center gap-2">
+                        <span class="text-xs font-medium text-gray-500">Filter Pecahan:</span>
+                        @php
+                            $pecahanList = [
+                                'S' => ['label' => 'S · Rp1.000',  'active' => 'bg-stone-600 border-stone-700 text-white',   'idle' => 'bg-stone-100   border-stone-400  text-stone-700  hover:bg-stone-200'],
+                                'T' => ['label' => 'T · Rp2.000',  'active' => 'bg-slate-500  border-slate-600  text-white',   'idle' => 'bg-slate-100   border-slate-400  text-slate-700  hover:bg-slate-200'],
+                                'U' => ['label' => 'U · Rp5.000',  'active' => 'bg-orange-500 border-orange-600 text-white',   'idle' => 'bg-orange-100  border-orange-400 text-orange-700 hover:bg-orange-200'],
+                                'V' => ['label' => 'V · Rp10.000', 'active' => 'bg-purple-600 border-purple-700 text-white',   'idle' => 'bg-purple-100  border-purple-400 text-purple-700 hover:bg-purple-200'],
+                                'W' => ['label' => 'W · Rp20.000', 'active' => 'bg-green-600  border-green-700  text-white',   'idle' => 'bg-green-100   border-green-400  text-green-700  hover:bg-green-200'],
+                                'X' => ['label' => 'X · Rp50.000', 'active' => 'bg-blue-600   border-blue-700   text-white',   'idle' => 'bg-blue-100    border-blue-400   text-blue-700   hover:bg-blue-200'],
+                                'Y' => ['label' => 'Y · Rp100.000','active' => 'bg-red-600    border-red-700    text-white',   'idle' => 'bg-red-100    border-red-400    text-red-700    hover:bg-red-200'],
+                            ];
+                        @endphp
+                        @foreach($pecahanList as $key => $pec)
+                            @php
+                                $isActive  = $pecahanFilter === $key;
+                                $btnClass  = $isActive ? $pec['active'] : $pec['idle'];
+                            @endphp
+                            <button type="button"
+                                onclick="setPecahan('{{ $key }}', this)"
+                                data-pecahan="{{ $key }}"
+                                class="pecahan-btn inline-flex flex-col items-center px-3 py-1.5 rounded-lg border-2 text-xs font-bold transition-all shadow-sm {{ $btnClass }}">
+                                <span class="text-base leading-none">{{ $key }}</span>
+                                <span class="text-[9px] font-normal leading-none mt-0.5 opacity-80">{{ explode(' · ', $pec['label'])[1] }}</span>
+                            </button>
+                        @endforeach
+                    </div>
+
                     {{-- Active filter tags --}}
-                    @if($search || $startDate || $endDate)
+                    @if($search || $startDate || $endDate || $pecahanFilter)
                         <div class="px-6 pb-4 flex flex-wrap gap-2">
                             @if($search)
                                 <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-200">
@@ -75,6 +105,16 @@
                             @if($startDate)
                                 <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
                                     Dari: {{ \Carbon\Carbon::parse($startDate)->translatedFormat('d M Y') }}
+                                </span>
+                            @endif
+                            @if($pecahanFilter)
+                                @php
+                                    $pecColors = ['S'=>'stone','T'=>'slate','U'=>'orange','V'=>'purple','W'=>'green','X'=>'blue','Y'=>'red'];
+                                    $pc = $pecColors[$pecahanFilter] ?? 'gray';
+                                    $pecLabels = ['S'=>'Rp1.000','T'=>'Rp2.000','U'=>'Rp5.000','V'=>'Rp10.000','W'=>'Rp20.000','X'=>'Rp50.000','Y'=>'Rp100.000'];
+                                @endphp
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-{{ $pc }}-50 text-{{ $pc }}-700 border border-{{ $pc }}-300">
+                                    Pecahan: <strong>{{ $pecahanFilter }} · {{ $pecLabels[$pecahanFilter] ?? '' }}</strong>
                                 </span>
                             @endif
                             @if($endDate)
@@ -94,10 +134,10 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                     </svg>
                     <h3 class="mt-4 text-lg font-medium text-gray-700">
-                        {{ ($search || $startDate || $endDate) ? 'Tidak ada data yang sesuai filter' : 'Belum ada data penerimaan' }}
+                        {{ ($search || $startDate || $endDate || $pecahanFilter) ? 'Tidak ada data yang sesuai filter' : 'Belum ada data penerimaan' }}
                     </h3>
                     <p class="mt-1 text-sm text-gray-500">
-                        {{ ($search || $startDate || $endDate) ? 'Coba ubah kata kunci atau rentang tanggal.' : 'Data batch tracking akan muncul setelah ada input penerimaan HCS.' }}
+                        {{ ($search || $startDate || $endDate || $pecahanFilter) ? 'Coba ubah kata kunci, rentang tanggal, atau filter pecahan.' : 'Data batch tracking akan muncul setelah ada input penerimaan HCS.' }}
                     </p>
                 </div>
             @else
@@ -397,6 +437,20 @@
             searchInput.value = searchInput.value.toUpperCase();
             searchInput.setSelectionRange(pos, pos);
         });
+
+        function setPecahan(value, btn) {
+            const input = document.getElementById('pecahan_input');
+            const form = input.closest('form');
+            
+            // If already active, clear it. Otherwise, set it.
+            if (input.value === value) {
+                input.value = '';
+            } else {
+                input.value = value;
+            }
+            
+            form.submit();
+        }
     </script>
     @endpush
 </x-app-layout>
