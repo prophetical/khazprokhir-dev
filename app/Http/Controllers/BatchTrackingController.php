@@ -70,8 +70,7 @@ class BatchTrackingController extends Controller
                 });
             }
 
-            $packs = $packQuery->orderBy('pack_number')
-                ->get(['pack_number', 'supplier', 'created_at', 'hcs_receiving_id']);
+            $packs = $packQuery->with('hcsReceiving')->orderBy('pack_number')->get();
 
             $totalQuery = HcsReceiving::where('batch', $batch)->where('seri', $seri);
             if ($startDate)
@@ -85,10 +84,11 @@ class BatchTrackingController extends Controller
 
             $pecahanGroups = [];
             foreach ($packs as $pack) {
-                $pecahan = $pack->hcsReceiving->pecahan ?? '?';
+                $pecahan = $pack->hcsReceiving->pecahan ?? 'S'; // Fallback to S if missing
                 $pecahanGroups[$pecahan][$pack->pack_number] = [
                     'supplier' => $pack->supplier,
-                    'date' => $pack->created_at,
+                    'date' => $pack->created_at->format('Y-m-d H:i:s'),
+                    'sorted' => $pack->hcs_sorting_id ? true : false,
                 ];
             }
             ksort($pecahanGroups);

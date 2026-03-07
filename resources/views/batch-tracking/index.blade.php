@@ -11,13 +11,13 @@
             {{-- ===== SEARCH & FILTER FORM ===== --}}
             @php
                 $themeClasses = [
-                    'S' => ['bg' => 'bg-lime-500', 'border' => 'border-lime-500', 'ring' => 'focus:ring-lime-500', 'focus' => 'focus:border-lime-500', 'btn' => 'bg-lime-500', 'text' => 'text-gray-900', 'label' => 'Rp1.000'],
-                    'T' => ['bg' => 'bg-gray-400', 'border' => 'border-gray-400', 'ring' => 'focus:ring-gray-400', 'focus' => 'focus:border-gray-400', 'btn' => 'bg-gray-400', 'text' => 'text-white', 'label' => 'Rp2.000'],
-                    'U' => ['bg' => 'bg-amber-400', 'border' => 'border-amber-400', 'ring' => 'focus:ring-amber-400', 'focus' => 'focus:border-amber-400', 'btn' => 'bg-amber-400', 'text' => 'text-gray-900', 'label' => 'Rp5.000'],
-                    'V' => ['bg' => 'bg-purple-500', 'border' => 'border-purple-500', 'ring' => 'focus:ring-purple-500', 'focus' => 'focus:border-purple-500', 'btn' => 'bg-purple-500', 'text' => 'text-white', 'label' => 'Rp10.000'],
-                    'W' => ['bg' => 'bg-green-500', 'border' => 'border-green-500', 'ring' => 'focus:ring-green-500', 'focus' => 'focus:border-green-500', 'btn' => 'bg-green-500', 'text' => 'text-white', 'label' => 'Rp20.000'],
-                    'X' => ['bg' => 'bg-blue-500', 'border' => 'border-blue-500', 'ring' => 'focus:ring-blue-500', 'focus' => 'focus:border-blue-500', 'btn' => 'bg-blue-500', 'text' => 'text-white', 'label' => 'Rp50.000'],
-                    'Y' => ['bg' => 'bg-red-500', 'border' => 'border-red-500', 'ring' => 'focus:ring-red-500', 'focus' => 'focus:border-red-500', 'btn' => 'bg-red-500', 'text' => 'text-white', 'label' => 'Rp100.000'],
+                    'S' => ['bg' => 'bg-lime-500', 'border' => 'border-lime-500', 'ring' => 'focus:ring-lime-500', 'focus' => 'focus:border-lime-500', 'btn' => 'bg-lime-500', 'text' => 'text-gray-900', 'label' => 'Rp1.000', 'subtle' => 'bg-lime-50 border-lime-200 text-lime-700 hover:bg-lime-100'],
+                    'T' => ['bg' => 'bg-gray-400', 'border' => 'border-gray-400', 'ring' => 'focus:ring-gray-400', 'focus' => 'focus:border-gray-400', 'btn' => 'bg-gray-400', 'text' => 'text-white', 'label' => 'Rp2.000', 'subtle' => 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100'],
+                    'U' => ['bg' => 'bg-amber-400', 'border' => 'border-amber-400', 'ring' => 'focus:ring-amber-400', 'focus' => 'focus:border-amber-400', 'btn' => 'bg-amber-400', 'text' => 'text-gray-900', 'label' => 'Rp5.000', 'subtle' => 'bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100'],
+                    'V' => ['bg' => 'bg-purple-500', 'border' => 'border-purple-500', 'ring' => 'focus:ring-purple-500', 'focus' => 'focus:border-purple-500', 'btn' => 'bg-purple-500', 'text' => 'text-white', 'label' => 'Rp10.000', 'subtle' => 'bg-purple-50 border-purple-200 text-purple-700 hover:bg-purple-100'],
+                    'W' => ['bg' => 'bg-green-500', 'border' => 'border-green-500', 'ring' => 'focus:ring-green-500', 'focus' => 'focus:border-green-500', 'btn' => 'bg-green-500', 'text' => 'text-white', 'label' => 'Rp20.000', 'subtle' => 'bg-green-50 border-green-200 text-green-700 hover:bg-green-100'],
+                    'X' => ['bg' => 'bg-blue-500', 'border' => 'border-blue-500', 'ring' => 'focus:ring-blue-500', 'focus' => 'focus:border-blue-500', 'btn' => 'bg-blue-500', 'text' => 'text-white', 'label' => 'Rp50.000', 'subtle' => 'bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100'],
+                    'Y' => ['bg' => 'bg-red-500', 'border' => 'border-red-500', 'ring' => 'focus:ring-red-500', 'focus' => 'focus:border-red-500', 'btn' => 'bg-red-500', 'text' => 'text-white', 'label' => 'Rp100.000', 'subtle' => 'bg-red-50 border-red-200 text-red-700 hover:bg-red-100'],
                 ];
                 $selectedPecahan = $pecahanFilter ?? '';
             @endphp
@@ -101,7 +101,7 @@
                                 <button type="button"
                                     @click="setPecahan('{{ $pec }}')"
                                     class="inline-flex flex-col items-center px-4 py-2 rounded-xl border-2 text-xs font-black transition-all shadow-sm active:scale-95"
-                                    :class="selectedPecahan === '{{ $pec }}' ? (themes['{{ $pec }}'].bg + ' ' + themes['{{ $pec }}'].border + ' ' + themes['{{ $pec }}'].text) : 'bg-white border-gray-100 text-gray-400 hover:border-gray-200'">
+                                    :class="selectedPecahan === '{{ $pec }}' ? (themes['{{ $pec }}'].bg + ' ' + themes['{{ $pec }}'].border + ' ' + themes['{{ $pec }}'].text) : (themes['{{ $pec }}'].subtle)">
                                     <span class="text-base leading-none">{{ $pec }}</span>
                                     <span class="text-[8px] font-bold leading-none mt-1 opacity-80 uppercase tracking-tighter">{{ $themeClasses[$pec]['label'] }}</span>
                                 </button>
@@ -218,90 +218,193 @@
                                     $pecahanLabel = ['S'=>'S · Rp1.000','T'=>'T · Rp2.000','U'=>'U · Rp5.000','V'=>'V · Rp10.000','W'=>'W · Rp20.000','X'=>'X · Rp50.000','Y'=>'Y · Rp100.000'][$pecahan] ?? $pecahan;
                                 @endphp
                                 <button type="button" onclick="openModal('{{ $modalId }}')"
-                                    class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-md border bg-amber-50 border-amber-300 text-amber-700 hover:bg-amber-100 transition-colors">
+                                    class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-md border transition-all active:scale-95 shadow-sm {{ $themeClasses[$pecahan]['subtle'] }}">
                                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
                                     Rekap Grid · Pec. {{ $pecahan }}
                                 </button>
 
                                 {{-- ===== MODAL REKAP GRID ===== --}}
                                 <div id="{{ $modalId }}" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                                    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[95vh]">
+                                    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl flex flex-col max-h-[95vh] border-t-8 {{ $themeClasses[$pecahan]['border'] }}">
 
                                         {{-- Modal Header --}}
-                                        <div class="flex items-start justify-between px-5 py-3 border-b border-gray-100 flex-shrink-0">
-                                            <div>
-                                                <h4 class="text-sm font-bold text-gray-900">Rekap Grid Pack</h4>
-                                                <div class="mt-0.5 flex flex-wrap gap-x-3 gap-y-0.5 text-[10px] text-gray-500">
-                                                    <span>Batch: <strong class="font-mono text-gray-700">{{ strtoupper($item['batch']) }}</strong></span>
-                                                    <span>Seri: <strong class="font-mono text-gray-700">{{ strtoupper($item['seri']) }}</strong></span>
-                                                    <span>Pec: <strong class="text-gray-700">{{ $pecahan }}</strong></span>
+                                        <div class="flex items-center justify-between px-8 py-6 border-b border-gray-100 flex-shrink-0 bg-slate-50/50 rounded-t-2xl">
+                                            <div class="flex items-center gap-4">
+                                                <div class="p-3 rounded-xl {{ $themeClasses[$pecahan]['bg'] }} shadow-lg shadow-inner">
+                                                    <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                                                </div>
+                                                <div>
+                                                    <h4 class="text-xl font-black text-gray-900 uppercase tracking-tighter leading-none">Rekap Grid Pack</h4>
+                                                    <div class="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-400 font-bold uppercase tracking-widest">
+                                                        <span class="flex items-center gap-1.5">Batch: <span class="text-gray-700 font-mono">{{ strtoupper($item['batch']) }}</span></span>
+                                                        <span class="text-gray-300">/</span>
+                                                        <span class="flex items-center gap-1.5">Seri: <span class="text-indigo-600 font-mono">{{ strtoupper($item['seri']) }}</span></span>
+                                                        <span class="text-gray-300">/</span>
+                                                        <span>Pecahan: <span class="{{ $themeClasses[$pecahan]['text'] }} {{ $themeClasses[$pecahan]['bg'] }} px-2 py-0.5 rounded text-[10px]">{{ $pecahan }}</span></span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <button type="button" onclick="closeModal('{{ $modalId }}')" class="ml-4 text-gray-400 hover:text-gray-600 transition-colors">
-                                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                            <button type="button" onclick="closeModal('{{ $modalId }}')" class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all duration-300">
+                                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                             </button>
                                         </div>
 
-                                        {{-- Modal Legend --}}
-                                        <div class="px-5 py-1.5 flex gap-3 text-[9px] border-b border-gray-100 bg-gray-50/60 flex-shrink-0">
-                                            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-blue-200 border border-blue-400 inline-block"></span>Cutpack</span>
-                                            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-green-200 border border-green-400 inline-block"></span>Rikyet</span>
-                                            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-gray-100 border border-gray-300 inline-block"></span>N/A</span>
-                                        </div>
-
-                                        {{-- 10×10 Grid — VERTICAL flow: col1=1-10, col2=11-20, … col10=91-100 --}}
-                                        <div class="px-4 py-2 overflow-y-auto flex-1">
-                                            <div class="grid gap-0.5" style="grid-template-rows: repeat(10, minmax(0, 1fr)); grid-template-columns: repeat(10, minmax(0, 1fr)); grid-auto-flow: column;">
-                                                @for($p = 1; $p <= 100; $p++)
-                                                    @php
-                                                        $cell  = $packMap[$p] ?? null;
-                                                        $months = ['','Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-                                                        if ($cell) {
-                                                            $carbon    = \Carbon\Carbon::parse($cell['date']);
-                                                            $dateLabel = $carbon->day . ' ' . $months[$carbon->month] . ' ' . $carbon->year . ', ' . $carbon->format('H:i');
-                                                            $cellClass = $cell['supplier'] === 'Cutpack'
-                                                                ? 'bg-blue-200 border-blue-400 text-blue-900 hover:bg-blue-300'
-                                                                : 'bg-green-200 border-green-400 text-green-900 hover:bg-green-300';
-                                                        } else {
-                                                            $dateLabel = '';
-                                                            $cellClass = 'bg-gray-100 border-gray-300 text-gray-400';
-                                                        }
-                                                    @endphp
-                                                    <div class="relative group w-full aspect-square flex items-center justify-center rounded-sm border font-bold text-[9px] cursor-default select-none transition-all {{ $cellClass }}">
-                                                        {{ $p }}
-                                                        @if($cell)
-                                                            <div class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-[70] hidden group-hover:flex flex-col items-center">
-                                                                <div class="bg-gray-900 text-white text-[9px] rounded-lg px-2 py-1 whitespace-nowrap shadow-xl text-center leading-tight">
-                                                                    <div class="font-semibold">Pack {{ $p }}</div>
-                                                                    <div class="{{ $cell['supplier'] === 'Cutpack' ? 'text-blue-300' : 'text-green-300' }}">{{ $cell['supplier'] }}</div>
-                                                                    <div class="text-gray-400 text-[8px] mt-0.5">{{ $dateLabel }}</div>
-                                                                </div>
-                                                                <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-1"></div>
+                                        {{-- Modal Layout: Info Sidebar + Grid --}}
+                                        <div class="flex-1 overflow-hidden flex flex-col lg:flex-row">
+                                            
+                                            {{-- Sidebar: Legend & Stats --}}
+                                            <div class="w-full lg:w-64 bg-gray-50/50 border-r border-gray-100 p-5 overflow-y-auto space-y-5 flex-shrink-0">
+                                                
+                                                {{-- Legend Group --}}
+                                                <div>
+                                                    <h5 class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-3">Keterangan Warna</h5>
+                                                    <div class="space-y-2.5">
+                                                        <div class="flex items-center gap-2.5">
+                                                            <div class="w-7 h-7 rounded-lg bg-blue-100 border-2 border-blue-300 shadow-sm flex-shrink-0"></div>
+                                                            <div class="flex flex-col">
+                                                                <span class="text-[10px] font-black text-blue-800 leading-none">CUTPACK</span>
+                                                                <span class="text-[9px] font-medium text-blue-400 mt-0.5 uppercase">Belum Sortir</span>
                                                             </div>
-                                                        @endif
+                                                        </div>
+                                                        <div class="flex items-center gap-2.5">
+                                                            <div class="w-7 h-7 rounded-lg bg-blue-600 border-2 border-blue-800 shadow-md flex-shrink-0"></div>
+                                                            <div class="flex flex-col">
+                                                                <span class="text-[10px] font-black text-blue-900 leading-none">CUTPACK</span>
+                                                                <span class="text-[9px] font-bold text-blue-600 mt-0.5 uppercase">Sudah Sortir</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="h-px bg-gray-200 my-3"></div>
+                                                        <div class="flex items-center gap-2.5">
+                                                            <div class="w-7 h-7 rounded-lg bg-green-100 border-2 border-green-300 shadow-sm flex-shrink-0"></div>
+                                                            <div class="flex flex-col">
+                                                                <span class="text-[10px] font-black text-green-800 leading-none">RIKYET</span>
+                                                                <span class="text-[9px] font-medium text-green-400 mt-0.5 uppercase">Belum Sortir</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex items-center gap-2.5">
+                                                            <div class="w-7 h-7 rounded-lg bg-green-600 border-2 border-green-800 shadow-md flex-shrink-0"></div>
+                                                            <div class="flex flex-col">
+                                                                <span class="text-[10px] font-black text-green-900 leading-none">RIKYET</span>
+                                                                <span class="text-[9px] font-bold text-green-600 mt-0.5 uppercase">Sudah Sortir</span>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                @endfor
+                                                </div>
+
+                                                {{-- Stats Summary --}}
+                                                @php
+                                                    $pFilled  = count($packMap);
+                                                    $pSorted  = 0;
+                                                    foreach($packMap as $cm) {
+                                                        if ($cm['sorted'] ?? false) $pSorted++;
+                                                    }
+                                                    $pUnsorted = $pFilled - $pSorted;
+                                                    $diterima = $pFilled > 0 ? round(($pSorted / $pFilled) * 100) : 0;
+                                                @endphp
+                                                <div>
+                                                    <h5 class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-3">Statistik Input</h5>
+                                                    <div class="grid grid-cols-1 gap-1.5">
+                                                        <div class="bg-white p-2.5 rounded-lg border border-gray-100 shadow-sm">
+                                                            <div class="text-[8px] font-bold text-gray-400 uppercase">Input / Total</div>
+                                                            <div class="text-base font-black text-gray-900">{{ $pFilled }} <span class="text-[9px] text-gray-400 font-medium">/ 100</span></div>
+                                                        </div>
+                                                        <div class="bg-indigo-600 p-2.5 rounded-lg shadow-md">
+                                                            <div class="text-[8px] font-bold text-indigo-200 uppercase">Sudah Sortir</div>
+                                                            <div class="text-base font-black text-white">{{ $pSorted }} <span class="text-[9px] text-indigo-300 font-medium lowercase">packs</span></div>
+                                                        </div>
+                                                        <div class="bg-white p-2.5 rounded-lg border border-gray-100 shadow-sm">
+                                                            <div class="text-[8px] font-bold text-gray-400 uppercase">SORTIR/PENERIMAAN</div>
+                                                            <div class="text-base font-black text-gray-900">{{ $diterima }}%</div>
+                                                            <div class="w-full bg-gray-100 h-1 rounded-full mt-1.5 overflow-hidden">
+                                                                <div class="bg-indigo-600 h-full rounded-full transition-all duration-1000" style="width: {{ $diterima }}%"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
 
-                                            {{-- Summary --}}
-                                            @php
-                                                $pFilled  = count($packMap);
-                                                $pCutpack = collect($packMap)->where('supplier', 'Cutpack')->count();
-                                                $pRikyet  = collect($packMap)->where('supplier', 'Rikyet')->count();
-                                                $pEmpty   = 100 - $pFilled;
-                                            @endphp
-                                            <div class="mt-2 pt-1.5 border-t border-gray-100 flex flex-wrap gap-x-3 gap-y-0.5 text-[9px] text-gray-500">
-                                                <span>Terisi: <strong class="text-gray-700">{{ $pFilled }}/100</strong></span>
-                                                @if($pCutpack > 0)<span class="text-blue-600">Cut: <strong>{{ $pCutpack }}</strong></span>@endif
-                                                @if($pRikyet > 0)<span class="text-green-600">Rik: <strong>{{ $pRikyet }}</strong></span>@endif
-                                                <span>Kosong: <strong>{{ $pEmpty }}</strong></span>
+                                            {{-- Grid Area --}}
+                                            <div class="flex-1 p-4 lg:p-6 overflow-auto bg-white flex justify-center items-center">
+                                                <div class="grid grid-cols-10 gap-1.5 w-full max-w-fit mx-auto">
+                                                    @for($r = 0; $r < 10; $r++)
+                                                        @for($c = 0; $c < 10; $c++)
+                                                            @php
+                                                                $p = ($c * 10) + $r + 1;
+                                                                $cell  = $packMap[$p] ?? null;
+                                                                $months = ['','Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+                                                                $pecTheme = $themeClasses[$pecahan] ?? [
+                                                                    'bg' => 'bg-slate-500', 
+                                                                    'border' => 'border-slate-500', 
+                                                                    'text' => 'text-white'
+                                                                ];
+
+                                                                if ($cell) {
+                                                                    $carbon    = \Carbon\Carbon::parse($cell['date']);
+                                                                    $dateLabel = $carbon->day . ' ' . $months[$carbon->month] . ' ' . $carbon->year . ', ' . $carbon->format('H:i');
+                                                                    $isSorted  = !empty($cell['sorted']);
+                                                                    
+                                                                    if ($cell['supplier'] === 'Cutpack') {
+                                                                        $cellClass = $isSorted 
+                                                                            ? 'bg-blue-600 border-blue-800 text-white shadow-md ring-2 ring-inset ' . str_replace('border-', 'ring-', $pecTheme['border'])
+                                                                            : 'bg-blue-100 border-blue-300 text-blue-800';
+                                                                    } else {
+                                                                        $cellClass = $isSorted
+                                                                            ? 'bg-green-600 border-green-800 text-white shadow-md ring-2 ring-inset ' . str_replace('border-', 'ring-', $pecTheme['border'])
+                                                                            : 'bg-green-100 border-green-300 text-green-800';
+                                                                    }
+                                                                } else {
+                                                                    $dateLabel = '';
+                                                                    $cellClass = 'bg-gray-50 border-gray-200 text-gray-300 hover:border-gray-400';
+                                                                }
+                                                            @endphp
+                                                            @php
+                                                                // r = row index (0-9), c = col index (0-9)
+                                                                $vClass = ($r < 4) ? 'top-full mt-2 flex-col-reverse' : 'bottom-full mb-2 flex-col';
+                                                                $arrowV = ($r < 4) ? '-mb-1' : '-mt-1';
+                                                                
+                                                                if ($c < 3) {
+                                                                    $hClass = 'left-0 translate-x-0';
+                                                                    $arrowH = 'left-3 translate-x-0';
+                                                                } elseif ($c > 6) {
+                                                                    $hClass = 'right-0 left-auto translate-x-0';
+                                                                    $arrowH = 'right-3 translate-x-0';
+                                                                } else {
+                                                                    $hClass = 'left-1/2 -translate-x-1/2';
+                                                                    $arrowH = 'left-1/2 -translate-x-1/2';
+                                                                }
+                                                            @endphp
+                                                            <div class="relative group w-8 h-8 flex items-center justify-center rounded-lg border-2 font-black text-[10px] cursor-default select-none transition-all duration-300 hover:scale-110 hover:z-50 {{ $cellClass }}">
+                                                                {{ $p }}
+                                                                @if($cell)
+                                                                    <div class="pointer-events-none absolute {{ $vClass }} {{ $hClass }} z-[100] hidden group-hover:flex items-center">
+                                                                        <div class="bg-gray-900/95 backdrop-blur-sm text-white text-[10px] rounded-xl px-3 py-2 whitespace-nowrap shadow-2xl text-center leading-tight border border-white/10">
+                                                                            <div class="font-black border-b border-white/20 pb-1.5 mb-1.5 flex items-center justify-center gap-2">
+                                                                                PACK {{ $p }}
+                                                                                @if(!empty($cell['sorted']))
+                                                                                    <span class="px-2 py-0.5 rounded-full bg-green-500 text-[8px] text-white">TERSORTIR</span>
+                                                                                @endif
+                                                                            </div>
+                                                                            <div class="font-bold {{ ($cell['supplier'] ?? '') === 'Cutpack' ? 'text-blue-300' : 'text-green-300' }} uppercase tracking-tighter">{{ $cell['supplier'] ?? '' }}</div>
+                                                                            <div class="text-gray-400 text-[9px] mt-1 font-medium">{{ $dateLabel }}</div>
+                                                                        </div>
+                                                                        <div class="w-2 h-2 bg-gray-900 rotate-45 {{ $arrowV }} {{ $arrowH }}"></div>
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+                                                        @endfor
+                                                    @endfor
+                                                </div>
                                             </div>
                                         </div>
 
-                                        <div class="px-6 py-3 border-t border-gray-100 flex justify-end flex-shrink-0">
+                                        {{-- Modal Footer --}}
+                                        <div class="px-8 py-4 border-t border-gray-100 flex justify-between items-center bg-gray-50/50 rounded-b-2xl flex-shrink-0">
+                                            <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                                * Pastikan data yang anda input selalu sesuai dengan fisik
+                                            </div>
                                             <button type="button" onclick="closeModal('{{ $modalId }}')"
-                                                class="px-4 py-2 text-sm font-medium rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors">
-                                                Tutup
+                                                class="px-8 py-2.5 text-xs font-black uppercase tracking-widest rounded-xl bg-gray-900 text-white hover:bg-black transition-all shadow-lg shadow-gray-200 active:scale-95">
+                                                Selesai
                                             </button>
                                         </div>
                                     </div>
