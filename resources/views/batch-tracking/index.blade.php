@@ -32,12 +32,12 @@
                     } else {
                         this.selectedPecahan = val;
                     }
-                    this.$nextTick(() => { document.forms[0].submit(); });
+                    this.$nextTick(() => { document.getElementById('filterForm').submit(); });
                 }
             }" 
             class="bg-white shadow-sm sm:rounded-xl border-t-4 transition-all duration-500 overflow-hidden"
             :class="currentTheme ? currentTheme.border : 'border-gray-100'">
-                <form action="{{ route('batch-tracking.index') }}" method="GET">
+                <form id="filterForm" action="{{ route('batch-tracking.index') }}" method="GET">
                     <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                         <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
                         <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Cari & Filter</h3>
@@ -56,7 +56,7 @@
                             <div class="relative">
                                 <input id="search" name="search" type="text"
                                     value="{{ $search }}"
-                                    placeholder="Contoh: 1322001 atau AA-BA3"
+                                    placeholder="CARI BATCH ATAU SERI"
                                     class="block w-full text-sm border-gray-200 rounded-lg shadow-sm px-4 py-3 text-center transition-all duration-300 font-mono uppercase" 
                                     :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"/>
                             </div>
@@ -451,8 +451,6 @@
             const pos = searchInput.selectionStart;
             searchInput.value = searchInput.value.toUpperCase();
             searchInput.setSelectionRange(pos, pos);
-        });
-
         });
     </script>
     @endpush

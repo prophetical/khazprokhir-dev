@@ -8,53 +8,81 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
+            @php
+                $pecahanData = [
+                    'S' => ['label' => 'S', 'color' => 'bg-lime-500', 'border' => 'border-lime-100', 'hover' => 'hover:shadow-lime-200'],
+                    'T' => ['label' => 'T', 'color' => 'bg-gray-400', 'border' => 'border-gray-200', 'hover' => 'hover:shadow-gray-200'],
+                    'U' => ['label' => 'U', 'color' => 'bg-amber-400', 'border' => 'border-amber-100', 'hover' => 'hover:shadow-amber-200'],
+                    'V' => ['label' => 'V', 'color' => 'bg-purple-500', 'border' => 'border-purple-100', 'hover' => 'hover:shadow-purple-200'],
+                    'W' => ['label' => 'W', 'color' => 'bg-green-500', 'border' => 'border-green-100', 'hover' => 'hover:shadow-green-200'],
+                    'X' => ['label' => 'X', 'color' => 'bg-blue-500', 'border' => 'border-blue-100', 'hover' => 'hover:shadow-blue-200'],
+                    'Y' => ['label' => 'Y', 'color' => 'bg-red-500', 'border' => 'border-red-100', 'hover' => 'hover:shadow-red-200'],
+                ];
+            @endphp
+
             <!-- Summary Section -->
-            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 mb-8">
-                @php
-                    $pecahanData = [
-                        'S' => ['label' => 'S', 'color' => 'bg-lime-500', 'border' => 'border-lime-100', 'hover' => 'hover:shadow-lime-200'],
-                        'T' => ['label' => 'T', 'color' => 'bg-gray-400', 'border' => 'border-gray-200', 'hover' => 'hover:shadow-gray-200'],
-                        'U' => ['label' => 'U', 'color' => 'bg-amber-400', 'border' => 'border-amber-100', 'hover' => 'hover:shadow-amber-200'],
-                        'V' => ['label' => 'V', 'color' => 'bg-purple-500', 'border' => 'border-purple-100', 'hover' => 'hover:shadow-purple-200'],
-                        'W' => ['label' => 'W', 'color' => 'bg-green-500', 'border' => 'border-green-100', 'hover' => 'hover:shadow-green-200'],
-                        'X' => ['label' => 'X', 'color' => 'bg-blue-500', 'border' => 'border-blue-100', 'hover' => 'hover:shadow-blue-200'],
-                        'Y' => ['label' => 'Y', 'color' => 'bg-red-500', 'border' => 'border-red-100', 'hover' => 'hover:shadow-red-200'],
-                    ];
-                @endphp
-
-                <!-- Grand Total Card -->
-                <div class="col-span-2 lg:col-span-1 bg-white p-4 rounded-xl shadow-sm border border-indigo-100 hover:shadow-md transition-all duration-300">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-[10px] font-bold text-indigo-500 uppercase tracking-widest">Total Siap Sortir</span>
-                        <div class="p-1.5 bg-indigo-50 rounded-lg text-indigo-600">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+            <div class="space-y-4 mb-8">
+                <!-- Row 1: S, T, U, V -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    @foreach(['S', 'T', 'U', 'V'] as $p)
+                        <div class="bg-white p-4 rounded-xl shadow-sm border {{ $pecahanData[$p]['border'] }} {{ $pecahanData[$p]['hover'] }} transition-all duration-300 group">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold text-white {{ $pecahanData[$p]['color'] }} shadow-sm">
+                                    {{ $p }}
+                                </span>
+                                <span class="text-[8px] font-medium text-gray-400 group-hover:text-gray-600 transition-colors uppercase">{{ $pecahanData[$p]['label'] }}</span>
+                            </div>
+                            <div class="text-xl font-black text-gray-900 leading-none mb-1">
+                                {{ number_format($summaries[$p]['total_pack'] ?? 0, 0, ',', '.') }}
+                                <span class="text-[10px] text-gray-400 font-medium lowercase">PACK</span>
+                            </div>
+                            @if(($summaries[$p]['total_bilyet'] ?? 0) > 0)
+                                <div class="text-[9px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full inline-block">
+                                    {{ number_format(($summaries[$p]['total_bilyet'] ?? 0), 0, ',', '.') }} <span class="text-[7px] text-green-400 uppercase">Bilyet</span>
+                                </div>
+                            @else
+                                <div class="text-[9px] font-medium text-gray-300 italic px-2 py-0.5">TIDAK ADA PACK SIAP SORTIR</div>
+                            @endif
                         </div>
-                    </div>
-                    <div class="text-xl font-black text-gray-900 leading-none mb-1">{{ number_format($totalAllPacks, 0, ',', '.') }} <span class="text-[10px] text-gray-400 font-medium lowercase">packs</span></div>
-                    <div class="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full inline-block">{{ number_format($totalAllBilyet, 0, ',', '.') }} <span class="text-[8px] text-green-400">Bilyet</span></div>
+                    @endforeach
                 </div>
 
-                @foreach(['S', 'T', 'U', 'V', 'W', 'X', 'Y'] as $p)
-                <div class="bg-white p-4 rounded-xl shadow-sm border {{ $pecahanData[$p]['border'] }} {{ $pecahanData[$p]['hover'] }} transition-all duration-300 group">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold text-white {{ $pecahanData[$p]['color'] }} shadow-sm">
-                            {{ $p }}
-                        </span>
-                        <span class="text-[8px] font-medium text-gray-400 group-hover:text-gray-600 transition-colors uppercase">{{ $pecahanData[$p]['label'] }}</span>
-                    </div>
-                    <div class="text-xl font-black text-gray-900 leading-none mb-1">
-                        {{ number_format($summaries[$p]['total_pack'] ?? 0, 0, ',', '.') }}
-                        <span class="text-[10px] text-gray-400 font-medium lowercase">PACK</span>
-                    </div>
-                    @if(($summaries[$p]['total_bilyet'] ?? 0) > 0)
-                        <div class="text-[9px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full inline-block">
-                            {{ number_format(($summaries[$p]['total_bilyet'] ?? 0), 0, ',', '.') }} <span class="text-[7px] text-green-400 uppercase">Bilyet</span>
+                <!-- Row 2: W, X, Y & TOTAL -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    @foreach(['W', 'X', 'Y'] as $p)
+                        <div class="bg-white p-4 rounded-xl shadow-sm border {{ $pecahanData[$p]['border'] }} {{ $pecahanData[$p]['hover'] }} transition-all duration-300 group">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold text-white {{ $pecahanData[$p]['color'] }} shadow-sm">
+                                    {{ $p }}
+                                </span>
+                                <span class="text-[8px] font-medium text-gray-400 group-hover:text-gray-600 transition-colors uppercase">{{ $pecahanData[$p]['label'] }}</span>
+                            </div>
+                            <div class="text-xl font-black text-gray-900 leading-none mb-1">
+                                {{ number_format($summaries[$p]['total_pack'] ?? 0, 0, ',', '.') }}
+                                <span class="text-[10px] text-gray-400 font-medium lowercase">PACK</span>
+                            </div>
+                            @if(($summaries[$p]['total_bilyet'] ?? 0) > 0)
+                                <div class="text-[9px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full inline-block">
+                                    {{ number_format(($summaries[$p]['total_bilyet'] ?? 0), 0, ',', '.') }} <span class="text-[7px] text-green-400 uppercase">Bilyet</span>
+                                </div>
+                            @else
+                                <div class="text-[9px] font-medium text-gray-300 italic px-2 py-0.5">TIDAK ADA PACK SIAP SORTIR</div>
+                            @endif
                         </div>
-                    @else
-                        <div class="text-[9px] font-medium text-gray-300 italic px-2 py-0.5">TIDAK ADA PACK SIAP SORTIR</div>
-                    @endif
+                    @endforeach
+
+                    <!-- Grand Total Card -->
+                    <div class="bg-indigo-600 p-4 rounded-xl shadow-md border border-indigo-500 hover:shadow-lg transition-all duration-300 group">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[10px] font-bold text-indigo-100 uppercase tracking-widest">Total Siap Sortir</span>
+                            <div class="p-1.5 bg-white/20 rounded-lg text-white">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                            </div>
+                        </div>
+                        <div class="text-xl font-black text-white leading-none mb-1">{{ number_format($totalAllPacks, 0, ',', '.') }} <span class="text-[10px] text-indigo-200 font-medium lowercase">packs</span></div>
+                        <div class="text-[10px] font-bold text-white bg-white/30 px-2 py-0.5 rounded-full inline-block">{{ number_format($totalAllBilyet, 0, ',', '.') }} <span class="text-[8px] text-indigo-100 uppercase">Bilyet</span></div>
+                    </div>
                 </div>
-                @endforeach
             </div>
 
             @php
