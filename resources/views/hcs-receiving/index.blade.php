@@ -215,11 +215,14 @@
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
-                                @forelse ($receivings->groupBy(function($item) { return $item->batch . ' / ' . $item->seri; }) as $groupKey => $groupItems)
+                                @forelse ($receivings->groupBy(function($item) { return $item->batch . ' / ' . $item->seri . ' / ' . $item->pecahan; }) as $groupKey => $groupItems)
                                     <!-- Group Header Row -->
                                     <tr class="bg-indigo-50 border-t border-b border-indigo-100">
                                         <td colspan="10" class="px-6 py-3 text-sm font-bold text-indigo-900">
-                                            {{ $groupKey }}
+                                            <div class="flex justify-between items-center w-full">
+                                                <span>{{ $groupKey }}</span>
+                                                <span class="font-mono text-indigo-700">Total: {{ number_format($groupItems->sum('jumlah'), 0, ',', '.') }} Bilyet</span>
+                                            </div>
                                         </td>
                                     </tr>
                                     
@@ -254,8 +257,8 @@
                                                 <div>{{ $receiving->batch }}</div>
                                                 @if(isset($receiving->packs) && $receiving->packs->whereNotNull('hcs_sorting_id')->isNotEmpty())
                                                     <div class="mt-1">
-                                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-600 border border-red-200 uppercase tracking-tighter">
-                                                            Ada Pack Disortir
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] bg-red-100 text-red-600 border border-red-200 uppercase tracking-tighter">
+                                                            ADA PACK TELAH TERSORTIR
                                                         </span>
                                                     </div>
                                                 @endif
