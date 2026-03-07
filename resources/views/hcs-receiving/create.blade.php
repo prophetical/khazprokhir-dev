@@ -120,6 +120,7 @@
                                     <div class="flex items-center"><div class="w-4 h-4 bg-green-300 mr-2 rounded"></div> Rikyet (Dipilih)</div>
                                     <div class="flex items-center"><div class="w-4 h-4 bg-blue-300 opacity-60 mr-2 rounded border border-blue-400"></div> Cutpack (Terpakai)</div>
                                     <div class="flex items-center"><div class="w-4 h-4 bg-green-300 opacity-60 mr-2 rounded border border-green-400"></div> Rikyet (Terpakai)</div>
+                                    <div class="flex items-center"><div class="w-4 h-4 bg-red-400 mr-2 rounded border border-red-500"></div> Sudah Disortir</div>
                                 </div>
 
                                 <div class="text-sm mb-4 bg-gray-50 p-3 rounded-md border text-gray-700 flex justify-between">
@@ -221,7 +222,7 @@
                     fetch(`/api/packs/used?batch=${batchVal}&seri=${seriVal}`)
                     .then(res => res.json())
                     .then(data => {
-                        usedPacks = data.map(p => ({ pack_number: parseInt(p.pack_number, 10), supplier: p.supplier }));
+                        usedPacks = data.map(p => ({ pack_number: parseInt(p.pack_number, 10), supplier: p.supplier, hcs_sorting_id: p.hcs_sorting_id }));
                         const usedPackNumbers = usedPacks.map(p => p.pack_number);
                         selectedPacks = selectedPacks.filter(p => !usedPackNumbers.includes(p));
                         renderGrid();
@@ -287,14 +288,19 @@
                     
                     const usedPack = usedPacks.find(p => p.pack_number === num);
                     if (usedPack) {
-                        btn.setAttribute('title', usedPack.supplier);
-                        btn.classList.add('cursor-not-allowed', 'opacity-60');
-                        if (usedPack.supplier === 'Cutpack') {
-                            btn.classList.add('bg-blue-300', 'text-blue-900', 'border', 'border-blue-400');
-                        } else if (usedPack.supplier === 'Rikyet') {
-                            btn.classList.add('bg-green-300', 'text-green-900', 'border', 'border-green-400');
+                        btn.setAttribute('title', usedPack.supplier + (usedPack.hcs_sorting_id ? ' - Sudah Disortir' : ' - Terpakai'));
+                        btn.classList.add('cursor-not-allowed');
+                        if (usedPack.hcs_sorting_id) {
+                            btn.classList.add('bg-red-400', 'text-white', 'border', 'border-red-500', 'opacity-80');
                         } else {
-                            btn.classList.add('bg-gray-400', 'text-white', 'border', 'border-gray-500');
+                            btn.classList.add('opacity-60');
+                            if (usedPack.supplier === 'Cutpack') {
+                                btn.classList.add('bg-blue-300', 'text-blue-900', 'border', 'border-blue-400');
+                            } else if (usedPack.supplier === 'Rikyet') {
+                                btn.classList.add('bg-green-300', 'text-green-900', 'border', 'border-green-400');
+                            } else {
+                                btn.classList.add('bg-gray-400', 'text-white', 'border', 'border-gray-500');
+                            }
                         }
                     } else if (selectedPacks.includes(num)) {
                         if (currentSupplier === 'Cutpack') {

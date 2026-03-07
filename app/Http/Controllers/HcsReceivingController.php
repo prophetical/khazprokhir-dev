@@ -19,7 +19,7 @@ class HcsReceivingController extends Controller
 
     public function index(Request $request)
     {
-        $query = HcsReceiving::with('user');
+        $query = HcsReceiving::with(['user', 'packs']);
 
         // Text Search
         if ($request->filled('search')) {
@@ -99,6 +99,10 @@ class HcsReceivingController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
+        if ($hcsReceiving->packs()->whereNotNull('hcs_sorting_id')->exists()) {
+            return back()->with('error', 'Data tidak dapat diedit karena beberapa pack sudah disortir.');
+        }
+
         $hcsReceiving->load('packs');
         return view('hcs-receiving.edit', compact('hcsReceiving'));
     }
@@ -114,6 +118,10 @@ class HcsReceivingController extends Controller
             return back()->withInput()->withErrors(['packs' => "Jumlah packs yang dipilih ($selectedPacksCount) tidak sesuai dengan jumlah bilyet ($jumlah). Dibutuhkan $packsNeeded packs."]);
         }
 
+        if ($hcsReceiving->packs()->whereNotNull('hcs_sorting_id')->exists()) {
+            return back()->withInput()->withErrors(['error' => 'Data tidak dapat diedit karena beberapa pack sudah disortir.']);
+        }
+
         try {
             $this->service->updateReceiving($hcsReceiving, $validated, auth()->id());
             return redirect()->route('hcs-receiving.index')->with('success', 'Data Penerimaan HCS berhasil diperbarui.');
@@ -127,6 +135,10 @@ class HcsReceivingController extends Controller
     {
         if (auth()->user()->role !== 'sortir') {
             abort(403, 'Unauthorized action.');
+        }
+
+        if ($hcsReceiving->packs()->whereNotNull('hcs_sorting_id')->exists()) {
+            return back()->withErrors(['error' => 'Data tidak dapat dihapus karena beberapa pack sudah disortir.']);
         }
 
         try {

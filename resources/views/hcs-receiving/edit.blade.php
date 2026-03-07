@@ -119,11 +119,13 @@
                                 <h3 class="text-lg font-medium text-gray-900 mb-2">Pack Grid System</h3>
                                 
                                 <!-- Legend -->
-                                <div class="flex gap-4 mb-4 text-sm font-medium">
-                                    <div class="flex items-center"><div class="w-4 h-4 bg-gray-400 opacity-50 mr-2 rounded"></div> Used</div>
-                                    <div class="flex items-center"><div class="w-4 h-4 bg-white border border-gray-300 mr-2 rounded"></div> Empty</div>
-                                    <div class="flex items-center"><div class="w-4 h-4 bg-blue-300 mr-2 rounded"></div> Cutpack</div>
-                                    <div class="flex items-center"><div class="w-4 h-4 bg-green-300 mr-2 rounded"></div> Rikyet</div>
+                                <div class="flex flex-wrap gap-4 mb-4 text-sm font-medium">
+                                    <div class="flex items-center"><div class="w-4 h-4 bg-white border border-gray-300 mr-2 rounded"></div> Kosong</div>
+                                    <div class="flex items-center"><div class="w-4 h-4 bg-blue-300 mr-2 rounded"></div> Cutpack (Dipilih)</div>
+                                    <div class="flex items-center"><div class="w-4 h-4 bg-green-300 mr-2 rounded"></div> Rikyet (Dipilih)</div>
+                                    <div class="flex items-center"><div class="w-4 h-4 bg-blue-300 opacity-60 mr-2 rounded border border-blue-400"></div> Cutpack (Terpakai)</div>
+                                    <div class="flex items-center"><div class="w-4 h-4 bg-green-300 opacity-60 mr-2 rounded border border-green-400"></div> Rikyet (Terpakai)</div>
+                                    <div class="flex items-center"><div class="w-4 h-4 bg-red-400 mr-2 rounded border border-red-500"></div> Sudah Disortir</div>
                                 </div>
 
                                 <div class="text-sm mb-4 bg-gray-50 p-3 rounded-md border text-gray-700 flex justify-between">
@@ -227,8 +229,9 @@
                     fetch(`/api/packs/used?batch=${batchVal}&seri=${seriVal}&exclude_hcs_id={{ $hcsReceiving->id }}`)
                     .then(res => res.json())
                     .then(data => {
-                        usedPacks = data.map(p => parseInt(p.pack_number, 10));
-                        selectedPacks = selectedPacks.filter(p => !usedPacks.includes(p));
+                        usedPacks = data.map(p => ({ pack_number: parseInt(p.pack_number, 10), supplier: p.supplier, hcs_sorting_id: p.hcs_sorting_id }));
+                        const usedPackNumbers = usedPacks.map(p => p.pack_number);
+                        selectedPacks = selectedPacks.filter(p => !usedPackNumbers.includes(p));
                         renderGrid();
                     }).catch(e => console.error(e));
                 } else {
@@ -238,7 +241,7 @@
             }
 
             function togglePack(number) {
-                if (usedPacks.includes(number)) return;
+                if (usedPacks.some(p => p.pack_number === number)) return;
                 
                 let index = selectedPacks.indexOf(number);
                 if (index > -1) {
@@ -290,8 +293,22 @@
                     // Reset to base classes
                     btn.className = 'pack-btn aspect-square flex items-center justify-center text-xs sm:text-sm font-semibold rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500';
                     
-                    if (usedPacks.includes(num)) {
-                        btn.classList.add('bg-gray-400', 'text-white', 'cursor-not-allowed', 'opacity-50');
+                    const usedPack = usedPacks.find(p => p.pack_number === num);
+                    if (usedPack) {
+                        btn.setAttribute('title', usedPack.supplier + (usedPack.hcs_sorting_id ? ' - Sudah Disortir' : ' - Terpakai'));
+                        btn.classList.add('cursor-not-allowed');
+                        if (usedPack.hcs_sorting_id) {
+                            btn.classList.add('bg-red-400', 'text-white', 'border', 'border-red-500', 'opacity-80');
+                        } else {
+                            btn.classList.add('opacity-60');
+                            if (usedPack.supplier === 'Cutpack') {
+                                btn.classList.add('bg-blue-300', 'text-blue-900', 'border', 'border-blue-400');
+                            } else if (usedPack.supplier === 'Rikyet') {
+                                btn.classList.add('bg-green-300', 'text-green-900', 'border', 'border-green-400');
+                            } else {
+                                btn.classList.add('bg-gray-400', 'text-white', 'border', 'border-gray-500');
+                            }
+                        }
                     } else if (selectedPacks.includes(num)) {
                         if (currentSupplier === 'Cutpack') {
                             btn.classList.add('bg-blue-300', 'text-blue-900', 'border', 'border-blue-400');

@@ -215,26 +215,40 @@
                                             <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600 font-medium">{{ $receiving->user->name ?? '-' }}</td>
                                             <td class="px-4 py-4 whitespace-nowrap text-center text-sm font-medium">
                                                 @if(auth()->user()->role === 'sortir')
+                                                    @php $hasSortedPacks = $receiving->packs->whereNotNull('hcs_sorting_id')->isNotEmpty(); @endphp
                                                     <div class="flex justify-center items-center space-x-4">
                                                         <a href="{{ route('hcs-receiving.create', ['batch' => $receiving->batch, 'seri' => $receiving->seri, 'pecahan' => $receiving->pecahan]) }}" class="text-green-600 hover:text-green-800 transition-all hover:scale-110" title="Input di batch ini">
                                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                                             </svg>
                                                         </a>
-                                                        <a href="{{ route('hcs-receiving.edit', $receiving->id) }}" class="text-indigo-600 hover:text-indigo-800 transition-all hover:scale-110" title="Edit Data">
-                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                                            </svg>
-                                                        </a>
-                                                        <form id="delete-form-{{ $receiving->id }}" action="{{ route('hcs-receiving.destroy', $receiving->id) }}" method="POST" class="inline-block">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="button" class="text-red-600 hover:text-red-900 transition-colors" title="Hapus Data" onclick="confirmDelete('{{ $receiving->id }}')">
+                                                        @if($hasSortedPacks)
+                                                            <button type="button" class="text-indigo-600 opacity-50 cursor-not-allowed hover:scale-110 transition-all" title="Edit Data (Disabled)" onclick="alertSorted()">
+                                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                                                </svg>
+                                                            </button>
+                                                            <button type="button" class="text-red-600 opacity-50 cursor-not-allowed transition-colors" title="Hapus Data (Disabled)" onclick="alertSorted()">
                                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                                                 </svg>
                                                             </button>
-                                                        </form>
+                                                        @else
+                                                            <a href="{{ route('hcs-receiving.edit', $receiving->id) }}" class="text-indigo-600 hover:text-indigo-800 transition-all hover:scale-110" title="Edit Data">
+                                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                                                </svg>
+                                                            </a>
+                                                            <form id="delete-form-{{ $receiving->id }}" action="{{ route('hcs-receiving.destroy', $receiving->id) }}" method="POST" class="inline-block">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="button" class="text-red-600 hover:text-red-900 transition-colors" title="Hapus Data" onclick="confirmDelete('{{ $receiving->id }}')">
+                                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                                    </svg>
+                                                                </button>
+                                                            </form>
+                                                        @endif
                                                     </div>
                                                 @else
                                                     <span class="text-gray-400">-</span>
@@ -277,6 +291,15 @@
                     document.getElementById('delete-form-' + id).submit();
                 }
             })
+        }
+
+        function alertSorted() {
+            Swal.fire({
+                title: 'Aksi Ditolak',
+                text: 'Data pack sesuai batch, seri, dan pecahan ini sudah disortir. Anda tidak dapat mengedit ataupun menghapusnya.',
+                icon: 'error',
+                confirmButtonColor: '#4f46e5'
+            });
         }
     </script>
     @endpush

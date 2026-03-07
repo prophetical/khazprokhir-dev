@@ -91,6 +91,10 @@ class HcsReceivingService
         try {
             DB::beginTransaction();
 
+            if ($hcs->packs()->whereNotNull('hcs_sorting_id')->exists()) {
+                throw new Exception("Data tidak dapat diubah karena pack sudah disortir.");
+            }
+
             // 1. Revert Old Stock Ledger
             $oldPacksCount = $hcs->packs()->count();
             $oldLedger = StockLedger::where([
@@ -175,6 +179,10 @@ class HcsReceivingService
     {
         try {
             DB::beginTransaction();
+
+            if ($hcs->packs()->whereNotNull('hcs_sorting_id')->exists()) {
+                throw new Exception("Data tidak dapat dihapus karena pack sudah disortir.");
+            }
 
             // Revert Stock Ledger
             $oldPacksCount = $hcs->packs()->count();

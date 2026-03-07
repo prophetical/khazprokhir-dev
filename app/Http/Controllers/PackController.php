@@ -22,7 +22,7 @@ class PackController extends Controller
             $query->where('hcs_receiving_id', '!=', $request->exclude_hcs_id);
         }
 
-        $packs = $query->select('pack_number', 'supplier')->get();
+        $packs = $query->select('pack_number', 'supplier', 'hcs_sorting_id')->get();
 
         return response()->json($packs);
     }
