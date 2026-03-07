@@ -193,31 +193,52 @@
                         <table class="min-w-full divide-y divide-gray-200 border">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No Bon</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pecahan</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gilir</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mesin</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supplier</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Batch/Seri</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Operator</th>
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-3 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">No Bon</th>
+                                    <th scope="col" class="px-3 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Pch</th>
+                                    <th scope="col" class="px-3 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">Jumlah</th>
+                                    <th scope="col" class="px-3 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Gilir</th>
+                                    <th scope="col" class="px-3 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Mesin</th>
+                                    <th scope="col" class="px-3 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Supplier</th>
+                                    <th scope="col" class="px-3 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">Batch / Seri</th>
+                                    <th scope="col" class="px-3 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">Operator</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
-                                @forelse($data as $row)
-                                    <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $row->nomor_bon }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $row->pecahan }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ number_format($row->jumlah, 0, ',', '.') }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $row->gilir }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $row->mesin }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $row->supplier }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $row->batch }} / {{ $row->seri }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $row->user->name ?? '-' }}</td>
+                                @forelse($data->groupBy('tanggal_penerimaan') as $date => $group)
+                                    <!-- Date Header Row -->
+                                    <tr class="bg-gray-50/80 border-t border-gray-200">
+                                        <td colspan="8" class="px-3 py-2 text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                                            <div class="flex items-center">
+                                                <svg class="w-3.5 h-3.5 mr-2 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                                Penerimaan: {{ \Carbon\Carbon::parse($date)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
+                                            </div>
+                                        </td>
                                     </tr>
+                                    @foreach($group as $row)
+                                        <tr class="hover:bg-gray-50/50 transition-colors">
+                                            <td class="px-3 py-3 whitespace-nowrap text-xs font-bold text-gray-800">{{ $row->nomor_bon }}</td>
+                                            <td class="px-3 py-3 whitespace-nowrap text-xs text-center">
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black {{ $themeClasses[$row->pecahan]['bg'] }} {{ $themeClasses[$row->pecahan]['text'] }} shadow-sm">
+                                                    {{ $row->pecahan }}
+                                                </span>
+                                            </td>
+                                            <td class="px-3 py-3 whitespace-nowrap text-xs text-right font-black text-gray-900">{{ number_format($row->jumlah, 0, ',', '.') }}</td>
+                                            <td class="px-3 py-3 whitespace-nowrap text-[10px] text-center font-bold text-gray-500 uppercase">{{ $row->gilir }}</td>
+                                            <td class="px-3 py-3 whitespace-nowrap text-[10px] text-center font-bold text-gray-500 uppercase">{{ $row->mesin }}</td>
+                                            <td class="px-3 py-3 whitespace-nowrap text-xs text-center">
+                                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $row->supplier === 'Cutpack' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700' }}">
+                                                    {{ $row->supplier }}
+                                                </span>
+                                            </td>
+                                            <td class="px-3 py-3 whitespace-nowrap text-xs text-gray-600 font-medium italic">{{ $row->batch }} / {{ $row->seri }}</td>
+                                            <td class="px-3 py-3 whitespace-nowrap text-[10px] text-gray-500 font-bold uppercase">{{ $row->user->name ?? '-' }}</td>
+                                        </tr>
+                                    @endforeach
                                 @empty
                                     <tr>
-                                        <td colspan="8" class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">Tidak ada data ditemukan untuk filter ini.</td>
+                                        <td colspan="8" class="px-6 py-10 whitespace-nowrap text-sm text-center text-gray-500 italic">Tidak ada data ditemukan untuk filter ini.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

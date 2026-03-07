@@ -147,7 +147,7 @@
                                     <div class="flex justify-between items-center">
                                         <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Pack:</span>
                                         <span class="text-xl font-black transition-colors duration-500" 
-                                              :class="currentTheme ? currentTheme.text.replace('text-', 'text-') : 'text-indigo-700'" 
+                                              :class="currentTheme ? currentTheme.text.replace('text-white', 'text-gray-900') : 'text-indigo-700'" 
                                               x-text="selectedPacks.length"></span>
                                     </div>
                                     <div class="flex justify-between items-center border-t border-gray-100 pt-3">
@@ -276,39 +276,16 @@
                 },
 
                 onHover(num) {
-                    if (this.isDragging && this.dragStart !== null) {
-                        // generate range from dragStart to num
-                        let start = Math.min(this.dragStart, num);
-                        let end = Math.max(this.dragStart, num);
-                        
-                        let newSelection = [];
-                        for(let i=start; i<=end; i++){
-                            newSelection.push(i);
-                        }
-                        // We reset selected to the currently dragged range. 
-                        // To allow multiple blocks, we would need ctrl+click, but requirement says "berurutan" 
-                        // It implies maybe a single continuous block or multiple. Let's support multiple contiguous blocks.
-                        // For simplicity in UX, we'll let dragging OVERRIDE current selection to form exactly one contiguous block each drag 
-                        // (Wait, user might want to select 1-4 and 21-24. We need to append. Let's rethink.)
-                    }
-                },
-                
-                // Let's refine the selection logic to simply toggle the pack, and we validate the whole array.
-                // Resetting logic:
-                startSelection(num) {
-                    this.isDragging = true;
-                    this.togglePack(num);
-                },
-                
-                onHover(num) {
-                     // In a real application, drag-to-select is complex if we want multiple blocks. 
-                     // Let's stick to click-to-toggle for reliability, drag just continues toggling the state of dragStart.
-                     if(!this.isDragging) return;
+                     if(!this.isDragging || this.dragStart === null) return;
                      
-                     // If it's already selected, skip
-                     if(!this.isSelected(num)) {
-                         this.togglePack(num);
+                     let start = Math.min(this.dragStart, num);
+                     let end = Math.max(this.dragStart, num);
+                     
+                     let newSelection = [];
+                     for(let i=start; i<=end; i++){
+                        newSelection.push(i);
                      }
+                     this.selectedPacks = [...newSelection];
                 },
                 
                 endSelection() {
@@ -320,9 +297,8 @@
                     if (this.isSelected(num)) {
                         this.selectedPacks = this.selectedPacks.filter(p => p !== num);
                     } else {
-                        this.selectedPacks.push(num);
+                        this.selectedPacks = [...this.selectedPacks, num].sort((a,b) => a-b);
                     }
-                    this.selectedPacks.sort((a,b) => a-b);
                     this.validateSelection();
                 },
 

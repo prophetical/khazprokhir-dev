@@ -132,32 +132,40 @@
                 <table class="w-full text-left border-collapse table-tight">
                     <thead class="bg-gray-50 border-b border-gray-200">
                         <tr>
-                            <th class="text-[10px] font-bold text-gray-500 uppercase">Tanggal</th>
-                            <th class="text-[10px] font-bold text-gray-500 uppercase">No Bon</th>
-                            <th class="text-[10px] font-bold text-gray-500 uppercase text-center">Pec</th>
-                            <th class="text-[10px] font-bold text-gray-500 uppercase text-right">Jumlah</th>
-                            <th class="text-[10px] font-bold text-gray-500 uppercase">Gilir</th>
-                            <th class="text-[10px] font-bold text-gray-500 uppercase">Mesin</th>
-                            <th class="text-[10px] font-bold text-gray-500 uppercase">Supplier</th>
-                            <th class="text-[10px] font-bold text-gray-500 uppercase">Batch/Seri</th>
+                            <th class="text-[9px] font-bold text-gray-500 uppercase">No Bon</th>
+                            <th class="text-[9px] font-bold text-gray-500 uppercase text-center">Pec</th>
+                            <th class="text-[9px] font-bold text-gray-500 uppercase text-right">Jumlah</th>
+                            <th class="text-[9px] font-bold text-gray-500 uppercase text-center">Gilir</th>
+                            <th class="text-[9px] font-bold text-gray-500 uppercase">Mesin</th>
+                            <th class="text-[9px] font-bold text-gray-500 uppercase">Supplier</th>
+                            <th class="text-[9px] font-bold text-gray-500 uppercase">Batch/Seri</th>
+                            <th class="text-[9px] font-bold text-gray-500 uppercase">Operator</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
-                        @forelse($data as $row)
-                        <tr>
-                            <td class="text-xs font-medium text-gray-600">{{ \Carbon\Carbon::parse($row->tanggal_penerimaan)->locale('id')->isoFormat('D MMMM YYYY') }}</td>
-                            <td class="text-xs font-bold text-gray-900">{{ $row->nomor_bon }}</td>
-                            <td class="text-center">
-                                <span class="{{ $pecahanMeta[$row->pecahan]['color'] }} text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
-                                    {{ $row->pecahan }}
-                                </span>
-                            </td>
-                            <td class="text-xs font-bold text-gray-900 text-right">{{ number_format($row->jumlah, 0, ',', '.') }}</td>
-                            <td class="text-[10px] font-medium text-gray-500 uppercase">{{ $row->gilir }}</td>
-                            <td class="text-xs font-medium text-gray-600">{{ $row->mesin }}</td>
-                            <td class="text-xs font-medium text-gray-600">{{ $row->supplier }}</td>
-                            <td class="text-xs font-medium text-gray-600 italic">{{ $row->batch }} / {{ $row->seri }}</td>
-                        </tr>
+                        @forelse($data->groupBy('tanggal_penerimaan') as $date => $group)
+                            <!-- Date Line -->
+                            <tr class="bg-gray-50">
+                                <td colspan="8" class="text-[9px] font-black text-gray-500 uppercase py-1 px-2 border-y border-gray-100">
+                                    Penerimaan: {{ \Carbon\Carbon::parse($date)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
+                                </td>
+                            </tr>
+                            @foreach($group as $row)
+                            <tr>
+                                <td class="text-[10px] font-bold text-gray-900 px-2 py-1.5">{{ $row->nomor_bon }}</td>
+                                <td class="text-center px-1 py-1.5">
+                                    <span class="{{ $pecahanMeta[$row->pecahan]['color'] }} text-white text-[8px] font-bold px-1 py-0.5 rounded">
+                                        {{ $row->pecahan }}
+                                    </span>
+                                </td>
+                                <td class="text-[10px] font-bold text-gray-900 text-right px-2 py-1.5">{{ number_format($row->jumlah, 0, ',', '.') }}</td>
+                                <td class="text-[9px] font-bold text-gray-500 uppercase px-2 py-1.5 text-center">{{ $row->gilir }}</td>
+                                <td class="text-[9px] font-medium text-gray-600 px-2 py-1.5 text-center">{{ $row->mesin }}</td>
+                                <td class="text-[9px] font-medium text-gray-600 px-2 py-1.5 text-center">{{ $row->supplier }}</td>
+                                <td class="text-[9px] font-medium text-gray-600 italic px-2 py-1.5">{{ $row->batch }} / {{ $row->seri }}</td>
+                                <td class="text-[9px] font-medium text-gray-400 uppercase px-2 py-1.5">{{ $row->user->name ?? '-' }}</td>
+                            </tr>
+                            @endforeach
                         @empty
                         <tr>
                             <td colspan="8" class="text-center py-10 text-gray-400 text-sm italic">Tidak ada data ditemukan untuk periode ini.</td>
@@ -166,9 +174,9 @@
                     </tbody>
                     <tfoot class="bg-gray-50 border-t border-gray-200">
                         <tr>
-                            <td colspan="3" class="text-[10px] font-bold text-gray-700 uppercase p-3">Total Baris Ini</td>
-                            <td class="text-xs font-extrabold text-gray-900 text-right p-3">{{ number_format($data->sum('jumlah'), 0, ',', '.') }}</td>
-                            <td colspan="4"></td>
+                            <th colspan="2" class="text-[9px] font-bold text-gray-700 uppercase p-2 border-r border-gray-100">Subtotal Halaman</th>
+                            <td class="text-[10px] font-black text-gray-900 text-right p-2">{{ number_format($data->sum('jumlah'), 0, ',', '.') }}</td>
+                            <td colspan="5" class="bg-gray-50"></td>
                         </tr>
                     </tfoot>
                 </table>

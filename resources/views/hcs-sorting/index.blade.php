@@ -15,9 +15,9 @@
 
                     @php
                         $pecahanData = [
-                            'S' => ['label' => 'S', 'color' => 'bg-lime-500', 'border' => 'border-lime-100', 'hover' => 'hover:shadow-lime-100', 'text' => 'text-gray-900'],
+                            'S' => ['label' => 'S', 'color' => 'bg-lime-500', 'border' => 'border-lime-100', 'hover' => 'hover:shadow-lime-100', 'text' => 'text-white'],
                             'T' => ['label' => 'T', 'color' => 'bg-gray-400', 'border' => 'border-gray-100', 'hover' => 'hover:shadow-gray-100', 'text' => 'text-white'],
-                            'U' => ['label' => 'U', 'color' => 'bg-amber-400', 'border' => 'border-amber-100', 'hover' => 'hover:shadow-amber-100', 'text' => 'text-gray-900'],
+                            'U' => ['label' => 'U', 'color' => 'bg-amber-400', 'border' => 'border-amber-100', 'hover' => 'hover:shadow-amber-100', 'text' => 'text-white'],
                             'V' => ['label' => 'V', 'color' => 'bg-purple-500', 'border' => 'border-purple-100', 'hover' => 'hover:shadow-purple-100', 'text' => 'text-white'],
                             'W' => ['label' => 'W', 'color' => 'bg-green-500', 'border' => 'border-green-100', 'hover' => 'hover:shadow-green-100', 'text' => 'text-white'],
                             'X' => ['label' => 'X', 'color' => 'bg-blue-500', 'border' => 'border-blue-100', 'hover' => 'hover:shadow-blue-100', 'text' => 'text-white'],
@@ -99,9 +99,9 @@
                     @php
                         $selectedPecahan = request('pecahan', '');
                         $themeClasses = [
-                            'S' => ['bg' => 'bg-lime-500', 'border' => 'border-lime-500', 'ring' => 'focus:ring-lime-500', 'focus' => 'focus:border-lime-500', 'btn' => 'bg-lime-500', 'text' => 'text-gray-900'],
+                            'S' => ['bg' => 'bg-lime-500', 'border' => 'border-lime-500', 'ring' => 'focus:ring-lime-500', 'focus' => 'focus:border-lime-500', 'btn' => 'bg-lime-500', 'text' => 'text-white'],
                             'T' => ['bg' => 'bg-gray-400', 'border' => 'border-gray-400', 'ring' => 'focus:ring-gray-400', 'focus' => 'focus:border-gray-400', 'btn' => 'bg-gray-400', 'text' => 'text-white'],
-                            'U' => ['bg' => 'bg-amber-400', 'border' => 'border-amber-400', 'ring' => 'focus:ring-amber-400', 'focus' => 'focus:border-amber-400', 'btn' => 'bg-amber-400', 'text' => 'text-gray-900'],
+                            'U' => ['bg' => 'bg-amber-400', 'border' => 'border-amber-400', 'ring' => 'focus:ring-amber-400', 'focus' => 'focus:border-amber-400', 'btn' => 'bg-amber-400', 'text' => 'text-white'],
                             'V' => ['bg' => 'bg-purple-500', 'border' => 'border-purple-500', 'ring' => 'focus:ring-purple-500', 'focus' => 'focus:border-purple-500', 'btn' => 'bg-purple-500', 'text' => 'text-white'],
                             'W' => ['bg' => 'bg-green-500', 'border' => 'border-green-500', 'ring' => 'focus:ring-green-500', 'focus' => 'focus:border-green-500', 'btn' => 'bg-green-500', 'text' => 'text-white'],
                             'X' => ['bg' => 'bg-blue-500', 'border' => 'border-blue-500', 'ring' => 'focus:ring-blue-500', 'focus' => 'focus:border-blue-500', 'btn' => 'bg-blue-500', 'text' => 'text-white'],
