@@ -14,7 +14,8 @@
         <!-- Tailwind CDN -->
         <script src="https://cdn.tailwindcss.com"></script>
 
-        <!-- Scripts (Vite removed due to no npm) -->
+        <!-- Scripts -->
+        <script src="{{ asset('js/sweetalert2.all.min.js') }}"></script>
         {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
         
         <!-- Fallback AlpineJS if Vite build fails -->
@@ -88,8 +89,7 @@
 
         @stack('scripts')
         
-        <!-- SweetAlert2 CDN -->
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
         <script>
             document.addEventListener('DOMContentLoaded', () => {
