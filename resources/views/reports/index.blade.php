@@ -11,49 +11,60 @@
             <!-- Summary Cards per Pecahan (Two Rows) -->
             <div class="space-y-4 mb-8">
                 @php
-                    $pecahanMeta = [
-                        'S' => ['color' => 'bg-stone-600',   'label' => 'Rp1.000'],
-                        'T' => ['color' => 'bg-slate-500',   'label' => 'Rp2.000'],
-                        'U' => ['color' => 'bg-orange-500',  'label' => 'Rp5.000'],
-                        'V' => ['color' => 'bg-purple-600',  'label' => 'Rp10.000'],
-                        'W' => ['color' => 'bg-green-600',   'label' => 'Rp20.000'],
-                        'X' => ['color' => 'bg-blue-600',    'label' => 'Rp50.000'],
-                        'Y' => ['color' => 'bg-red-600',     'label' => 'Rp100.000'],
+                    $themeClasses = [
+                        'S' => ['bg' => 'bg-lime-500', 'border' => 'border-lime-500', 'ring' => 'focus:ring-lime-500', 'focus' => 'focus:border-lime-500', 'btn' => 'bg-lime-500', 'text' => 'text-gray-900', 'label' => 'Rp1.000'],
+                        'T' => ['bg' => 'bg-gray-400', 'border' => 'border-gray-400', 'ring' => 'focus:ring-gray-400', 'focus' => 'focus:border-gray-400', 'btn' => 'bg-gray-400', 'text' => 'text-white', 'label' => 'Rp2.000'],
+                        'U' => ['bg' => 'bg-amber-400', 'border' => 'border-amber-400', 'ring' => 'focus:ring-amber-400', 'focus' => 'focus:border-amber-400', 'btn' => 'bg-amber-400', 'text' => 'text-gray-900', 'label' => 'Rp5.000'],
+                        'V' => ['bg' => 'bg-purple-500', 'border' => 'border-purple-500', 'ring' => 'focus:ring-purple-500', 'focus' => 'focus:border-purple-500', 'btn' => 'bg-purple-500', 'text' => 'text-white', 'label' => 'Rp10.000'],
+                        'W' => ['bg' => 'bg-green-500', 'border' => 'border-green-500', 'ring' => 'focus:ring-green-500', 'focus' => 'focus:border-green-500', 'btn' => 'bg-green-500', 'text' => 'text-white', 'label' => 'Rp20.000'],
+                        'X' => ['bg' => 'bg-blue-500', 'border' => 'border-blue-500', 'ring' => 'focus:ring-blue-500', 'focus' => 'focus:border-blue-500', 'btn' => 'bg-blue-500', 'text' => 'text-white', 'label' => 'Rp50.000'],
+                        'Y' => ['bg' => 'bg-red-500', 'border' => 'border-red-500', 'ring' => 'focus:ring-red-500', 'focus' => 'focus:border-red-500', 'btn' => 'bg-red-500', 'text' => 'text-white', 'label' => 'Rp100.000'],
                     ];
 
                     $row1 = ['S', 'T', 'U', 'V'];
                     $row2 = ['W', 'X', 'Y'];
+                    $selectedPecahan = $pecahan ?? '';
                 @endphp
 
                 <!-- Row 1: S, T, U, V -->
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     @foreach($row1 as $key)
-                    @php $meta = $pecahanMeta[$key]; @endphp
-                    <a href="{{ route('reports.index', ['pecahan' => $key]) }}" class="bg-white overflow-hidden shadow-sm rounded-xl border {{ isset($pecahan) && $pecahan == $key ? 'border-indigo-500 ring-2 ring-indigo-200' : 'border-gray-100' }} p-4 flex flex-col items-center group hover:shadow-md transition-all">
-                        <div class="{{ $meta['color'] }} w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-lg mb-2 shadow-sm group-hover:scale-110 transition-transform">
+                    @php $meta = $themeClasses[$key]; @endphp
+                    <a href="{{ route('reports.index', ['pecahan' => $key]) }}" class="bg-white overflow-hidden shadow-sm rounded-xl border {{ isset($pecahan) && $pecahan == $key ? 'ring-2 ring-offset-1' : 'border-gray-100' }} p-4 flex flex-col items-center group hover:shadow-md transition-all"
+                       style="{{ isset($pecahan) && $pecahan == $key ? 'border-color: transparent;' : '' }}"
+                       id="card-{{ $key }}">
+                        <div class="{{ $meta['bg'] }} w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-lg mb-2 shadow-sm group-hover:scale-110 transition-transform {{ $meta['text'] }}">
                             {{ $key }}
                         </div>
-                        <div class="text-[10px] text-gray-400 font-medium uppercase tracking-wider mb-1">{{ $meta['label'] }}</div>
-                        <div class="text-xl font-bold text-gray-800">
+                        <div class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">{{ $meta['label'] }}</div>
+                        <div class="text-xl font-black text-gray-900 transition-colors duration-500" :class="selectedPecahan == '{{ $key }}' ? '{{ $meta['text'] }}' : ''">
                             {{ number_format($globalTotalsPerPecahan[$key] ?? 0, 0, ',', '.') }}
                         </div>
                     </a>
+                    <style>
+                        #card-{{ $key }}.ring-2 { --tw-ring-color: {{ str_contains($meta['bg'], 'lime') ? '#84cc16' : (str_contains($meta['bg'], 'gray') ? '#9ca3af' : (str_contains($meta['bg'], 'amber') ? '#fbbf24' : (str_contains($meta['bg'], 'purple') ? '#a855f7' : (str_contains($meta['bg'], 'green') ? '#22c55e' : (str_contains($meta['bg'], 'blue') ? '#3b82f6' : '#ef4444'))))) }}; }
+                    </style>
                     @endforeach
                 </div>
 
                 <!-- Row 2: W, X, Y, TOTAL -->
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     @foreach($row2 as $key)
-                    @php $meta = $pecahanMeta[$key]; @endphp
-                    <a href="{{ route('reports.index', ['pecahan' => $key]) }}" class="bg-white overflow-hidden shadow-sm rounded-xl border {{ isset($pecahan) && $pecahan == $key ? 'border-indigo-500 ring-2 ring-indigo-200' : 'border-gray-100' }} p-4 flex flex-col items-center group hover:shadow-md transition-all">
-                        <div class="{{ $meta['color'] }} w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-lg mb-2 shadow-sm group-hover:scale-110 transition-transform">
+                    @php $meta = $themeClasses[$key]; @endphp
+                    <a href="{{ route('reports.index', ['pecahan' => $key]) }}" class="bg-white overflow-hidden shadow-sm rounded-xl border {{ isset($pecahan) && $pecahan == $key ? 'ring-2 ring-offset-1' : 'border-gray-100' }} p-4 flex flex-col items-center group hover:shadow-md transition-all"
+                       style="{{ isset($pecahan) && $pecahan == $key ? 'border-color: transparent;' : '' }}"
+                       id="card-{{ $key }}">
+                        <div class="{{ $meta['bg'] }} w-10 h-10 rounded-lg flex items-center justify-center font-bold text-lg mb-2 shadow-sm group-hover:scale-110 transition-transform {{ $meta['text'] }}">
                             {{ $key }}
                         </div>
-                        <div class="text-[10px] text-gray-400 font-medium uppercase tracking-wider mb-1">{{ $meta['label'] }}</div>
-                        <div class="text-xl font-bold text-gray-800">
+                        <div class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">{{ $meta['label'] }}</div>
+                        <div class="text-xl font-black text-gray-900 transition-colors duration-500" :class="selectedPecahan == '{{ $key }}' ? '{{ $meta['text'] }}' : ''">
                             {{ number_format($globalTotalsPerPecahan[$key] ?? 0, 0, ',', '.') }}
                         </div>
                     </a>
+                    <style>
+                        #card-{{ $key }}.ring-2 { --tw-ring-color: {{ str_contains($meta['bg'], 'lime') ? '#84cc16' : (str_contains($meta['bg'], 'gray') ? '#9ca3af' : (str_contains($meta['bg'], 'amber') ? '#fbbf24' : (str_contains($meta['bg'], 'purple') ? '#a855f7' : (str_contains($meta['bg'], 'green') ? '#22c55e' : (str_contains($meta['bg'], 'blue') ? '#3b82f6' : '#ef4444'))))) }}; }
+                    </style>
                     @endforeach
 
                     <!-- Grand Total Card -->
@@ -70,7 +81,13 @@
             </div>
 
             <!-- Filters Section -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl mb-6 border border-gray-100">
+            <div x-data="{ 
+                selectedPecahan: '{{ $selectedPecahan }}',
+                themes: {{ json_encode($themeClasses) }},
+                get currentTheme() { return this.themes[this.selectedPecahan] || null }
+            }" 
+            class="bg-white overflow-hidden shadow-sm rounded-xl mb-6 border-t-4 transition-all duration-500"
+            :class="currentTheme ? currentTheme.border : 'border-gray-100'">
                 <div class="p-6">
                     <form action="{{ route('reports.index') }}" method="GET">
                         @if(isset($pecahan))
@@ -81,40 +98,44 @@
                             <!-- Date Range -->
                             <div class="md:col-span-2 lg:col-span-2 grid grid-cols-2 gap-4">
                                 <div>
-                                    <x-input-label for="start_date" value="Dari Tanggal" class="mb-2 text-gray-500 font-medium" />
-                                    <x-text-input id="start_date" name="start_date" type="date" class="mt-1 block w-full border-gray-200 rounded-lg shadow-sm px-3 py-2 text-sm bg-gray-50/50 hover:bg-white focus:bg-white transition-all" value="{{ $startDate }}" />
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Dari Tanggal</label>
+                                    <input id="start_date" name="start_date" type="date" 
+                                           class="mt-1 block w-full border-gray-200 rounded-lg shadow-sm px-3 py-3 text-sm text-center transition-all duration-300"
+                                           :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'" 
+                                           value="{{ $startDate }}" />
                                 </div>
                                 <div>
-                                    <x-input-label for="end_date" value="Sampai Tanggal" class="mb-2 text-gray-500 font-medium" />
-                                    <x-text-input id="end_date" name="end_date" type="date" class="mt-1 block w-full border-gray-200 rounded-lg shadow-sm px-3 py-2 text-sm bg-gray-50/50 hover:bg-white focus:bg-white transition-all" value="{{ $endDate }}" />
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Sampai Tanggal</label>
+                                    <input id="end_date" name="end_date" type="date" 
+                                           class="mt-1 block w-full border-gray-200 rounded-lg shadow-sm px-3 py-3 text-sm text-center transition-all duration-300" 
+                                           :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
+                                           value="{{ $endDate }}" />
                                 </div>
                             </div>
 
                             <!-- Gilir Filter -->
                             <div class="col-span-1">
-                                <x-input-label for="gilir" value="Gilir (Shift)" class="mb-2 text-gray-500 font-medium" />
-                                <div class="relative group">
-                                    <select id="gilir" name="gilir" class="appearance-none mt-1 block w-full border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-lg shadow-sm pl-3 pr-10 py-2.5 text-sm transition-all bg-gray-50/50 hover:bg-white cursor-pointer">
-                                        <option value="">Semua Gilir</option>
-                                        <option value="Gilir 1" {{ $gilir == 'Gilir 1' ? 'selected' : '' }}>Gilir 1</option>
-                                        <option value="Gilir 2" {{ $gilir == 'Gilir 2' ? 'selected' : '' }}>Gilir 2</option>
-                                        <option value="Gilir 3" {{ $gilir == 'Gilir 3' ? 'selected' : '' }}>Gilir 3</option>
-                                    </select>
-                                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400 group-hover:text-indigo-500 transition-colors">
-                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                                    </div>
-                                </div>
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Gilir</label>
+                                <select id="gilir" name="gilir" 
+                                        class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 text-center transition-all duration-300"
+                                        :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
+                                    <option value="">Semua Gilir</option>
+                                    <option value="Gilir 1" {{ $gilir == 'Gilir 1' ? 'selected' : '' }}>Gilir 1</option>
+                                    <option value="Gilir 2" {{ $gilir == 'Gilir 2' ? 'selected' : '' }}>Gilir 2</option>
+                                    <option value="Gilir 3" {{ $gilir == 'Gilir 3' ? 'selected' : '' }}>Gilir 3</option>
+                                </select>
                             </div>
 
-                            <!-- Actions -->
+                            <!-- Action Buttons -->
                             <div class="col-span-1 flex flex-col gap-2">
-                                <div class="grid grid-cols-2 gap-2">
-                                    <button type="submit" class="inline-flex items-center justify-center px-4 py-2.5 bg-indigo-600 border border-transparent rounded-lg font-bold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200 shadow-sm">
-                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                <div class="flex gap-2">
+                                    <button type="submit" 
+                                            class="flex-1 inline-flex justify-center items-center px-4 py-3 rounded-lg font-bold text-xs uppercase tracking-widest transition-all shadow-md active:scale-95"
+                                            :class="currentTheme ? (currentTheme.btn + ' ' + currentTheme.text + ' brightness-95 hover:brightness-105') : 'bg-gray-800 text-white'">
                                         Filter
                                     </button>
-                                    <a href="{{ route('reports.index') }}" class="inline-flex items-center justify-center px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-lg font-bold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-200 active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 transition duration-200 shadow-sm" title="Reset Semua Filter">
-                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                                    <a href="{{ route('reports.index', isset($pecahan) ? ['pecahan' => $pecahan] : []) }}" 
+                                       class="flex-1 inline-flex justify-center items-center px-4 py-3 bg-gray-100 border border-gray-200 rounded-lg font-bold text-xs text-gray-400 uppercase tracking-widest shadow-sm hover:bg-gray-200 transition-all text-center">
                                         Reset
                                     </a>
                                 </div>
@@ -158,7 +179,7 @@
                         <div class="flex items-center text-sm font-medium text-gray-500 bg-gray-50 px-4 py-2 rounded-full border border-gray-100">
                             <svg class="w-4 h-4 mr-2 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                             @if($startDate && $endDate)
-                                {{ \Carbon\Carbon::parse($startDate)->format('d/m/Y') }} — {{ \Carbon\Carbon::parse($endDate)->format('d/m/Y') }}
+                                {{ \Carbon\Carbon::parse($startDate)->locale('id')->isoFormat('D MMMM YYYY') }} — {{ \Carbon\Carbon::parse($endDate)->locale('id')->isoFormat('D MMMM YYYY') }}
                             @else
                                 Semua Tanggal
                             @endif

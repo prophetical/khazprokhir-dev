@@ -111,7 +111,7 @@
                         @endphp
                         @forelse($reports as $row)
                         <tr>
-                            <td class="text-[10px] font-medium text-gray-600">{{ $row->tanggal_sortir->format('d/m/Y') }}</td>
+                            <td class="text-[10px] font-medium text-gray-600">{{ $row->tanggal_sortir->locale('id')->isoFormat('D MMMM YYYY') }}</td>
                             <td class="text-[10px] font-medium text-gray-900">{{ $row->gilir }}</td>
                             <td class="text-[10px] font-bold text-gray-900">{{ $row->batch }}</td>
                             <td class="text-[10px] font-medium text-gray-900">{{ $row->seri }}</td>

@@ -26,6 +26,9 @@ class HcsSortingReportController extends Controller
         if ($request->filled('gilir')) {
             $query->where('gilir', $request->gilir);
         }
+        if ($request->filled('pecahan')) {
+            $query->where('pecahan', $request->pecahan);
+        }
 
         $reports = $query->orderBy('tanggal_sortir', 'desc')
             ->orderBy('created_at', 'desc')
@@ -37,7 +40,7 @@ class HcsSortingReportController extends Controller
 
     public function edit(HcsSorting $hcs_sorting_report)
     {
-        // Fetch packs related to this reporting context (same pecahan, batch, seri)
+        // Ambil data pack yang sejenis sama laporan ini (pecahan, batch, dan seri yang sama)
         $packsData = \App\Models\Pack::join('hcs_receivings', 'packs.hcs_receiving_id', '=', 'hcs_receivings.id')
             ->where('hcs_receivings.pecahan', $hcs_sorting_report->pecahan)
             ->where('packs.batch', $hcs_sorting_report->batch)
@@ -64,7 +67,7 @@ class HcsSortingReportController extends Controller
         $selectedPacks = $request->selected_packs;
         sort($selectedPacks);
 
-        // Validation 1: Must be in groups of 4 and sequential
+        // Validasi 1: Harus dalam kelompok berisi 4 dan berurutan
         $contiguousBlocks = [];
         $currentBlock = [];
         foreach ($selectedPacks as $packNum) {
@@ -101,12 +104,12 @@ class HcsSortingReportController extends Controller
             }
         }
 
-        // Ensure none of these packs are already sorted by ANOTHER session
+        // Pastiin pack yang dipilih belum disortir sama sesi (laporan) lain
         $alreadySorted = \App\Models\Pack::where('batch', $hcs_sorting_report->batch)
             ->where('seri', $hcs_sorting_report->seri)
             ->whereIn('pack_number', $selectedPacks)
             ->whereNotNull('hcs_sorting_id')
-            ->where('hcs_sorting_id', '!=', $hcs_sorting_report->id) // Exclude current session
+            ->where('hcs_sorting_id', '!=', $hcs_sorting_report->id) // Abaikan sesi laporan yang lagi diedit ini
             ->exists();
 
         if ($alreadySorted) {
@@ -120,17 +123,17 @@ class HcsSortingReportController extends Controller
 
         \Illuminate\Support\Facades\DB::beginTransaction();
         try {
-            // Nullify ALL previously owned packs for this session
+            // Kosongin status sortir semua pack yang sebelumnya dipunyai sesi ini
             \App\Models\Pack::where('hcs_sorting_id', $hcs_sorting_report->id)
                 ->update(['hcs_sorting_id' => null]);
 
-            // Assign the newly selected packs
+            // Tetapkan pack-pack baru yang barusan dipilih
             \App\Models\Pack::where('batch', $hcs_sorting_report->batch)
                 ->where('seri', $hcs_sorting_report->seri)
                 ->whereIn('pack_number', $selectedPacks)
                 ->update(['hcs_sorting_id' => $hcs_sorting_report->id]);
 
-            // Update the report metadata
+            // Update data detail laporannya
             $hcs_sorting_report->update([
                 'supplier' => $request->supplier,
                 'packs_selected' => $selectedPacks,
@@ -155,11 +158,11 @@ class HcsSortingReportController extends Controller
     {
         \Illuminate\Support\Facades\DB::beginTransaction();
         try {
-            // Nullify the associated packs
+            // Kosongin status sortir pack yang berkaitan
             \App\Models\Pack::where('hcs_sorting_id', $hcs_sorting_report->id)
                 ->update(['hcs_sorting_id' => null]);
 
-            // Delete the report
+            // Hapus laporannya
             $hcs_sorting_report->delete();
 
             \Illuminate\Support\Facades\DB::commit();

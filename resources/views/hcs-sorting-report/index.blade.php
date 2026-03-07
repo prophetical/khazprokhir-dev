@@ -9,61 +9,117 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 border-b border-gray-200">
-                    <h3 class="text-lg font-medium text-gray-900 border-l-4 border-indigo-600 pl-2 mb-6">Filter Laporan</h3>
+                    <h3 class="text-lg font-bold text-gray-900 border-l-4 border-indigo-600 pl-4 mb-8">Filter Laporan Penyortiran</h3>
                     
-                    <form method="GET" action="{{ route('hcs-sorting-reports.index') }}" class="mb-6 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 items-end bg-gray-50 p-4 rounded-md border border-gray-100">
-                        <div>
-                            <x-input-label for="tanggal_dari" :value="__('Tanggal Dari')" />
-                            <x-text-input id="tanggal_dari" class="block mt-1 w-full text-sm" type="date" name="tanggal_dari" :value="request('tanggal_dari')" />
-                        </div>
-                        <div>
-                            <x-input-label for="tanggal_sampai" :value="__('Tanggal Sampai')" />
-                            <x-text-input id="tanggal_sampai" class="block mt-1 w-full text-sm" type="date" name="tanggal_sampai" :value="request('tanggal_sampai')" />
-                        </div>
-                        <div>
-                            <x-input-label for="gilir" :value="__('Gilir')" />
-                            <select id="gilir" name="gilir" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm">
-                                <option value="">Semua Gilir</option>
-                                <option value="Gilir 1" {{ request('gilir') == 'Gilir 1' ? 'selected' : '' }}>Gilir 1</option>
-                                <option value="Gilir 2" {{ request('gilir') == 'Gilir 2' ? 'selected' : '' }}>Gilir 2</option>
-                                <option value="Gilir 3" {{ request('gilir') == 'Gilir 3' ? 'selected' : '' }}>Gilir 3</option>
-                            </select>
-                        </div>
-                        <div>
-                            <x-input-label for="batch" :value="__('Batch')" />
-                            <x-text-input id="batch" class="block mt-1 w-full text-sm" type="text" name="batch" :value="request('batch')" placeholder="Cari Batch" />
-                        </div>
-                        <div>
-                            <x-input-label for="seri" :value="__('Seri')" />
-                            <x-text-input id="seri" class="block mt-1 w-full text-sm" type="text" name="seri" :value="request('seri')" placeholder="Cari Seri" />
-                        </div>
-                        <div class="col-span-1 lg:col-span-1 flex flex-col gap-2">
-                                <div class="grid grid-cols-2 gap-2">
-                                    <button type="submit" class="inline-flex items-center justify-center px-4 py-2.5 bg-indigo-600 border border-transparent rounded-lg font-bold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200 shadow-sm" title="Terapkan Filter">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                                    </button>
-                                    <a href="{{ route('hcs-sorting-reports.index') }}" class="inline-flex items-center justify-center px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-lg font-bold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-200 active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 transition duration-200 shadow-sm" title="Reset Semua Filter">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                                    </a>
+                    @php
+                        $themeClasses = [
+                            'S' => ['bg' => 'bg-lime-500', 'border' => 'border-lime-500', 'ring' => 'focus:ring-lime-500', 'focus' => 'focus:border-lime-500', 'btn' => 'bg-lime-500', 'text' => 'text-gray-900'],
+                            'T' => ['bg' => 'bg-gray-400', 'border' => 'border-gray-400', 'ring' => 'focus:ring-gray-400', 'focus' => 'focus:border-gray-400', 'btn' => 'bg-gray-400', 'text' => 'text-white'],
+                            'U' => ['bg' => 'bg-amber-400', 'border' => 'border-amber-400', 'ring' => 'focus:ring-amber-400', 'focus' => 'focus:border-amber-400', 'btn' => 'bg-amber-400', 'text' => 'text-gray-900'],
+                            'V' => ['bg' => 'bg-purple-500', 'border' => 'border-purple-500', 'ring' => 'focus:ring-purple-500', 'focus' => 'focus:border-purple-500', 'btn' => 'bg-purple-500', 'text' => 'text-white'],
+                            'W' => ['bg' => 'bg-green-500', 'border' => 'border-green-500', 'ring' => 'focus:ring-green-500', 'focus' => 'focus:border-green-500', 'btn' => 'bg-green-500', 'text' => 'text-white'],
+                            'X' => ['bg' => 'bg-blue-500', 'border' => 'border-blue-500', 'ring' => 'focus:ring-blue-500', 'focus' => 'focus:border-blue-500', 'btn' => 'bg-blue-500', 'text' => 'text-white'],
+                            'Y' => ['bg' => 'bg-red-500', 'border' => 'border-red-500', 'ring' => 'focus:ring-red-500', 'focus' => 'focus:border-red-500', 'btn' => 'bg-red-500', 'text' => 'text-white'],
+                        ];
+                        $selectedPecahan = request('pecahan', '');
+                    @endphp
+
+                    <div x-data="{ 
+                        selectedPecahan: '{{ $selectedPecahan }}',
+                        themes: {{ json_encode($themeClasses) }},
+                        get currentTheme() { return this.themes[this.selectedPecahan] || null }
+                    }" 
+                    class="bg-white overflow-hidden shadow-sm rounded-xl mb-6 border-t-4 transition-all duration-500"
+                    :class="currentTheme ? currentTheme.border : 'border-gray-100'">
+                        <div class="p-6">
+                            <form method="GET" action="{{ route('hcs-sorting-reports.index') }}">
+                                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 items-end">
+                                    <div class="lg:col-span-2 grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Dari Tanggal</label>
+                                            <input id="tanggal_dari" name="tanggal_dari" type="date" 
+                                                   class="block w-full border-gray-200 rounded-lg shadow-sm px-3 py-3 text-sm text-center transition-all duration-300"
+                                                   :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
+                                                   value="{{ request('tanggal_dari') }}" />
+                                        </div>
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Sampai Tanggal</label>
+                                            <input id="tanggal_sampai" name="tanggal_sampai" type="date" 
+                                                   class="block w-full border-gray-200 rounded-lg shadow-sm px-3 py-3 text-sm text-center transition-all duration-300"
+                                                   :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
+                                                   value="{{ request('tanggal_sampai') }}" />
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Pecahan</label>
+                                        <select id="pecahan" name="pecahan" x-model="selectedPecahan"
+                                                class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 text-center transition-all duration-300 font-bold"
+                                                :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
+                                            <option value="">Semua</option>
+                                            @foreach(['S','T','U','V','W','X','Y'] as $p)
+                                                <option value="{{ $p }}">{{ $p }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Gilir</label>
+                                        <select id="gilir" name="gilir" 
+                                                class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 text-center transition-all duration-300"
+                                                :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
+                                            <option value="">Semua</option>
+                                            <option value="Gilir 1" {{ request('gilir') == 'Gilir 1' ? 'selected' : '' }}>Gilir 1</option>
+                                            <option value="Gilir 2" {{ request('gilir') == 'Gilir 2' ? 'selected' : '' }}>Gilir 2</option>
+                                            <option value="Gilir 3" {{ request('gilir') == 'Gilir 3' ? 'selected' : '' }}>Gilir 3</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Batch / Seri</label>
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <input id="batch" name="batch" type="text" placeholder="Batch"
+                                                   class="block w-full border-gray-200 rounded-lg shadow-sm px-3 py-3 text-sm text-center transition-all duration-300"
+                                                   :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
+                                                   value="{{ request('batch') }}" />
+                                            <input id="seri" name="seri" type="text" placeholder="Seri"
+                                                   class="block w-full border-gray-200 rounded-lg shadow-sm px-3 py-3 text-sm text-center transition-all duration-300"
+                                                   :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
+                                                   value="{{ request('seri') }}" />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-span-1 flex flex-col gap-2">
+                                        <div class="flex gap-2">
+                                            <button type="submit" 
+                                                    class="flex-1 inline-flex justify-center items-center px-4 py-3 rounded-lg font-bold text-xs uppercase tracking-widest transition-all shadow-md active:scale-95"
+                                                    :class="currentTheme ? (currentTheme.btn + ' ' + currentTheme.text + ' brightness-95 hover:brightness-105') : 'bg-gray-800 text-white'">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                            </button>
+                                            <a href="{{ route('hcs-sorting-reports.index') }}" 
+                                               class="flex-1 inline-flex justify-center items-center px-4 py-3 bg-gray-100 border border-gray-200 rounded-lg font-bold text-xs text-gray-400 uppercase tracking-widest shadow-sm hover:bg-gray-200 transition-all">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                                            </a>
+                                        </div>
+                                        <div class="grid grid-cols-3 gap-2">
+                                            <a href="{{ route('hcs-sorting-reports.export', request()->all()) }}" 
+                                               class="inline-flex items-center justify-center p-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors shadow-sm" title="Export Excel">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                            </a>
+                                            <a href="{{ route('hcs-sorting-reports.print', request()->all()) }}" target="_blank"
+                                               class="inline-flex items-center justify-center p-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-colors shadow-sm" title="Export PDF">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                                            </a>
+                                            <a href="{{ route('hcs-sorting-reports.print', array_merge(request()->all(), ['autoprint' => 1])) }}" target="_blank"
+                                               class="inline-flex items-center justify-center p-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors shadow-sm" title="Cetak Langsung">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 00-2 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="grid grid-cols-3 gap-2">
-                                    <a href="{{ route('hcs-sorting-reports.export', ['tanggal_dari' => request('tanggal_dari'), 'tanggal_sampai' => request('tanggal_sampai'), 'gilir' => request('gilir'), 'batch' => request('batch'), 'seri' => request('seri')]) }}" 
-                                       class="inline-flex items-center justify-center p-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors shadow-sm" title="Export Excel (CSV)">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                                    </a>
-                                    <a href="{{ route('hcs-sorting-reports.print', ['tanggal_dari' => request('tanggal_dari'), 'tanggal_sampai' => request('tanggal_sampai'), 'gilir' => request('gilir'), 'batch' => request('batch'), 'seri' => request('seri')]) }}" 
-                                       target="_blank"
-                                       class="inline-flex items-center justify-center p-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-colors shadow-sm" title="Export PDF">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
-                                    </a>
-                                    <a href="{{ route('hcs-sorting-reports.print', ['tanggal_dari' => request('tanggal_dari'), 'tanggal_sampai' => request('tanggal_sampai'), 'gilir' => request('gilir'), 'batch' => request('batch'), 'seri' => request('seri'), 'autoprint' => 1]) }}" 
-                                       target="_blank"
-                                       class="inline-flex items-center justify-center p-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors shadow-sm" title="Cetak Laporan">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 00-2 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
-                                    </a>
-                                </div>
+                            </form>
                         </div>
-                    </form>
+                    </div>
 
                     @if(session('success'))
                         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
@@ -96,18 +152,18 @@
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @php
                                     $colorMap = [
-                                        'S' => 'bg-lime-200 border-lime-400 text-lime-800',
-                                        'T' => 'bg-gray-200 border-gray-400 text-gray-800',
-                                        'U' => 'bg-amber-100 border-amber-300 text-amber-800',
-                                        'V' => 'bg-purple-100 border-purple-300 text-purple-800',
-                                        'W' => 'bg-green-100 border-green-300 text-green-800',
-                                        'X' => 'bg-blue-100 border-blue-300 text-blue-800',
-                                        'Y' => 'bg-red-100 border-red-300 text-red-800',
+                                        'S' => 'bg-lime-500 border-lime-600 text-gray-900',
+                                        'T' => 'bg-gray-400 border-gray-500 text-white',
+                                        'U' => 'bg-amber-400 border-amber-500 text-gray-900',
+                                        'V' => 'bg-purple-500 border-purple-600 text-white',
+                                        'W' => 'bg-green-500 border-green-600 text-white',
+                                        'X' => 'bg-blue-500 border-blue-600 text-white',
+                                        'Y' => 'bg-red-500 border-red-600 text-white',
                                     ];
                                 @endphp
                                 @forelse ($reports as $report)
                                     <tr class="hover:bg-gray-50">
-                                        <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">{{ $report->tanggal_sortir->format('d/m/Y') }}</td>
+                                        <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">{{ $report->tanggal_sortir->locale('id')->isoFormat('D MMMM YYYY') }}</td>
                                         <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">{{ $report->gilir }}</td>
                                         <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{{ $report->batch }}</td>
                                         <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">{{ $report->seri }}</td>

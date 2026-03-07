@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Penerimaan HCS - {{ \Carbon\Carbon::now()->format('d/m/Y') }}</title>
+    <title>Laporan Penerimaan HCS - {{ \Carbon\Carbon::now()->locale('id')->isoFormat('D MMMM YYYY') }}</title>
     <!-- Tailwind Local -->
     <script src="{{ asset('vendor/tailwindcss/tailwindcss.min.js') }}"></script>
     <style>
@@ -46,7 +46,7 @@
                         <span class="text-gray-400 mr-2">Periode:</span>
                         <span class="font-bold text-gray-700">
                             @if($startDate && $endDate)
-                                {{ \Carbon\Carbon::parse($startDate)->format('d/m/Y') }} – {{ \Carbon\Carbon::parse($endDate)->format('d/m/Y') }}
+                                {{ \Carbon\Carbon::parse($startDate)->locale('id')->isoFormat('D MMMM YYYY') }} – {{ \Carbon\Carbon::parse($endDate)->locale('id')->isoFormat('D MMMM YYYY') }}
                             @else
                                 Semua Tanggal
                             @endif
@@ -145,7 +145,7 @@
                     <tbody class="divide-y divide-gray-100">
                         @forelse($data as $row)
                         <tr>
-                            <td class="text-xs font-medium text-gray-600">{{ \Carbon\Carbon::parse($row->tanggal_penerimaan)->format('d/m/Y') }}</td>
+                            <td class="text-xs font-medium text-gray-600">{{ \Carbon\Carbon::parse($row->tanggal_penerimaan)->locale('id')->isoFormat('D MMMM YYYY') }}</td>
                             <td class="text-xs font-bold text-gray-900">{{ $row->nomor_bon }}</td>
                             <td class="text-center">
                                 <span class="{{ $pecahanMeta[$row->pecahan]['color'] }} text-white text-[9px] font-bold px-1.5 py-0.5 rounded">

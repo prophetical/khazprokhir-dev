@@ -5,13 +5,25 @@
         </h2>
     </x-slot>
 
-    <div class="py-6 min-h-screen bg-gray-100" x-data="sortingGrid()">
+    @php
+        $themeClasses = [
+            'S' => ['bg' => 'bg-lime-500', 'border' => 'border-lime-500', 'ring' => 'focus:ring-lime-500', 'focus' => 'focus:border-lime-500', 'btn' => 'bg-lime-500', 'text' => 'text-gray-900'],
+            'T' => ['bg' => 'bg-gray-400', 'border' => 'border-gray-400', 'ring' => 'focus:ring-gray-400', 'focus' => 'focus:border-gray-400', 'btn' => 'bg-gray-400', 'text' => 'text-white'],
+            'U' => ['bg' => 'bg-amber-400', 'border' => 'border-amber-400', 'ring' => 'focus:ring-amber-400', 'focus' => 'focus:border-amber-400', 'btn' => 'bg-amber-400', 'text' => 'text-gray-900'],
+            'V' => ['bg' => 'bg-purple-500', 'border' => 'border-purple-500', 'ring' => 'focus:ring-purple-500', 'focus' => 'focus:border-purple-500', 'btn' => 'bg-purple-500', 'text' => 'text-white'],
+            'W' => ['bg' => 'bg-green-500', 'border' => 'border-green-500', 'ring' => 'focus:ring-green-500', 'focus' => 'focus:border-green-500', 'btn' => 'bg-green-500', 'text' => 'text-white'],
+            'X' => ['bg' => 'bg-blue-500', 'border' => 'border-blue-500', 'ring' => 'focus:ring-blue-500', 'focus' => 'focus:border-blue-500', 'btn' => 'bg-blue-500', 'text' => 'text-white'],
+            'Y' => ['bg' => 'bg-red-500', 'border' => 'border-red-500', 'ring' => 'focus:ring-red-500', 'focus' => 'focus:border-red-500', 'btn' => 'bg-red-500', 'text' => 'text-white'],
+        ];
+    @endphp
+
+    <div class="py-6 min-h-screen bg-gray-50 transition-colors duration-500" x-data="sortingGrid('{{ $pecahan }}', {{ json_encode($themeClasses) }})">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
             @if ($errors->any())
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                    <strong class="font-bold">Terjadi Kesalahan!</strong>
-                    <ul class="mt-2 list-disc list-inside text-sm">
+                <div class="bg-red-50 border-l-4 border-red-400 text-red-700 px-4 py-3 rounded shadow-sm" role="alert">
+                    <strong class="font-bold flex items-center mb-1"><svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg> Terjadi Kesalahan!</strong>
+                    <ul class="mt-1 list-disc list-inside text-xs font-medium">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
@@ -19,33 +31,37 @@
                 </div>
             @endif
             @if(session('error'))
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                    <span class="block sm:inline">{{ session('error') }}</span>
+                <div class="bg-red-50 border-l-4 border-red-400 text-red-700 px-4 py-3 rounded shadow-sm" role="alert">
+                    <span class="block sm:inline text-sm font-medium">{{ session('error') }}</span>
                 </div>
             @endif
 
             <div class="flex flex-col lg:flex-row gap-6">
                 <!-- Left Column: Grid Selection -->
-                <div class="flex-1 bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="flex-1 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-500 sm:rounded-xl border-t-4"
+                     :class="currentTheme ? currentTheme.border : 'border-gray-100'">
                     <div class="p-6 text-gray-900">
-                        <h3 class="text-lg font-medium text-gray-900 border-b pb-2 mb-4">Pilih Pack untuk Disortir (1-100)</h3>
+                        <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center uppercase tracking-wider">
+                            <div class="w-2 h-6 mr-3 rounded-full transition-all duration-500" :class="currentTheme ? currentTheme.bg : 'bg-gray-400'"></div>
+                            Pilih Pack untuk Disortir
+                        </h3>
                         
                         <!-- Legend -->
-                        <div class="flex flex-wrap gap-4 mb-6 text-sm bg-gray-50 p-3 rounded-md border border-gray-200">
-                            <div class="flex items-center"><div class="w-4 h-4 rounded bg-blue-500 mr-2 shadow-sm"></div> Rikyet (Siap)</div>
-                            <div class="flex items-center"><div class="w-4 h-4 rounded bg-green-500 mr-2 shadow-sm"></div> Cutpack (Siap)</div>
-                            <div class="flex items-center"><div class="w-4 h-4 rounded bg-blue-200 border border-blue-400 mr-2" style="background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 3px, transparent 3px, transparent 6px);"></div> Rikyet (Disortir)</div>
-                            <div class="flex items-center"><div class="w-4 h-4 rounded bg-green-200 border border-green-400 mr-2" style="background-image: repeating-linear-gradient(-45deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 3px, transparent 3px, transparent 6px);"></div> Cutpack (Disortir)</div>
-                            <div class="flex items-center"><div class="w-4 h-4 rounded bg-gray-100 border border-gray-300 mr-2"></div> Belum Diinput</div>
+                        <div class="flex flex-wrap gap-4 mb-8 text-[10px] font-bold uppercase tracking-widest text-gray-500 bg-gray-50/50 p-4 rounded-lg border border-gray-100">
+                            <div class="flex items-center"><div class="w-3 h-3 rounded-sm bg-blue-500 mr-2 shadow-sm"></div> RK (Siap)</div>
+                            <div class="flex items-center"><div class="w-3 h-3 rounded-sm bg-green-500 mr-2 shadow-sm"></div> CP (Siap)</div>
+                            <div class="flex items-center"><div class="w-3 h-3 rounded-sm bg-blue-200 border border-blue-400 mr-2" style="background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 3px, transparent 3px, transparent 6px);"></div> RK (Sortir)</div>
+                            <div class="flex items-center"><div class="w-3 h-3 rounded-sm bg-green-200 border border-green-400 mr-2" style="background-image: repeating-linear-gradient(-45deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 3px, transparent 3px, transparent 6px);"></div> CP (Sortir)</div>
+                            <div class="flex items-center"><div class="w-3 h-3 rounded-sm bg-gray-100 border border-gray-200 mr-2"></div> Kosong</div>
                         </div>
 
                         <!-- 10x10 Grid -->
-                        <div class="grid grid-flow-col gap-2 mb-6" style="grid-template-rows: repeat(10, minmax(0, 1fr));" @mouseleave="isDragging = false">
+                        <div class="grid grid-flow-col gap-2 mb-8" style="grid-template-rows: repeat(10, minmax(0, 1fr));" @mouseleave="isDragging = false">
                             @for ($i = 1; $i <= 100; $i++)
                                 @php
                                     $pack = $packsData->get($i);
                                     $status = 'empty'; // default
-                                    $statusClass = 'bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed';
+                                    $statusClass = 'bg-gray-50 border-gray-100 text-gray-300 cursor-not-allowed opacity-50';
                                     $isReady = false;
 
                                     if ($pack) {
@@ -54,32 +70,33 @@
 
                                         if ($isSorted) {
                                             $status = 'sorted';
-                                            // Strong Hatch pattern for sorted packs
                                             if (str_contains($supplier, 'rikyet')) {
-                                                $statusClass = 'bg-blue-200 text-blue-900 cursor-not-allowed border-blue-400 shadow-inner';
-                                                $hatchStyle = "background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 4px, transparent 4px, transparent 8px);";
+                                                $statusClass = 'bg-blue-100 text-blue-900 cursor-not-allowed border-blue-200 shadow-inner opacity-60';
+                                                $hatchStyle = "background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.05), rgba(0,0,0,0.05) 4px, transparent 4px, transparent 8px);";
                                             } else {
-                                                $statusClass = 'bg-green-200 text-green-900 cursor-not-allowed border-green-400 shadow-inner';
-                                                $hatchStyle = "background-image: repeating-linear-gradient(-45deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 4px, transparent 4px, transparent 8px);";
+                                                $statusClass = 'bg-green-100 text-green-900 cursor-not-allowed border-green-200 shadow-inner opacity-60';
+                                                $hatchStyle = "background-image: repeating-linear-gradient(-45deg, rgba(0,0,0,0.05), rgba(0,0,0,0.05) 4px, transparent 4px, transparent 8px);";
                                             }
                                             $statusClass .= '" style="' . $hatchStyle; 
                                         } else {
                                             $status = 'ready';
                                             $isReady = true;
                                             if (str_contains($supplier, 'rikyet')) {
-                                                $statusClass = 'bg-blue-500 text-white hover:bg-blue-600 cursor-pointer shadow-sm';
+                                                $statusClass = 'bg-blue-500 text-white hover:bg-blue-600 cursor-pointer shadow-sm hover:scale-105 transform transition-all';
                                             } else {
-                                                $statusClass = 'bg-green-500 text-white hover:bg-green-600 cursor-pointer shadow-sm';
+                                                $statusClass = 'bg-green-500 text-white hover:bg-green-600 cursor-pointer shadow-sm hover:scale-105 transform transition-all';
                                             }
                                         }
                                     }
                                 @endphp
 
                                 <div 
-                                    class="h-10 w-full flex items-center justify-center rounded text-sm font-bold border select-none transition-colors 
+                                    class="h-10 w-full flex items-center justify-center rounded-md text-sm font-black border select-none transition-all duration-200
                                            {{ $statusClass }}"
                                     :class="{
-                                        'ring-4 ring-yellow-400 ring-inset opacity-90 scale-105 z-10': isSelected({{ $i }})
+                                        'ring-4 scale-110 z-10 shadow-xl brightness-125': isSelected({{ $i }}),
+                                        'ring-yellow-400': isSelected({{ $i }}) && !currentTheme,
+                                        [currentTheme ? currentTheme.ring.replace('focus:', '') : '']: isSelected({{ $i }})
                                     }"
                                     title="Pack {{ $i }} {{ $pack ? '- ' . $pack->pack_supplier : '(Kosong)' }}"
                                     @if($isReady)
@@ -94,17 +111,24 @@
                         </div>
                         
                         <!-- Validation Message -->
-                        <div x-show="validationError" x-cloak class="text-red-600 text-sm font-medium mt-2 p-3 bg-red-50 rounded border border-red-200" x-text="validationError"></div>
-                        <div class="text-sm text-gray-500 mt-2">
-                            * Klik dan geser (drag) untuk memilih beberapa pack sekaligus. Harus berurutan dan kelipatan 4.
+                        <div x-show="validationError" x-cloak 
+                             class="text-red-700 text-xs font-bold mt-4 p-4 bg-red-50 rounded-lg border border-red-100 flex items-center space-x-2 animate-pulse" 
+                             x-text="validationError"></div>
+                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-4 flex items-center">
+                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+                            Klik & Geser untuk memilih Pack (Harus berurutan & kelipatan 4).
                         </div>
                     </div>
                 </div>
 
                 <!-- Right Column: Form -->
-                <div class="w-full lg:w-1/3 bg-white overflow-hidden shadow-sm sm:rounded-lg h-fit">
+                <div class="w-full lg:w-1/3 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-500 sm:rounded-xl border-t-4 h-fit"
+                     :class="currentTheme ? currentTheme.border : 'border-gray-100'">
                     <div class="p-6 text-gray-900">
-                        <h3 class="text-lg font-medium text-gray-900 border-b pb-2 mb-4">Detail Penyortiran</h3>
+                        <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center uppercase tracking-wider">
+                            <div class="w-2 h-6 mr-3 rounded-full transition-all duration-500" :class="currentTheme ? currentTheme.bg : 'bg-gray-400'"></div>
+                            Detail Penyortiran
+                        </h3>
                         
                         <form method="POST" action="{{ route('hcs-sorting.store') }}" id="sortingForm" @submit="validateSubmission">
                             @csrf
@@ -117,22 +141,27 @@
                                 <input type="hidden" name="selected_packs[]" :value="pack">
                             </template>
 
-                            <div class="space-y-4">
+                            <div class="space-y-6">
                                 <!-- Summary Info -->
-                                <div class="bg-gray-50 p-4 rounded-md border border-gray-200 space-y-2">
-                                    <div class="flex justify-between">
-                                        <span class="text-sm text-gray-600">Total Pack Dipilih:</span>
-                                        <span class="font-bold text-indigo-700" x-text="selectedPacks.length"></span>
+                                <div class="bg-gray-50/50 p-5 rounded-xl border border-gray-100 space-y-3 shadow-inner">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Pack:</span>
+                                        <span class="text-xl font-black transition-colors duration-500" 
+                                              :class="currentTheme ? currentTheme.text.replace('text-', 'text-') : 'text-indigo-700'" 
+                                              x-text="selectedPacks.length"></span>
                                     </div>
-                                    <div class="flex justify-between border-t pt-2">
-                                        <span class="text-sm text-gray-600">Total Bilyet:</span>
-                                        <span class="font-bold text-green-700 text-lg" x-text="formatNumber(totalBilyet)"></span>
+                                    <div class="flex justify-between items-center border-t border-gray-100 pt-3">
+                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Bilyet:</span>
+                                        <span class="text-2xl font-black text-gray-900" x-text="formatNumber(totalBilyet)"></span>
                                     </div>
                                 </div>
 
                                 <div>
-                                    <x-input-label for="supplier" :value="__('Supplier (Hasil Sortir)')" />
-                                    <select id="supplier" name="supplier" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-1 w-full" required>
+                                    <label for="supplier" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Supplier (Hasil Sortir)</label>
+                                    <select id="supplier" name="supplier" 
+                                            class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 transition-all duration-300"
+                                            :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'" 
+                                            required>
                                         <option value="">Pilih Supplier</option>
                                         <option value="Cutpack" {{ old('supplier') == 'Cutpack' ? 'selected' : '' }}>Cutpack</option>
                                         <option value="Rikyet" {{ old('supplier') == 'Rikyet' ? 'selected' : '' }}>Rikyet</option>
@@ -140,23 +169,35 @@
                                 </div>
 
                                 <div>
-                                    <x-input-label for="petugas_1" :value="__('Petugas 1')" />
-                                    <x-text-input id="petugas_1" class="block mt-1 w-full" type="text" name="petugas_1" :value="old('petugas_1')" required />
+                                    <label for="petugas_1" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Petugas 1</label>
+                                    <input id="petugas_1" name="petugas_1" type="text" 
+                                           class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 transition-all duration-300"
+                                           :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
+                                           value="{{ old('petugas_1') }}" required />
                                 </div>
 
                                 <div>
-                                    <x-input-label for="petugas_2" :value="__('Petugas 2 (Opsional)')" />
-                                    <x-text-input id="petugas_2" class="block mt-1 w-full" type="text" name="petugas_2" :value="old('petugas_2')" />
+                                    <label for="petugas_2" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Petugas 2 (Opsional)</label>
+                                    <input id="petugas_2" name="petugas_2" type="text"
+                                           class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 transition-all duration-300"
+                                           :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
+                                           value="{{ old('petugas_2') }}" />
                                 </div>
 
                                 <div>
-                                    <x-input-label for="tanggal" :value="__('Tanggal')" />
-                                    <x-text-input id="tanggal" class="block mt-1 w-full" type="date" name="tanggal" :value="old('tanggal', date('Y-m-d'))" required />
+                                    <label for="tanggal" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Tanggal</label>
+                                    <input id="tanggal" name="tanggal" type="date"
+                                           class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 transition-all duration-300"
+                                           :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
+                                           value="{{ old('tanggal', date('Y-m-d')) }}" required />
                                 </div>
 
                                 <div>
-                                    <x-input-label for="gilir" :value="__('Gilir')" />
-                                    <select id="gilir" name="gilir" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-1 w-full" required>
+                                    <label for="gilir" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Gilir</label>
+                                    <select id="gilir" name="gilir" 
+                                            class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 transition-all duration-300"
+                                            :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
+                                            required>
                                         <option value="">Pilih Gilir</option>
                                         <option value="Gilir 1" {{ old('gilir') == 'Gilir 1' ? 'selected' : '' }}>Gilir 1</option>
                                         <option value="Gilir 2" {{ old('gilir') == 'Gilir 2' ? 'selected' : '' }}>Gilir 2</option>
@@ -164,9 +205,10 @@
                                     </select>
                                 </div>
                                 
-                                <div class="pt-4 border-t">
+                                <div class="pt-6">
                                     <button type="submit" 
-                                            class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                            class="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-xs font-bold uppercase tracking-widest transition-all duration-300 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed disabled:grayscale"
+                                            :class="currentTheme ? (currentTheme.btn + ' ' + currentTheme.text + ' brightness-95 hover:brightness-105') : 'bg-gray-800 text-white'"
                                             :disabled="selectedPacks.length === 0 || validationError !== ''">
                                         Simpan Data Sortir
                                     </button>
@@ -182,8 +224,15 @@
     <!-- Alpine.js script for sorting layout -->
     <script>
         document.addEventListener('alpine:init', () => {
-            Alpine.data('sortingGrid', () => ({
-                selectedPacks: [],
+            Alpine.data('sortingGrid', (initialPecahan = '', themes = {}) => ({
+                selectedPecahan: initialPecahan,
+                themes: themes,
+                get currentTheme() { return this.themes[this.selectedPecahan] || null },
+                @if(request()->has('selected_packs'))
+                    selectedPacks: [{{ request('selected_packs') }}],
+                @else
+                    selectedPacks: [],
+                @endif
                 isDragging: false,
                 dragStart: null,
                 validationError: '',

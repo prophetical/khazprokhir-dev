@@ -1,8 +1,8 @@
-<nav x-data="{ 
+    <nav x-data="{ 
         sidebarCollapsed: localStorage.getItem('sidebarCollapsed') === 'true',
         mobileOpen: false,
         hcsOpen: {{ request()->routeIs('hcs-receiving.*', 'batch-tracking.*', 'reports.*') ? 'true' : 'false' }},
-        sortingOpen: {{ request()->routeIs('hcs-sorting.*', 'hcs-sorting-reports.*') ? 'true' : 'false' }}
+        sortingOpen: {{ request()->routeIs('hcs-sorting.*', 'hcs-sorting-reports.*', 'rekomendasi-penyortiran.*') ? 'true' : 'false' }}
     }" 
     x-init="$watch('sidebarCollapsed', value => localStorage.setItem('sidebarCollapsed', value))"
     :class="sidebarCollapsed ? 'w-20' : 'w-64'"
@@ -79,7 +79,7 @@
         <!-- HCS Sorting Group -->
         <div class="space-y-1 mt-2">
             <button @click="sortingOpen = !sortingOpen; if(sidebarCollapsed) sidebarCollapsed = false;"
-               class="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('hcs-sorting.*', 'hcs-sorting-reports.*') ? 'text-white font-semibold bg-white/10' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
+               class="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('hcs-sorting.*', 'hcs-sorting-reports.*', 'rekomendasi-penyortiran.*') ? 'text-white font-semibold bg-white/10' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
                title="Penyortiran HCS">
                 <div class="flex items-center">
                     <div class="shrink-0 w-8 flex justify-center">
@@ -98,8 +98,12 @@
             <!-- Sub-menu Items -->
             <div x-show="sortingOpen && !sidebarCollapsed" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="pl-11 space-y-1">
                 <a href="{{ route('hcs-sorting.index') }}" 
-                   class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('hcs-sorting.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                   class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('hcs-sorting.index', 'hcs-sorting.create', 'hcs-sorting.edit') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
                     Data Penyortiran
+                </a>
+                <a href="{{ route('rekomendasi-penyortiran.index') }}" 
+                   class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('rekomendasi-penyortiran.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                    Rekomendasi Penyortiran
                 </a>
                 <a href="{{ route('hcs-sorting-reports.index') }}" 
                    class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('hcs-sorting-reports.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">

@@ -12,7 +12,7 @@ class HcsSortingController extends Controller
 {
     public function index(Request $request)
     {
-        // 1. Build Query for Available Groups with Filters
+        // 1. Siapin Query untuk Grup yang Tersedia beserta Filternya
         $query = Pack::whereNull('hcs_sorting_id')
             ->join('hcs_receivings', 'packs.hcs_receiving_id', '=', 'hcs_receivings.id');
 
@@ -31,7 +31,7 @@ class HcsSortingController extends Controller
             ->orderBy('total_pack', 'desc')
             ->paginate(20)->withQueryString();
 
-        // 2. Build Summary per Pecahan
+        // 2. Bikin Ringkasan per Pecahan
         $summaryData = Pack::whereNull('hcs_sorting_id')
             ->join('hcs_receivings', 'packs.hcs_receiving_id', '=', 'hcs_receivings.id')
             ->select('hcs_receivings.pecahan', DB::raw('count(*) as total_pack'))
@@ -61,8 +61,8 @@ class HcsSortingController extends Controller
             return redirect()->route('hcs-sorting.index')->with('error', 'Silahkan pilih grup data terlebih dahulu.');
         }
 
-        // Get all packs for this specific group (sorted and unsorted up to 100)
-        // Note: The prompt says "pack 1 sampai 100", so we need to know the status of each pack 1-100.
+        // Ambil semua pack untuk grup spesifik ini (baik yang udah disortir maupun belum, maks 100)
+        // Catatan: Karena permintaannya "pack 1 sampai 100", kita perlu tau status masing-masing pack 1-100.
         $packsData = Pack::join('hcs_receivings', 'packs.hcs_receiving_id', '=', 'hcs_receivings.id')
             ->where('hcs_receivings.pecahan', $pecahan)
             ->where('packs.batch', $batch)
@@ -92,8 +92,8 @@ class HcsSortingController extends Controller
         $selectedPacks = $request->selected_packs;
         sort($selectedPacks);
 
-        // Validation 1: Must be in groups of 4 and sequential
-        // To be valid, the selected packs must be contiguous blocks, each block length must be a multiple of 4.
+        // Validasi 1: Harus dalam kelompok berisi 4 dan berurutan
+        // Biar valid, pack yang dipilih harus berurutan, dan panjang tiap kelompoknya kelipatan 4.
         $contiguousBlocks = [];
         $currentBlock = [];
         foreach ($selectedPacks as $packNum) {
@@ -123,8 +123,8 @@ class HcsSortingController extends Controller
                 ]);
             }
 
-            // Also ensure the block starts at a correct multiple of 4 boundary.
-            // i.e., pack 1, 5, 9, 13... so (pack - 1) % 4 == 0
+            // Pastikan juga kelompoknya dimulai dari batas kelipatan 4 yang benar.
+            // maksudnya, pack 1, 5, 9, 13... jadinya (pack - 1) kelipatan 4
             if (($block[0] - 1) % 4 !== 0) {
                 throw ValidationException::withMessages([
                     'selected_packs' => 'Posisi awal pack yang dipilih tidak valid. Harus dimulai dari kelipatan yang benar (misal: 1, 5, 9, dst).',
@@ -132,7 +132,7 @@ class HcsSortingController extends Controller
             }
         }
 
-        // Ensure none of these packs are already sorted
+        // Pastiin gak ada pack terpilih yang ternyata udah disortir duluan
         $alreadySorted = Pack::where('batch', $request->batch)
             ->where('seri', $request->seri)
             ->whereIn('pack_number', $selectedPacks)
@@ -166,7 +166,7 @@ class HcsSortingController extends Controller
                 'created_by' => auth()->id(),
             ]);
 
-            // Update Packs
+            // Update data pack-nya
             Pack::where('batch', $request->batch)
                 ->where('seri', $request->seri)
                 ->whereIn('pack_number', $selectedPacks)

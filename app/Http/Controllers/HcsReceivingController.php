@@ -21,7 +21,7 @@ class HcsReceivingController extends Controller
     {
         $query = HcsReceiving::with(['user', 'packs']);
 
-        // Text Search
+        // Pencarian Teks
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -31,7 +31,7 @@ class HcsReceivingController extends Controller
             });
         }
 
-        // Date Range Filter
+        // Filter Rentang Tanggal
         if ($request->filled('start_date')) {
             $query->whereDate('tanggal_penerimaan', '>=', $request->start_date);
         }
@@ -39,7 +39,7 @@ class HcsReceivingController extends Controller
             $query->whereDate('tanggal_penerimaan', '<=', $request->end_date);
         }
 
-        // Dropdown Filters
+        // Filter Dropdown
         if ($request->filled('pecahan')) {
             $query->where('pecahan', $request->pecahan);
         }
@@ -47,7 +47,7 @@ class HcsReceivingController extends Controller
             $query->where('supplier', $request->supplier);
         }
 
-        // Sorting
+        // Pengurutan Data (Sorting)
         $sortableColumns = ['tanggal_penerimaan', 'nomor_bon', 'pecahan', 'jumlah', 'supplier', 'batch', 'seri'];
         $sortBy = $request->get('sort_by', 'created_at');
         $sortDirection = $request->get('sort_direction', 'desc');
@@ -59,7 +59,7 @@ class HcsReceivingController extends Controller
             $query->latest();
         }
 
-        // Append query strings to pagination links so filters and sorts persist across pages
+        // Tambahin query string ke link pagination biar filter dan urutan datanya gak ilang pas pindah halaman
         $receivings = $query->paginate(10)->withQueryString();
 
         return view('hcs-receiving.index', compact('receivings'));
@@ -94,7 +94,7 @@ class HcsReceivingController extends Controller
 
     public function edit(HcsReceiving $hcsReceiving)
     {
-        // Require Sortir access validation via middleware/policies, here we just show the view
+        // Butuh validasi akses Sortir (biasanya lewat middleware/policy), di sini kita cuma nampilin halamannya aja
         if (auth()->user()->role !== 'sortir') {
             abort(403, 'Unauthorized action.');
         }
@@ -122,7 +122,7 @@ class HcsReceivingController extends Controller
         $sortedPacks = $hcsReceiving->packs()->whereNotNull('hcs_sorting_id')->pluck('pack_number')->toArray();
 
         if (!empty($sortedPacks)) {
-            // Check read-only fields
+            // Cek field yang gak boleh diedit (read-only)
             if ($validated['pecahan'] !== $hcsReceiving->pecahan ||
             $validated['batch'] !== $hcsReceiving->batch ||
             $validated['seri'] !== $hcsReceiving->seri) {

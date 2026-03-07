@@ -9,54 +9,82 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-5">
 
             {{-- ===== SEARCH & FILTER FORM ===== --}}
-            <div class="bg-white shadow-sm sm:rounded-xl border border-gray-100">
+            @php
+                $themeClasses = [
+                    'S' => ['bg' => 'bg-lime-500', 'border' => 'border-lime-500', 'ring' => 'focus:ring-lime-500', 'focus' => 'focus:border-lime-500', 'btn' => 'bg-lime-500', 'text' => 'text-gray-900', 'label' => 'Rp1.000'],
+                    'T' => ['bg' => 'bg-gray-400', 'border' => 'border-gray-400', 'ring' => 'focus:ring-gray-400', 'focus' => 'focus:border-gray-400', 'btn' => 'bg-gray-400', 'text' => 'text-white', 'label' => 'Rp2.000'],
+                    'U' => ['bg' => 'bg-amber-400', 'border' => 'border-amber-400', 'ring' => 'focus:ring-amber-400', 'focus' => 'focus:border-amber-400', 'btn' => 'bg-amber-400', 'text' => 'text-gray-900', 'label' => 'Rp5.000'],
+                    'V' => ['bg' => 'bg-purple-500', 'border' => 'border-purple-500', 'ring' => 'focus:ring-purple-500', 'focus' => 'focus:border-purple-500', 'btn' => 'bg-purple-500', 'text' => 'text-white', 'label' => 'Rp10.000'],
+                    'W' => ['bg' => 'bg-green-500', 'border' => 'border-green-500', 'ring' => 'focus:ring-green-500', 'focus' => 'focus:border-green-500', 'btn' => 'bg-green-500', 'text' => 'text-white', 'label' => 'Rp20.000'],
+                    'X' => ['bg' => 'bg-blue-500', 'border' => 'border-blue-500', 'ring' => 'focus:ring-blue-500', 'focus' => 'focus:border-blue-500', 'btn' => 'bg-blue-500', 'text' => 'text-white', 'label' => 'Rp50.000'],
+                    'Y' => ['bg' => 'bg-red-500', 'border' => 'border-red-500', 'ring' => 'focus:ring-red-500', 'focus' => 'focus:border-red-500', 'btn' => 'bg-red-500', 'text' => 'text-white', 'label' => 'Rp100.000'],
+                ];
+                $selectedPecahan = $pecahanFilter ?? '';
+            @endphp
+
+            <div x-data="{ 
+                selectedPecahan: '{{ $selectedPecahan }}',
+                themes: {{ json_encode($themeClasses) }},
+                get currentTheme() { return this.themes[this.selectedPecahan] || null },
+                setPecahan(val) {
+                    if (this.selectedPecahan === val) {
+                        this.selectedPecahan = '';
+                    } else {
+                        this.selectedPecahan = val;
+                    }
+                    this.$nextTick(() => { document.forms[0].submit(); });
+                }
+            }" 
+            class="bg-white shadow-sm sm:rounded-xl border-t-4 transition-all duration-500 overflow-hidden"
+            :class="currentTheme ? currentTheme.border : 'border-gray-100'">
                 <form action="{{ route('batch-tracking.index') }}" method="GET">
                     <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                         <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
-                        <h3 class="text-sm font-semibold text-gray-700">Cari & Filter</h3>
+                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Cari & Filter</h3>
                         @if($search || $startDate || $endDate || $pecahanFilter)
-                            <a href="{{ route('batch-tracking.index') }}" class="ml-auto text-xs text-red-500 hover:text-red-700 flex items-center gap-1 transition-colors">
+                            <a href="{{ route('batch-tracking.index') }}" class="ml-auto text-[10px] font-bold text-red-500 uppercase tracking-widest flex items-center gap-1 transition-colors hover:text-red-700">
                                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                 Reset Filter
                             </a>
                         @endif
                     </div>
-                    <div class="px-6 py-4 flex flex-wrap gap-4 items-end">
+                    <div class="px-6 py-6 flex flex-wrap gap-6 items-end">
 
                         {{-- Keyword Search --}}
-                        <div class="flex-1 min-w-[180px]">
-                            <label for="search" class="block text-xs font-medium text-gray-500 mb-1">Cari Batch / Seri</label>
+                        <div class="flex-1 min-w-[220px]">
+                            <label for="search" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Cari Batch / Seri</label>
                             <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                                </div>
                                 <input id="search" name="search" type="text"
                                     value="{{ $search }}"
                                     placeholder="Contoh: 1322001 atau AA-BA3"
-                                    class="pl-9 block w-full text-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm font-mono uppercase" />
+                                    class="block w-full text-sm border-gray-200 rounded-lg shadow-sm px-4 py-3 text-center transition-all duration-300 font-mono uppercase" 
+                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"/>
                             </div>
                         </div>
 
                         {{-- Start Date --}}
-                        <div class="min-w-[160px]">
-                            <label for="start_date" class="block text-xs font-medium text-gray-500 mb-1">Tanggal Dari</label>
+                        <div class="min-w-[180px]">
+                            <label for="start_date" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Dari Tanggal</label>
                             <input id="start_date" name="start_date" type="date"
                                 value="{{ $startDate }}"
-                                class="block w-full text-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" />
+                                class="block w-full text-sm border-gray-200 rounded-lg shadow-sm px-4 py-3 text-center transition-all duration-300" 
+                                :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"/>
                         </div>
 
                         {{-- End Date --}}
-                        <div class="min-w-[160px]">
-                            <label for="end_date" class="block text-xs font-medium text-gray-500 mb-1">Tanggal Sampai</label>
+                        <div class="min-w-[180px]">
+                            <label for="end_date" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Sampai Tanggal</label>
                             <input id="end_date" name="end_date" type="date"
                                 value="{{ $endDate }}"
-                                class="block w-full text-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" />
+                                class="block w-full text-sm border-gray-200 rounded-lg shadow-sm px-4 py-3 text-center transition-all duration-300"
+                                :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"/>
                         </div>
 
                         {{-- Submit --}}
                         <div class="flex gap-2">
                             <button type="submit"
-                                class="inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-md transition-colors shadow-sm">
+                                class="inline-flex items-center justify-center gap-1.5 px-6 py-3 rounded-lg font-bold text-xs uppercase tracking-widest transition-all shadow-md active:scale-95"
+                                :class="currentTheme ? (currentTheme.btn + ' ' + currentTheme.text + ' brightness-95 hover:brightness-105') : 'bg-gray-800 text-white'">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                                 Cari
                             </button>
@@ -65,61 +93,48 @@
                     </div>
 
                     {{-- Pecahan Filter Buttons --}}
-                    <input type="hidden" id="pecahan_input" name="pecahan" value="{{ $pecahanFilter }}">
-                    <div class="px-6 pb-4 flex flex-wrap items-center gap-2">
-                        <span class="text-xs font-medium text-gray-500">Filter Pecahan:</span>
-                        @php
-                            $pecahanList = [
-                                'S' => ['label' => 'S · Rp1.000',  'active' => 'bg-stone-600 border-stone-700 text-white',   'idle' => 'bg-stone-100   border-stone-400  text-stone-700  hover:bg-stone-200'],
-                                'T' => ['label' => 'T · Rp2.000',  'active' => 'bg-slate-500  border-slate-600  text-white',   'idle' => 'bg-slate-100   border-slate-400  text-slate-700  hover:bg-slate-200'],
-                                'U' => ['label' => 'U · Rp5.000',  'active' => 'bg-orange-500 border-orange-600 text-white',   'idle' => 'bg-orange-100  border-orange-400 text-orange-700 hover:bg-orange-200'],
-                                'V' => ['label' => 'V · Rp10.000', 'active' => 'bg-purple-600 border-purple-700 text-white',   'idle' => 'bg-purple-100  border-purple-400 text-purple-700 hover:bg-purple-200'],
-                                'W' => ['label' => 'W · Rp20.000', 'active' => 'bg-green-600  border-green-700  text-white',   'idle' => 'bg-green-100   border-green-400  text-green-700  hover:bg-green-200'],
-                                'X' => ['label' => 'X · Rp50.000', 'active' => 'bg-blue-600   border-blue-700   text-white',   'idle' => 'bg-blue-100    border-blue-400   text-blue-700   hover:bg-blue-200'],
-                                'Y' => ['label' => 'Y · Rp100.000','active' => 'bg-red-600    border-red-700    text-white',   'idle' => 'bg-red-100    border-red-400    text-red-700    hover:bg-red-200'],
-                            ];
-                        @endphp
-                        @foreach($pecahanList as $key => $pec)
-                            @php
-                                $isActive  = $pecahanFilter === $key;
-                                $btnClass  = $isActive ? $pec['active'] : $pec['idle'];
-                            @endphp
-                            <button type="button"
-                                onclick="setPecahan('{{ $key }}', this)"
-                                data-pecahan="{{ $key }}"
-                                class="pecahan-btn inline-flex flex-col items-center px-3 py-1.5 rounded-lg border-2 text-xs font-bold transition-all shadow-sm {{ $btnClass }}">
-                                <span class="text-base leading-none">{{ $key }}</span>
-                                <span class="text-[9px] font-normal leading-none mt-0.5 opacity-80">{{ explode(' · ', $pec['label'])[1] }}</span>
-                            </button>
-                        @endforeach
+                    <input type="hidden" name="pecahan" x-model="selectedPecahan">
+                    <div class="px-6 pb-6 pt-2 border-t border-gray-50 bg-gray-50/30">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mr-2">Filter Pecahan:</span>
+                            @foreach(['S', 'T', 'U', 'V', 'W', 'X', 'Y'] as $pec)
+                                <button type="button"
+                                    @click="setPecahan('{{ $pec }}')"
+                                    class="inline-flex flex-col items-center px-4 py-2 rounded-xl border-2 text-xs font-black transition-all shadow-sm active:scale-95"
+                                    :class="selectedPecahan === '{{ $pec }}' ? (themes['{{ $pec }}'].bg + ' ' + themes['{{ $pec }}'].border + ' ' + themes['{{ $pec }}'].text) : 'bg-white border-gray-100 text-gray-400 hover:border-gray-200'">
+                                    <span class="text-base leading-none">{{ $pec }}</span>
+                                    <span class="text-[8px] font-bold leading-none mt-1 opacity-80 uppercase tracking-tighter">{{ $themeClasses[$pec]['label'] }}</span>
+                                </button>
+                            @endforeach
+                        </div>
                     </div>
 
                     {{-- Active filter tags --}}
                     @if($search || $startDate || $endDate || $pecahanFilter)
                         <div class="px-6 pb-4 flex flex-wrap gap-2">
                             @if($search)
-                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-200">
-                                    Keyword: <strong class="font-mono">{{ strtoupper($search) }}</strong>
+                                <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-indigo-50 text-indigo-700 border border-indigo-200">
+                                    Keyword: <strong class="font-mono ml-1">{{ strtoupper($search) }}</strong>
                                 </span>
                             @endif
                             @if($startDate)
-                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
-                                    Dari: {{ \Carbon\Carbon::parse($startDate)->translatedFormat('d M Y') }}
+                                <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-50 text-amber-700 border border-amber-200">
+                                    Dari: <span class="ml-1">{{ \Carbon\Carbon::parse($startDate)->translatedFormat('d M Y') }}</span>
                                 </span>
                             @endif
                             @if($pecahanFilter)
                                 @php
-                                    $pecColors = ['S'=>'stone','T'=>'slate','U'=>'orange','V'=>'purple','W'=>'green','X'=>'blue','Y'=>'red'];
-                                    $pc = $pecColors[$pecahanFilter] ?? 'gray';
-                                    $pecLabels = ['S'=>'Rp1.000','T'=>'Rp2.000','U'=>'Rp5.000','V'=>'Rp10.000','W'=>'Rp20.000','X'=>'Rp50.000','Y'=>'Rp100.000'];
+                                    $theme = $themeClasses[$pecahanFilter] ?? null;
+                                    $bgColor = $theme ? str_replace('bg-', 'bg-', $theme['bg']) : 'bg-gray-100';
+                                    $textColor = $theme ? $theme['text'] : 'text-gray-700';
                                 @endphp
-                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-{{ $pc }}-50 text-{{ $pc }}-700 border border-{{ $pc }}-300">
-                                    Pecahan: <strong>{{ $pecahanFilter }} · {{ $pecLabels[$pecahanFilter] ?? '' }}</strong>
+                                <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider {{ $bgColor }} {{ $textColor }} brightness-95">
+                                    Pecahan: <strong class="ml-1">{{ $pecahanFilter }} · {{ $themeClasses[$pecahanFilter]['label'] }}</strong>
                                 </span>
                             @endif
                             @if($endDate)
-                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
-                                    Sampai: {{ \Carbon\Carbon::parse($endDate)->translatedFormat('d M Y') }}
+                                <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-50 text-amber-700 border border-amber-200">
+                                    Sampai: <span class="ml-1">{{ \Carbon\Carbon::parse($endDate)->translatedFormat('d M Y') }}</span>
                                 </span>
                             @endif
                         </div>
@@ -438,19 +453,7 @@
             searchInput.setSelectionRange(pos, pos);
         });
 
-        function setPecahan(value, btn) {
-            const input = document.getElementById('pecahan_input');
-            const form = input.closest('form');
-            
-            // If already active, clear it. Otherwise, set it.
-            if (input.value === value) {
-                input.value = '';
-            } else {
-                input.value = value;
-            }
-            
-            form.submit();
-        }
+        });
     </script>
     @endpush
 </x-app-layout>

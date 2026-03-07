@@ -42,6 +42,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         }
         );
         Route::get('/hcs-sorting', [\App\Http\Controllers\HcsSortingController::class , 'index'])->name('hcs-sorting.index');
+        Route::get('/rekomendasi-penyortiran', [\App\Http\Controllers\RekomendasiPenyortiranController::class , 'index'])->name('rekomendasi-penyortiran.index');
         Route::get('/hcs-sorting-reports', [\App\Http\Controllers\HcsSortingReportController::class , 'index'])->name('hcs-sorting-reports.index');
         Route::get('/hcs-sorting-reports/export', [\App\Http\Controllers\HcsSortingReportController::class , 'export'])->name('hcs-sorting-reports.export');
         Route::get('/hcs-sorting-reports/print', [\App\Http\Controllers\HcsSortingReportController::class , 'print'])->name('hcs-sorting-reports.print');

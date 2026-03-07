@@ -17,14 +17,14 @@ class ReportController extends Controller
         $gilir = $request->input('gilir');
         $pecahan = $request->input('pecahan');
 
-        // Calculate GLOBAL all-time totals for each denomination for the summary cards
+        // Hitung total KESELURUHAN (dari awal) buat tiap pecahan untuk ditampilin di kartu ringkasan
         $globalTotalsPerPecahan = collect(['S' => 0, 'T' => 0, 'U' => 0, 'V' => 0, 'W' => 0, 'X' => 0, 'Y' => 0]);
         $totals = HcsReceiving::selectRaw('pecahan, SUM(jumlah) as total')
             ->groupBy('pecahan')
             ->pluck('total', 'pecahan');
         $globalTotalsPerPecahan = $globalTotalsPerPecahan->merge($totals);
 
-        // Calculate Global Grand Total
+        // Hitung Total Keseluruhan (Semua Pecahan)
         $globalGrandTotal = $globalTotalsPerPecahan->sum();
 
         $query = HcsReceiving::with('user');
@@ -115,7 +115,7 @@ class ReportController extends Controller
         $gilir = $request->input('gilir');
         $pecahan = $request->input('pecahan');
 
-        // Global totals (All-time)
+        // Total Keseluruhan (Dari awal banget)
         $globalTotalsPerPecahan = collect(['S' => 0, 'T' => 0, 'U' => 0, 'V' => 0, 'W' => 0, 'X' => 0, 'Y' => 0]);
         $totals = HcsReceiving::selectRaw('pecahan, SUM(jumlah) as total')
             ->groupBy('pecahan')
@@ -123,7 +123,7 @@ class ReportController extends Controller
         $globalTotalsPerPecahan = $globalTotalsPerPecahan->merge($totals);
         $globalGrandTotal = $globalTotalsPerPecahan->sum();
 
-        // Filtered totals (Current View)
+        // Total Hasil Filter (Sesuai yang tampil sekarang)
         $filteredTotalsPerPecahan = collect(['S' => 0, 'T' => 0, 'U' => 0, 'V' => 0, 'W' => 0, 'X' => 0, 'Y' => 0]);
 
         $query = HcsReceiving::with('user');
