@@ -43,6 +43,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         );
         Route::get('/hcs-sorting', [\App\Http\Controllers\HcsSortingController::class , 'index'])->name('hcs-sorting.index');
         Route::get('/hcs-sorting-reports', [\App\Http\Controllers\HcsSortingReportController::class , 'index'])->name('hcs-sorting-reports.index');
+        Route::middleware('role:sortir')->group(function () {
+            Route::get('/hcs-sorting-reports/{hcs_sorting_report}/edit', [\App\Http\Controllers\HcsSortingReportController::class , 'edit'])->name('hcs-sorting-reports.edit');
+            Route::put('/hcs-sorting-reports/{hcs_sorting_report}', [\App\Http\Controllers\HcsSortingReportController::class , 'update'])->name('hcs-sorting-reports.update');
+            Route::delete('/hcs-sorting-reports/{hcs_sorting_report}', [\App\Http\Controllers\HcsSortingReportController::class , 'destroy'])->name('hcs-sorting-reports.destroy');
+        }
+        );
 
         // API to get used packs (requires auth)
         Route::get('/api/packs/used', [\App\Http\Controllers\PackController::class , 'used'])->name('packs.used');

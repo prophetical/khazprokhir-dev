@@ -15,7 +15,7 @@
 
                     @php
                         $colorMap = [
-                            'S' => 'bg-yellow-200 border-yellow-400 text-yellow-900',   // 1k Kuning Kehijauan
+                            'S' => 'bg-lime-100 border-lime-300 text-lime-900',       // 1k Kuning Kehijauan
                             'T' => 'bg-gray-200 border-gray-400 text-gray-900',       // 2k Abu-abu
                             'U' => 'bg-amber-100 border-amber-300 text-amber-900',    // 5k Cokelat Kekuningan
                             'V' => 'bg-purple-100 border-purple-300 text-purple-900',   // 10k Ungu

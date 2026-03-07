@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Proses Penyortiran HCS') }} - Batch: {{ $batch }}, Seri: {{ $seri }}, Pecahan: {{ $pecahan }}
+            {{ __('Edit Laporan Penyortiran HCS') }} - Batch: {{ $hcs_sorting_report->batch }}, Seri: {{ $hcs_sorting_report->seri }}, Pecahan: {{ $hcs_sorting_report->pecahan }}
         </h2>
     </x-slot>
 
@@ -9,7 +9,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
             @if ($errors->any())
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
                     <strong class="font-bold">Terjadi Kesalahan!</strong>
                     <ul class="mt-2 list-disc list-inside text-sm">
                         @foreach ($errors->all() as $error)
@@ -28,14 +28,17 @@
                 <!-- Left Column: Grid Selection -->
                 <div class="flex-1 bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900">
-                        <h3 class="text-lg font-medium text-gray-900 border-b pb-2 mb-4">Pilih Pack untuk Disortir (1-100)</h3>
+                        <div class="flex justify-between items-center border-b pb-2 mb-4">
+                            <h3 class="text-lg font-medium text-gray-900">Ubah Pack Disortir (1-100)</h3>
+                        </div>
                         
                         <!-- Legend -->
                         <div class="flex flex-wrap gap-4 mb-6 text-sm bg-gray-50 p-3 rounded-md border border-gray-200">
-                            <div class="flex items-center"><div class="w-4 h-4 rounded bg-blue-500 mr-2 shadow-sm"></div> Rikyet (Siap)</div>
-                            <div class="flex items-center"><div class="w-4 h-4 rounded bg-green-500 mr-2 shadow-sm"></div> Cutpack (Siap)</div>
-                            <div class="flex items-center"><div class="w-4 h-4 rounded bg-blue-200 border border-blue-400 mr-2" style="background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 3px, transparent 3px, transparent 6px);"></div> Rikyet (Disortir)</div>
-                            <div class="flex items-center"><div class="w-4 h-4 rounded bg-green-200 border border-green-400 mr-2" style="background-image: repeating-linear-gradient(-45deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 3px, transparent 3px, transparent 6px);"></div> Cutpack (Disortir)</div>
+                            <div class="flex items-center"><div class="w-4 h-4 rounded bg-blue-500 mr-2 shadow-sm"></div> Rikyet (Tersedia)</div>
+                            <div class="flex items-center"><div class="w-4 h-4 rounded bg-green-500 mr-2 shadow-sm"></div> Cutpack (Tersedia)</div>
+                            <div class="flex items-center"><div class="w-4 h-4 rounded bg-blue-200 border border-blue-400 mr-2" style="background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 3px, transparent 3px, transparent 6px);"></div> Rikyet (Disortir Sesi Lain)</div>
+                            <div class="flex items-center"><div class="w-4 h-4 rounded bg-green-200 border border-green-400 mr-2" style="background-image: repeating-linear-gradient(-45deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 3px, transparent 3px, transparent 6px);"></div> Cutpack (Disortir Sesi Lain)</div>
+                            <div class="flex items-center"><div class="w-4 h-4 rounded ring-2 ring-indigo-500 bg-white mr-2"></div> Sedang Dipilih</div>
                             <div class="flex items-center"><div class="w-4 h-4 rounded bg-gray-100 border border-gray-300 mr-2"></div> Belum Diinput</div>
                         </div>
 
@@ -44,17 +47,16 @@
                             @for ($i = 1; $i <= 100; $i++)
                                 @php
                                     $pack = $packsData->get($i);
-                                    $status = 'empty'; // default
                                     $statusClass = 'bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed';
                                     $isReady = false;
 
                                     if ($pack) {
-                                        $isSorted = !is_null($pack->hcs_sorting_id);
                                         $supplier = strtolower($pack->pack_supplier);
+                                        // A pack is sorted by ANOTHER session if it has an id and it doesn't match the current one
+                                        $isSortedByOther = !is_null($pack->hcs_sorting_id) && $pack->hcs_sorting_id !== $hcs_sorting_report->id;
 
-                                        if ($isSorted) {
-                                            $status = 'sorted';
-                                            // Strong Hatch pattern for sorted packs
+                                        if ($isSortedByOther) {
+                                            // Disabled / Sorted by other
                                             if (str_contains($supplier, 'rikyet')) {
                                                 $statusClass = 'bg-blue-200 text-blue-900 cursor-not-allowed border-blue-400 shadow-inner';
                                                 $hatchStyle = "background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 4px, transparent 4px, transparent 8px);";
@@ -64,7 +66,7 @@
                                             }
                                             $statusClass .= '" style="' . $hatchStyle; 
                                         } else {
-                                            $status = 'ready';
+                                            // Available for THIS session
                                             $isReady = true;
                                             if (str_contains($supplier, 'rikyet')) {
                                                 $statusClass = 'bg-blue-500 text-white hover:bg-blue-600 cursor-pointer shadow-sm';
@@ -96,7 +98,7 @@
                         <!-- Validation Message -->
                         <div x-show="validationError" x-cloak class="text-red-600 text-sm font-medium mt-2 p-3 bg-red-50 rounded border border-red-200" x-text="validationError"></div>
                         <div class="text-sm text-gray-500 mt-2">
-                            * Klik dan geser (drag) untuk memilih beberapa pack sekaligus. Harus berurutan dan kelipatan 4.
+                            * Klik dan geser (drag) untuk memilih/membatalkan pilihan beberapa pack sekaligus. Harus berurutan dan kelipatan 4.
                         </div>
                     </div>
                 </div>
@@ -104,13 +106,11 @@
                 <!-- Right Column: Form -->
                 <div class="w-full lg:w-1/3 bg-white overflow-hidden shadow-sm sm:rounded-lg h-fit">
                     <div class="p-6 text-gray-900">
-                        <h3 class="text-lg font-medium text-gray-900 border-b pb-2 mb-4">Detail Penyortiran</h3>
+                        <h3 class="text-lg font-medium text-gray-900 border-b pb-2 mb-4">Detail Laporan</h3>
                         
-                        <form method="POST" action="{{ route('hcs-sorting.store') }}" id="sortingForm" @submit="validateSubmission">
+                        <form method="POST" action="{{ route('hcs-sorting-reports.update', $hcs_sorting_report->id) }}" id="sortingForm" @submit="validateSubmission">
                             @csrf
-                            <input type="hidden" name="pecahan" value="{{ $pecahan }}">
-                            <input type="hidden" name="batch" value="{{ $batch }}">
-                            <input type="hidden" name="seri" value="{{ $seri }}">
+                            @method('PUT')
                             
                             <!-- Hidden inputs for selected packs -->
                             <template x-for="pack in selectedPacks" :key="pack">
@@ -131,44 +131,45 @@
                                 </div>
 
                                 <div>
-                                    <x-input-label for="supplier" :value="__('Supplier (Hasil Sortir)')" />
+                                    <x-input-label for="supplier" :value="__('Supplier')" />
                                     <select id="supplier" name="supplier" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-1 w-full" required>
-                                        <option value="">Pilih Supplier</option>
-                                        <option value="Cutpack" {{ old('supplier') == 'Cutpack' ? 'selected' : '' }}>Cutpack</option>
-                                        <option value="Rikyet" {{ old('supplier') == 'Rikyet' ? 'selected' : '' }}>Rikyet</option>
+                                        <option value="Cutpack" {{ old('supplier', $hcs_sorting_report->supplier) == 'Cutpack' ? 'selected' : '' }}>Cutpack</option>
+                                        <option value="Rikyet" {{ old('supplier', $hcs_sorting_report->supplier) == 'Rikyet' ? 'selected' : '' }}>Rikyet</option>
                                     </select>
                                 </div>
 
                                 <div>
                                     <x-input-label for="petugas_1" :value="__('Petugas 1')" />
-                                    <x-text-input id="petugas_1" class="block mt-1 w-full" type="text" name="petugas_1" :value="old('petugas_1')" required />
+                                    <x-text-input id="petugas_1" class="block mt-1 w-full" type="text" name="petugas_1" :value="old('petugas_1', $hcs_sorting_report->petugas_1)" required />
                                 </div>
 
                                 <div>
                                     <x-input-label for="petugas_2" :value="__('Petugas 2 (Opsional)')" />
-                                    <x-text-input id="petugas_2" class="block mt-1 w-full" type="text" name="petugas_2" :value="old('petugas_2')" />
+                                    <x-text-input id="petugas_2" class="block mt-1 w-full" type="text" name="petugas_2" :value="old('petugas_2', $hcs_sorting_report->petugas_2)" />
                                 </div>
 
                                 <div>
-                                    <x-input-label for="tanggal" :value="__('Tanggal')" />
-                                    <x-text-input id="tanggal" class="block mt-1 w-full" type="date" name="tanggal" :value="old('tanggal', date('Y-m-d'))" required />
+                                    <x-input-label for="tanggal_sortir" :value="__('Tanggal Sortir')" />
+                                    <x-text-input id="tanggal_sortir" class="block mt-1 w-full" type="date" name="tanggal_sortir" :value="old('tanggal_sortir', $hcs_sorting_report->tanggal_sortir->format('Y-m-d'))" required />
                                 </div>
 
                                 <div>
                                     <x-input-label for="gilir" :value="__('Gilir')" />
                                     <select id="gilir" name="gilir" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-1 w-full" required>
-                                        <option value="">Pilih Gilir</option>
-                                        <option value="Gilir 1" {{ old('gilir') == 'Gilir 1' ? 'selected' : '' }}>Gilir 1</option>
-                                        <option value="Gilir 2" {{ old('gilir') == 'Gilir 2' ? 'selected' : '' }}>Gilir 2</option>
-                                        <option value="Gilir 3" {{ old('gilir') == 'Gilir 3' ? 'selected' : '' }}>Gilir 3</option>
+                                        <option value="Gilir 1" {{ old('gilir', $hcs_sorting_report->gilir) == 'Gilir 1' ? 'selected' : '' }}>Gilir 1</option>
+                                        <option value="Gilir 2" {{ old('gilir', $hcs_sorting_report->gilir) == 'Gilir 2' ? 'selected' : '' }}>Gilir 2</option>
+                                        <option value="Gilir 3" {{ old('gilir', $hcs_sorting_report->gilir) == 'Gilir 3' ? 'selected' : '' }}>Gilir 3</option>
                                     </select>
                                 </div>
                                 
-                                <div class="pt-4 border-t">
+                                <div class="flex items-center justify-end mt-6 gap-3 pt-4 border-t">
+                                    <a href="{{ route('hcs-sorting-reports.index') }}" class="w-1/3 text-center inline-flex justify-center items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
+                                        Batal
+                                    </a>
                                     <button type="submit" 
-                                            class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                            class="w-2/3 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                             :disabled="selectedPacks.length === 0 || validationError !== ''">
-                                        Simpan Data Sortir
+                                        Simpan Perubahan
                                     </button>
                                 </div>
                             </div>
@@ -183,7 +184,8 @@
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('sortingGrid', () => ({
-                selectedPacks: [],
+                // Initialize with existing packs
+                selectedPacks: {!! json_encode(old('selected_packs', $hcs_sorting_report->packs_selected)) !!}.map(Number),
                 isDragging: false,
                 dragStart: null,
                 validationError: '',
@@ -201,50 +203,6 @@
                     return this.selectedPacks.includes(num);
                 },
 
-                startSelection(num) {
-                    // Logic to toggle block or start drag
-                    this.isDragging = true;
-                    this.dragStart = num;
-                    
-                    // If clicking an already selected one, we don't clear, we just start fresh selection point
-                    if (!this.isSelected(num)) {
-                       // Optional: If we want strict block clicking, we might just re-evaluate here
-                       this.selectedPacks = [num];
-                    } else {
-                        // Deselect block logic
-                        let newSelection = [...this.selectedPacks];
-                        const index = newSelection.indexOf(num);
-                        if (index > -1) {
-                            newSelection.splice(index, 1);
-                        }
-                        this.selectedPacks = [...newSelection].sort((a,b)=>a-b);
-                    }
-                    this.validateSelection();
-                    
-                    // Actually, a better UX is clicking toggles selection. Let's make it simpler for user:
-                    // If start click is not selected, select it. If drag, add to it.
-                    this.selectedPacks = [num]; // reset on new click to start fresh block selection
-                },
-
-                onHover(num) {
-                    if (this.isDragging && this.dragStart !== null) {
-                        // generate range from dragStart to num
-                        let start = Math.min(this.dragStart, num);
-                        let end = Math.max(this.dragStart, num);
-                        
-                        let newSelection = [];
-                        for(let i=start; i<=end; i++){
-                            newSelection.push(i);
-                        }
-                        // We reset selected to the currently dragged range. 
-                        // To allow multiple blocks, we would need ctrl+click, but requirement says "berurutan" 
-                        // It implies maybe a single continuous block or multiple. Let's support multiple contiguous blocks.
-                        // For simplicity in UX, we'll let dragging OVERRIDE current selection to form exactly one contiguous block each drag 
-                        // (Wait, user might want to select 1-4 and 21-24. We need to append. Let's rethink.)
-                    }
-                },
-                
-                // Let's refine the selection logic to simply toggle the pack, and we validate the whole array.
                 // Resetting logic:
                 startSelection(num) {
                     this.isDragging = true;
@@ -252,11 +210,7 @@
                 },
                 
                 onHover(num) {
-                     // In a real application, drag-to-select is complex if we want multiple blocks. 
-                     // Let's stick to click-to-toggle for reliability, drag just continues toggling the state of dragStart.
                      if(!this.isDragging) return;
-                     
-                     // If it's already selected, skip
                      if(!this.isSelected(num)) {
                          this.togglePack(num);
                      }

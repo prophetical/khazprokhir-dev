@@ -81,6 +81,7 @@ class HcsSortingController extends Controller
             'pecahan' => 'required',
             'batch' => 'required',
             'seri' => 'required',
+            'supplier' => 'required|in:Rikyet,Cutpack',
             'petugas_1' => 'required',
             'petugas_2' => 'nullable',
             'tanggal' => 'required|date',
@@ -121,18 +122,14 @@ class HcsSortingController extends Controller
                     'selected_packs' => 'Pack yang dipilih harus berurutan dan berkelipatan 4 (contoh: 1-4, 5-8, dll).',
                 ]);
             }
-        }
 
-        // Determine Supplier (assuming all selected packs share the same supplier, we just get from the first one)
-        $firstPack = Pack::where('batch', $request->batch)
-            ->where('seri', $request->seri)
-            ->where('pack_number', $selectedPacks[0])
-            ->first();
-
-        if (!$firstPack) {
-            throw ValidationException::withMessages([
-                'selected_packs' => 'Data pack tidak ditemukan.',
-            ]);
+            // Also ensure the block starts at a correct multiple of 4 boundary.
+            // i.e., pack 1, 5, 9, 13... so (pack - 1) % 4 == 0
+            if (($block[0] - 1) % 4 !== 0) {
+                throw ValidationException::withMessages([
+                    'selected_packs' => 'Posisi awal pack yang dipilih tidak valid. Harus dimulai dari kelipatan yang benar (misal: 1, 5, 9, dst).',
+                ]);
+            }
         }
 
         // Ensure none of these packs are already sorted
@@ -158,7 +155,7 @@ class HcsSortingController extends Controller
                 'pecahan' => $request->pecahan,
                 'batch' => $request->batch,
                 'seri' => $request->seri,
-                'supplier' => $firstPack->supplier,
+                'supplier' => $request->supplier,
                 'packs_selected' => $selectedPacks,
                 'jumlah_pack' => $jumlahPack,
                 'jumlah_bilyet' => $jumlahBilyet,
