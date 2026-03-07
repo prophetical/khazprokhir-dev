@@ -43,6 +43,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         );
         Route::get('/hcs-sorting', [\App\Http\Controllers\HcsSortingController::class , 'index'])->name('hcs-sorting.index');
         Route::get('/hcs-sorting-reports', [\App\Http\Controllers\HcsSortingReportController::class , 'index'])->name('hcs-sorting-reports.index');
+        Route::get('/hcs-sorting-reports/export', [\App\Http\Controllers\HcsSortingReportController::class , 'export'])->name('hcs-sorting-reports.export');
+        Route::get('/hcs-sorting-reports/print', [\App\Http\Controllers\HcsSortingReportController::class , 'print'])->name('hcs-sorting-reports.print');
         Route::middleware('role:sortir')->group(function () {
             Route::get('/hcs-sorting-reports/{hcs_sorting_report}/edit', [\App\Http\Controllers\HcsSortingReportController::class , 'edit'])->name('hcs-sorting-reports.edit');
             Route::put('/hcs-sorting-reports/{hcs_sorting_report}', [\App\Http\Controllers\HcsSortingReportController::class , 'update'])->name('hcs-sorting-reports.update');

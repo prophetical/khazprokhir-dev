@@ -91,9 +91,7 @@ class HcsReceivingService
         try {
             DB::beginTransaction();
 
-            if ($hcs->packs()->whereNotNull('hcs_sorting_id')->exists()) {
-                throw new Exception("Data tidak dapat diubah karena pack sudah disortir.");
-            }
+            $sortedPacks = $hcs->packs()->whereNotNull('hcs_sorting_id')->get()->keyBy('pack_number');
 
             // 1. Revert Old Stock Ledger
             $oldPacksCount = $hcs->packs()->count();
@@ -112,8 +110,8 @@ class HcsReceivingService
                 $oldLedger->decrement('total_packed', $decPacked);
             }
 
-            // 2. Delete Old Packs
-            $hcs->packs()->delete();
+            // 2. Delete Old Packs (Only those without hcs_sorting_id)
+            $hcs->packs()->whereNull('hcs_sorting_id')->delete();
 
             // 3. Update HCS Record
             $hcs->update([
@@ -131,17 +129,19 @@ class HcsReceivingService
                 'updated_by' => $userId,
             ]);
 
-            // 4. Create New Packs
+            // 4. Create New Packs (Avoid re-creating sorted ones)
             $selectedPacksCount = count($data['packs']);
             foreach ($data['packs'] as $packNumber) {
-                Pack::create([
-                    'hcs_receiving_id' => $hcs->id,
-                    'batch' => $data['batch'],
-                    'seri' => $data['seri'],
-                    'pack_number' => $packNumber,
-                    'supplier' => $data['supplier'],
-                    'created_by' => $userId,
-                ]);
+                if (!$sortedPacks->has($packNumber)) {
+                    Pack::create([
+                        'hcs_receiving_id' => $hcs->id,
+                        'batch' => $data['batch'],
+                        'seri' => $data['seri'],
+                        'pack_number' => $packNumber,
+                        'supplier' => $data['supplier'],
+                        'created_by' => $userId,
+                    ]);
+                }
             }
 
             // 5. Update New Stock Ledger

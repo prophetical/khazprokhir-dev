@@ -99,12 +99,13 @@ class HcsReceivingController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        if ($hcsReceiving->packs()->whereNotNull('hcs_sorting_id')->exists()) {
-            return back()->with('error', 'Data tidak dapat diedit karena beberapa pack sudah disortir.');
-        }
-
         $hcsReceiving->load('packs');
-        return view('hcs-receiving.edit', compact('hcsReceiving'));
+
+        $sortedPacks = $hcsReceiving->packs->whereNotNull('hcs_sorting_id')->pluck('pack_number')->toArray();
+        $hasSortedPacks = !empty($sortedPacks);
+        $sortedPacksCount = count($sortedPacks);
+
+        return view('hcs-receiving.edit', compact('hcsReceiving', 'sortedPacks', 'hasSortedPacks', 'sortedPacksCount'));
     }
 
     public function update(UpdateHcsReceivingRequest $request, HcsReceiving $hcsReceiving)
@@ -118,8 +119,26 @@ class HcsReceivingController extends Controller
             return back()->withInput()->withErrors(['packs' => "Jumlah packs yang dipilih ($selectedPacksCount) tidak sesuai dengan jumlah bilyet ($jumlah). Dibutuhkan $packsNeeded packs."]);
         }
 
-        if ($hcsReceiving->packs()->whereNotNull('hcs_sorting_id')->exists()) {
-            return back()->withInput()->withErrors(['error' => 'Data tidak dapat diedit karena beberapa pack sudah disortir.']);
+        $sortedPacks = $hcsReceiving->packs()->whereNotNull('hcs_sorting_id')->pluck('pack_number')->toArray();
+
+        if (!empty($sortedPacks)) {
+            // Check read-only fields
+            if ($validated['pecahan'] !== $hcsReceiving->pecahan ||
+            $validated['batch'] !== $hcsReceiving->batch ||
+            $validated['seri'] !== $hcsReceiving->seri) {
+                return back()->withInput()->withErrors(['error' => 'Pecahan, Batch, dan Seri tidak boleh diubah karena sudah ada pack yang disortir.']);
+            }
+
+            // Validasi minimum pack
+            if ($selectedPacksCount < count($sortedPacks)) {
+                return back()->withInput()->withErrors(['packs' => 'Jumlah pack tidak boleh kurang dari pack yang sudah disortir (' . count($sortedPacks) . ' pack).']);
+            }
+
+            // Validasi pack yang sudah disortir tidak boleh di-unselect
+            $missingSortedPacks = array_diff($sortedPacks, $validated['packs']);
+            if (!empty($missingSortedPacks)) {
+                return back()->withInput()->withErrors(['packs' => 'Pack yang sudah disortir tidak boleh dibuang.']);
+            }
         }
 
         try {

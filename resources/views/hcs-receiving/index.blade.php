@@ -179,7 +179,7 @@
                                     <!-- Group Header Row -->
                                     <tr class="bg-indigo-50 border-t border-b border-indigo-100">
                                         <td colspan="8" class="px-6 py-3 text-sm font-bold text-indigo-900">
-                                            Batch / Seri: {{ $groupKey }}
+                                            {{ $groupKey }}
                                         </td>
                                     </tr>
                                     
@@ -187,7 +187,14 @@
                                     @foreach($groupItems as $receiving)
                                         <tr class="hover:bg-indigo-50/30 transition-colors">
                                             <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">{{ $receiving->tanggal_penerimaan }}</td>
-                                            <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ $receiving->nomor_bon }}</td>
+                                            <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+                                                {{ $receiving->nomor_bon }}
+                                                @if(isset($receiving->packs) && $receiving->packs->whereNotNull('hcs_sorting_id')->isNotEmpty())
+                                                    <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                                                        Ada Pack Disortir
+                                                    </span>
+                                                @endif
+                                            </td>
                                             <td class="px-4 py-4 whitespace-nowrap text-sm">
                                                 @php
                                                     $pecahanColors = [
@@ -223,11 +230,11 @@
                                                             </svg>
                                                         </a>
                                                         @if($hasSortedPacks)
-                                                            <button type="button" class="text-indigo-600 opacity-50 cursor-not-allowed hover:scale-110 transition-all" title="Edit Data (Disabled)" onclick="alertSorted()">
+                                                            <a href="{{ route('hcs-receiving.edit', $receiving->id) }}" class="text-orange-600 hover:text-orange-800 transition-all hover:scale-110" title="Edit Data (Sebagian Terkunci)">
                                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                                                 </svg>
-                                                            </button>
+                                                            </a>
                                                             <button type="button" class="text-red-600 opacity-50 cursor-not-allowed transition-colors" title="Hapus Data (Disabled)" onclick="alertSorted()">
                                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>

@@ -11,7 +11,7 @@
                 <div class="p-6 text-gray-900 border-b border-gray-200">
                     <h3 class="text-lg font-medium text-gray-900 border-l-4 border-indigo-600 pl-2 mb-6">Filter Laporan</h3>
                     
-                    <form method="GET" action="{{ route('hcs-sorting-reports.index') }}" class="mb-6 grid grid-cols-1 md:grid-cols-5 gap-4 items-end bg-gray-50 p-4 rounded-md border border-gray-100">
+                    <form method="GET" action="{{ route('hcs-sorting-reports.index') }}" class="mb-6 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 items-end bg-gray-50 p-4 rounded-md border border-gray-100">
                         <div>
                             <x-input-label for="tanggal_dari" :value="__('Tanggal Dari')" />
                             <x-text-input id="tanggal_dari" class="block mt-1 w-full text-sm" type="date" name="tanggal_dari" :value="request('tanggal_dari')" />
@@ -21,6 +21,15 @@
                             <x-text-input id="tanggal_sampai" class="block mt-1 w-full text-sm" type="date" name="tanggal_sampai" :value="request('tanggal_sampai')" />
                         </div>
                         <div>
+                            <x-input-label for="gilir" :value="__('Gilir')" />
+                            <select id="gilir" name="gilir" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm">
+                                <option value="">Semua Gilir</option>
+                                <option value="Gilir 1" {{ request('gilir') == 'Gilir 1' ? 'selected' : '' }}>Gilir 1</option>
+                                <option value="Gilir 2" {{ request('gilir') == 'Gilir 2' ? 'selected' : '' }}>Gilir 2</option>
+                                <option value="Gilir 3" {{ request('gilir') == 'Gilir 3' ? 'selected' : '' }}>Gilir 3</option>
+                            </select>
+                        </div>
+                        <div>
                             <x-input-label for="batch" :value="__('Batch')" />
                             <x-text-input id="batch" class="block mt-1 w-full text-sm" type="text" name="batch" :value="request('batch')" placeholder="Cari Batch" />
                         </div>
@@ -28,13 +37,31 @@
                             <x-input-label for="seri" :value="__('Seri')" />
                             <x-text-input id="seri" class="block mt-1 w-full text-sm" type="text" name="seri" :value="request('seri')" placeholder="Cari Seri" />
                         </div>
-                        <div class="flex gap-2">
-                            <button type="submit" class="w-full inline-flex justify-center items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                                Filter
-                            </button>
-                            <a href="{{ route('hcs-sorting-reports.index') }}" class="w-full inline-flex justify-center items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150 text-center">
-                                Reset
-                            </a>
+                        <div class="col-span-1 lg:col-span-1 flex flex-col gap-2">
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button type="submit" class="inline-flex items-center justify-center px-4 py-2.5 bg-indigo-600 border border-transparent rounded-lg font-bold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200 shadow-sm" title="Terapkan Filter">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                    </button>
+                                    <a href="{{ route('hcs-sorting-reports.index') }}" class="inline-flex items-center justify-center px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-lg font-bold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-200 active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 transition duration-200 shadow-sm" title="Reset Semua Filter">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                                    </a>
+                                </div>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <a href="{{ route('hcs-sorting-reports.export', ['tanggal_dari' => request('tanggal_dari'), 'tanggal_sampai' => request('tanggal_sampai'), 'gilir' => request('gilir'), 'batch' => request('batch'), 'seri' => request('seri')]) }}" 
+                                       class="inline-flex items-center justify-center p-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors shadow-sm" title="Export Excel (CSV)">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                    </a>
+                                    <a href="{{ route('hcs-sorting-reports.print', ['tanggal_dari' => request('tanggal_dari'), 'tanggal_sampai' => request('tanggal_sampai'), 'gilir' => request('gilir'), 'batch' => request('batch'), 'seri' => request('seri')]) }}" 
+                                       target="_blank"
+                                       class="inline-flex items-center justify-center p-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-colors shadow-sm" title="Export PDF">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                                    </a>
+                                    <a href="{{ route('hcs-sorting-reports.print', ['tanggal_dari' => request('tanggal_dari'), 'tanggal_sampai' => request('tanggal_sampai'), 'gilir' => request('gilir'), 'batch' => request('batch'), 'seri' => request('seri'), 'autoprint' => 1]) }}" 
+                                       target="_blank"
+                                       class="inline-flex items-center justify-center p-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors shadow-sm" title="Cetak Laporan">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 00-2 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                                    </a>
+                                </div>
                         </div>
                     </form>
 
@@ -50,7 +77,7 @@
                     @endif
 
                     <div class="overflow-x-auto rounded-lg border border-gray-200 mt-4">
-                        <table id="reportsTable" class="min-w-full divide-y divide-gray-200 stripe hover" style="width:100%">
+                        <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
@@ -69,18 +96,18 @@
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @php
                                     $colorMap = [
-                                        'S' => 'bg-lime-200 border-lime-400 text-lime-800',       // 1k Kuning Kehijauan
-                                        'T' => 'bg-gray-200 border-gray-400 text-gray-800',       // 2k Abu-abu
-                                        'U' => 'bg-amber-100 border-amber-300 text-amber-800',    // 5k Cokelat Kekuningan
-                                        'V' => 'bg-purple-100 border-purple-300 text-purple-800',   // 10k Ungu
-                                        'W' => 'bg-green-100 border-green-300 text-green-800',    // 20k Hijau
-                                        'X' => 'bg-blue-100 border-blue-300 text-blue-800',      // 50k Biru
-                                        'Y' => 'bg-red-100 border-red-300 text-red-800',       // 100k Merah
+                                        'S' => 'bg-lime-200 border-lime-400 text-lime-800',
+                                        'T' => 'bg-gray-200 border-gray-400 text-gray-800',
+                                        'U' => 'bg-amber-100 border-amber-300 text-amber-800',
+                                        'V' => 'bg-purple-100 border-purple-300 text-purple-800',
+                                        'W' => 'bg-green-100 border-green-300 text-green-800',
+                                        'X' => 'bg-blue-100 border-blue-300 text-blue-800',
+                                        'Y' => 'bg-red-100 border-red-300 text-red-800',
                                     ];
                                 @endphp
                                 @forelse ($reports as $report)
                                     <tr class="hover:bg-gray-50">
-                                        <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900" data-sort="{{ $report->tanggal_sortir->format('Y-m-d') }}">{{ $report->tanggal_sortir->format('d/m/Y') }}</td>
+                                        <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">{{ $report->tanggal_sortir->format('d/m/Y') }}</td>
                                         <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">{{ $report->gilir }}</td>
                                         <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{{ $report->batch }}</td>
                                         <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">{{ $report->seri }}</td>
@@ -90,21 +117,28 @@
                                             </span>
                                         </td>
                                         <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">{{ $report->supplier }}</td>
-                                        <td class="px-3 py-4 text-sm text-gray-500 max-w-xs truncate" title="{{ implode(', ', $report->packs_selected) }}">
+                                        <td class="px-3 py-4 text-sm text-gray-500 max-w-xs truncate" title="{{ is_array($report->packs_selected) ? implode(', ', $report->packs_selected) : '' }}">
                                             @php
-                                                $arr = $report->packs_selected;
-                                                sort($arr);
-                                                $displayStr = "";
-                                                if(count($arr) <= 5) {
-                                                    $displayStr = implode(', ', $arr);
-                                                } else {
-                                                    $displayStr = $arr[0] . ', ' . $arr[1] . ', ... , ' . $arr[count($arr)-1];
+                                                $arr = is_array($report->packs_selected) ? $report->packs_selected : [];
+                                                sort($arr, SORT_NUMERIC);
+                                                $ranges = [];
+                                                $i = 0;
+                                                while ($i < count($arr)) {
+                                                    $start = $arr[$i];
+                                                    $end = $start;
+                                                    while (isset($arr[$i + 1]) && $arr[$i + 1] == $end + 1) {
+                                                        $end = $arr[$i + 1];
+                                                        $i++;
+                                                    }
+                                                    $ranges[] = ($start == $end) ? $start : $start . '-' . $end;
+                                                    $i++;
                                                 }
+                                                $displayStr = implode(' | ', $ranges);
                                             @endphp
                                             {{ $displayStr }}
                                         </td>
                                         <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900 text-right font-medium">{{ number_format($report->jumlah_pack, 0, ',', '.') }}</td>
-                                        <td class="px-3 py-4 whitespace-nowrap text-sm text-green-700 text-right font-medium" data-sort="{{ $report->jumlah_bilyet }}">{{ number_format($report->jumlah_bilyet, 0, ',', '.') }}</td>
+                                        <td class="px-3 py-4 whitespace-nowrap text-sm text-green-700 text-right font-medium">{{ number_format($report->jumlah_bilyet, 0, ',', '.') }}</td>
                                         <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {{ $report->petugas_1 }} 
                                             @if($report->petugas_2)
@@ -133,65 +167,26 @@
                                         </td>
                                     </tr>
                                 @empty
-                                    <!-- Leave empty, let DataTables handle empty state -->
+                                    <tr>
+                                        <td colspan="11" class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">Tidak ada data penyortiran yang sesuai.</td>
+                                    </tr>
                                 @endforelse
                             </tbody>
                         </table>
+                    </div>
+                    
+                    <div class="mt-4">
+                        {{ $reports->links() }}
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- DataTables CSS & JS (Localized) -->
-    <link href="{{ asset('vendor/datatables/datatables.min.css') }}" rel="stylesheet">
-    <script src="{{ asset('vendor/datatables/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('vendor/datatables/vfs_fonts.js') }}"></script>
-    <script src="{{ asset('vendor/datatables/datatables.min.js') }}"></script>
     <!-- SweetAlert2 -->
     <script src="{{ asset('vendor/sweetalert2/sweetalert2.all.min.js') }}"></script>
     
     <script>
-        $(document).ready(function() {
-            var table = $('#reportsTable').DataTable({
-                "pageLength": 15,
-                "lengthMenu": [[10, 15, 25, 50, -1], [10, 15, 25, 50, "All"]],
-                "language": {
-                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/id.json"
-                },
-                "order": [[0, "desc"]],
-                "dom": '<"flex flex-col md:flex-row justify-between items-center mb-4"lBf>rt<"flex justify-between items-center mt-4"ip>',
-                "buttons": [
-                    {
-                        extend: 'copyHtml5',
-                        text: 'Copy',
-                        className: 'px-3 py-1 bg-gray-200 text-gray-800 rounded mx-1 hover:bg-gray-300 transition'
-                    },
-                    {
-                        extend: 'excelHtml5',
-                        text: 'Excel',
-                        className: 'px-3 py-1 bg-green-500 text-white rounded mx-1 hover:bg-green-600 transition'
-                    },
-                    {
-                        extend: 'pdfHtml5',
-                        text: 'PDF',
-                        className: 'px-3 py-1 bg-red-500 text-white rounded mx-1 hover:bg-red-600 transition',
-                        orientation: 'landscape',
-                        pageSize: 'A4'
-                    },
-                    {
-                        extend: 'print',
-                        text: 'Print',
-                        className: 'px-3 py-1 bg-blue-500 text-white rounded mx-1 hover:bg-blue-600 transition'
-                    }
-                ]
-            });
-
-            // Make sure DT search integrates with Tailwind
-            $('.dataTables_filter input').addClass('border-gray-300 rounded-md shadow-sm ml-2 focus:ring-indigo-500 focus:border-indigo-500');
-            $('.dataTables_length select').addClass('border-gray-300 rounded-md shadow-sm mx-1 focus:ring-indigo-500 focus:border-indigo-500');
-        });
-
         // Global function for SweetAlert Delete Confirmation
         function deleteReport(id) {
             Swal.fire({

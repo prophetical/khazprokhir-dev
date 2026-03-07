@@ -42,7 +42,7 @@
 
                                     <div>
                                         <x-input-label for="pecahan" value="Pecahan" />
-                                        <select id="pecahan" name="pecahan" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                                        <select id="pecahan" name="pecahan" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm {{ $hasSortedPacks ? 'bg-gray-100 pointer-events-none' : '' }}" {{ $hasSortedPacks ? 'readonly tabindex="-1"' : '' }} required>
                                             <option value="">Pilih Pecahan</option>
                                             <option value="S" {{ old('pecahan', $hcsReceiving->pecahan) == 'S' ? 'selected' : '' }}>S - 1.000</option>
                                             <option value="T" {{ old('pecahan', $hcsReceiving->pecahan) == 'T' ? 'selected' : '' }}>T - 2.000</option>
@@ -58,6 +58,9 @@
                                         <x-input-label for="jumlah_display" value="Jumlah Bilyet" />
                                         <input id="jumlah_display" type="tel" class="mt-1 block w-full text-right font-mono border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" value="{{ old('jumlahDisplay', number_format($hcsReceiving->jumlah, 0, ',', '.')) }}" required />
                                         <input type="hidden" id="jumlah_original" name="jumlah" value="{{ old('jumlah', $hcsReceiving->jumlah) }}">
+                                        @if($hasSortedPacks)
+                                            <p class="text-xs text-red-500 mt-1 font-semibold">Minimal pack: {{ $sortedPacksCount }} pack (sudah disortir).</p>
+                                        @endif
                                         <p class="text-xs text-gray-500 mt-1">Dibutuhkan <span id="packs_needed_display" class="font-bold text-indigo-600">0</span> packs.</p>
                                     </div>
 
@@ -87,12 +90,12 @@
 
                                     <div>
                                         <x-input-label for="batch" value="Batch (7 digits)" />
-                                        <x-text-input id="batch" name="batch" type="text" maxlength="7" class="mt-1 block w-full font-mono uppercase bg-gray-100" value="{{ old('batch', $hcsReceiving->batch) }}" readonly required />
+                                        <x-text-input id="batch" name="batch" type="text" maxlength="7" class="mt-1 block w-full font-mono uppercase {{ $hasSortedPacks ? 'bg-gray-200 pointer-events-none' : 'bg-gray-100' }}" value="{{ old('batch', $hcsReceiving->batch) }}" readonly required />
                                     </div>
 
                                     <div>
                                         <x-input-label for="seri" value="Seri (Format: AA-BB7)" />
-                                        <x-text-input id="seri" name="seri" type="text" class="mt-1 block w-full font-mono uppercase bg-gray-100" placeholder="AA-BB7" value="{{ old('seri', $hcsReceiving->seri) }}" readonly required />
+                                        <x-text-input id="seri" name="seri" type="text" class="mt-1 block w-full font-mono uppercase {{ $hasSortedPacks ? 'bg-gray-200 pointer-events-none' : 'bg-gray-100' }}" placeholder="AA-BB7" value="{{ old('seri', $hcsReceiving->seri) }}" readonly required />
                                     </div>
 
                                     <div>
@@ -180,6 +183,8 @@
             let oldPacks = {!! json_encode(old('packs', null)) !!};
             let selectedPacks = oldPacks ? oldPacks.map(Number) : dbPacks;
             let usedPacks = [];
+            const lockedPacks = {!! json_encode($sortedPacks) !!}.map(Number);
+            const minPacks = {{ $hasSortedPacks ? $sortedPacksCount : 0 }};
 
             function init() {
                 if (jumlahOriginal > 0) {
@@ -242,6 +247,15 @@
 
             function togglePack(number) {
                 if (usedPacks.some(p => p.pack_number === number)) return;
+                if (lockedPacks.includes(number)) {
+                    Swal.fire({
+                        title: 'Data Terkunci',
+                        text: 'Pack ini sudah disortir dan tidak dapat dibuang.',
+                        icon: 'warning',
+                        confirmButtonColor: '#4f46e5'
+                    });
+                    return;
+                }
                 
                 let index = selectedPacks.indexOf(number);
                 if (index > -1) {
@@ -295,7 +309,7 @@
                     
                     const usedPack = usedPacks.find(p => p.pack_number === num);
                     if (usedPack) {
-                        btn.setAttribute('title', usedPack.supplier + (usedPack.hcs_sorting_id ? ' - Sudah Disortir' : ' - Terpakai'));
+                        btn.setAttribute('title', usedPack.supplier + (usedPack.hcs_sorting_id ? ' - Sudah Disortir (Record Lain)' : ' - Terpakai'));
                         btn.classList.add('cursor-not-allowed');
                         if (usedPack.hcs_sorting_id) {
                             btn.classList.add('bg-red-400', 'text-white', 'border', 'border-red-500', 'opacity-80');
@@ -309,6 +323,10 @@
                                 btn.classList.add('bg-gray-400', 'text-white', 'border', 'border-gray-500');
                             }
                         }
+                    } else if (lockedPacks.includes(num)) {
+                        btn.setAttribute('title', 'Sudah Disortir (Terkunci)');
+                        btn.classList.add('bg-red-500', 'text-white', 'border', 'border-red-600', 'cursor-not-allowed', 'opacity-90');
+                        // Ensure it visually indicates it is selected and cannot be removed
                     } else if (selectedPacks.includes(num)) {
                         if (currentSupplier === 'Cutpack') {
                             btn.classList.add('bg-blue-300', 'text-blue-900', 'border', 'border-blue-400');
@@ -374,6 +392,17 @@
                     Swal.fire({
                         title: 'Jumlah Pack Tidak Sesuai',
                         text: `Jumlah packs yang dipilih (${selectedPacks.length}) tidak sesuai dengan jumlah bilyet (${jumlahOriginal}). Dibutuhkan ${packsNeeded} packs.`,
+                        icon: 'error',
+                        confirmButtonColor: '#4f46e5'
+                    });
+                    return;
+                }
+
+                if (packsNeeded < minPacks) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: 'Jumlah Bilyet Terlalu Kecil',
+                        text: `Minimal pack yang dimasukkan harus ${minPacks} pack, sesuai dengan pack yang sudah disortir.`,
                         icon: 'error',
                         confirmButtonColor: '#4f46e5'
                     });
