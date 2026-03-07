@@ -1,7 +1,8 @@
 <nav x-data="{ 
         sidebarCollapsed: localStorage.getItem('sidebarCollapsed') === 'true',
         mobileOpen: false,
-        hcsOpen: {{ request()->routeIs('hcs-receiving.*', 'batch-tracking.*', 'reports.*') ? 'true' : 'false' }}
+        hcsOpen: {{ request()->routeIs('hcs-receiving.*', 'batch-tracking.*', 'reports.*') ? 'true' : 'false' }},
+        sortingOpen: {{ request()->routeIs('hcs-sorting.*', 'hcs-sorting-reports.*') ? 'true' : 'false' }}
     }" 
     x-init="$watch('sidebarCollapsed', value => localStorage.setItem('sidebarCollapsed', value))"
     :class="sidebarCollapsed ? 'w-20' : 'w-64'"
@@ -40,7 +41,7 @@
             <span x-show="!sidebarCollapsed" x-transition class="ml-3 text-sm font-medium whitespace-nowrap overflow-hidden">{{ __('Dashboard') }}</span>
         </a>
 
-        <!-- HCS Section Group -->
+        <!-- HCS Receiving Group -->
         <div class="space-y-1">
             <button @click="hcsOpen = !hcsOpen; if(sidebarCollapsed) sidebarCollapsed = false;"
                class="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('hcs-receiving.*', 'batch-tracking.*', 'reports.*') ? 'text-white font-semibold bg-white/10' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
@@ -71,6 +72,38 @@
                 <a href="{{ route('reports.index') }}" 
                    class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('reports.index') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
                     Laporan Receiving
+                </a>
+            </div>
+        </div>
+
+        <!-- HCS Sorting Group -->
+        <div class="space-y-1 mt-2">
+            <button @click="sortingOpen = !sortingOpen; if(sidebarCollapsed) sidebarCollapsed = false;"
+               class="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('hcs-sorting.*', 'hcs-sorting-reports.*') ? 'text-white font-semibold bg-white/10' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
+               title="Penyortiran HCS">
+                <div class="flex items-center">
+                    <div class="shrink-0 w-8 flex justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <!-- A different icon for sorting (e.g. server/stack) -->
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                        </svg>
+                    </div>
+                    <span x-show="!sidebarCollapsed" x-transition class="ml-3 text-sm font-medium whitespace-nowrap overflow-hidden">Penyortiran HCS</span>
+                </div>
+                <svg x-show="!sidebarCollapsed" :class="sortingOpen ? 'rotate-180' : ''" class="w-3 h-3 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+
+            <!-- Sub-menu Items -->
+            <div x-show="sortingOpen && !sidebarCollapsed" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="pl-11 space-y-1">
+                <a href="{{ route('hcs-sorting.index') }}" 
+                   class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('hcs-sorting.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                    Data Penyortiran
+                </a>
+                <a href="{{ route('hcs-sorting-reports.index') }}" 
+                   class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('hcs-sorting-reports.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                    Laporan Penyortiran
                 </a>
             </div>
         </div>

@@ -35,6 +35,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Everyone can view index (with respective policies)
         Route::get('/hcs-receiving', [\App\Http\Controllers\HcsReceivingController::class , 'index'])->name('hcs-receiving.index');
 
+        // HCS Sorting Routes
+        Route::middleware('role:sortir')->group(function () {
+            Route::get('/hcs-sorting/create', [\App\Http\Controllers\HcsSortingController::class , 'create'])->name('hcs-sorting.create');
+            Route::post('/hcs-sorting', [\App\Http\Controllers\HcsSortingController::class , 'store'])->name('hcs-sorting.store');
+        }
+        );
+        Route::get('/hcs-sorting', [\App\Http\Controllers\HcsSortingController::class , 'index'])->name('hcs-sorting.index');
+        Route::get('/hcs-sorting-reports', [\App\Http\Controllers\HcsSortingReportController::class , 'index'])->name('hcs-sorting-reports.index');
+
         // API to get used packs (requires auth)
         Route::get('/api/packs/used', [\App\Http\Controllers\PackController::class , 'used'])->name('packs.used');
     });

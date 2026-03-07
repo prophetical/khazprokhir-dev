@@ -17,4 +17,9 @@ class Pack extends Model
     {
         return $this->belongsTo(User::class , 'created_by');
     }
+
+    public function hcsSorting()
+    {
+        return $this->belongsTo(HcsSorting::class);
+    }
 }
