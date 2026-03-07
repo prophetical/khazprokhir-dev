@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laporan Penerimaan HCS - {{ \Carbon\Carbon::now()->format('d/m/Y') }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind Local -->
+    <script src="{{ asset('vendor/tailwindcss/tailwindcss.min.js') }}"></script>
     <style>
         @media print {
             .no-print { display: none !important; }
@@ -177,12 +178,12 @@
         <!-- Footer / Approval -->
         <footer class="mt-20 pt-10 border-t border-dashed border-gray-200 grid grid-cols-2 gap-20">
             <div class="text-center">
-                <p class="text-[10px] text-gray-400 uppercase font-bold mb-16">Petugas Operasional</p>
+                <p class="text-[10px] text-gray-400 uppercase font-bold mb-16">Penanggung Jawab</p>
                 <div class="w-40 h-px bg-gray-200 mx-auto mb-2"></div>
                 <p class="text-sm font-bold text-gray-800">( ........................................ )</p>
             </div>
             <div class="text-center">
-                <p class="text-[10px] text-gray-400 uppercase font-bold mb-16">Supervisor / Manager</p>
+                <p class="text-[10px] text-gray-400 uppercase font-bold mb-16">Kepala Seksi</p>
                 <div class="w-40 h-px bg-gray-200 mx-auto mb-2"></div>
                 <p class="text-sm font-bold text-gray-800">( ........................................ )</p>
             </div>

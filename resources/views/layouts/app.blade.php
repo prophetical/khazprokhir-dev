@@ -7,19 +7,18 @@
 
         <title>{{ config('app.name', 'Laravel') }}</title>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <!-- Fonts Local -->
+        <link href="{{ asset('css/fonts.css') }}" rel="stylesheet" />
 
-        <!-- Tailwind CDN -->
-        <script src="https://cdn.tailwindcss.com"></script>
+        <!-- Tailwind Local -->
+        <script src="{{ asset('vendor/tailwindcss/tailwindcss.min.js') }}"></script>
 
         <!-- Scripts -->
         <script src="{{ asset('js/sweetalert2.all.min.js') }}"></script>
         {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
         
-        <!-- Fallback AlpineJS if Vite build fails -->
-        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+        <!-- Local AlpineJS -->
+        <script defer src="{{ asset('vendor/alpinejs/alpine.min.js') }}"></script>
     </head>
     <body class="font-sans antialiased">
         <div class="flex h-screen bg-gray-100 overflow-hidden">
