@@ -135,6 +135,8 @@
                             <input type="hidden" name="pecahan" value="{{ $pecahan }}">
                             <input type="hidden" name="batch" value="{{ $batch }}">
                             <input type="hidden" name="seri" value="{{ $seri }}">
+                            <input type="hidden" name="emisi" value="{{ $emisi }}">
+                            <input type="hidden" name="tahun_anggaran" value="{{ $tahun_anggaran }}">
                             
                             <!-- Hidden inputs for selected packs -->
                             <template x-for="pack in selectedPacks" :key="pack">
@@ -166,6 +168,18 @@
                                         <option value="Cutpack" {{ old('supplier') == 'Cutpack' ? 'selected' : '' }}>Cutpack</option>
                                         <option value="Rikyet" {{ old('supplier') == 'Rikyet' ? 'selected' : '' }}>Rikyet</option>
                                     </select>
+                                </div>
+
+                                <div>
+                                    <label for="emisi" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Emisi / TA</label>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <input type="text" 
+                                               class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 transition-all duration-300 bg-gray-50 opacity-70"
+                                               value="{{ $emisi }}" readonly />
+                                        <input type="text" 
+                                               class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 transition-all duration-300 bg-gray-50 opacity-70"
+                                               value="{{ $tahun_anggaran }}" readonly />
+                                    </div>
                                 </div>
 
                                 <div>

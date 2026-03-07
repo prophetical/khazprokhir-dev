@@ -142,7 +142,19 @@
                                             <input id="emisi" name="emisi" type="number" min="2000" max="2100" 
                                                    class="block w-full py-2.5 px-4 border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 placeholder-gray-300 font-bold text-sm"
                                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'" 
-                                                   value="{{ old('emisi', date('Y')) }}" required />
+                                                   value="{{ old('emisi', '2022') }}" required />
+                                        </div>
+
+                                        <div class="space-y-1.5">
+                                            <label for="tahun_anggaran" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Tahun Anggaran</label>
+                                            <select id="tahun_anggaran" name="tahun_anggaran" 
+                                                    class="block w-full py-2.5 px-4 border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 font-bold text-sm"
+                                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'" 
+                                                    required>
+                                                @foreach(['2024', '2025', '2026', '2027'] as $year)
+                                                    <option value="{{ $year }}" {{ old('tahun_anggaran', '2025') == $year ? 'selected' : '' }}>{{ $year }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                         
                                         <div class="col-span-1 sm:col-span-2 mt-4">

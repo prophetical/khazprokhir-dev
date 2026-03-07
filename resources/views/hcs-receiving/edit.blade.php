@@ -142,6 +142,18 @@
                                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'" 
                                                    value="{{ old('emisi', $hcsReceiving->emisi) }}" required />
                                         </div>
+
+                                        <div class="space-y-1.5">
+                                            <label for="tahun_anggaran" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Tahun Anggaran</label>
+                                            <select id="tahun_anggaran" name="tahun_anggaran" 
+                                                    class="block w-full py-2.5 px-4 border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 font-bold text-sm"
+                                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'" 
+                                                    required>
+                                                @foreach(['2024', '2025', '2026', '2027'] as $year)
+                                                    <option value="{{ $year }}" {{ old('tahun_anggaran', $hcsReceiving->tahun_anggaran ?? '2025') == $year ? 'selected' : '' }}>{{ $year }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                         
                                         <div class="col-span-1 sm:col-span-2 mt-4">
                                             <div class="p-6 rounded-[2rem] border border-gray-100 bg-white/80 shadow-inner flex flex-col sm:flex-row items-center justify-between gap-6 overflow-hidden relative group">
@@ -393,8 +405,8 @@
                 buttons.forEach(btn => {
                     const num = parseInt(btn.getAttribute('data-pack'), 10);
                     
-                    // Reset to base classes
-                    btn.className = 'pack-btn aspect-square flex items-center justify-center text-[10px] sm:text-xs font-black rounded-lg transition-all duration-300 bg-white text-gray-400 border border-gray-100 shadow-sm hover:scale-110 hover:z-10 focus:outline-none focus:ring-4';
+                    // Reset to base classes (Removed default text-gray-400)
+                    btn.className = 'pack-btn aspect-square flex items-center justify-center text-[10px] sm:text-xs font-black rounded-lg transition-all duration-300 bg-white border border-gray-100 shadow-sm hover:scale-110 hover:z-10 focus:outline-none focus:ring-4';
                     
                     const usedPack = usedPacks.find(p => p.pack_number === num);
                     if (usedPack) {
@@ -410,23 +422,23 @@
                             } else if (usedPack.supplier === 'Rikyet') {
                                 btn.classList.add('bg-green-100', 'text-green-400');
                             } else {
-                                btn.classList.add('bg-gray-100', 'text-gray-300');
+                                btn.classList.add('bg-gray-100', 'text-gray-400');
                             }
                         }
                     } else if (lockedPacks.includes(num)) {
                         btn.setAttribute('title', 'Sudah Disortir (Terkunci)');
-                        btn.classList.add('bg-red-500', 'text-white', 'border-red-600', 'shadow-lg', 'shadow-red-500/20', 'cursor-not-allowed');
+                        btn.classList.add('bg-red-600', 'text-white', 'border-red-700', 'shadow-lg', 'shadow-red-500/30', 'cursor-not-allowed');
                     } else if (selectedPacks.includes(num)) {
                         btn.classList.add('shadow-lg', 'text-white');
                         if (currentSupplier === 'Cutpack') {
-                            btn.classList.add('bg-blue-400', 'border-blue-500', 'shadow-blue-500/20');
+                            btn.classList.add('bg-blue-500', 'border-blue-600', 'shadow-blue-500/20');
                         } else if (currentSupplier === 'Rikyet') {
-                            btn.classList.add('bg-green-400', 'border-green-500', 'shadow-green-500/20');
+                            btn.classList.add('bg-green-500', 'border-green-600', 'shadow-green-500/20');
                         } else {
-                            btn.classList.add('bg-indigo-500', 'border-indigo-600', 'shadow-indigo-500/20');
+                            btn.classList.add('bg-indigo-600', 'border-indigo-700', 'shadow-indigo-500/20');
                         }
                     } else {
-                        btn.classList.add('hover:bg-gray-50', 'hover:text-gray-600', 'hover:border-gray-200');
+                        btn.classList.add('text-gray-400', 'hover:bg-gray-50', 'hover:text-gray-600', 'hover:border-gray-200');
                     }
                 });
             }

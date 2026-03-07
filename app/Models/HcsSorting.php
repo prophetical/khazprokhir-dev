@@ -10,6 +10,8 @@ class HcsSorting extends Model
         'pecahan',
         'batch',
         'seri',
+        'emisi',
+        'tahun_anggaran',
         'supplier',
         'packs_selected',
         'jumlah_pack',

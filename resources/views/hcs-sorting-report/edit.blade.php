@@ -139,6 +139,14 @@
                                 </div>
 
                                 <div>
+                                    <x-input-label for="emisi" :value="__('Emisi / TA')" />
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <x-text-input class="block mt-1 w-full bg-gray-50 opacity-70" type="text" name="emisi" :value="old('emisi', $hcs_sorting_report->emisi)" readonly required />
+                                        <x-text-input class="block mt-1 w-full bg-gray-50 opacity-70" type="text" name="tahun_anggaran" :value="old('tahun_anggaran', $hcs_sorting_report->tahun_anggaran)" readonly required />
+                                    </div>
+                                </div>
+
+                                <div>
                                     <x-input-label for="petugas_1" :value="__('Petugas 1')" />
                                     <x-text-input id="petugas_1" class="block mt-1 w-full" type="text" name="petugas_1" :value="old('petugas_1', $hcs_sorting_report->petugas_1)" required />
                                 </div>

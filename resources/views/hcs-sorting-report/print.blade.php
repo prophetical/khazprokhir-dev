@@ -89,6 +89,8 @@
                             <th class="text-[10px] font-bold text-gray-500 uppercase">Gilir</th>
                             <th class="text-[10px] font-bold text-gray-500 uppercase">Batch</th>
                             <th class="text-[10px] font-bold text-gray-500 uppercase">Seri</th>
+                            <th class="text-[10px] font-bold text-gray-500 uppercase text-center">Emisi</th>
+                            <th class="text-[10px] font-bold text-gray-500 uppercase text-center">TA</th>
                             <th class="text-[10px] font-bold text-gray-500 uppercase text-center">Pch</th>
                             <th class="text-[10px] font-bold text-gray-500 uppercase">Supplier</th>
                             <th class="text-[10px] font-bold text-gray-500 uppercase">Pack Terpilih</th>
@@ -115,6 +117,8 @@
                             <td class="text-[10px] font-medium text-gray-900">{{ $row->gilir }}</td>
                             <td class="text-[10px] font-bold text-gray-900">{{ $row->batch }}</td>
                             <td class="text-[10px] font-medium text-gray-900">{{ $row->seri }}</td>
+                            <td class="text-[10px] font-bold text-gray-700 text-center">{{ $row->emisi }}</td>
+                            <td class="text-[10px] font-bold text-gray-700 text-center">{{ $row->tahun_anggaran }}</td>
                             <td class="text-center">
                                 <span class="{{ $colorMap[$row->pecahan] ?? 'bg-gray-500' }} text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
                                     {{ $row->pecahan }}
@@ -152,13 +156,13 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="10" class="text-center py-10 text-gray-400 text-sm italic">Tidak ada data ditemukan untuk periode ini.</td>
+                            <td colspan="11" class="text-center py-10 text-gray-400 text-sm italic">Tidak ada data ditemukan untuk periode ini.</td>
                         </tr>
                         @endforelse
                     </tbody>
                     <tfoot class="bg-gray-50 border-t border-gray-200">
                         <tr>
-                            <td colspan="7" class="text-[10px] font-bold text-gray-700 uppercase p-3 text-right">Total Filter Ini</td>
+                            <td colspan="8" class="text-[10px] font-bold text-gray-700 uppercase p-3 text-right">Total Filter Ini</td>
                             <td class="text-[10px] font-extrabold text-gray-900 text-right p-3">{{ number_format($reports->sum('jumlah_pack'), 0, ',', '.') }}</td>
                             <td class="text-[10px] font-extrabold text-green-700 text-right p-3">{{ number_format($reports->sum('jumlah_bilyet'), 0, ',', '.') }}</td>
                             <td></td>

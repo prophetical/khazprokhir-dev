@@ -197,6 +197,8 @@
                                 <tr>
                                     <th scope="col" class="px-3 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">No Bon</th>
                                     <th scope="col" class="px-3 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Pch</th>
+                                    <th scope="col" class="px-3 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Emisi</th>
+                                    <th scope="col" class="px-3 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">TA</th>
                                     <th scope="col" class="px-3 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">Jumlah</th>
                                     <th scope="col" class="px-3 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Gilir</th>
                                     <th scope="col" class="px-3 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Mesin</th>
@@ -209,7 +211,7 @@
                                 @forelse($data->groupBy('tanggal_penerimaan') as $date => $group)
                                     <!-- Date Header Row -->
                                     <tr class="bg-gray-50/80 border-t border-gray-200">
-                                        <td colspan="8" class="px-3 py-2 text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                                        <td colspan="10" class="px-3 py-2 text-[10px] font-black text-gray-500 uppercase tracking-widest">
                                             <div class="flex items-center">
                                                 <svg class="w-3.5 h-3.5 mr-2 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                                                 Penerimaan: {{ \Carbon\Carbon::parse($date)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
@@ -224,6 +226,8 @@
                                                     {{ $row->pecahan }}
                                                 </span>
                                             </td>
+                                            <td class="px-3 py-3 whitespace-nowrap text-xs text-center font-bold text-gray-700">{{ $row->emisi }}</td>
+                                            <td class="px-3 py-3 whitespace-nowrap text-xs text-center font-bold text-gray-700">{{ $row->tahun_anggaran }}</td>
                                             <td class="px-3 py-3 whitespace-nowrap text-xs text-right font-black text-gray-900">{{ number_format($row->jumlah, 0, ',', '.') }}</td>
                                             <td class="px-3 py-3 whitespace-nowrap text-[10px] text-center font-bold text-gray-500 uppercase">{{ $row->gilir }}</td>
                                             <td class="px-3 py-3 whitespace-nowrap text-[10px] text-center font-bold text-gray-500 uppercase">{{ $row->mesin }}</td>
@@ -238,7 +242,7 @@
                                     @endforeach
                                 @empty
                                     <tr>
-                                        <td colspan="8" class="px-6 py-10 whitespace-nowrap text-sm text-center text-gray-500 italic">Tidak ada data ditemukan untuk filter ini.</td>
+                                        <td colspan="10" class="px-6 py-10 whitespace-nowrap text-sm text-center text-gray-500 italic">Tidak ada data ditemukan untuk filter ini.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

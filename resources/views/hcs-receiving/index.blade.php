@@ -188,6 +188,12 @@
                                             @endif
                                         </a>
                                     </th>
+                                    <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest text-center">
+                                        Emisi
+                                    </th>
+                                    <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest text-center">
+                                        TA
+                                    </th>
                                     <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">
                                         <a href="{{ route('hcs-receiving.index', array_merge(request()->query(), ['sort_by' => 'batch', 'sort_direction' => request('sort_by') === 'batch' && request('sort_direction') === 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center hover:text-indigo-600 transition-colors">
                                             Batch
@@ -212,7 +218,7 @@
                                 @forelse ($receivings->groupBy(function($item) { return $item->batch . ' / ' . $item->seri; }) as $groupKey => $groupItems)
                                     <!-- Group Header Row -->
                                     <tr class="bg-indigo-50 border-t border-b border-indigo-100">
-                                        <td colspan="8" class="px-6 py-3 text-sm font-bold text-indigo-900">
+                                        <td colspan="10" class="px-6 py-3 text-sm font-bold text-indigo-900">
                                             {{ $groupKey }}
                                         </td>
                                     </tr>
@@ -223,11 +229,6 @@
                                             <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">{{ $receiving->tanggal_penerimaan }}</td>
                                             <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
                                                 {{ $receiving->nomor_bon }}
-                                                @if(isset($receiving->packs) && $receiving->packs->whereNotNull('hcs_sorting_id')->isNotEmpty())
-                                                    <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
-                                                        Ada Pack Disortir
-                                                    </span>
-                                                @endif
                                             </td>
                                             <td class="px-4 py-4 whitespace-nowrap text-sm">
                                                 @php
@@ -247,7 +248,18 @@
                                                 </span>
                                             </td>
                                             <td class="px-4 py-4 whitespace-nowrap text-sm font-mono text-indigo-700 font-bold">{{ number_format($receiving->jumlah, 0, ',', '.') }}</td>
-                                            <td class="px-4 py-4 whitespace-nowrap text-sm font-mono text-gray-600">{{ $receiving->batch }}</td>
+                                            <td class="px-4 py-4 whitespace-nowrap text-sm text-center font-bold text-gray-700">{{ $receiving->emisi }}</td>
+                                            <td class="px-4 py-4 whitespace-nowrap text-sm text-center font-bold text-gray-700">{{ $receiving->tahun_anggaran }}</td>
+                                            <td class="px-4 py-4 whitespace-nowrap text-sm font-mono text-gray-600">
+                                                <div>{{ $receiving->batch }}</div>
+                                                @if(isset($receiving->packs) && $receiving->packs->whereNotNull('hcs_sorting_id')->isNotEmpty())
+                                                    <div class="mt-1">
+                                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-600 border border-red-200 uppercase tracking-tighter">
+                                                            Ada Pack Disortir
+                                                        </span>
+                                                    </div>
+                                                @endif
+                                            </td>
                                             <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                                                 <span class="px-2.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full {{ $receiving->supplier === 'Cutpack' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800' }}">
                                                     {{ $receiving->supplier }}
@@ -299,7 +311,7 @@
                                     @endforeach
                                 @empty
                                     <tr>
-                                        <td colspan="8" class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">Belum ada data receiving.</td>
+                                        <td colspan="10" class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">Belum ada data receiving.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

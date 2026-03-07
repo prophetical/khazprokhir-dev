@@ -68,11 +68,14 @@ class HcsSortingController extends Controller
             ->where('packs.batch', $batch)
             ->where('packs.seri', $seri)
             ->where('packs.pack_number', '<=', 100)
-            ->select('packs.*', 'packs.supplier as pack_supplier', 'hcs_receivings.pecahan')
-            ->get()
-            ->keyBy('pack_number');
+            ->select('packs.*', 'packs.supplier as pack_supplier', 'hcs_receivings.pecahan', 'hcs_receivings.emisi', 'hcs_receivings.tahun_anggaran')
+            ->get();
 
-        return view('hcs-sorting.create', compact('pecahan', 'batch', 'seri', 'packsData'));
+        $emisi = $packsData->first()->emisi ?? null;
+        $tahun_anggaran = $packsData->first()->tahun_anggaran ?? '2025';
+        $packsData = $packsData->keyBy('pack_number');
+
+        return view('hcs-sorting.create', compact('pecahan', 'batch', 'seri', 'emisi', 'tahun_anggaran', 'packsData'));
     }
 
     public function store(Request $request)
@@ -81,6 +84,8 @@ class HcsSortingController extends Controller
             'pecahan' => 'required',
             'batch' => 'required',
             'seri' => 'required',
+            'emisi' => 'required',
+            'tahun_anggaran' => 'required',
             'supplier' => 'required|in:Rikyet,Cutpack',
             'petugas_1' => 'required',
             'petugas_2' => 'nullable',
@@ -155,6 +160,8 @@ class HcsSortingController extends Controller
                 'pecahan' => $request->pecahan,
                 'batch' => $request->batch,
                 'seri' => $request->seri,
+                'emisi' => $request->emisi,
+                'tahun_anggaran' => $request->tahun_anggaran,
                 'supplier' => $request->supplier,
                 'packs_selected' => $selectedPacks,
                 'jumlah_pack' => $jumlahPack,

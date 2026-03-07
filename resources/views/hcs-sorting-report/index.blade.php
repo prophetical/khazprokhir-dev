@@ -140,6 +140,8 @@
                                     <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gilir</th>
                                     <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Batch</th>
                                     <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Seri</th>
+                                    <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Emisi</th>
+                                    <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">TA</th>
                                     <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Pec</th>
                                     <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supplier</th>
                                     <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pack</th>
@@ -167,6 +169,8 @@
                                         <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">{{ $report->gilir }}</td>
                                         <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{{ $report->batch }}</td>
                                         <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">{{ $report->seri }}</td>
+                                        <td class="px-3 py-4 whitespace-nowrap text-sm text-center font-bold text-gray-700">{{ $report->emisi }}</td>
+                                        <td class="px-3 py-4 whitespace-nowrap text-sm text-center font-bold text-gray-700">{{ $report->tahun_anggaran }}</td>
                                         <td class="px-3 py-4 whitespace-nowrap text-sm text-center">
                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border {{ $colorMap[$report->pecahan] ?? 'bg-gray-100 text-gray-800' }}">
                                                 {{ $report->pecahan }}
@@ -224,7 +228,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="11" class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">Tidak ada data penyortiran yang sesuai.</td>
+                                        <td colspan="12" class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">Tidak ada data penyortiran yang sesuai.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

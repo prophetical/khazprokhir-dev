@@ -57,6 +57,7 @@ class HcsSortingReportController extends Controller
     {
         $request->validate([
             'supplier' => 'required|in:Rikyet,Cutpack',
+            'emisi' => 'required',
             'petugas_1' => 'required',
             'petugas_2' => 'nullable',
             'tanggal_sortir' => 'required|date',
@@ -136,6 +137,7 @@ class HcsSortingReportController extends Controller
             // Update data detail laporannya
             $hcs_sorting_report->update([
                 'supplier' => $request->supplier,
+                'emisi' => $request->emisi,
                 'packs_selected' => $selectedPacks,
                 'jumlah_pack' => $jumlahPack,
                 'jumlah_bilyet' => $jumlahBilyet,
@@ -208,7 +210,7 @@ class HcsSortingReportController extends Controller
 
         $callback = function () use ($query) {
             $file = fopen('php://output', 'w');
-            fputcsv($file, ['Tanggal', 'Gilir', 'Batch', 'Seri', 'Pecahan', 'Supplier', 'Pack Terpilih', 'Jumlah Pack', 'Total Bilyet', 'Petugas 1', 'Petugas 2']);
+            fputcsv($file, ['Tanggal', 'Gilir', 'Batch', 'Seri', 'Emisi', 'TA', 'Pecahan', 'Supplier', 'Pack Terpilih', 'Jumlah Pack', 'Total Bilyet', 'Petugas 1', 'Petugas 2']);
 
             $query->orderBy('tanggal_sortir', 'desc')->orderBy('created_at', 'desc')->chunk(100, function ($reports) use ($file) {
                     foreach ($reports as $row) {
@@ -233,6 +235,8 @@ class HcsSortingReportController extends Controller
                             $row->gilir,
                             $row->batch,
                             $row->seri,
+                            $row->emisi,
+                            $row->tahun_anggaran,
                             $row->pecahan,
                             $row->supplier,
                             $displayStr,

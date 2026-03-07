@@ -134,6 +134,8 @@
                         <tr>
                             <th class="text-[9px] font-bold text-gray-500 uppercase">No Bon</th>
                             <th class="text-[9px] font-bold text-gray-500 uppercase text-center">Pec</th>
+                            <th class="text-[9px] font-bold text-gray-500 uppercase text-center">Emisi</th>
+                            <th class="text-[9px] font-bold text-gray-500 uppercase text-center">TA</th>
                             <th class="text-[9px] font-bold text-gray-500 uppercase text-right">Jumlah</th>
                             <th class="text-[9px] font-bold text-gray-500 uppercase text-center">Gilir</th>
                             <th class="text-[9px] font-bold text-gray-500 uppercase">Mesin</th>
@@ -146,7 +148,7 @@
                         @forelse($data->groupBy('tanggal_penerimaan') as $date => $group)
                             <!-- Date Line -->
                             <tr class="bg-gray-50">
-                                <td colspan="8" class="text-[9px] font-black text-gray-500 uppercase py-1 px-2 border-y border-gray-100">
+                                <td colspan="10" class="text-[9px] font-black text-gray-500 uppercase py-1 px-2 border-y border-gray-100">
                                     Penerimaan: {{ \Carbon\Carbon::parse($date)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
                                 </td>
                             </tr>
@@ -158,6 +160,8 @@
                                         {{ $row->pecahan }}
                                     </span>
                                 </td>
+                                <td class="text-[10px] font-bold text-gray-700 text-center px-2 py-1.5">{{ $row->emisi }}</td>
+                                <td class="text-[10px] font-bold text-gray-700 text-center px-2 py-1.5">{{ $row->tahun_anggaran }}</td>
                                 <td class="text-[10px] font-bold text-gray-900 text-right px-2 py-1.5">{{ number_format($row->jumlah, 0, ',', '.') }}</td>
                                 <td class="text-[9px] font-bold text-gray-500 uppercase px-2 py-1.5 text-center">{{ $row->gilir }}</td>
                                 <td class="text-[9px] font-medium text-gray-600 px-2 py-1.5 text-center">{{ $row->mesin }}</td>
@@ -168,7 +172,7 @@
                             @endforeach
                         @empty
                         <tr>
-                            <td colspan="8" class="text-center py-10 text-gray-400 text-sm italic">Tidak ada data ditemukan untuk periode ini.</td>
+                            <td colspan="10" class="text-center py-10 text-gray-400 text-sm italic">Tidak ada data ditemukan untuk periode ini.</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -176,7 +180,7 @@
                         <tr>
                             <th colspan="2" class="text-[9px] font-bold text-gray-700 uppercase p-2 border-r border-gray-100">Subtotal Halaman</th>
                             <td class="text-[10px] font-black text-gray-900 text-right p-2">{{ number_format($data->sum('jumlah'), 0, ',', '.') }}</td>
-                            <td colspan="5" class="bg-gray-50"></td>
+                            <td colspan="6" class="bg-gray-50"></td>
                         </tr>
                     </tfoot>
                 </table>

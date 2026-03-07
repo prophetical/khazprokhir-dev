@@ -32,6 +32,7 @@ class StoreHcsReceivingRequest extends FormRequest
             'batch' => ['required', 'string', 'size:7'],
             'seri' => ['required', 'string'],
             'emisi' => ['required', 'date_format:Y'],
+            'tahun_anggaran' => ['required', 'in:2024,2025,2026,2027'],
             'repass' => ['nullable', 'in:repass'],
             'packs' => ['required', 'array'],
             'packs.*' => ['integer', 'min:1', 'max:100'],

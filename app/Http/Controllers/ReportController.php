@@ -68,7 +68,7 @@ class ReportController extends Controller
         $callback = function () use ($startDate, $endDate, $gilir, $pecahan) {
             $file = fopen('php://output', 'w');
 
-            fputcsv($file, ['Tanggal', 'No Bon', 'Pecahan', 'Jumlah', 'Gilir', 'Mesin', 'Supplier', 'Batch', 'Seri', 'Operator']);
+            fputcsv($file, ['Tanggal', 'No Bon', 'Pecahan', 'Emisi', 'TA', 'Jumlah', 'Gilir', 'Mesin', 'Supplier', 'Batch', 'Seri', 'Operator']);
 
             $query = HcsReceiving::with('user');
 
@@ -90,6 +90,8 @@ class ReportController extends Controller
                             $row->tanggal_penerimaan,
                             $row->nomor_bon,
                             $row->pecahan,
+                            $row->emisi,
+                            $row->tahun_anggaran,
                             $row->jumlah,
                             $row->gilir,
                             $row->mesin,
