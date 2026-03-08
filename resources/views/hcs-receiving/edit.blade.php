@@ -242,13 +242,45 @@
                                         <div class="absolute inset-0 bg-indigo-500/5 blur-[100px] rounded-full opacity-0 group-hover/grid:opacity-100 transition-opacity duration-1000"></div>
                                         <div class="grid grid-rows-10 grid-flow-col gap-1 sm:gap-1.5 auto-cols-[minmax(0,_1fr)] relative" id="pack_grid">
                                             @for ($i = 1; $i <= 100; $i++)
-                                                <button 
-                                                    type="button" 
-                                                    data-pack="{{ $i }}"
-                                                    class="pack-btn aspect-square flex items-center justify-center text-[10px] sm:text-xs font-black rounded-lg transition-all duration-300 bg-white text-gray-400 border border-gray-100 shadow-sm hover:scale-105 hover:z-10 focus:outline-none focus:ring-4"
-                                                    :class="currentTheme ? (currentTheme.ring.replace('focus:', '')) : 'focus:ring-indigo-500/20'">
-                                                    <span>{{ $i }}</span>
-                                                </button>
+                                                @php
+                                                    $row = ($i - 1) % 10;
+                                                    $col = floor(($i - 1) / 10);
+                                                    
+                                                    // Positioning logic mirroring batch-tracking
+                                                    $vClass = ($row < 4) ? 'top-full mt-2 flex-col-reverse' : 'bottom-full mb-2 flex-col';
+                                                    $arrowV = ($row < 4) ? '-mb-1' : '-mt-1';
+                                                    
+                                                    if ($col < 3) {
+                                                        $hClass = 'left-0 translate-x-0';
+                                                        $arrowH = 'left-3 translate-x-0';
+                                                    } elseif ($col > 6) {
+                                                        $hClass = 'right-0 left-auto translate-x-0';
+                                                        $arrowH = 'right-3 translate-x-0';
+                                                    } else {
+                                                        $hClass = 'left-1/2 -translate-x-1/2';
+                                                        $arrowH = 'left-1/2 -translate-x-1/2';
+                                                    }
+                                                @endphp
+                                                <div class="relative group">
+                                                    <button 
+                                                        type="button" 
+                                                        data-pack="{{ $i }}"
+                                                        class="pack-btn w-full aspect-square flex items-center justify-center text-[10px] sm:text-xs font-black rounded-lg transition-all duration-300 bg-white text-gray-400 border border-gray-100 shadow-sm hover:scale-105 hover:z-10 focus:outline-none focus:ring-4"
+                                                        :class="currentTheme ? (currentTheme.ring.replace('focus:', '')) : 'focus:ring-indigo-500/20'">
+                                                        <span>{{ $i }}</span>
+                                                    </button>
+                                                    <div class="pack-tooltip pointer-events-none absolute {{ $vClass }} {{ $hClass }} z-[100] hidden group-hover:flex items-center">
+                                                        <div class="bg-gray-900/95 backdrop-blur-sm text-white text-[10px] rounded-xl px-3 py-2 whitespace-nowrap shadow-2xl text-center leading-tight border border-white/10 min-w-[140px]">
+                                                            <div class="tooltip-header font-black border-b border-white/20 pb-1.5 mb-1.5 flex items-center justify-center gap-2">
+                                                                PACK {{ $i }}
+                                                                <span class="tooltip-badge hidden px-2 py-0.5 rounded-full text-[8px] text-white"></span>
+                                                            </div>
+                                                            <div class="tooltip-supplier font-bold uppercase tracking-tighter text-indigo-300">KOSONG</div>
+                                                            <div class="tooltip-status text-gray-400 text-[9px] mt-1 font-medium">Bisa Dipilih</div>
+                                                        </div>
+                                                        <div class="w-2 h-2 bg-gray-900 rotate-45 {{ $arrowV }} {{ $arrowH }}"></div>
+                                                    </div>
+                                                </div>
                                             @endfor
                                         </div>
                                     </div>
@@ -404,31 +436,59 @@
                 const buttons = gridContainer.querySelectorAll('.pack-btn');
                 buttons.forEach(btn => {
                     const num = parseInt(btn.getAttribute('data-pack'), 10);
+                    const group = btn.closest('.group');
+                    const tooltip = group.querySelector('.pack-tooltip');
+                    const badge = tooltip.querySelector('.tooltip-badge');
+                    const supplierEl = tooltip.querySelector('.tooltip-supplier');
+                    const statusEl = tooltip.querySelector('.tooltip-status');
+
+                    // Reset tooltip
+                    badge.classList.add('hidden');
+                    supplierEl.className = 'tooltip-supplier font-bold uppercase tracking-tighter text-indigo-300';
+                    supplierEl.textContent = 'KOSONG';
+                    statusEl.textContent = 'Bisa Dipilih';
                     
                     // Reset to base classes (Removed default text-gray-400)
-                    btn.className = 'pack-btn aspect-square flex items-center justify-center text-[10px] sm:text-xs font-black rounded-lg transition-all duration-300 bg-white border border-gray-100 shadow-sm hover:scale-110 hover:z-10 focus:outline-none focus:ring-4';
+                    btn.className = 'pack-btn w-full aspect-square flex items-center justify-center text-[10px] sm:text-xs font-black rounded-lg transition-all duration-300 bg-white border border-gray-100 shadow-sm hover:scale-110 hover:z-10 focus:outline-none focus:ring-4';
                     
                     const usedPack = usedPacks.find(p => p.pack_number === num);
                     if (usedPack) {
-                        btn.setAttribute('title', usedPack.supplier + (usedPack.hcs_sorting_id ? ' - Sudah Disortir (Record Lain)' : ' - Terpakai'));
+                        supplierEl.textContent = usedPack.supplier;
+                        supplierEl.className = 'tooltip-supplier font-bold uppercase tracking-tighter ' + (usedPack.supplier === 'Cutpack' ? 'text-blue-300' : 'text-green-300');
+                        statusEl.textContent = (usedPack.hcs_sorting_id ? 'Sudah Disortir (Record Lain)' : 'Terpakai (Record Lain)');
+                        
                         btn.classList.add('cursor-not-allowed', 'shadow-none');
                         if (usedPack.hcs_sorting_id) {
+                            badge.textContent = 'TERSORTIR';
+                            badge.className = 'tooltip-badge px-2 py-0.5 rounded-full text-[8px] text-white bg-red-500';
+                            badge.classList.remove('hidden');
                             btn.classList.add('bg-red-400', 'text-white', 'border-red-500', 'shadow-lg', 'shadow-red-500/20');
                         } else {
                             btn.classList.remove('rounded-lg');
-                            btn.classList.add('rounded-full', 'border-transparent');
+                            btn.classList.add('rounded-full', 'border-transparent', 'bg-gray-200'); // BG Abu-aku untuk terpakai
                             if (usedPack.supplier === 'Cutpack') {
-                                btn.classList.add('bg-blue-100', 'text-blue-400');
+                                btn.classList.add('text-blue-500'); // Font Biru tetap
                             } else if (usedPack.supplier === 'Rikyet') {
-                                btn.classList.add('bg-green-100', 'text-green-400');
+                                btn.classList.add('text-green-600'); // Font Hijau tetap
                             } else {
-                                btn.classList.add('bg-gray-100', 'text-gray-400');
+                                btn.classList.add('text-gray-400');
                             }
                         }
                     } else if (lockedPacks.includes(num)) {
-                        btn.setAttribute('title', 'Sudah Disortir (Terkunci)');
+                        supplierEl.textContent = currentSupplier || 'HCS';
+                        statusEl.textContent = 'Sudah Disortir (Terkunci)';
+                        badge.textContent = 'TERKUNCI';
+                        badge.className = 'tooltip-badge px-2 py-0.5 rounded-full text-[8px] text-white bg-red-600';
+                        badge.classList.remove('hidden');
                         btn.classList.add('bg-red-600', 'text-white', 'border-red-700', 'shadow-lg', 'shadow-red-500/30', 'cursor-not-allowed');
                     } else if (selectedPacks.includes(num)) {
+                        supplierEl.textContent = currentSupplier;
+                        supplierEl.className = 'tooltip-supplier font-bold uppercase tracking-tighter ' + (currentSupplier === 'Cutpack' ? 'text-blue-300' : (currentSupplier === 'Rikyet' ? 'text-green-300' : 'text-indigo-300'));
+                        statusEl.textContent = 'Dipilih (Siap Kemas)';
+                        badge.textContent = 'DIPILIH';
+                        badge.className = 'tooltip-badge px-2 py-0.5 rounded-full text-[8px] text-white bg-indigo-500';
+                        badge.classList.remove('hidden');
+
                         btn.classList.add('shadow-lg', 'text-white');
                         if (currentSupplier === 'Cutpack') {
                             btn.classList.add('bg-blue-500', 'border-blue-600', 'shadow-blue-500/20');

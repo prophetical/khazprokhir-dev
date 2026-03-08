@@ -68,22 +68,24 @@
                                 <!-- Filter Pecahan -->
                                 <div>
                                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Pecahan</label>
-                                    <select name="pecahan" class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-3 transition-all font-bold focus:border-indigo-500 focus:ring-indigo-500">
+                                    <select name="pecahan" x-model="selectedPecahan" class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-3 transition-all font-bold focus:ring-opacity-50"
+                                        :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
                                         <option value="">Semua</option>
-                                        <option value="S" {{ request('pecahan') == 'S' ? 'selected' : '' }}>S</option>
-                                        <option value="T" {{ request('pecahan') == 'T' ? 'selected' : '' }}>T</option>
-                                        <option value="U" {{ request('pecahan') == 'U' ? 'selected' : '' }}>U</option>
-                                        <option value="V" {{ request('pecahan') == 'V' ? 'selected' : '' }}>V</option>
-                                        <option value="W" {{ request('pecahan') == 'W' ? 'selected' : '' }}>W</option>
-                                        <option value="X" {{ request('pecahan') == 'X' ? 'selected' : '' }}>X</option>
-                                        <option value="Y" {{ request('pecahan') == 'Y' ? 'selected' : '' }}>Y</option>
+                                        <option value="S">S</option>
+                                        <option value="T">T</option>
+                                        <option value="U">U</option>
+                                        <option value="V">V</option>
+                                        <option value="W">W</option>
+                                        <option value="X">X</option>
+                                        <option value="Y">Y</option>
                                     </select>
                                 </div>
 
                                 <!-- Filter Tahun Anggaran -->
                                 <div>
                                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Tahun Anggaran</label>
-                                    <select name="tahun_anggaran" class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-3 transition-all font-bold focus:border-indigo-500 focus:ring-indigo-500">
+                                    <select name="tahun_anggaran" class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-3 transition-all font-bold focus:ring-opacity-50"
+                                        :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
                                         <option value="">Semua</option>
                                         <option value="2024" {{ request('tahun_anggaran') == '2024' ? 'selected' : '' }}>2024</option>
                                         <option value="2025" {{ request('tahun_anggaran') == '2025' ? 'selected' : '' }}>2025</option>
@@ -95,12 +97,14 @@
                                 <!-- Cari Data Umum -->
                                 <div>
                                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Cari (Batch / Seri)</label>
-                                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Batch, Seri..." class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-3 transition-all focus:border-indigo-500 focus:ring-indigo-500">
+                                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Batch, Seri..." class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-3 transition-all focus:ring-opacity-50"
+                                        :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
                                 </div>
 
                                 <!-- Tombol Aksi -->
                                 <div class="flex gap-2">
-                                    <button type="submit" class="flex-1 inline-flex justify-center items-center px-4 py-3 bg-gray-800 border border-transparent rounded-lg font-bold text-xs text-white uppercase tracking-widest shadow-md hover:bg-gray-700 active:scale-95 transition-all">
+                                    <button type="submit" class="flex-1 inline-flex justify-center items-center px-4 py-3 border border-transparent rounded-lg font-bold text-xs text-white uppercase tracking-widest shadow-md active:scale-95 transition-all duration-500"
+                                        :class="currentTheme ? currentTheme.btn : 'bg-gray-800 hover:bg-gray-700'">
                                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                                         Cari
                                     </button>

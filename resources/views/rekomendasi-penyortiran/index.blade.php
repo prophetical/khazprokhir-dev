@@ -30,7 +30,7 @@
                                 <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold text-white {{ $pecahanData[$p]['color'] }} shadow-sm">
                                     {{ $p }}
                                 </span>
-                                <span class="text-[8px] font-medium text-gray-400 group-hover:text-gray-600 transition-colors uppercase">{{ $pecahanData[$p]['label'] }}</span>
+                                <span class="text-[8px] font-black text-gray-400 uppercase tracking-tighter">PECAHAN {{ $pecahanData[$p]['label'] }}</span>
                             </div>
                             <div class="text-xl font-black text-gray-900 leading-none mb-1">
                                 {{ number_format($summaries[$p]['total_pack'] ?? 0, 0, ',', '.') }}
@@ -55,7 +55,7 @@
                                 <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold text-white {{ $pecahanData[$p]['color'] }} shadow-sm">
                                     {{ $p }}
                                 </span>
-                                <span class="text-[8px] font-medium text-gray-400 group-hover:text-gray-600 transition-colors uppercase">{{ $pecahanData[$p]['label'] }}</span>
+                                <span class="text-[8px] font-black text-gray-400 uppercase tracking-tighter">PECAHAN {{ $pecahanData[$p]['label'] }}</span>
                             </div>
                             <div class="text-xl font-black text-gray-900 leading-none mb-1">
                                 {{ number_format($summaries[$p]['total_pack'] ?? 0, 0, ',', '.') }}

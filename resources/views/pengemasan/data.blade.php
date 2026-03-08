@@ -9,21 +9,31 @@
         <div class="max-w-full mx-auto sm:px-6 lg:px-8">
             <div class="space-y-6">
                 @php
-                    $pecahan = request('pecahan');
-                    $borderColor = 'border-indigo-500'; // default
-                    if ($pecahan === 'S') $borderColor = 'border-lime-500';
-                    elseif ($pecahan === 'T') $borderColor = 'border-gray-500';
-                    elseif ($pecahan === 'U') $borderColor = 'border-amber-600';
-                    elseif ($pecahan === 'V') $borderColor = 'border-purple-500';
-                    elseif ($pecahan === 'W') $borderColor = 'border-green-500';
-                    elseif ($pecahan === 'X') $borderColor = 'border-blue-500';
-                    elseif ($pecahan === 'Y') $borderColor = 'border-red-500';
+                    $themeClasses = [
+                        'S' => ['bg' => 'bg-lime-500', 'border' => 'border-lime-500', 'ring' => 'focus:ring-lime-500', 'focus' => 'focus:border-lime-500', 'btn' => 'bg-lime-500', 'text' => 'text-white'],
+                        'T' => ['bg' => 'bg-gray-400', 'border' => 'border-gray-400', 'ring' => 'focus:ring-gray-400', 'focus' => 'focus:border-gray-400', 'btn' => 'bg-gray-400', 'text' => 'text-white'],
+                        'U' => ['bg' => 'bg-amber-400', 'border' => 'border-amber-400', 'ring' => 'focus:ring-amber-400', 'focus' => 'focus:border-amber-400', 'btn' => 'bg-amber-400', 'text' => 'text-white'],
+                        'V' => ['bg' => 'bg-purple-500', 'border' => 'border-purple-500', 'ring' => 'focus:ring-purple-500', 'focus' => 'focus:border-purple-500', 'btn' => 'bg-purple-500', 'text' => 'text-white'],
+                        'W' => ['bg' => 'bg-green-500', 'border' => 'border-green-500', 'ring' => 'focus:ring-green-500', 'focus' => 'focus:border-green-500', 'btn' => 'bg-green-500', 'text' => 'text-white'],
+                        'X' => ['bg' => 'bg-blue-500', 'border' => 'border-blue-500', 'ring' => 'focus:ring-blue-500', 'focus' => 'focus:border-blue-500', 'btn' => 'bg-blue-500', 'text' => 'text-white'],
+                        'Y' => ['bg' => 'bg-red-500', 'border' => 'border-red-500', 'ring' => 'focus:ring-red-500', 'focus' => 'focus:border-red-500', 'btn' => 'bg-red-500', 'text' => 'text-white'],
+                    ];
+                    $selectedPecahan = request('pecahan', '');
                 @endphp
 
                 <!-- Kotak Filter & Export -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6 border-t-4 {{ $borderColor }} transition-all duration-500">
+                <div x-data="{ 
+                        selectedPecahan: '{{ $selectedPecahan }}',
+                        themes: {{ json_encode($themeClasses) }},
+                        get currentTheme() { return this.themes[this.selectedPecahan] || null }
+                    }" 
+                    class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6 border-t-4 transition-all duration-500"
+                    :class="currentTheme ? currentTheme.border : 'border-indigo-500'">
                     <div class="p-6">
-                         <h3 class="text-lg font-bold text-gray-900 border-l-4 border-indigo-600 pl-4 mb-8">Laporan Pengemasan HCS</h3>
+                         <h3 class="text-lg font-bold text-gray-900 border-l-4 pl-4 mb-8 transition-colors duration-500"
+                            :class="currentTheme ? currentTheme.border : 'border-indigo-600'">
+                            Laporan Pengemasan HCS
+                        </h3>
                         <form method="GET" action="{{ route('pengemasan.data') }}">
                             @if(request('sort'))
                                 <input type="hidden" name="sort" value="{{ request('sort') }}">
@@ -34,22 +44,24 @@
                                 <!-- Filter Pecahan -->
                                 <div>
                                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Pecahan</label>
-                                    <select name="pecahan" class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-3 transition-all font-bold focus:border-indigo-500 focus:ring-indigo-500">
+                                    <select name="pecahan" x-model="selectedPecahan" class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-3 transition-all font-bold focus:ring-opacity-50"
+                                        :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
                                         <option value="">Semua</option>
-                                        <option value="S" {{ request('pecahan') == 'S' ? 'selected' : '' }}>S</option>
-                                        <option value="T" {{ request('pecahan') == 'T' ? 'selected' : '' }}>T</option>
-                                        <option value="U" {{ request('pecahan') == 'U' ? 'selected' : '' }}>U</option>
-                                        <option value="V" {{ request('pecahan') == 'V' ? 'selected' : '' }}>V</option>
-                                        <option value="W" {{ request('pecahan') == 'W' ? 'selected' : '' }}>W</option>
-                                        <option value="X" {{ request('pecahan') == 'X' ? 'selected' : '' }}>X</option>
-                                        <option value="Y" {{ request('pecahan') == 'Y' ? 'selected' : '' }}>Y</option>
+                                        <option value="S">S</option>
+                                        <option value="T">T</option>
+                                        <option value="U">U</option>
+                                        <option value="V">V</option>
+                                        <option value="W">W</option>
+                                        <option value="X">X</option>
+                                        <option value="Y">Y</option>
                                     </select>
                                 </div>
 
                                 <!-- Filter Gilir -->
                                 <div>
                                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Gilir</label>
-                                    <select name="gilir" class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-3 transition-all font-bold focus:border-indigo-500 focus:ring-indigo-500">
+                                    <select name="gilir" class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-3 transition-all font-bold focus:ring-opacity-50"
+                                        :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
                                         <option value="">Semua</option>
                                         <option value="1" {{ request('gilir') == '1' ? 'selected' : '' }}>Gilir 1</option>
                                         <option value="2" {{ request('gilir') == '2' ? 'selected' : '' }}>Gilir 2</option>
@@ -60,13 +72,15 @@
                                 <!-- Filter Tanggal Awal -->
                                 <div>
                                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Tanggal Awal</label>
-                                    <input type="date" name="tanggal_awal" value="{{ request('tanggal_awal') }}" class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-3 transition-all focus:border-indigo-500 focus:ring-indigo-500">
+                                    <input type="date" name="tanggal_awal" value="{{ request('tanggal_awal') }}" class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-3 transition-all focus:ring-opacity-50"
+                                        :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
                                 </div>
 
                                 <!-- Filter Tanggal Akhir -->
                                 <div>
                                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Tanggal Akhir</label>
-                                    <input type="date" name="tanggal_akhir" value="{{ request('tanggal_akhir') }}" class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-3 transition-all focus:border-indigo-500 focus:ring-indigo-500">
+                                    <input type="date" name="tanggal_akhir" value="{{ request('tanggal_akhir') }}" class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-3 transition-all focus:ring-opacity-50"
+                                        :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
                                 </div>
                             </div>
 
@@ -74,7 +88,8 @@
                                 <!-- Cari Data Umum -->
                                 <div class="lg:col-span-2">
                                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Cari Data (Batch, Seri, dll)</label>
-                                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Data..." class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-3 transition-all focus:border-indigo-500 focus:ring-indigo-500">
+                                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Data..." class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-3 transition-all focus:ring-opacity-50"
+                                        :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
                                 </div>
 
                                 <!-- Cari No Dus -->
@@ -82,16 +97,18 @@
                                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Cari No Dus Spesifik</label>
                                     <div class="relative">
                                         <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                                            <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                                            <svg class="w-4 h-4 transition-colors duration-500" :class="currentTheme ? currentTheme.text.replace('text-white', 'text-indigo-400') : 'text-indigo-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
                                         </span>
-                                        <input type="number" name="search_dus" value="{{ request('search_dus') }}" placeholder="No Dus" class="block w-full pl-10 border-indigo-200 rounded-lg shadow-sm text-sm py-3 bg-indigo-50 text-indigo-900 focus:border-indigo-500 focus:ring-indigo-500 transition-all">
+                                        <input type="number" name="search_dus" value="{{ request('search_dus') }}" placeholder="No Dus" class="block w-full pl-10 border-indigo-200 rounded-lg shadow-sm text-sm py-3 bg-indigo-50 text-indigo-900 focus:ring-opacity-50 transition-all font-bold"
+                                            :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
                                     </div>
                                 </div>
 
                                 <!-- Tombol Aksi -->
                                 <div class="flex flex-col gap-2">
                                     <div class="flex gap-2 h-full">
-                                        <button type="submit" class="flex-1 inline-flex justify-center items-center px-4 py-3 bg-gray-800 border border-transparent rounded-lg font-bold text-xs text-white uppercase tracking-widest shadow-md hover:bg-gray-700 active:scale-95 transition-all">
+                                        <button type="submit" class="flex-1 inline-flex justify-center items-center px-4 py-3 border border-transparent rounded-lg font-bold text-xs text-white uppercase tracking-widest shadow-md active:scale-95 transition-all duration-500"
+                                            :class="currentTheme ? currentTheme.btn : 'bg-gray-800 hover:bg-gray-700'">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                                         </button>
                                         <a href="{{ route('pengemasan.data') }}" class="flex-1 inline-flex justify-center items-center px-4 py-3 bg-gray-100 border border-gray-200 rounded-lg font-bold text-xs text-gray-400 uppercase tracking-widest shadow-sm hover:bg-gray-200 active:scale-95 transition-all @if(!request('search') && !request('pecahan') && !request('search_dus') && !request('tanggal_awal') && !request('tanggal_akhir') && !request('gilir')) opacity-50 pointer-events-none @endif">
