@@ -31,7 +31,14 @@
                                 </svg>
                             </div>
                             <div>
-                                <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Input Pengemasan</h2>
+                                <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight flex items-center gap-3">
+                                    Input Pengemasan
+                                    @if(isset($auto_fill['batch']) || isset($auto_fill['seri']))
+                                        <span class="inline-flex items-center px-4 py-1.5 rounded-2xl border-2 text-xl font-black uppercase tracking-tighter {{ $borderColor }} {{ $textColor }} bg-white shadow-sm">
+                                            {{ $auto_fill['batch'] ?? '-' }} / {{ $auto_fill['seri'] ?? '-' }}
+                                        </span>
+                                    @endif
+                                </h2>
                                 <p class="text-gray-500 text-sm">Form input pengemasan sesuai data penyortiran HCS.</p>
                             </div>
                         </div>

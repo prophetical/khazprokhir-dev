@@ -7,67 +7,89 @@
 
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-2xl">
+            @php
+                $pecahan = $pengemasan->pecahan ?? '';
+                $pecCol = [
+                    'S' => 'lime',
+                    'T' => 'gray',
+                    'U' => 'amber',
+                    'V' => 'purple',
+                    'W' => 'green',
+                    'X' => 'blue',
+                    'Y' => 'red',
+                ][$pecahan] ?? 'indigo';
+                
+                $borderColor = "border-{$pecCol}-500";
+                if ($pecahan === 'U') $borderColor = "border-{$pecCol}-600";
+                $textColor = "text-{$pecCol}-500";
+                if ($pecahan === 'U') $textColor = "text-{$pecCol}-600";
+            @endphp
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-2xl border-t-8 {{ $borderColor }}">
                 <div class="p-8 text-gray-900">
-                    <div class="flex justify-between items-start mb-8">
+                    <div class="flex justify-between items-start mb-6">
                         <div>
-                            <h2 class="text-3xl font-extrabold text-indigo-900 mb-2">Detail Pengemasan #{{ $pengemasan->id }}</h2>
-                            <p class="text-gray-500">Hasil pembentukan {{ $pengemasan->jumlah_dus }} dus dari {{ $pengemasan->jumlah_pack }} pack.</p>
+                            <h2 class="text-3xl font-extrabold text-gray-900 mb-2 flex items-center gap-3">
+                                Detail Pengemasan
+                                <span class="inline-flex items-center px-4 py-1.5 rounded-2xl border-2 text-xl font-black uppercase tracking-tighter {{ $borderColor }} {{ $textColor }} bg-white shadow-sm">
+                                    {{ $pengemasan->batch }} / {{ $pengemasan->seri }}
+                                </span>
+                            </h2>
+                            <p class="text-gray-500 text-sm">Hasil pembentukan {{ $pengemasan->jumlah_dus }} dus dari {{ $pengemasan->jumlah_pack }} pack.</p>
                         </div>
                         <div class="flex flex-col items-end">
-                            <span class="px-4 py-2 bg-indigo-100 text-indigo-700 rounded-lg font-bold text-sm mb-2 shadow-sm">
+                            <span class="px-4 py-2 bg-{{ $pecCol }}-50 {{ $pecahan === 'S' || $pecahan === 'U' || $pecahan === 'T' ? 'text-gray-800' : $textColor }} rounded-lg font-bold text-sm mb-2 shadow-sm">
                                 {{ $pengemasan->tanggal_pengemasan->format('d F Y') }}
                             </span>
                             <span class="text-xs text-gray-400 font-medium italic">Oleh: {{ $pengemasan->user->name ?? '-' }}</span>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
-                        <div class="bg-gradient-to-br from-indigo-50 to-white p-6 rounded-2xl border border-indigo-100 shadow-sm">
-                            <h4 class="text-xs font-bold text-indigo-400 uppercase tracking-widest mb-4">Informasi Produksi</h4>
-                            <div class="space-y-3">
-                                <div class="flex justify-between">
-                                    <span class="text-sm text-gray-500">Pecahan:</span>
-                                    <span class="text-sm font-bold text-gray-900">{{ $pengemasan->pecahan }}</span>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                        <div class="bg-gradient-to-br from-{{ $pecCol }}-50 to-white p-4 rounded-xl border border-{{ $pecCol }}-100 shadow-sm">
+                            <h4 class="text-[10px] font-bold text-{{ $pecCol }}-400 uppercase tracking-widest mb-3">Informasi Produksi</h4>
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs text-gray-500 font-medium">Pecahan:</span>
+                                    <span class="text-sm font-black text-gray-900 bg-white px-2 py-0.5 rounded border border-{{ $pecCol }}-100 shadow-sm">{{ $pengemasan->pecahan }}</span>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="text-sm text-gray-500">Batch:</span>
+                                    <span class="text-xs text-gray-500">Batch:</span>
                                     <span class="text-sm font-bold text-gray-900">{{ $pengemasan->batch }}</span>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="text-sm text-gray-500">Seri:</span>
+                                    <span class="text-xs text-gray-500">Seri:</span>
                                     <span class="text-sm font-bold text-gray-900">{{ $pengemasan->seri }}</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="bg-gradient-to-br from-purple-50 to-white p-6 rounded-2xl border border-purple-100 shadow-sm">
-                            <h4 class="text-xs font-bold text-purple-400 uppercase tracking-widest mb-4">Detail Pack</h4>
-                            <div class="space-y-3">
+                        <div class="bg-gradient-to-br from-{{ $pecCol }}-50 to-white p-4 rounded-xl border border-{{ $pecCol }}-100 shadow-sm">
+                            <h4 class="text-[10px] font-bold text-{{ $pecCol }}-400 uppercase tracking-widest mb-3">Detail Pack</h4>
+                            <div class="space-y-2">
                                 <div class="flex justify-between">
-                                    <span class="text-sm text-gray-500">Rentang Pack:</span>
+                                    <span class="text-xs text-gray-500">Rentang Pack:</span>
                                     <span class="text-sm font-bold text-gray-900">{{ $pengemasan->pack_awal }} - {{ $pengemasan->pack_akhir }}</span>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="text-sm text-gray-500">Total Pack:</span>
+                                    <span class="text-xs text-gray-500">Total Pack:</span>
                                     <span class="text-sm font-bold text-gray-900">{{ $pengemasan->jumlah_pack }}</span>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="text-sm text-gray-500">Tahun Anggaran/Emisi:</span>
+                                    <span class="text-xs text-gray-500">Tahun Anggaran/Emisi:</span>
                                     <span class="text-sm font-bold text-gray-900">{{ $pengemasan->tahun_anggaran }} / {{ $pengemasan->tahun_emisi }}</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="bg-gradient-to-br from-blue-50 to-white p-6 rounded-2xl border border-blue-100 shadow-sm">
-                            <h4 class="text-xs font-bold text-blue-400 uppercase tracking-widest mb-4">Informasi Dus</h4>
-                            <div class="space-y-3">
+                        <div class="bg-gradient-to-br from-{{ $pecCol }}-50 to-white p-4 rounded-xl border border-{{ $pecCol }}-100 shadow-sm">
+                            <h4 class="text-[10px] font-bold text-{{ $pecCol }}-400 uppercase tracking-widest mb-3">Informasi Dus</h4>
+                            <div class="space-y-2">
                                 <div class="flex justify-between">
-                                    <span class="text-sm text-gray-500">Total Dus:</span>
+                                    <span class="text-xs text-gray-500">Total Dus:</span>
                                     <span class="text-sm font-bold text-gray-900">{{ $pengemasan->jumlah_dus }}</span>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="text-sm text-gray-500">Nomor Dus:</span>
+                                    <span class="text-xs text-gray-500">Nomor Dus:</span>
                                     <span class="text-sm font-bold text-gray-900">{{ $pengemasan->dus_awal }} - {{ $pengemasan->dus_akhir }}</span>
                                 </div>
                             </div>
