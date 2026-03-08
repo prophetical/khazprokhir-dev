@@ -100,9 +100,9 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-medium">
                                             @if($dus->pack_awal == $dus->pack_akhir)
-                                                Pack {{ $dus->pack_awal }}
+                                                {{ $dus->pack_awal }}
                                             @else
-                                                Pack {{ $dus->pack_awal }} - {{ $dus->pack_akhir }}
+                                                {{ $dus->pack_awal }} - {{ $dus->pack_akhir }}
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900">{{ $dus->seri_awal }}</td>

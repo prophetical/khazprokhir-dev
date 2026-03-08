@@ -92,7 +92,7 @@
                                     @empty
                                         <tr>
                                             <td colspan="6" class="px-6 py-8 text-center text-sm text-gray-500 italic">
-                                                Tidak ada pack yang berstatus selesai sortir dan siap kemas (kelipatan 4, berurutan).
+                                                Tidak ada pack yang berstatus selesai sortir dan siap kemas.
                                             </td>
                                         </tr>
                                     @endforelse

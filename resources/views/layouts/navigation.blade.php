@@ -22,7 +22,10 @@
         <!-- Logo -->
         <a href="{{ route('dashboard') }}" class="flex items-center">
             <x-application-logo class="block h-8 w-auto fill-current text-white" />
-            <span x-show="!sidebarCollapsed" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="ml-3 font-bold text-white text-lg tracking-wider whitespace-nowrap uppercase">KHAZPRO</span>
+            <div x-show="!sidebarCollapsed" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="ml-3 flex flex-col justify-center">
+                <span class="font-bold text-white text-lg tracking-wider whitespace-nowrap uppercase leading-none mb-0.5">KHAZPRO</span>
+                <span class="text-[9px] text-indigo-300 font-medium tracking-wide whitespace-nowrap italic">Presisi mengelola, terpercaya menjaga</span>
+            </div>
         </a>
     </div>
 

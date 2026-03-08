@@ -35,17 +35,40 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                             </svg>
                         </button>
-                        <!-- Page Heading Title (if present) -->
-                        @isset($header)
-                            <div class="flex-1">
-                                {{ $header }}
-                            </div>
-                        @else
-                            <div class="flex-1"></div>
-                        @endisset
-                    </div>
+                    <!-- Page Heading Title (if present) -->
+                    @isset($header)
+                        <div class="flex-1">
+                            {{ $header }}
+                        </div>
+                    @else
+                        <div class="flex-1"></div>
+                    @endisset
+                </div>
 
-                    <!-- User Profile Dropdown -->
+                <!-- Realtime Jam & Tanggal -->
+                <div class="hidden sm:flex items-center ml-auto mr-4 text-gray-600 bg-gray-50 border border-gray-200 shadow-sm rounded-lg px-3 py-1.5" x-data="{ 
+                    time: '', 
+                    date: '',
+                    init() {
+                        this.updateClock();
+                        setInterval(() => this.updateClock(), 1000);
+                    },
+                    updateClock() {
+                        const now = new Date();
+                        const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Jakarta' };
+                        const optionsTime = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'Asia/Jakarta' };
+                        this.date = now.toLocaleDateString('id-ID', optionsDate);
+                        this.time = now.toLocaleTimeString('id-ID', optionsTime).replace(/\./g, ':');
+                    }
+                }">
+                    <svg class="w-4 h-4 text-indigo-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <div class="flex flex-col text-right justify-center mt-0.5">
+                        <span class="text-[9px] font-bold uppercase tracking-wider text-gray-400" x-text="date"></span>
+                        <span class="text-sm font-black tracking-tight text-gray-800 leading-none" x-text="time + ' WIB'"></span>
+                    </div>
+                </div>
+
+                <!-- User Profile Dropdown -->
                     <div class="flex items-center ml-auto">
                         <x-dropdown align="right" width="48">
                             <x-slot name="trigger">

@@ -67,6 +67,135 @@ class PengemasanController extends Controller
         return view('pengemasan.data', compact('pengemasans', 'sortColumn', 'sortDirection'));
     }
 
+    public function export(Request $request)
+    {
+        $query = Pengemasan::with('user');
+
+        if ($request->filled('pecahan')) {
+            $query->where('pecahan', $request->pecahan);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('pecahan', 'like', "%{$search}%")
+                    ->orWhere('batch', 'like', "%{$search}%")
+                    ->orWhere('seri', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($userQ) use ($search) {
+                    $userQ->where('name', 'like', "%{$search}%");
+                }
+                );
+            });
+        }
+
+        if ($request->filled('search_dus') && is_numeric($request->search_dus)) {
+            $searchDus = (int)$request->search_dus;
+            $query->where(function ($q) use ($searchDus) {
+                $q->where('dus_awal', '<=', $searchDus)
+                    ->where('dus_akhir', '>=', $searchDus);
+            });
+        }
+
+        $sortColumn = $request->input('sort', 'tanggal_pengemasan');
+        $sortDirection = $request->input('direction', 'desc');
+
+        if ($sortColumn === 'petugas') {
+            $query->join('users', 'pengemasans.created_by', '=', 'users.id')
+                ->orderBy('users.name', $sortDirection)
+                ->select('pengemasans.*');
+        }
+        else {
+            $query->orderBy($sortColumn, $sortDirection);
+        }
+
+        $filename = "data_pengemasan_" . date('Y-m-d_H-i-s') . ".csv";
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $callback = function () use ($query) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, ['Tanggal', 'Gilir', 'Thn Anggaran', 'Thn Emisi', 'Pecahan', 'Batch', 'Seri', 'Pack Awal', 'Pack Akhir', 'Jml Pack', 'Jml Dus', 'Dus Awal', 'Dus Akhir', 'Petugas']);
+
+            $query->chunk(100, function ($pengemasans) use ($file) {
+                    foreach ($pengemasans as $row) {
+                        fputcsv($file, [
+                            $row->tanggal_pengemasan->format('Y-m-d'),
+                            $row->gilir,
+                            $row->tahun_anggaran,
+                            $row->tahun_emisi,
+                            $row->pecahan,
+                            $row->batch,
+                            $row->seri,
+                            $row->pack_awal,
+                            $row->pack_akhir,
+                            $row->jumlah_pack,
+                            $row->jumlah_dus,
+                            $row->dus_awal,
+                            $row->dus_akhir,
+                            $row->user->name ?? '-'
+                        ]);
+                    }
+                }
+                );
+
+                fclose($file);
+            };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function print(Request $request)
+    {
+        $query = Pengemasan::with('user');
+
+        if ($request->filled('pecahan')) {
+            $query->where('pecahan', $request->pecahan);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('pecahan', 'like', "%{$search}%")
+                    ->orWhere('batch', 'like', "%{$search}%")
+                    ->orWhere('seri', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($userQ) use ($search) {
+                    $userQ->where('name', 'like', "%{$search}%");
+                }
+                );
+            });
+        }
+
+        if ($request->filled('search_dus') && is_numeric($request->search_dus)) {
+            $searchDus = (int)$request->search_dus;
+            $query->where(function ($q) use ($searchDus) {
+                $q->where('dus_awal', '<=', $searchDus)
+                    ->where('dus_akhir', '>=', $searchDus);
+            });
+        }
+
+        $sortColumn = $request->input('sort', 'tanggal_pengemasan');
+        $sortDirection = $request->input('direction', 'desc');
+
+        if ($sortColumn === 'petugas') {
+            $query->join('users', 'pengemasans.created_by', '=', 'users.id')
+                ->orderBy('users.name', $sortDirection)
+                ->select('pengemasans.*');
+        }
+        else {
+            $query->orderBy($sortColumn, $sortDirection);
+        }
+
+        $pengemasans = $query->get();
+
+        return view('pengemasan.print', compact('pengemasans'));
+    }
+
     private function findReadyToPackageGroups()
     {
         // Ambil semua pack yang sudah disortir tapi belum dikemas
@@ -293,6 +422,12 @@ class PengemasanController extends Controller
 
             Pack::whereIn('id', $packs->pluck('id'))->update(['id_pengemasan' => $pengemasan->id]);
 
+            // [NEW] Kunci data penyortiran terkait
+            $sortingIds = $packs->pluck('hcs_sorting_id')->filter()->unique();
+            if ($sortingIds->isNotEmpty()) {
+                \App\Models\HcsSorting::whereIn('id', $sortingIds)->update(['status_kunci_pengemasan' => 1]);
+            }
+
             $this->generateDetailPengemasan($pengemasan, $request->seri, $nomorDusAwal, $request->batch, $parsedChunks);
 
             DB::commit();
@@ -387,5 +522,46 @@ class PengemasanController extends Controller
     {
         $pengemasan = Pengemasan::with(['detailPengemasans', 'user'])->findOrFail($id);
         return view('pengemasan.show', compact('pengemasan'));
+    }
+
+    public function destroy($id)
+    {
+        DB::beginTransaction();
+        try {
+            $pengemasan = Pengemasan::findOrFail($id);
+
+            // 1. Ambil id penyortiran dari pack yang terikat dengan pengemasan ini
+            $sortingIds = Pack::where('id_pengemasan', $pengemasan->id)->pluck('hcs_sorting_id')->filter()->unique();
+
+            // 2. Lepas relasi pack dari pengemasan ini
+            Pack::where('id_pengemasan', $pengemasan->id)->update(['id_pengemasan' => null]);
+
+            // 3. Evaluasi ulang status penguncian penyortiran
+            //    Jika sebuah sesi sortir (HcsSorting) sudah tidak memiliki pack yang DIKEMAS lagi,
+            //    maka gembok / lock-nya bisa dibuka (status_kunci_pengemasan = 0)
+            foreach ($sortingIds as $sId) {
+                // Adakah satupun pack dari sesi sortir ini yang masih bersatus terkemas?
+                $packMasihDikemas = Pack::where('hcs_sorting_id', $sId)
+                    ->whereNotNull('id_pengemasan')
+                    ->exists();
+
+                if (!$packMasihDikemas) {
+                    \App\Models\HcsSorting::where('id', $sId)->update(['status_kunci_pengemasan' => 0]);
+                }
+            }
+
+            // 4. Hapus detail dus yang dihasilkan dari pengemasan ini
+            DetailPengemasan::where('id_pengemasan', $pengemasan->id)->delete();
+
+            // 5. Hapus riwayat pengemasannya
+            $pengemasan->delete();
+
+            DB::commit();
+            return redirect()->route('pengemasan.data')->with('success', 'Data pengemasan berhasil dihapus. Data penyortiran yang terkait telah dibuka kembali/bisa diedit.');
+        }
+        catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Terjadi kesalahan sistem saat menghapus: ' . $e->getMessage());
+        }
     }
 }

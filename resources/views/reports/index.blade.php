@@ -6,7 +6,7 @@
     </x-slot>
 
     <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-full mx-auto sm:px-6 lg:px-8">
             
             <!-- Summary Cards per Pecahan (Two Rows) -->
             <div class="space-y-4 mb-8">
@@ -80,7 +80,34 @@
                 </div>
             </div>
 
-            <!-- Filters Section -->
+            
+
+            <!-- Report Data Table -->
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl border border-gray-100">
+                <div class="p-6 text-gray-900">
+                    
+                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+                        <h3 class="text-xl font-bold text-gray-800 flex items-center">
+                            Laporan Penerimaan Harian
+                            @if(isset($pecahan))
+                                <span class="ml-2 text-indigo-500">Pecahan {{ $pecahan }}</span>
+                            @endif
+                        </h3>
+                        
+                        <div class="flex items-center text-sm font-medium text-gray-500 bg-gray-50 px-4 py-2 rounded-full border border-gray-100">
+                            <svg class="w-4 h-4 mr-2 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                            @if($startDate && $endDate)
+                                {{ \Carbon\Carbon::parse($startDate)->locale('id')->isoFormat('D MMMM YYYY') }} — {{ \Carbon\Carbon::parse($endDate)->locale('id')->isoFormat('D MMMM YYYY') }}
+                            @else
+                                Semua Tanggal
+                            @endif
+                            @if($gilir)
+                                <span class="mx-2 text-gray-300">|</span>
+                                <span class="text-indigo-600 font-bold uppercase">{{ $gilir }}</span>
+                            @endif
+                        </div>
+                    </div>
+                    <!-- Filters Section -->
             <div x-data="{ 
                 selectedPecahan: '{{ $selectedPecahan }}',
                 themes: {{ json_encode($themeClasses) }},
@@ -93,7 +120,7 @@
                         @if(isset($pecahan))
                             <input type="hidden" name="pecahan" value="{{ $pecahan }}">
                         @endif
-                        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 items-end">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-end">
                             
                             <!-- Date Range -->
                             <div class="md:col-span-2 lg:col-span-2 grid grid-cols-2 gap-4">
@@ -128,67 +155,43 @@
 
                             <!-- Action Buttons -->
                             <div class="col-span-1 flex flex-col gap-2">
-                                <div class="flex gap-2">
+                                <div class="flex gap-2 h-full">
                                     <button type="submit" 
                                             class="flex-1 inline-flex justify-center items-center px-4 py-3 rounded-lg font-bold text-xs uppercase tracking-widest transition-all shadow-md active:scale-95"
                                             :class="currentTheme ? (currentTheme.btn + ' ' + currentTheme.text + ' brightness-95 hover:brightness-105') : 'bg-gray-800 text-white'">
-                                        Filter
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                                     </button>
                                     <a href="{{ route('reports.index', isset($pecahan) ? ['pecahan' => $pecahan] : []) }}" 
                                        class="flex-1 inline-flex justify-center items-center px-4 py-3 bg-gray-100 border border-gray-200 rounded-lg font-bold text-xs text-gray-400 uppercase tracking-widest shadow-sm hover:bg-gray-200 transition-all text-center">
-                                        Reset
-                                    </a>
-                                </div>
-                                
-                                <div class="grid grid-cols-3 gap-2">
-                                    <a href="{{ route('reports.export', ['start_date' => $startDate, 'end_date' => $endDate, 'gilir' => $gilir, 'pecahan' => $pecahan ?? '']) }}" 
-                                       class="inline-flex items-center justify-center p-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors" title="Export Excel (CSV)">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                                    </a>
-                                    <a href="{{ route('reports.print', ['start_date' => $startDate, 'end_date' => $endDate, 'gilir' => $gilir, 'pecahan' => $pecahan ?? '']) }}" 
-                                       target="_blank"
-                                       class="inline-flex items-center justify-center p-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-colors" title="Export PDF">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
-                                    </a>
-                                    <a href="{{ route('reports.print', ['start_date' => $startDate, 'end_date' => $endDate, 'gilir' => $gilir, 'pecahan' => $pecahan ?? '', 'autoprint' => 1]) }}" 
-                                       target="_blank"
-                                       class="inline-flex items-center justify-center p-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors" title="Cetak Laporan">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 00-2 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                                     </a>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Pemisah antara Form Pencarian dan Tombol Export -->
+                        <div class="mt-6 pt-4 border-t border-gray-100 flex flex-wrap gap-2 justify-end lg:justify-end">
+                            <a href="{{ route('reports.export', ['start_date' => $startDate, 'end_date' => $endDate, 'gilir' => $gilir, 'pecahan' => $pecahan ?? '']) }}" 
+                               class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors shadow-sm" title="Export Excel (CSV)">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                Excel
+                            </a>
+                            <a href="{{ route('reports.print', ['start_date' => $startDate, 'end_date' => $endDate, 'gilir' => $gilir, 'pecahan' => $pecahan ?? '']) }}" 
+                               target="_blank"
+                               class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium bg-rose-50 text-rose-700 border border-rose-200 rounded-lg hover:bg-rose-100 transition-colors shadow-sm" title="Export PDF / Print">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                                PDF
+                            </a>
+                            <a href="{{ route('reports.print', ['start_date' => $startDate, 'end_date' => $endDate, 'gilir' => $gilir, 'pecahan' => $pecahan ?? '', 'autoprint' => 1]) }}" 
+                               target="_blank"
+                               class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium bg-gray-50 text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors shadow-sm" title="Cetak Langsung">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 00-2 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                                Print
+                            </a>
+                        </div>
                     </form>
                 </div>
             </div>
-
-            <!-- Report Data Table -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl border border-gray-100">
-                <div class="p-6 text-gray-900">
-                    
-                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-                        <h3 class="text-xl font-bold text-gray-800 flex items-center">
-                            <span class="bg-indigo-100 text-indigo-700 p-2 rounded-lg mr-3">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 2v-6m-9 9h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                            </span>
-                            Laporan Penerimaan Harian
-                            @if(isset($pecahan))
-                                <span class="ml-2 text-indigo-500">(Pecahan {{ $pecahan }})</span>
-                            @endif
-                        </h3>
-                        <div class="flex items-center text-sm font-medium text-gray-500 bg-gray-50 px-4 py-2 rounded-full border border-gray-100">
-                            <svg class="w-4 h-4 mr-2 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                            @if($startDate && $endDate)
-                                {{ \Carbon\Carbon::parse($startDate)->locale('id')->isoFormat('D MMMM YYYY') }} — {{ \Carbon\Carbon::parse($endDate)->locale('id')->isoFormat('D MMMM YYYY') }}
-                            @else
-                                Semua Tanggal
-                            @endif
-                            @if($gilir)
-                                <span class="mx-2 text-gray-300">|</span>
-                                <span class="text-indigo-600 font-bold uppercase">{{ $gilir }}</span>
-                            @endif
-                        </div>
-                    </div>
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200 border">
                             <thead class="bg-gray-50">

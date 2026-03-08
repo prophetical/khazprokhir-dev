@@ -21,6 +21,7 @@ class HcsSorting extends Model
         'tanggal_sortir',
         'gilir',
         'created_by',
+        'status_kunci_pengemasan',
     ];
 
     protected $casts = [

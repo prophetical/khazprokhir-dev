@@ -40,6 +40,10 @@ class HcsSortingReportController extends Controller
 
     public function edit(HcsSorting $hcs_sorting_report)
     {
+        if ($hcs_sorting_report->status_kunci_pengemasan) {
+            return redirect()->route('hcs-sorting-reports.index')->with('error', 'Data penyortiran tidak dapat diubah karena sudah digunakan dalam proses pengemasan.');
+        }
+
         // Ambil data pack yang sejenis sama laporan ini (pecahan, batch, dan seri yang sama)
         $packsData = \App\Models\Pack::join('hcs_receivings', 'packs.hcs_receiving_id', '=', 'hcs_receivings.id')
             ->where('hcs_receivings.pecahan', $hcs_sorting_report->pecahan)
@@ -55,6 +59,10 @@ class HcsSortingReportController extends Controller
 
     public function update(Request $request, HcsSorting $hcs_sorting_report)
     {
+        if ($hcs_sorting_report->status_kunci_pengemasan) {
+            return redirect()->route('hcs-sorting-reports.index')->with('error', 'Data penyortiran tidak dapat diubah karena sudah digunakan dalam proses pengemasan.');
+        }
+
         $request->validate([
             'supplier' => 'required|in:Rikyet,Cutpack',
             'emisi' => 'required',
@@ -158,6 +166,10 @@ class HcsSortingReportController extends Controller
 
     public function destroy(HcsSorting $hcs_sorting_report)
     {
+        if ($hcs_sorting_report->status_kunci_pengemasan) {
+            return redirect()->route('hcs-sorting-reports.index')->with('error', 'Data penyortiran tidak dapat dihapus karena sudah digunakan dalam proses pengemasan.');
+        }
+
         \Illuminate\Support\Facades\DB::beginTransaction();
         try {
             // Kosongin status sortir pack yang berkaitan

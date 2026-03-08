@@ -60,10 +60,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::middleware('role:sortir')->group(function () {
             Route::get('/pengemasan/create', [\App\Http\Controllers\PengemasanController::class , 'create'])->name('pengemasan.create');
             Route::post('/pengemasan', [\App\Http\Controllers\PengemasanController::class , 'store'])->name('pengemasan.store');
+            Route::delete('/pengemasan/{id}', [\App\Http\Controllers\PengemasanController::class , 'destroy'])->name('pengemasan.destroy');
         }
         );
         Route::get('/pengemasan', [\App\Http\Controllers\PengemasanController::class , 'index'])->name('pengemasan.index');
         Route::get('/data-pengemasan', [\App\Http\Controllers\PengemasanController::class , 'data'])->name('pengemasan.data');
+        Route::get('/data-pengemasan/export', [\App\Http\Controllers\PengemasanController::class , 'export'])->name('pengemasan.export');
+        Route::get('/data-pengemasan/print', [\App\Http\Controllers\PengemasanController::class , 'print'])->name('pengemasan.print');
         Route::get('/pengemasan/{id}', [\App\Http\Controllers\PengemasanController::class , 'show'])->name('pengemasan.show');
     });
 
