@@ -196,6 +196,8 @@
                                     @endforelse
                                 </tbody>
                             </table>
+                        <div class="mt-6 border-t border-gray-100 pt-4">
+                            {{ $readyGroups->links() }}
                         </div>
                     </div>
 

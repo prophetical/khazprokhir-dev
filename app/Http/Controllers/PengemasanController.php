@@ -13,7 +13,17 @@ class PengemasanController extends Controller
 {
     public function index(Request $request)
     {
-        $readyGroups = $this->findReadyToPackageGroups($request->all());
+        $readyGroupsAll = $this->findReadyToPackageGroups($request->all());
+
+        // Manual Pagination for array
+        $currentPage = $request->input('page', 1);
+        $perPage = 20;
+        $currentItems = $readyGroupsAll->slice(($currentPage - 1) * $perPage, $perPage)->all();
+        $readyGroups = new \Illuminate\Pagination\LengthAwarePaginator($currentItems, $readyGroupsAll->count(), $perPage, $currentPage, [
+            'path' => $request->url(),
+            'query' => $request->query(),
+        ]);
+
         $missingGaps = $this->detectMissingDusGaps();
         return view('pengemasan.index', compact('readyGroups', 'missingGaps'));
     }
@@ -76,7 +86,7 @@ class PengemasanController extends Controller
             $query->orderBy($sortColumn, $sortDirection);
         }
 
-        $pengemasans = $query->paginate(15)->withQueryString();
+        $pengemasans = $query->paginate(20)->withQueryString();
 
         $missingGaps = $this->detectMissingDusGaps();
 

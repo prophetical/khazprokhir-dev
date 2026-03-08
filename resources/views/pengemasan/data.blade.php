@@ -186,25 +186,28 @@
                                             Tanggal {{ sortIcon('tanggal_pengemasan') }}
                                         </a>
                                     </th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-200">
+                                    <th class="px-2 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-200">
                                         <a href="{{ route('pengemasan.data', array_merge(request()->query(), ['sort' => 'gilir', 'direction' => $direction])) }}" class="hover:text-indigo-600 flex items-center">
                                             Gilir {{ sortIcon('gilir') }}
                                         </a>
                                     </th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-200">
+                                    <th class="px-4 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-200">
                                         <a href="{{ route('pengemasan.data', array_merge(request()->query(), ['sort' => 'pecahan', 'direction' => $direction])) }}" class="hover:text-indigo-600 flex items-center">
                                             Identitas {{ sortIcon('pecahan') }}
                                         </a>
                                     </th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-200">
-                                        <a href="{{ route('pengemasan.data', array_merge(request()->query(), ['sort' => 'pack_awal', 'direction' => $direction])) }}" class="hover:text-indigo-600 flex items-center">
+                                    <th class="px-6 py-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-200">
+                                        <a href="{{ route('pengemasan.data', array_merge(request()->query(), ['sort' => 'pack_awal', 'direction' => $direction])) }}" class="hover:text-indigo-600 flex items-center justify-center">
                                             Pack {{ sortIcon('pack_awal') }}
                                         </a>
                                     </th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-200">
+                                    <th class="px-2 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-200">
                                         <a href="{{ route('pengemasan.data', array_merge(request()->query(), ['sort' => 'jumlah_dus', 'direction' => $direction])) }}" class="hover:text-indigo-600 flex items-center">
-                                            Jml Dus {{ sortIcon('jumlah_dus') }}
+                                            Dus {{ sortIcon('jumlah_dus') }}
                                         </a>
+                                    </th>
+                                    <th class="px-6 py-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-200">
+                                        Bilyet
                                     </th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-200">
                                         <a href="{{ route('pengemasan.data', array_merge(request()->query(), ['sort' => 'dus_awal', 'direction' => $direction])) }}" class="hover:text-indigo-600 flex items-center">
@@ -225,34 +228,46 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-medium">
                                             {{ \Carbon\Carbon::parse($p->tanggal_pengemasan)->locale('id')->isoFormat('D MMMM YYYY') }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
+                                        <td class="px-2 py-4 whitespace-nowrap text-sm text-center">
                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-gray-100 text-gray-800 border border-gray-200">G{{ $p->gilir }}</span>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm font-bold text-gray-900">{{ $p->pecahan }} - {{ $p->batch }} - {{ $p->seri }}</div>
-                                            <div class="text-xs text-gray-500">{{ $p->tahun_anggaran }} / {{ $p->tahun_emisi }}</div>
+                                        <td class="px-4 py-4 whitespace-nowrap">
+                                            <div class="flex flex-col items-center gap-0.5">
+                                                <div class="text-[10px] font-black flex items-center gap-1.5 uppercase tracking-tighter">
+                                                    <span class="px-1.5 py-0.5 rounded-sm {{ $themeClasses[$p->pecahan]['bg'] ?? 'bg-indigo-500' }} text-white text-[9px]">{{ $p->pecahan }}</span>
+                                                    <span class="text-black-600">{{ $p->batch }}</span>
+                                                    <span class="text-gray-300">/</span>
+                                                    <span class="text-black-600">{{ $p->seri }}</span>
+                                                </div>
+                                                <div class="text-[9px] text-gray-400 font-bold tracking-tighter">{{ $p->tahun_anggaran }} / {{ $p->tahun_emisi }}</div>
+                                            </div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-600">
                                             <div class="mb-1">
                                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                                     {{ $p->pack_awal }} - {{ $p->pack_akhir }}
                                                 </span>
                                             </div>
-                                            <div class="text-xs text-gray-500 font-bold ml-1">({{ $p->jumlah_pack }} pack)</div>
+                                            <div class="text-xs text-gray-500 font-bold">({{ $p->jumlah_pack }} pack)</div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                            <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-purple-100 text-purple-800 font-black">
+                                        <td class="px-2 py-4 whitespace-nowrap text-sm">
+                                            <span class="inline-flex items-center text-[12px] justify-center h-6 w-6 rounded-full bg-purple-100 text-purple-800 font-black">
                                                 {{ $p->jumlah_dus }}
                                             </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-[10px] font-black text-emerald-600 text-center">
+                                            {{ number_format($p->jumlah_pack * 45000, 0, ',', '.') }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-bold text-center">
                                             {{ $p->dus_awal }} - {{ $p->dus_akhir }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 flex items-center space-x-2 mt-2">
-                                            <div class="h-6 w-6 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-600">
-                                                {{ substr($p->user->name ?? '?', 0, 1) }}
+                                        <td class="px-2 py-4 whitespace-nowrap text-[10px] text-gray-500">
+                                            <div class="flex items-center space-x-1">
+                                                <div class="h-4 w-4 rounded-full bg-gray-100 flex items-center justify-center text-[8px] font-bold text-gray-400 border border-gray-200">
+                                                    {{ substr($p->user->name ?? '?', 0, 1) }}
+                                                </div>
+                                                <span class="truncate max-w-[80px]">{{ $p->user->name ?? '-' }}</span>
                                             </div>
-                                            <span>{{ $p->user->name ?? '-' }}</span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             <div class="flex items-center gap-2">
@@ -302,7 +317,7 @@
         function deletePengemasan(id) {
             Swal.fire({
                 title: 'Hapus Data Pengemasan?',
-                text: 'Data penyortiran terkait akan dibuka kembali dan bungkus akan dibongkar.',
+                text: 'Data penyortiran terkait akan dibuka kembali dan query data pengemasan akan dihapus.',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',

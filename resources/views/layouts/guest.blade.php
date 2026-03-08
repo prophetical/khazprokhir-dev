@@ -12,34 +12,61 @@
 
         <!-- Tailwind Local -->
         <script src="{{ asset('vendor/tailwindcss/tailwindcss.min.js') }}"></script>
-        
+
         <!-- Local AlpineJS -->
         <script defer src="{{ asset('vendor/alpinejs/alpine.min.js') }}"></script>
-    <body class="font-sans text-white antialiased selection:bg-indigo-500/30">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#0f172a] relative overflow-hidden">
-            
-            {{-- Floating Decorative Elements --}}
-            <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600/20 rounded-full blur-[120px] animate-pulse"></div>
-            <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" style="animation-delay: 2s"></div>
+    </head>
+    <body class="font-sans antialiased">
+        <div class="min-h-screen flex" style="background: #f0f4ff;">
 
-            <div class="z-10 transition-all duration-700 hover:scale-105">
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-indigo-400 drop-shadow-[0_0_15px_rgba(129,140,248,0.5)]" />
-                </a>
-            </div>
+            {{-- ===== LEFT PANEL: Branding ===== --}}
+            <div class="hidden lg:flex lg:w-1/2 flex-col items-center justify-center relative overflow-hidden p-16"
+                 style="background: linear-gradient(135deg, #1e40af 0%, #7c3aed 55%, #db2777 100%);">
 
-            <div class="w-full sm:max-w-md mt-6 z-10">
-                <div class="mx-4 sm:mx-0 px-8 py-8 bg-white/5 backdrop-blur-2xl border border-white/10 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] rounded-3xl relative overflow-hidden group">
-                    {{-- Glass inner glow --}}
-                    <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none"></div>
-                    
-                    {{ $slot }}
+                {{-- Decorative blobs --}}
+                <div class="absolute top-0 right-0 w-80 h-80 rounded-full opacity-20 blur-3xl" style="background: radial-gradient(circle, #fff 0%, transparent 70%); transform: translate(30%, -30%);"></div>
+                <div class="absolute bottom-0 left-0 w-96 h-96 rounded-full opacity-20 blur-3xl" style="background: radial-gradient(circle, #fff 0%, transparent 70%); transform: translate(-30%, 30%);"></div>
+
+                {{-- Grid dots pattern --}}
+                <div class="absolute inset-0 opacity-10"
+                     style="background-image: radial-gradient(circle, white 1px, transparent 1px); background-size: 32px 32px;">
                 </div>
-                
-                <p class="mt-6 text-center text-xs font-bold text-gray-500 uppercase tracking-[0.3em] opacity-50">
-                    Khazprokhir &middot; v2.0
-                </p>
+
+                <div class="relative z-10 text-center text-white">
+                    {{-- Logo --}}
+                    <div class="flex justify-center mb-8">
+                        <div class="w-20 h-20 bg-white/15 rounded-3xl flex items-center justify-center border border-white/20 shadow-2xl backdrop-blur-sm">
+                            <x-application-logo class="w-12 h-12 fill-current text-white drop-shadow" />
+                        </div>
+                    </div>
+
+                    <h1 class="text-4xl font-extrabold tracking-tight mb-3 drop-shadow-lg">Khazprokhir</h1>
+                    <p class="text-white/70 text-lg font-medium mb-10">Management System</p>
+
+
+                </div>
             </div>
+
+            {{-- ===== RIGHT PANEL: Login Form ===== --}}
+            <div class="w-full lg:w-1/2 flex items-center justify-center p-8">
+                <div class="w-full max-w-md">
+
+                    {{-- Mobile logo (shown only on small screens) --}}
+                    <div class="flex justify-center mb-8 lg:hidden">
+                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg"
+                             style="background: linear-gradient(135deg, #1e40af, #7c3aed);">
+                            <x-application-logo class="w-9 h-9 fill-current text-white" />
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-3xl shadow-xl shadow-indigo-100/60 border border-gray-100 px-8 py-10">
+                        {{ $slot }}
+                    </div>
+
+
+                </div>
+            </div>
+
         </div>
     </body>
 </html>

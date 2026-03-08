@@ -68,6 +68,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/data-pengemasan/export', [\App\Http\Controllers\PengemasanController::class , 'export'])->name('pengemasan.export');
         Route::get('/data-pengemasan/print', [\App\Http\Controllers\PengemasanController::class , 'print'])->name('pengemasan.print');
         Route::get('/pengemasan/{id}', [\App\Http\Controllers\PengemasanController::class , 'show'])->name('pengemasan.show');
+        // Penyerahan ke BI Routes
+        Route::get('/penyerahan-bi', [\App\Http\Controllers\PenyerahanBiController::class , 'index'])->name('penyerahan-bi.index');
+        Route::get('/penyerahan-bi/create', [\App\Http\Controllers\PenyerahanBiController::class , 'create'])->name('penyerahan-bi.create');
+        Route::post('/penyerahan-bi', [\App\Http\Controllers\PenyerahanBiController::class , 'store'])->name('penyerahan-bi.store');
+        Route::get('/penyerahan-bi/export', [\App\Http\Controllers\PenyerahanBiController::class , 'export'])->name('penyerahan-bi.export');
+        Route::get('/penyerahan-bi/print', [\App\Http\Controllers\PenyerahanBiController::class , 'print'])->name('penyerahan-bi.print');
+        Route::get('/api/penyerahan-bi/check-duplicate', [\App\Http\Controllers\PenyerahanBiController::class , 'checkDuplicate'])->name('penyerahan-bi.check-duplicate');
     });
 
 require __DIR__ . '/auth.php';

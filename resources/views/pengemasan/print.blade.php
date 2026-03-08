@@ -64,6 +64,22 @@
                         <span class="font-bold text-emerald-700 uppercase">{{ request('search_dus') }}</span>
                     </div>
                     @endif
+                    @if(request('gilir'))
+                    <div class="bg-purple-50 px-3 py-1.5 rounded-lg border border-purple-100 flex items-center">
+                        <span class="text-purple-400 mr-2">Gilir:</span>
+                        <span class="font-bold text-purple-700 uppercase">G{{ request('gilir') }}</span>
+                    </div>
+                    @endif
+                    @if(request('tanggal_awal') || request('tanggal_akhir'))
+                    <div class="bg-rose-50 px-3 py-1.5 rounded-lg border border-rose-100 flex items-center">
+                        <span class="text-rose-400 mr-2">Periode:</span>
+                        <span class="font-bold text-rose-700">
+                            {{ request('tanggal_awal') ? \Carbon\Carbon::parse(request('tanggal_awal'))->format('d/m/Y') : '...' }}
+                             - 
+                            {{ request('tanggal_akhir') ? \Carbon\Carbon::parse(request('tanggal_akhir'))->format('d/m/Y') : '...' }}
+                        </span>
+                    </div>
+                    @endif
                 </div>
             </div>
             <div class="text-right">
@@ -86,8 +102,9 @@
                             <th class="text-[10px] font-bold text-gray-500 uppercase text-center">Pch</th>
                             <th class="text-[10px] font-bold text-gray-500 uppercase">Batch</th>
                             <th class="text-[10px] font-bold text-gray-500 uppercase">Seri</th>
-                            <th class="text-[10px] font-bold text-gray-500 uppercase">Rentang Pack</th>
+                            <th class="text-[10px] font-bold text-gray-500 uppercase text-center">Rentang Pack</th>
                             <th class="text-[10px] font-bold text-gray-500 uppercase text-right">Jml Pack</th>
+                            <th class="text-[10px] font-bold text-gray-500 uppercase text-right">Bilyet</th>
                             <th class="text-[10px] font-bold text-gray-500 uppercase text-right">Jml Dus</th>
                             <th class="text-[10px] font-bold text-gray-500 uppercase text-center">No Dus</th>
                             <th class="text-[10px] font-bold text-gray-500 uppercase">Petugas</th>
@@ -118,10 +135,11 @@
                             </td>
                             <td class="text-[10px] font-bold text-gray-900">{{ $row->batch }}</td>
                             <td class="text-[10px] font-medium text-gray-900">{{ $row->seri }}</td>
-                            <td class="text-[10px] font-medium text-gray-600 bg-blue-50 rounded px-2">
+                            <td class="text-[10px] font-medium text-gray-600 bg-blue-50/50 rounded px-2 text-center">
                                 {{ $row->pack_awal }} - {{ $row->pack_akhir }}
                             </td>
                             <td class="text-[10px] font-bold text-gray-900 text-right">{{ number_format($row->jumlah_pack, 0, ',', '.') }}</td>
+                            <td class="text-[10px] font-bold text-emerald-600 text-right">{{ number_format($row->jumlah_pack * 45000, 0, ',', '.') }}</td>
                             <td class="text-[10px] font-bold text-purple-700 text-right">{{ number_format($row->jumlah_dus, 0, ',', '.') }}</td>
                             <td class="text-[10px] font-bold text-green-700 text-center">{{ $row->dus_awal }} - {{ $row->dus_akhir }}</td>
                             <td class="text-[10px] font-medium text-gray-600">
@@ -130,7 +148,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="12" class="text-center py-10 text-gray-400 text-sm italic">Tidak ada data ditemukan untuk rincian ini.</td>
+                            <td colspan="13" class="text-center py-10 text-gray-400 text-sm italic">Tidak ada data ditemukan untuk rincian ini.</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -138,6 +156,7 @@
                         <tr>
                             <td colspan="8" class="text-[10px] font-bold text-gray-700 uppercase p-3 text-right">Total Filter Ini</td>
                             <td class="text-[10px] font-extrabold text-gray-900 text-right p-3">{{ number_format($pengemasans->sum('jumlah_pack'), 0, ',', '.') }}</td>
+                            <td class="text-[10px] font-extrabold text-emerald-600 text-right p-3">{{ number_format($pengemasans->sum(function($p) { return $p->jumlah_pack * 45000; }), 0, ',', '.') }}</td>
                             <td class="text-[10px] font-extrabold text-purple-700 text-right p-3">{{ number_format($pengemasans->sum('jumlah_dus'), 0, ',', '.') }}</td>
                             <td colspan="2"></td>
                         </tr>

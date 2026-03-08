@@ -1,110 +1,132 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Production Dashboard') }}
+            {{ __('Dashboard') }}
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                <!-- Stat 1 -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900 flex flex-col items-center">
-                        <div class="text-sm font-medium text-gray-500 uppercase tracking-wide">HCS Received Today</div>
-                        <div class="mt-2 text-3xl font-extrabold text-indigo-600">{{ $totalHcsToday }}</div>
-                    </div>
-                </div>
-                
-                <!-- Stat 2 -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900 flex flex-col items-center">
-                        <div class="text-sm font-medium text-gray-500 uppercase tracking-wide">Bilyet Processed</div>
-                        <div class="mt-2 text-3xl font-extrabold text-blue-600">{{ number_format($totalBilyetToday, 0, ',', '.') }}</div>
-                    </div>
-                </div>
+    <div class="py-8">
+        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-                <!-- Stat 3 -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900 flex flex-col items-center">
-                        <div class="text-sm font-medium text-gray-500 uppercase tracking-wide">Packs Processed</div>
-                        <div class="mt-2 text-3xl font-extrabold text-green-600">{{ number_format($totalPacksToday, 0, ',', '.') }}</div>
-                    </div>
+            {{-- Under Construction Banner --}}
+            <div class="relative overflow-hidden rounded-2xl shadow-xl" style="background: linear-gradient(135deg, #1e40af 0%, #7c3aed 50%, #db2777 100%);">
+                {{-- Decorative pattern --}}
+                <div class="absolute inset-0 opacity-10">
+                    <div class="absolute -top-10 -right-10 w-60 h-60 rounded-full bg-white"></div>
+                    <div class="absolute -bottom-16 -left-10 w-80 h-80 rounded-full bg-white"></div>
                 </div>
-                
-                <!-- Stat 4 -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900 flex flex-col items-center">
-                        <div class="text-sm font-medium text-gray-500 uppercase tracking-wide">Pack Usage</div>
-                        <div class="mt-2 text-3xl font-extrabold text-purple-600">{{ $packUsagePercentage }}%</div>
+                <div class="relative px-8 py-10 flex flex-col md:flex-row items-center gap-8">
+                    {{-- Icon --}}
+                    <div class="shrink-0 flex items-center justify-center w-24 h-24 rounded-2xl bg-white/10 border border-white/20 shadow-inner">
+                        <svg class="w-12 h-12 text-yellow-300 drop-shadow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z"/>
+                        </svg>
+                    </div>
+                    {{-- Text --}}
+                    <div class="text-center md:text-left flex-1">
+                        <div class="inline-flex items-center gap-2 bg-yellow-400/20 border border-yellow-400/30 text-yellow-300 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full mb-3">
+                            <span class="inline-block w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
+                            Under Construction
+                        </div>
+                        <h1 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight mb-2">Dashboard Sedang Dibangun</h1>
+                        <p class="text-white/70 text-sm leading-relaxed max-w-xl">
+                            Halaman dashboard produksi sedang dalam tahap pengembangan untuk memberikan tampilan yang lebih informatif dan komprehensif.
+                            Sementara ini, gunakan menu di sidebar untuk mengakses modul yang sudah tersedia.
+                        </p>
                     </div>
                 </div>
             </div>
 
+            {{-- System Status & Info Grid --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Supplier Distribution Chart (Simple CSS implementation) -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900">
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Supplier Distribution</h3>
-                        
-                        @php
-                            $totalSuppliers = $cutpackCount + $rikyetCount;
-                            $cutpackPct = $totalSuppliers > 0 ? ($cutpackCount / $totalSuppliers) * 100 : 0;
-                            $rikyetPct = $totalSuppliers > 0 ? ($rikyetCount / $totalSuppliers) * 100 : 0;
-                        @endphp
 
-                        @if ($totalSuppliers > 0)
-                            <div class="space-y-4">
-                                <div>
-                                    <div class="flex justify-between items-end mb-1">
-                                        <span class="text-sm font-semibold text-blue-600">Cutpack ({{ $cutpackCount }} packs)</span>
-                                        <span class="text-sm font-semibold text-blue-600">{{ round($cutpackPct, 1) }}%</span>
-                                    </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-4">
-                                        <div class="bg-blue-500 h-4 rounded-full" style="width: {{ $cutpackPct }}%"></div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="flex justify-between items-end mb-1">
-                                        <span class="text-sm font-semibold text-green-600">Rikyet ({{ $rikyetCount }} packs)</span>
-                                        <span class="text-sm font-semibold text-green-600">{{ round($rikyetPct, 1) }}%</span>
-                                    </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-4">
-                                        <div class="bg-green-500 h-4 rounded-full" style="width: {{ $rikyetPct }}%"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        @else
-                            <div class="text-center text-gray-500 py-8">
-                                Belum ada data supplier hari ini.
-                            </div>
-                        @endif
+                {{-- System Status --}}
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse"></span>
+                        <h3 class="text-sm font-bold text-gray-800 uppercase tracking-widest">System Status</h3>
+                    </div>
+                    <div class="p-5 space-y-3">
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-500">Aplikasi</span>
+                            <span class="flex items-center gap-1.5 font-semibold text-green-600">
+                                <span class="w-2 h-2 rounded-full bg-green-400"></span> Online
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-500">Database</span>
+                            <span class="flex items-center gap-1.5 font-semibold text-green-600">
+                                <span class="w-2 h-2 rounded-full bg-green-400"></span> Terhubung
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-500">Pengguna Aktif</span>
+                            <span class="font-bold text-indigo-700">{{ auth()->user()->name }}</span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-500">Role</span>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-700 uppercase tracking-wider">
+                                {{ ucfirst(auth()->user()->role) }}
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-500">Waktu Server</span>
+                            <span class="font-mono text-xs font-semibold text-gray-700">{{ \Carbon\Carbon::now()->locale('id')->isoFormat('D MMMM YYYY, HH:mm') }}</span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-500">PHP Version</span>
+                            <span class="font-mono text-xs font-semibold text-gray-600">{{ phpversion() }}</span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-500">Laravel Version</span>
+                            <span class="font-mono text-xs font-semibold text-gray-600">{{ app()->version() }}</span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Recent Activity or Information -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900">
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">System Status</h3>
-                        <p class="text-gray-600 mb-4">Khazprokhir Inventory and Production Management System berjalan normal.</p>
-                        
-                        <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
-                            <div class="flex">
-                                <div class="flex-shrink-0">
-                                    <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                {{-- Module Navigation --}}
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/></svg>
+                        <h3 class="text-sm font-bold text-gray-800 uppercase tracking-widest">Modul Tersedia</h3>
+                    </div>
+                    <div class="p-4 space-y-2">
+                        @php
+                            $modules = [
+                                ['icon'=>'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10', 'label'=>'Penerimaan HCS', 'sub'=>'Data Receiving, Batch Tracking, Laporan', 'color'=>'bg-blue-50 text-blue-700 border-blue-100', 'route'=>'hcs-receiving.index'],
+                                ['icon'=>'M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4', 'label'=>'Penyortiran HCS', 'sub'=>'Data Sortir, Rekomendasi, Laporan', 'color'=>'bg-purple-50 text-purple-700 border-purple-100', 'route'=>'hcs-sorting.index'],
+                                ['icon'=>'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4', 'label'=>'Pengemasan HCS', 'sub'=>'Input Kemas, Data Pengemasan', 'color'=>'bg-green-50 text-green-700 border-green-100', 'route'=>'pengemasan.index'],
+                                ['icon'=>'M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4', 'label'=>'Penyerahan ke BI', 'sub'=>'Input & Laporan Penyerahan', 'color'=>'bg-rose-50 text-rose-700 border-rose-100', 'route'=>'penyerahan-bi.index'],
+                            ];
+                        @endphp
+                        @foreach($modules as $mod)
+                            <a href="{{ route($mod['route']) }}"
+                               class="flex items-center gap-3 p-3 rounded-lg border {{ $mod['color'] }} hover:shadow-sm transition-all duration-150 group">
+                                <div class="shrink-0 flex items-center justify-center w-8 h-8 rounded-lg bg-white/70 shadow-sm">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $mod['icon'] }}"/>
                                     </svg>
                                 </div>
-                                <div class="ml-3">
-                                    <p class="text-sm text-blue-700">
-                                        Role anda: <strong>{{ ucfirst(auth()->user()->role) }}</strong>. 
-                                        Pastikan data yang diinput sesuai dengan bilyet fisik.
-                                    </p>
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-xs font-bold">{{ $mod['label'] }}</div>
+                                    <div class="text-[10px] opacity-70 truncate">{{ $mod['sub'] }}</div>
                                 </div>
-                            </div>
-                        </div>
+                                <svg class="w-3.5 h-3.5 opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                            </a>
+                        @endforeach
                     </div>
+                </div>
+            </div>
+
+            {{-- Info Banner --}}
+            <div class="bg-blue-50 border border-blue-100 rounded-xl p-5 flex items-start gap-4">
+                <svg class="w-5 h-5 text-blue-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <div>
+                    <p class="text-sm font-bold text-blue-800 mb-1">Khazprokhir Management System</p>
+                    <p class="text-xs text-blue-600 leading-relaxed">
+                        Sistem ini digunakan untuk mengelola alur kerja HCS mulai dari <strong>Penerimaan → Penyortiran → Pengemasan → Penyerahan ke BI</strong>.
+                        Dashboard statistik produksi akan segera tersedia di pembaruan berikutnya.
+                    </p>
                 </div>
             </div>
 
