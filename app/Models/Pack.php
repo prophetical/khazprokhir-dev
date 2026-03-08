@@ -22,4 +22,9 @@ class Pack extends Model
     {
         return $this->belongsTo(HcsSorting::class);
     }
+
+    public function pengemasan()
+    {
+        return $this->belongsTo(Pengemasan::class , 'id_pengemasan');
+    }
 }

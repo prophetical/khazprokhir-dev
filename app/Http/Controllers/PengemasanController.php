@@ -1,0 +1,391 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Pengemasan;
+use App\Models\DetailPengemasan;
+use App\Models\Pack;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
+
+class PengemasanController extends Controller
+{
+    public function index()
+    {
+        $readyGroups = $this->findReadyToPackageGroups();
+        return view('pengemasan.index', compact('readyGroups'));
+    }
+
+    public function data(Request $request)
+    {
+        $query = Pengemasan::with('user');
+
+        // Handle Filter Pecahan
+        if ($request->filled('pecahan')) {
+            $query->where('pecahan', $request->pecahan);
+        }
+
+        // Handle Search General
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('pecahan', 'like', "%{$search}%")
+                    ->orWhere('batch', 'like', "%{$search}%")
+                    ->orWhere('seri', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($userQ) use ($search) {
+                    $userQ->where('name', 'like', "%{$search}%");
+                }
+                );
+            });
+        }
+
+        // Handle Search Dus Spesifik
+        if ($request->filled('search_dus') && is_numeric($request->search_dus)) {
+            $searchDus = (int)$request->search_dus;
+            $query->where(function ($q) use ($searchDus) {
+                $q->where('dus_awal', '<=', $searchDus)
+                    ->where('dus_akhir', '>=', $searchDus);
+            });
+        }
+
+        // Handle Order
+        $sortColumn = $request->input('sort', 'created_at');
+        $sortDirection = $request->input('direction', 'desc');
+
+        if ($sortColumn === 'petugas') {
+            $query->join('users', 'pengemasans.created_by', '=', 'users.id')
+                ->orderBy('users.name', $sortDirection)
+                ->select('pengemasans.*');
+        }
+        else {
+            $query->orderBy($sortColumn, $sortDirection);
+        }
+
+        $pengemasans = $query->paginate(15)->withQueryString();
+
+        return view('pengemasan.data', compact('pengemasans', 'sortColumn', 'sortDirection'));
+    }
+
+    private function findReadyToPackageGroups()
+    {
+        // Ambil semua pack yang sudah disortir tapi belum dikemas
+        $packs = Pack::whereNotNull('hcs_sorting_id')
+            ->whereNull('id_pengemasan')
+            ->join('hcs_receivings', 'packs.hcs_receiving_id', '=', 'hcs_receivings.id')
+            ->select(
+            'packs.pack_number',
+            'packs.batch',
+            'packs.seri',
+            'hcs_receivings.pecahan',
+            'hcs_receivings.emisi',
+            'hcs_receivings.tahun_anggaran'
+        )
+            ->orderBy('hcs_receivings.tahun_anggaran')
+            ->orderBy('hcs_receivings.emisi')
+            ->orderBy('hcs_receivings.pecahan')
+            ->orderBy('packs.batch')
+            ->orderBy('packs.seri')
+            ->orderBy('packs.pack_number')
+            ->get();
+
+        $grouped = [];
+        foreach ($packs as $pack) {
+            $key = "{$pack->tahun_anggaran}|{$pack->emisi}|{$pack->pecahan}|{$pack->batch}|{$pack->seri}";
+            if (!isset($grouped[$key])) {
+                $grouped[$key] = [
+                    'tahun_anggaran' => $pack->tahun_anggaran,
+                    'emisi' => $pack->emisi,
+                    'pecahan' => $pack->pecahan,
+                    'batch' => $pack->batch,
+                    'seri' => $pack->seri,
+                    'numbers' => []
+                ];
+            }
+            $grouped[$key]['numbers'][] = $pack->pack_number;
+        }
+
+        $readyGroups = [];
+
+        foreach ($grouped as $group) {
+            $numbers = $group['numbers'];
+            if (count($numbers) < 4)
+                continue;
+
+            $contiguousBlocks = [];
+            $currentBlock = [];
+
+            foreach ($numbers as $num) {
+                if (empty($currentBlock)) {
+                    $currentBlock[] = $num;
+                }
+                else {
+                    $last = end($currentBlock);
+                    if ($num == $last + 1) {
+                        $currentBlock[] = $num;
+                    }
+                    else {
+                        $contiguousBlocks[] = $currentBlock;
+                        $currentBlock = [$num];
+                    }
+                }
+            }
+            if (!empty($currentBlock)) {
+                $contiguousBlocks[] = $currentBlock;
+            }
+
+            foreach ($contiguousBlocks as $block) {
+                // Jangan pecah per 4. Tapi kita harus pastikan bahwa block ini minimal 4.
+                // Jika ingin Kemas Semua, pastikan bisa kelipatan 4.
+                // Namun, validasi form sudah memastikan harus kelipatan 4 ketika store.
+                // Untuk "Kemas Semua", kita bisa batasi block akhir agar selalu kelipatan 4 
+                // dari pack_awal, ATAU biarkan index menampilkan keseluruhan range, dan "Kemas Semua"
+                // akan mengirimkan range maksimal yang merupakan kelipatan 4.
+
+                $totalInBlock = count($block);
+
+                // Jika total pack dalam range berurutan ini kurang dari 4, lewati
+                if ($totalInBlock < 4)
+                    continue;
+
+                $readyGroups[] = [
+                    'tahun_anggaran' => $group['tahun_anggaran'],
+                    'emisi' => $group['emisi'],
+                    'pecahan' => $group['pecahan'],
+                    'batch' => $group['batch'],
+                    'seri' => $group['seri'],
+                    'pack_awal' => $block[0],
+                    'pack_akhir' => end($block),
+                    'jumlah_pack' => $totalInBlock,
+                ];
+            }
+        }
+
+        return collect($readyGroups);
+    }
+
+    public function create(Request $request)
+    {
+        $lastDus = DetailPengemasan::whereHas('pengemasan', function ($query) use ($request) {
+            if ($request->has('pecahan'))
+                $query->where('pecahan', $request->pecahan);
+            if ($request->has('tahun_anggaran'))
+                $query->where('tahun_anggaran', $request->tahun_anggaran);
+            if ($request->has('tahun_emisi'))
+                $query->where('tahun_emisi', $request->tahun_emisi);
+        })->orderBy('no_dus', 'desc')
+            ->first();
+
+        $lastNumber = $lastDus ? $lastDus->no_dus : 0;
+
+        return view('pengemasan.create', [
+            'auto_fill' => $request->all(),
+            'last_number' => $lastNumber
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'tanggal_pengemasan' => 'required|date',
+            'gilir' => 'required',
+            'tahun_anggaran' => 'required',
+            'tahun_emisi' => 'required|digits:4',
+            'pecahan' => 'required',
+            'batch' => 'required',
+            'seri' => 'required',
+            'selected_chunks' => 'required|array|min:1',
+        ]);
+
+        $packNumbers = [];
+        $parsedChunks = [];
+
+        $selectedChunksInput = $request->selected_chunks;
+
+        // sort by starting pack
+        usort($selectedChunksInput, function ($a, $b) {
+            $aStart = (int)explode('-', $a)[0];
+            $bStart = (int)explode('-', $b)[0];
+            return $aStart <=> $bStart;
+        });
+
+        foreach ($selectedChunksInput as $chunkStr) {
+            $parts = explode('-', $chunkStr);
+            if (count($parts) == 2) {
+                $cAwal = (int)$parts[0];
+                $cAkhir = (int)$parts[1];
+                $parsedChunks[] = ['awal' => $cAwal, 'akhir' => $cAkhir];
+                for ($i = $cAwal; $i <= $cAkhir; $i++) {
+                    $packNumbers[] = $i;
+                }
+            }
+        }
+
+        $jumlahPack = count($packNumbers);
+
+        if ($jumlahPack <= 0 || $jumlahPack % 4 !== 0) {
+            throw ValidationException::withMessages([
+                'selected_chunks' => "Jumlah pack ($jumlahPack) tidak valid. Jumlah pack harus kelipatan 4 untuk dikemas (1 module pengemasan = 4 pack).",
+            ]);
+        }
+
+        $packAwal = min($packNumbers);
+        $packAkhir = max($packNumbers);
+
+        $packs = Pack::where('packs.batch', $request->batch)
+            ->where('packs.seri', $request->seri)
+            ->whereIn('packs.pack_number', $packNumbers)
+            ->join('hcs_receivings', 'packs.hcs_receiving_id', '=', 'hcs_receivings.id')
+            ->where('hcs_receivings.pecahan', $request->pecahan)
+            ->where('hcs_receivings.emisi', $request->tahun_emisi)
+            ->where('hcs_receivings.tahun_anggaran', $request->tahun_anggaran)
+            ->select('packs.*')
+            ->get();
+
+        if ($packs->count() !== $jumlahPack) {
+            throw ValidationException::withMessages([
+                'selected_chunks' => "Terdapat ketidaksesuaian jumlah pack dengan yang dipilih. Beberapa pack mungkin tidak tersedia atau identitas berbeda.",
+            ]);
+        }
+
+        foreach ($packs as $pack) {
+            if (is_null($pack->hcs_sorting_id)) {
+                throw ValidationException::withMessages([
+                    'selected_chunks' => "Pack nomor {$pack->pack_number} belum selesai disortir. Harap selesaikan penyortiran.",
+                ]);
+            }
+            if (!is_null($pack->id_pengemasan)) {
+                throw ValidationException::withMessages([
+                    'selected_chunks' => "Pack nomor {$pack->pack_number} sudah tercatat dalam riwayat pengemasan sebelumnya.",
+                ]);
+            }
+        }
+
+        $lastDus = DetailPengemasan::whereHas('pengemasan', function ($query) use ($request) {
+            $query->where('pecahan', $request->pecahan)
+                ->where('tahun_anggaran', $request->tahun_anggaran)
+                ->where('tahun_emisi', $request->tahun_emisi);
+        })->orderBy('no_dus', 'desc')
+            ->first();
+
+        $nomorDusAwal = $lastDus ? $lastDus->no_dus + 1 : 1;
+        $jumlahDus = ($jumlahPack / 4) * 9;
+        $nomorDusAkhir = $nomorDusAwal + $jumlahDus - 1;
+
+        DB::beginTransaction();
+        try {
+            $pengemasan = Pengemasan::create([
+                'tanggal_pengemasan' => $request->tanggal_pengemasan,
+                'gilir' => $request->gilir,
+                'tahun_anggaran' => $request->tahun_anggaran,
+                'tahun_emisi' => $request->tahun_emisi,
+                'pecahan' => $request->pecahan,
+                'batch' => $request->batch,
+                'seri' => $request->seri,
+                'pack_awal' => $packAwal,
+                'pack_akhir' => $packAkhir,
+                'jumlah_pack' => $jumlahPack,
+                'jumlah_dus' => $jumlahDus,
+                'dus_awal' => $nomorDusAwal,
+                'dus_akhir' => $nomorDusAkhir,
+                'created_by' => auth()->id(),
+            ]);
+
+            Pack::whereIn('id', $packs->pluck('id'))->update(['id_pengemasan' => $pengemasan->id]);
+
+            $this->generateDetailPengemasan($pengemasan, $request->seri, $nomorDusAwal, $request->batch, $parsedChunks);
+
+            DB::commit();
+            return redirect()->route('pengemasan.index')->with('success', 'Data pengemasan berhasil diproses secara otomatis.');
+        }
+        catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage())->withInput();
+        }
+    }
+
+    private function generateDetailPengemasan($pengemasan, $seriRaw, $startNumber, $batch, $parsedChunks)
+    {
+        // Pola pembacaan seri: format ideal [AAA]-[BBB][No]
+        // Contoh: RJ-MJ9 -> AAA = RJ, BBB = MJ
+        $parts = explode('-', $seriRaw);
+        $seriAwalPrefix = $parts[0] ?? '';
+
+        $seriAkhirFull = $parts[1] ?? '';
+        // Ekstrak huruf dari seri akhir (menghilangkan angka di belakang)
+        preg_match('/^[A-Za-z]+/', $seriAkhirFull, $matches);
+        $seriAkhirPrefix = $matches[0] ?? $seriAwalPrefix;
+
+        if (empty($seriAwalPrefix) || empty($seriAkhirPrefix)) {
+            throw new \Exception("Format seri $seriRaw tidak sesuai dengan standar konvensi pengemasan.");
+        }
+
+        // Pola 1: seriAwal + A -> seriAwal + U
+        $pola1Awal = $seriAwalPrefix . 'A';
+        $pola1Akhir = $seriAwalPrefix . 'U';
+
+        // Pola 2: seriAkhir + A -> seriAkhir + U
+        $pola2Awal = $seriAkhirPrefix . 'A';
+        $pola2Akhir = $seriAkhirPrefix . 'U';
+
+        // Pola 3: seriAwal + V -> seriAkhir + Z
+        $pola3Awal = $seriAwalPrefix . 'V';
+        $pola3Akhir = $seriAkhirPrefix . 'Z';
+
+        $currentNoDus = $startNumber;
+
+        foreach ($parsedChunks as $chunk) {
+            $p1 = $chunk['awal'];
+            $p2 = $p1 + 1;
+            $p3 = $p1 + 2;
+            $p4 = $p1 + 3;
+
+            // Dus 1: Pack 1-4, Pola 3
+            $this->createDusRow($pengemasan->id, $currentNoDus++, $p1, $p4, $pola3Awal, $pola3Akhir, $batch);
+
+            // Dus 2: Pack 1, Pola 2
+            $this->createDusRow($pengemasan->id, $currentNoDus++, $p1, $p1, $pola2Awal, $pola2Akhir, $batch);
+
+            // Dus 3: Pack 1, Pola 1
+            $this->createDusRow($pengemasan->id, $currentNoDus++, $p1, $p1, $pola1Awal, $pola1Akhir, $batch);
+
+            // Dus 4: Pack 2, Pola 2
+            $this->createDusRow($pengemasan->id, $currentNoDus++, $p2, $p2, $pola2Awal, $pola2Akhir, $batch);
+
+            // Dus 5: Pack 2, Pola 1
+            $this->createDusRow($pengemasan->id, $currentNoDus++, $p2, $p2, $pola1Awal, $pola1Akhir, $batch);
+
+            // Dus 6: Pack 3, Pola 2
+            $this->createDusRow($pengemasan->id, $currentNoDus++, $p3, $p3, $pola2Awal, $pola2Akhir, $batch);
+
+            // Dus 7: Pack 3, Pola 1
+            $this->createDusRow($pengemasan->id, $currentNoDus++, $p3, $p3, $pola1Awal, $pola1Akhir, $batch);
+
+            // Dus 8: Pack 4, Pola 2
+            $this->createDusRow($pengemasan->id, $currentNoDus++, $p4, $p4, $pola2Awal, $pola2Akhir, $batch);
+
+            // Dus 9: Pack 4, Pola 1
+            $this->createDusRow($pengemasan->id, $currentNoDus++, $p4, $p4, $pola1Awal, $pola1Akhir, $batch);
+        }
+    }
+
+    private function createDusRow($id_pengemasan, $noDus, $packAwal, $packAkhir, $seriAwal, $seriAkhir, $batch)
+    {
+        DetailPengemasan::create([
+            'id_pengemasan' => $id_pengemasan,
+            'no_dus' => $noDus,
+            'pack_awal' => $packAwal,
+            'pack_akhir' => $packAkhir,
+            'seri_awal' => $seriAwal,
+            'seri_akhir' => $seriAkhir,
+            'batch' => $batch,
+            'jumlah_bilyet' => 20000,
+        ]);
+    }
+
+    public function show($id)
+    {
+        $pengemasan = Pengemasan::with(['detailPengemasans', 'user'])->findOrFail($id);
+        return view('pengemasan.show', compact('pengemasan'));
+    }
+}

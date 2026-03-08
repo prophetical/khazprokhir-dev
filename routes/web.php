@@ -55,6 +55,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // API to get used packs (requires auth)
         Route::get('/api/packs/used', [\App\Http\Controllers\PackController::class , 'used'])->name('packs.used');
+
+        // Pengemasan Routes
+        Route::middleware('role:sortir')->group(function () {
+            Route::get('/pengemasan/create', [\App\Http\Controllers\PengemasanController::class , 'create'])->name('pengemasan.create');
+            Route::post('/pengemasan', [\App\Http\Controllers\PengemasanController::class , 'store'])->name('pengemasan.store');
+        }
+        );
+        Route::get('/pengemasan', [\App\Http\Controllers\PengemasanController::class , 'index'])->name('pengemasan.index');
+        Route::get('/data-pengemasan', [\App\Http\Controllers\PengemasanController::class , 'data'])->name('pengemasan.data');
+        Route::get('/pengemasan/{id}', [\App\Http\Controllers\PengemasanController::class , 'show'])->name('pengemasan.show');
     });
 
 require __DIR__ . '/auth.php';
