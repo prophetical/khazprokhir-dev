@@ -30,7 +30,7 @@
                                 <input type="hidden" name="direction" value="{{ request('direction') }}">
                             @endif
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
                                 <!-- Filter Pecahan -->
                                 <div>
                                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Pecahan</label>
@@ -45,7 +45,32 @@
                                         <option value="Y" {{ request('pecahan') == 'Y' ? 'selected' : '' }}>Y</option>
                                     </select>
                                 </div>
-                                
+
+                                <!-- Filter Gilir -->
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Gilir</label>
+                                    <select name="gilir" class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-3 transition-all font-bold focus:border-indigo-500 focus:ring-indigo-500">
+                                        <option value="">Semua</option>
+                                        <option value="1" {{ request('gilir') == '1' ? 'selected' : '' }}>Gilir 1</option>
+                                        <option value="2" {{ request('gilir') == '2' ? 'selected' : '' }}>Gilir 2</option>
+                                        <option value="3" {{ request('gilir') == '3' ? 'selected' : '' }}>Gilir 3</option>
+                                    </select>
+                                </div>
+
+                                <!-- Filter Tanggal Awal -->
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Tanggal Awal</label>
+                                    <input type="date" name="tanggal_awal" value="{{ request('tanggal_awal') }}" class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-3 transition-all focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+
+                                <!-- Filter Tanggal Akhir -->
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Tanggal Akhir</label>
+                                    <input type="date" name="tanggal_akhir" value="{{ request('tanggal_akhir') }}" class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-3 transition-all focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end mt-4">
                                 <!-- Cari Data Umum -->
                                 <div class="lg:col-span-2">
                                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Cari Data (Batch, Seri, dll)</label>
@@ -69,7 +94,7 @@
                                         <button type="submit" class="flex-1 inline-flex justify-center items-center px-4 py-3 bg-gray-800 border border-transparent rounded-lg font-bold text-xs text-white uppercase tracking-widest shadow-md hover:bg-gray-700 active:scale-95 transition-all">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                                         </button>
-                                        <a href="{{ route('pengemasan.data') }}" class="flex-1 inline-flex justify-center items-center px-4 py-3 bg-gray-100 border border-gray-200 rounded-lg font-bold text-xs text-gray-400 uppercase tracking-widest shadow-sm hover:bg-gray-200 active:scale-95 transition-all @if(!request('search') && !request('pecahan') && !request('search_dus')) opacity-50 pointer-events-none @endif">
+                                        <a href="{{ route('pengemasan.data') }}" class="flex-1 inline-flex justify-center items-center px-4 py-3 bg-gray-100 border border-gray-200 rounded-lg font-bold text-xs text-gray-400 uppercase tracking-widest shadow-sm hover:bg-gray-200 active:scale-95 transition-all @if(!request('search') && !request('pecahan') && !request('search_dus') && !request('tanggal_awal') && !request('tanggal_akhir') && !request('gilir')) opacity-50 pointer-events-none @endif">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                                         </a>
                                     </div>
@@ -144,14 +169,31 @@
                                             Tanggal {{ sortIcon('tanggal_pengemasan') }}
                                         </a>
                                     </th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-200">Identitas</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-200">Pack Awal-Akhir</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-200">
+                                        <a href="{{ route('pengemasan.data', array_merge(request()->query(), ['sort' => 'gilir', 'direction' => $direction])) }}" class="hover:text-indigo-600 flex items-center">
+                                            Gilir {{ sortIcon('gilir') }}
+                                        </a>
+                                    </th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-200">
+                                        <a href="{{ route('pengemasan.data', array_merge(request()->query(), ['sort' => 'pecahan', 'direction' => $direction])) }}" class="hover:text-indigo-600 flex items-center">
+                                            Identitas {{ sortIcon('pecahan') }}
+                                        </a>
+                                    </th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-200">
+                                        <a href="{{ route('pengemasan.data', array_merge(request()->query(), ['sort' => 'pack_awal', 'direction' => $direction])) }}" class="hover:text-indigo-600 flex items-center">
+                                            Pack {{ sortIcon('pack_awal') }}
+                                        </a>
+                                    </th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-200">
                                         <a href="{{ route('pengemasan.data', array_merge(request()->query(), ['sort' => 'jumlah_dus', 'direction' => $direction])) }}" class="hover:text-indigo-600 flex items-center">
                                             Jml Dus {{ sortIcon('jumlah_dus') }}
                                         </a>
                                     </th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-200">No Dus</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-200">
+                                        <a href="{{ route('pengemasan.data', array_merge(request()->query(), ['sort' => 'dus_awal', 'direction' => $direction])) }}" class="hover:text-indigo-600 flex items-center">
+                                            No Dus {{ sortIcon('dus_awal') }}
+                                        </a>
+                                    </th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-200">
                                         <a href="{{ route('pengemasan.data', array_merge(request()->query(), ['sort' => 'petugas', 'direction' => $direction])) }}" class="hover:text-indigo-600 flex items-center">
                                             Petugas {{ sortIcon('petugas') }}
@@ -165,6 +207,9 @@
                                     <tr class="hover:bg-indigo-50 transition-colors duration-200 group">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-medium">
                                             {{ \Carbon\Carbon::parse($p->tanggal_pengemasan)->locale('id')->isoFormat('D MMMM YYYY') }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-gray-100 text-gray-800 border border-gray-200">G{{ $p->gilir }}</span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm font-bold text-gray-900">{{ $p->pecahan }} - {{ $p->batch }} - {{ $p->seri }}</div>
@@ -212,7 +257,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="px-6 py-12 text-center">
+                                        <td colspan="8" class="px-6 py-12 text-center">
                                             <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
                                             </svg>

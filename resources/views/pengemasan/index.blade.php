@@ -4,10 +4,27 @@
             {{ __('Pengemasan HCS') }}
         </h2>
     </x-slot>
-
+                    @php
+                        $themeClasses = [
+                            'S' => ['bg' => 'bg-lime-500', 'border' => 'border-lime-500', 'ring' => 'focus:ring-lime-500', 'focus' => 'focus:border-lime-500', 'btn' => 'bg-lime-500', 'text' => 'text-white'],
+                            'T' => ['bg' => 'bg-gray-400', 'border' => 'border-gray-400', 'ring' => 'focus:ring-gray-400', 'focus' => 'focus:border-gray-400', 'btn' => 'bg-gray-400', 'text' => 'text-white'],
+                            'U' => ['bg' => 'bg-amber-400', 'border' => 'border-amber-400', 'ring' => 'focus:ring-amber-400', 'focus' => 'focus:border-amber-400', 'btn' => 'bg-amber-400', 'text' => 'text-white'],
+                            'V' => ['bg' => 'bg-purple-500', 'border' => 'border-purple-500', 'ring' => 'focus:ring-purple-500', 'focus' => 'focus:border-purple-500', 'btn' => 'bg-purple-500', 'text' => 'text-white'],
+                            'W' => ['bg' => 'bg-green-500', 'border' => 'border-green-500', 'ring' => 'focus:ring-green-500', 'focus' => 'focus:border-green-500', 'btn' => 'bg-green-500', 'text' => 'text-white'],
+                            'X' => ['bg' => 'bg-blue-500', 'border' => 'border-blue-500', 'ring' => 'focus:ring-blue-500', 'focus' => 'focus:border-blue-500', 'btn' => 'bg-blue-500', 'text' => 'text-white'],
+                            'Y' => ['bg' => 'bg-red-500', 'border' => 'border-red-500', 'ring' => 'focus:ring-red-500', 'focus' => 'focus:border-red-500', 'btn' => 'bg-red-500', 'text' => 'text-white'],
+                        ];
+                        $selectedPecahan = request('pecahan', '');
+                    @endphp
     <div class="py-8">
         <div class="max-w-10xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div x-data="{ 
+                        selectedPecahan: '{{ $selectedPecahan }}',
+                        themes: {{ json_encode($themeClasses) }},
+                        get currentTheme() { return this.themes[this.selectedPecahan] || null }
+                    }" 
+                    class="bg-white overflow-hidden shadow-sm rounded-xl mb-6 border-t-4 transition-all duration-500"
+                    :class="currentTheme ? currentTheme.border : 'border-gray-100'">
                 <div class="p-6 text-gray-900">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-md font-bold text-indigo-800">Daftar Pack Siap Kemas</h2>
@@ -43,6 +60,58 @@
                             @endforeach
                         </div>
                     @endif
+
+                    <!-- KOTAK FILTER PENCARIAN -->
+                    <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 mb-6 shadow-sm">
+                        <form method="GET" action="{{ route('pengemasan.index') }}">
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                                <!-- Filter Pecahan -->
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Pecahan</label>
+                                    <select name="pecahan" class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-3 transition-all font-bold focus:border-indigo-500 focus:ring-indigo-500">
+                                        <option value="">Semua</option>
+                                        <option value="S" {{ request('pecahan') == 'S' ? 'selected' : '' }}>S</option>
+                                        <option value="T" {{ request('pecahan') == 'T' ? 'selected' : '' }}>T</option>
+                                        <option value="U" {{ request('pecahan') == 'U' ? 'selected' : '' }}>U</option>
+                                        <option value="V" {{ request('pecahan') == 'V' ? 'selected' : '' }}>V</option>
+                                        <option value="W" {{ request('pecahan') == 'W' ? 'selected' : '' }}>W</option>
+                                        <option value="X" {{ request('pecahan') == 'X' ? 'selected' : '' }}>X</option>
+                                        <option value="Y" {{ request('pecahan') == 'Y' ? 'selected' : '' }}>Y</option>
+                                    </select>
+                                </div>
+
+                                <!-- Filter Tahun Anggaran -->
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Tahun Anggaran</label>
+                                    <select name="tahun_anggaran" class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-3 transition-all font-bold focus:border-indigo-500 focus:ring-indigo-500">
+                                        <option value="">Semua</option>
+                                        <option value="2024" {{ request('tahun_anggaran') == '2024' ? 'selected' : '' }}>2024</option>
+                                        <option value="2025" {{ request('tahun_anggaran') == '2025' ? 'selected' : '' }}>2025</option>
+                                        <option value="2026" {{ request('tahun_anggaran') == '2026' ? 'selected' : '' }}>2026</option>
+                                        <option value="2027" {{ request('tahun_anggaran') == '2027' ? 'selected' : '' }}>2027</option>
+                                    </select>
+                                </div>
+
+                                <!-- Cari Data Umum -->
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Cari (Batch / Seri)</label>
+                                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Batch, Seri..." class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-3 transition-all focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+
+                                <!-- Tombol Aksi -->
+                                <div class="flex gap-2">
+                                    <button type="submit" class="flex-1 inline-flex justify-center items-center px-4 py-3 bg-gray-800 border border-transparent rounded-lg font-bold text-xs text-white uppercase tracking-widest shadow-md hover:bg-gray-700 active:scale-95 transition-all">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                        Cari
+                                    </button>
+                                    <a href="{{ route('pengemasan.index') }}" class="flex-1 inline-flex justify-center items-center px-4 py-3 bg-gray-100 border border-gray-200 rounded-lg font-bold text-xs text-gray-400 uppercase tracking-widest shadow-sm hover:bg-gray-200 active:scale-95 transition-all @if(!request('search') && !request('pecahan') && !request('tahun_anggaran')) opacity-50 pointer-events-none @endif">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                                        Reset
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
 
                     <!-- DAFTAR PACK SIAP KEMAS -->
                     <div class="mb-10">

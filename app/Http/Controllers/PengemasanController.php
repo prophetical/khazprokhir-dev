@@ -11,9 +11,9 @@ use Illuminate\Validation\ValidationException;
 
 class PengemasanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $readyGroups = $this->findReadyToPackageGroups();
+        $readyGroups = $this->findReadyToPackageGroups($request->all());
         $missingGaps = $this->detectMissingDusGaps();
         return view('pengemasan.index', compact('readyGroups', 'missingGaps'));
     }
@@ -25,6 +25,19 @@ class PengemasanController extends Controller
         // Handle Filter Pecahan
         if ($request->filled('pecahan')) {
             $query->where('pecahan', $request->pecahan);
+        }
+
+        // Handle Filter Range Tanggal
+        if ($request->filled('tanggal_awal')) {
+            $query->where('tanggal_pengemasan', '>=', $request->tanggal_awal);
+        }
+        if ($request->filled('tanggal_akhir')) {
+            $query->where('tanggal_pengemasan', '<=', $request->tanggal_akhir);
+        }
+
+        // Handle Filter Gilir
+        if ($request->filled('gilir')) {
+            $query->where('gilir', $request->gilir);
         }
 
         // Handle Search General
@@ -199,10 +212,10 @@ class PengemasanController extends Controller
         return view('pengemasan.print', compact('pengemasans'));
     }
 
-    private function findReadyToPackageGroups()
+    private function findReadyToPackageGroups(array $filters = [])
     {
         // Ambil semua pack yang sudah disortir tapi belum dikemas
-        $packs = Pack::whereNotNull('hcs_sorting_id')
+        $query = Pack::whereNotNull('hcs_sorting_id')
             ->whereNull('id_pengemasan')
             ->join('hcs_receivings', 'packs.hcs_receiving_id', '=', 'hcs_receivings.id')
             ->select(
@@ -212,7 +225,25 @@ class PengemasanController extends Controller
             'hcs_receivings.pecahan',
             'hcs_receivings.emisi',
             'hcs_receivings.tahun_anggaran'
-        )
+        );
+
+        // Terapkan filter
+        if (!empty($filters['pecahan'])) {
+            $query->where('hcs_receivings.pecahan', $filters['pecahan']);
+        }
+        if (!empty($filters['tahun_anggaran'])) {
+            $query->where('hcs_receivings.tahun_anggaran', $filters['tahun_anggaran']);
+        }
+        if (!empty($filters['search'])) {
+            $s = $filters['search'];
+            $query->where(function ($q) use ($s) {
+                $q->where('packs.batch', 'like', "%{$s}%")
+                    ->orWhere('packs.seri', 'like', "%{$s}%")
+                    ->orWhere('hcs_receivings.pecahan', 'like', "%{$s}%");
+            });
+        }
+
+        $packs = $query
             ->orderBy('hcs_receivings.tahun_anggaran')
             ->orderBy('hcs_receivings.emisi')
             ->orderBy('hcs_receivings.pecahan')
