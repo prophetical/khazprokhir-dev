@@ -64,7 +64,61 @@ class PengemasanController extends Controller
 
         $pengemasans = $query->paginate(15)->withQueryString();
 
-        return view('pengemasan.data', compact('pengemasans', 'sortColumn', 'sortDirection'));
+        // ---------------- [NEW] Deteksi Dus Hilang (Server-Side) ----------------
+        // 1. Ambil semua nomor dus dari tabel detail_pengemasan
+        // 2 & 3. Filter/kelompokkan dan Urutkan
+        $detailList = DB::table('detail_pengemasans')
+            ->join('pengemasans', 'detail_pengemasans.id_pengemasan', '=', 'pengemasans.id')
+            ->select('pengemasans.pecahan', 'pengemasans.tahun_anggaran', 'pengemasans.tahun_emisi', 'detail_pengemasans.no_dus')
+            ->orderBy('pengemasans.pecahan')
+            ->orderBy('pengemasans.tahun_anggaran')
+            ->orderBy('pengemasans.tahun_emisi')
+            ->orderBy('detail_pengemasans.no_dus')
+            ->get();
+
+        $groupedDus = [];
+        foreach ($detailList as $d) {
+            $key = $d->pecahan . '|' . $d->tahun_anggaran . '|' . $d->tahun_emisi;
+            if (!isset($groupedDus[$key]))
+                $groupedDus[$key] = [];
+            $groupedDus[$key][] = $d->no_dus;
+        }
+
+        $missingGaps = [];
+        foreach ($groupedDus as $key => $numbers) {
+            list($pecahan, $ta, $te) = explode('|', $key);
+            $expected = 1;
+            $missingRanges = [];
+
+            // Evaluasi gap nomor dus yang berurutan
+            foreach ($numbers as $num) {
+                if ($num > $expected) {
+                    $startGap = $expected;
+                    $endGap = $num - 1;
+                    if ($startGap == $endGap) {
+                        $missingRanges[] = $startGap;
+                    }
+                    else {
+                        $missingRanges[] = $startGap . '-' . $endGap;
+                    }
+                }
+                if ($num >= $expected) {
+                    $expected = $num + 1;
+                }
+            }
+
+            if (!empty($missingRanges)) {
+                $missingGaps[] = [
+                    'pecahan' => $pecahan,
+                    'tahun_anggaran' => $ta,
+                    'tahun_emisi' => $te,
+                    'ranges' => implode(', ', $missingRanges)
+                ];
+            }
+        }
+        // ------------------------------------------------------------------------
+
+        return view('pengemasan.data', compact('pengemasans', 'sortColumn', 'sortDirection', 'missingGaps'));
     }
 
     public function export(Request $request)
