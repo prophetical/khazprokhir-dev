@@ -75,6 +75,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/penyerahan-bi/export', [\App\Http\Controllers\PenyerahanBiController::class , 'export'])->name('penyerahan-bi.export');
         Route::get('/penyerahan-bi/print', [\App\Http\Controllers\PenyerahanBiController::class , 'print'])->name('penyerahan-bi.print');
         Route::get('/api/penyerahan-bi/check-duplicate', [\App\Http\Controllers\PenyerahanBiController::class , 'checkDuplicate'])->name('penyerahan-bi.check-duplicate');
+
+        // Laporan Harian
+        Route::get('/laporan-harian', [\App\Http\Controllers\LaporanHarianController::class , 'index'])->name('laporan-harian.index');
+        Route::get('/laporan-harian/print', [\App\Http\Controllers\LaporanHarianController::class , 'print'])->name('laporan-harian.print');
+        Route::get('/laporan-harian/export', [\App\Http\Controllers\LaporanHarianController::class , 'export'])->name('laporan-harian.export');
     });
 
 require __DIR__ . '/auth.php';

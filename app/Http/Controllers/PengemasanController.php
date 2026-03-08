@@ -54,23 +54,21 @@ class PengemasanController extends Controller
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('pecahan', 'like', "%{$search}%")
-                    ->orWhere('batch', 'like', "%{$search}%")
-                    ->orWhere('seri', 'like', "%{$search}%")
-                    ->orWhereHas('user', function ($userQ) use ($search) {
-                    $userQ->where('name', 'like', "%{$search}%");
-                }
-                );
-            });
+                return $q->where('pecahan', 'like', "%{$search}%")
+                ->orWhere('batch', 'like', "%{$search}%")
+                ->orWhere('seri', 'like', "%{$search}%")
+                ->orWhereHas('user', function ($userQ) use ($search) {
+                        return $userQ->where('name', 'like', "%{$search}%");
+                    }
+                    );
+                });
         }
 
         // Handle Search Dus Spesifik
         if ($request->filled('search_dus') && is_numeric($request->search_dus)) {
             $searchDus = (int)$request->search_dus;
-            $query->where(function ($q) use ($searchDus) {
-                $q->where('dus_awal', '<=', $searchDus)
-                    ->where('dus_akhir', '>=', $searchDus);
-            });
+            $query->where('dus_awal', '<=', $searchDus)
+                ->where('dus_akhir', '>=', $searchDus);
         }
 
         // Handle Order
@@ -104,22 +102,20 @@ class PengemasanController extends Controller
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('pecahan', 'like', "%{$search}%")
-                    ->orWhere('batch', 'like', "%{$search}%")
-                    ->orWhere('seri', 'like', "%{$search}%")
-                    ->orWhereHas('user', function ($userQ) use ($search) {
-                    $userQ->where('name', 'like', "%{$search}%");
-                }
-                );
-            });
+                return $q->where('pecahan', 'like', "%{$search}%")
+                ->orWhere('batch', 'like', "%{$search}%")
+                ->orWhere('seri', 'like', "%{$search}%")
+                ->orWhereHas('user', function ($userQ) use ($search) {
+                        return $userQ->where('name', 'like', "%{$search}%");
+                    }
+                    );
+                });
         }
 
         if ($request->filled('search_dus') && is_numeric($request->search_dus)) {
             $searchDus = (int)$request->search_dus;
-            $query->where(function ($q) use ($searchDus) {
-                $q->where('dus_awal', '<=', $searchDus)
-                    ->where('dus_akhir', '>=', $searchDus);
-            });
+            $query->where('dus_awal', '<=', $searchDus)
+                ->where('dus_akhir', '>=', $searchDus);
         }
 
         $sortColumn = $request->input('sort', 'tanggal_pengemasan');
@@ -187,22 +183,20 @@ class PengemasanController extends Controller
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('pecahan', 'like', "%{$search}%")
-                    ->orWhere('batch', 'like', "%{$search}%")
-                    ->orWhere('seri', 'like', "%{$search}%")
-                    ->orWhereHas('user', function ($userQ) use ($search) {
-                    $userQ->where('name', 'like', "%{$search}%");
-                }
-                );
-            });
+                return $q->where('pecahan', 'like', "%{$search}%")
+                ->orWhere('batch', 'like', "%{$search}%")
+                ->orWhere('seri', 'like', "%{$search}%")
+                ->orWhereHas('user', function ($userQ) use ($search) {
+                        return $userQ->where('name', 'like', "%{$search}%");
+                    }
+                    );
+                });
         }
 
         if ($request->filled('search_dus') && is_numeric($request->search_dus)) {
             $searchDus = (int)$request->search_dus;
-            $query->where(function ($q) use ($searchDus) {
-                $q->where('dus_awal', '<=', $searchDus)
-                    ->where('dus_akhir', '>=', $searchDus);
-            });
+            $query->where('dus_awal', '<=', $searchDus)
+                ->where('dus_akhir', '>=', $searchDus);
         }
 
         $sortColumn = $request->input('sort', 'tanggal_pengemasan');

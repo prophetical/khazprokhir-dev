@@ -3,7 +3,8 @@
         mobileOpen: false,
         hcsOpen: {{ request()->routeIs('hcs-receiving.*', 'batch-tracking.*', 'reports.*') ? 'true' : 'false' }},
         sortingOpen: {{ request()->routeIs('hcs-sorting.*', 'hcs-sorting-reports.*', 'rekomendasi-penyortiran.*') ? 'true' : 'false' }},
-        penyerahanBiOpen: {{ request()->routeIs('penyerahan-bi.*') ? 'true' : 'false' }}
+        penyerahanBiOpen: {{ request()->routeIs('penyerahan-bi.*') ? 'true' : 'false' }},
+        laporanOpen: {{ request()->routeIs('laporan-harian.*') ? 'true' : 'false' }}
     }" 
     x-init="$watch('sidebarCollapsed', value => localStorage.setItem('sidebarCollapsed', value))"
     :class="sidebarCollapsed ? 'w-20' : 'w-64'"
@@ -177,6 +178,18 @@
                 </a>
             </div>
         </div>
+
+        {{-- Laporan Harian --}}
+        <a href="{{ route('laporan-harian.index') }}"
+           class="flex items-center py-2.5 px-3 rounded-lg transition-all duration-200 mt-2 {{ request()->routeIs('laporan-harian.*') ? 'bg-white/20 text-white font-semibold shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
+           title="Laporan Harian">
+            <div class="shrink-0 w-8 flex justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+            </div>
+            <span x-show="!sidebarCollapsed" x-transition class="ml-3 text-sm font-medium whitespace-nowrap overflow-hidden">Laporan Harian</span>
+        </a>
 
     </div>
 

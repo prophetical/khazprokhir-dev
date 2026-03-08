@@ -26,9 +26,9 @@ class PenyerahanBiController extends Controller
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('nomor_ba', 'like', "%{$search}%")
-                    ->orWhere('pecahan', 'like', "%{$search}%")
-                    ->orWhere('tahun_anggaran', 'like', "%{$search}%");
+                return $q->where('nomor_ba', 'like', "%{$search}%")
+                ->orWhere('pecahan', 'like', "%{$search}%")
+                ->orWhere('tahun_anggaran', 'like', "%{$search}%");
             });
         }
         if ($request->filled('tanggal_awal'))
@@ -70,7 +70,7 @@ class PenyerahanBiController extends Controller
     {
         // Ambil semua penyerahan yang mungkin belum lengkap
         $candidates = PenyerahanBi::all();
-        $warnings = collect();
+        $warningsArray = [];
 
         foreach ($candidates as $p) {
             // Kumpulkan semua nomor dus dalam range penyerahan ini
@@ -112,7 +112,7 @@ class PenyerahanBiController extends Controller
             // Format missing dus menjadi ranges yang lebih ringkas (misal: 1-5, 8, 10-12)
             $missingRanges = $this->formatNomorDusToRanges($missing->toArray());
 
-            $warnings->push([
+            $warningsArray[] = [
                 'id' => $p->id,
                 'nomor_ba' => $p->nomor_ba,
                 'pecahan' => $p->pecahan,
@@ -121,10 +121,10 @@ class PenyerahanBiController extends Controller
                 'nomor_range' => $p->nomor_dus_awal . '–' . $p->nomor_dus_akhir,
                 'missing_count' => $missing->count(),
                 'missing_ranges' => $missingRanges,
-            ]);
+            ];
         }
 
-        return $warnings;
+        return collect($warningsArray);
     }
 
     /**
@@ -336,9 +336,11 @@ class PenyerahanBiController extends Controller
             $query->where('nomor_ba', 'like', '%' . $request->nomor_ba . '%');
         if ($request->filled('search')) {
             $s = $request->search;
-            $query->where(fn($q) => $q->where('nomor_ba', 'like', "%$s%")
-            ->orWhere('pecahan', 'like', "%$s%")
-            ->orWhere('tahun_anggaran', 'like', "%$s%"));
+            $query->where(function ($q) use ($s) {
+                return $q->where('nomor_ba', 'like', "%$s%")
+                ->orWhere('pecahan', 'like', "%$s%")
+                ->orWhere('tahun_anggaran', 'like', "%$s%");
+            });
         }
         if ($request->filled('tanggal_awal'))
             $query->whereDate('tanggal_penyerahan', '>=', $request->tanggal_awal);

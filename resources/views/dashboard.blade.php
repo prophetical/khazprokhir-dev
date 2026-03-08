@@ -97,6 +97,7 @@
                                 ['icon'=>'M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4', 'label'=>'Penyortiran HCS', 'sub'=>'Data Sortir, Rekomendasi, Laporan', 'color'=>'bg-purple-50 text-purple-700 border-purple-100', 'route'=>'hcs-sorting.index'],
                                 ['icon'=>'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4', 'label'=>'Pengemasan HCS', 'sub'=>'Input Kemas, Data Pengemasan', 'color'=>'bg-green-50 text-green-700 border-green-100', 'route'=>'pengemasan.index'],
                                 ['icon'=>'M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4', 'label'=>'Penyerahan ke BI', 'sub'=>'Input & Laporan Penyerahan', 'color'=>'bg-rose-50 text-rose-700 border-rose-100', 'route'=>'penyerahan-bi.index'],
+                                ['icon'=>'M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', 'label'=>'Laporan Harian', 'sub'=>'Data & Statistik Harian', 'color'=>'bg-emerald-50 text-emerald-700 border-emerald-100', 'route'=>'laporan-harian.index'],
                             ];
                         @endphp
                         @foreach($modules as $mod)

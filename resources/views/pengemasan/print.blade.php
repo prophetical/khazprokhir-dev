@@ -20,8 +20,14 @@
     </style>
 </head>
 <body class="p-4 md:p-10">
-    <div class="print-container max-w-6xl mx-auto bg-white p-8 border border-gray-100 shadow-sm rounded-2xl min-h-screen">
-        
+    <div class="print-container max-w-6xl mx-auto bg-white p-8 border border-gray-100 shadow-sm rounded-2xl min-h-screen relative overflow-hidden">
+        {{-- Dekorasi pojok kanan atas --}}
+        <div class="absolute top-0 right-0 w-40 h-40 rounded-bl-[80px] opacity-[0.08] pointer-events-none" style="background: linear-gradient(135deg, #1e40af 0%, #7c3aed 55%, #db2877 100%);"></div>
+        <div class="absolute top-0 right-0 w-20 h-20 rounded-bl-[40px] opacity-[0.13] pointer-events-none" style="background: linear-gradient(135deg, #1e40af 0%, #7c3aed 55%, #db2877 100%);"></div>
+        {{-- Dekorasi pojok kanan bawah --}}
+        <div class="absolute bottom-0 right-0 w-40 h-40 rounded-tl-[80px] opacity-[0.05] pointer-events-none" style="background: linear-gradient(315deg, #1e40af 0%, #7c3aed 55%, #db2877 100%);"></div>
+        <div class="absolute bottom-0 right-0 w-20 h-20 rounded-tl-[40px] opacity-[0.10] pointer-events-none" style="background: linear-gradient(315deg, #1e40af 0%, #7c3aed 55%, #db2877 100%);"></div>
+
         <!-- Action Toolbar (Hidden on Print) -->
         <div class="no-print flex justify-between items-center mb-8 pb-6 border-b border-gray-100">
             <a href="{{ route('pengemasan.data', request()->all()) }}" class="text-sm font-medium text-gray-500 hover:text-indigo-600 flex items-center transition-colors">
