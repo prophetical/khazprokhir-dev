@@ -91,6 +91,35 @@
                                             <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Seri</label>
                                             <input type="text" name="seri" x-model="seri" required class="w-full border-gray-200 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 py-2 px-2 text-center uppercase text-xs {{ isset($auto_fill['seri']) ? 'bg-gray-100' : '' }}" {{ isset($auto_fill['seri']) ? 'readonly' : '' }} placeholder="XX-XXN">
                                         </div>
+                                        
+                                        <div class="col-span-2 pt-3 mt-1 relative flex flex-col gap-3">
+                                            <!-- Toggle Switch Auto/Manual -->
+                                            <div class="flex items-center justify-between bg-white border border-gray-200 p-2 rounded-lg shadow-sm">
+                                                <div class="flex items-center">
+                                                    <svg class="w-5 h-5 text-indigo-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                                    <span class="text-xs font-bold text-gray-700">Gunakan Input Dus Manual</span>
+                                                </div>
+                                                <label class="relative inline-flex items-center cursor-pointer">
+                                                    <input type="checkbox" name="is_manual" value="1" x-model="isManual" class="sr-only peer">
+                                                    <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                                                </label>
+                                            </div>
+
+                                            <!-- INPUT MANUAL DUS (Tampil jk isManual = true) -->
+                                            <div x-show="isManual" x-transition.opacity class="border border-indigo-100 bg-indigo-50/50 p-3 rounded-lg relative">
+                                                <div class="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-white px-2 py-0.5 rounded-full text-[9px] font-black text-indigo-600 tracking-widest uppercase shadow-sm border border-indigo-100">INPUT DUS MANUAL</div>
+                                                <div class="grid grid-cols-2 gap-3 pt-2">
+                                                    <div>
+                                                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Dus Awal</label>
+                                                        <input type="number" name="dus_awal" x-model.number="dusAwal" :required="isManual" min="1" class="w-full border-indigo-200 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 py-2 px-2 text-center text-sm font-black text-indigo-700 bg-white placeholder-indigo-300" placeholder="0">
+                                                    </div>
+                                                    <div>
+                                                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Dus Akhir</label>
+                                                        <input type="number" name="dus_akhir" x-model.number="dusAkhir" :required="isManual" min="1" class="w-full border-indigo-200 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 py-2 px-2 text-center text-sm font-black text-indigo-700 bg-white placeholder-indigo-300" placeholder="0">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 
@@ -156,10 +185,24 @@
                                         <div class="text-[9px] font-bold text-purple-400 uppercase tracking-widest mb-0.5">Estimasi Dus</div>
                                         <div class="text-lg font-black leading-none text-purple-900" x-text="jumlahDus">0</div>
                                     </div>
-                                    <div class="bg-green-50 p-2 rounded-lg text-center border border-green-100 flex flex-col justify-center">
-                                        <div class="text-[9px] font-bold text-green-500 uppercase tracking-widest mb-0.5">Estimasi No Dus</div>
-                                        <div class="text-lg font-black leading-none text-green-900" x-text="estimasiRentangDus">-</div>
-                                    </div>
+                                    <!-- Estimasi Kotak Auto / Manual Indicator -->
+                                    <template x-if="!isManual">
+                                        <div class="bg-green-50 p-2 rounded-lg text-center border border-green-100 flex flex-col justify-center transition-colors duration-300">
+                                            <div class="text-[9px] font-bold text-green-600 uppercase tracking-widest mb-0.5 flex items-center justify-center gap-1">
+                                                <span>Estimasi Auto</span>
+                                            </div>
+                                            <div class="text-lg font-black leading-none text-green-700" x-text="estimasiRentangDus">-</div>
+                                        </div>
+                                    </template>
+                                    
+                                    <template x-if="isManual">
+                                        <div class="bg-green-50 p-2 rounded-lg text-center border border-green-100 flex flex-col justify-center transition-colors duration-300" :class="(dusAkhir - dusAwal + 1) === jumlahDus && jumlahDus > 0 ? 'bg-indigo-50 border-indigo-500' : 'bg-red-50 border-red-500'">
+                                            <div class="text-[9px] font-bold text-indigo-600 uppercase tracking-widest mb-0.5 flex items-center justify-center gap-1" :class="(dusAkhir - dusAwal + 1) === jumlahDus && jumlahDus > 0 ? 'text-indigo-600' : 'text-red-500'">
+                                                <span x-text="(dusAkhir - dusAwal + 1) === jumlahDus && jumlahDus > 0 ? 'Mode Manual (Aman)' : 'Range Manual Invalid!'"></span>
+                                            </div>
+                                            <div class="text-lg font-black leading-none" :class="(dusAkhir - dusAwal + 1) === jumlahDus && jumlahDus > 0 ? 'text-indigo-700' : 'text-red-700'" x-text="(dusAwal && dusAkhir) ? (dusAwal + ' - ' + dusAkhir) : '-'">-</div>
+                                        </div>
+                                    </template>
                                 </div>
                                 
                                 @if ($errors->any())
@@ -196,6 +239,9 @@
                 pecahan: '{{ $auto_fill["pecahan"] ?? "S" }}',
                 batch: '{{ $auto_fill["batch"] ?? "" }}',
                 seri: '{{ $auto_fill["seri"] ?? "" }}',
+                isManual: {{ old('is_manual') ? 'true' : 'false' }},
+                dusAwal: '{{ old("dus_awal", "") }}',
+                dusAkhir: '{{ old("dus_akhir", "") }}',
                 selectedChunks: {!! json_encode($defaultChunks ?? []) !!},
                 lastNumber: {{ $last_number ?? 0 }},
 

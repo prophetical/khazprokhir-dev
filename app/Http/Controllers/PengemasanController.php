@@ -14,7 +14,8 @@ class PengemasanController extends Controller
     public function index()
     {
         $readyGroups = $this->findReadyToPackageGroups();
-        return view('pengemasan.index', compact('readyGroups'));
+        $missingGaps = $this->detectMissingDusGaps();
+        return view('pengemasan.index', compact('readyGroups', 'missingGaps'));
     }
 
     public function data(Request $request)
@@ -64,59 +65,7 @@ class PengemasanController extends Controller
 
         $pengemasans = $query->paginate(15)->withQueryString();
 
-        // ---------------- [NEW] Deteksi Dus Hilang (Server-Side) ----------------
-        // 1. Ambil semua nomor dus dari tabel detail_pengemasan
-        // 2 & 3. Filter/kelompokkan dan Urutkan
-        $detailList = DB::table('detail_pengemasans')
-            ->join('pengemasans', 'detail_pengemasans.id_pengemasan', '=', 'pengemasans.id')
-            ->select('pengemasans.pecahan', 'pengemasans.tahun_anggaran', 'pengemasans.tahun_emisi', 'detail_pengemasans.no_dus')
-            ->orderBy('pengemasans.pecahan')
-            ->orderBy('pengemasans.tahun_anggaran')
-            ->orderBy('pengemasans.tahun_emisi')
-            ->orderBy('detail_pengemasans.no_dus')
-            ->get();
-
-        $groupedDus = [];
-        foreach ($detailList as $d) {
-            $key = $d->pecahan . '|' . $d->tahun_anggaran . '|' . $d->tahun_emisi;
-            if (!isset($groupedDus[$key]))
-                $groupedDus[$key] = [];
-            $groupedDus[$key][] = $d->no_dus;
-        }
-
-        $missingGaps = [];
-        foreach ($groupedDus as $key => $numbers) {
-            list($pecahan, $ta, $te) = explode('|', $key);
-            $expected = 1;
-            $missingRanges = [];
-
-            // Evaluasi gap nomor dus yang berurutan
-            foreach ($numbers as $num) {
-                if ($num > $expected) {
-                    $startGap = $expected;
-                    $endGap = $num - 1;
-                    if ($startGap == $endGap) {
-                        $missingRanges[] = $startGap;
-                    }
-                    else {
-                        $missingRanges[] = $startGap . '-' . $endGap;
-                    }
-                }
-                if ($num >= $expected) {
-                    $expected = $num + 1;
-                }
-            }
-
-            if (!empty($missingRanges)) {
-                $missingGaps[] = [
-                    'pecahan' => $pecahan,
-                    'tahun_anggaran' => $ta,
-                    'tahun_emisi' => $te,
-                    'ranges' => implode(', ', $missingRanges)
-                ];
-            }
-        }
-        // ------------------------------------------------------------------------
+        $missingGaps = $this->detectMissingDusGaps();
 
         return view('pengemasan.data', compact('pengemasans', 'sortColumn', 'sortDirection', 'missingGaps'));
     }
@@ -378,6 +327,9 @@ class PengemasanController extends Controller
             'batch' => 'required',
             'seri' => 'required',
             'selected_chunks' => 'required|array|min:1',
+            'is_manual' => 'nullable|boolean',
+            'dus_awal' => $request->boolean('is_manual') ? 'required|numeric|min:1' : 'nullable',
+            'dus_akhir' => $request->boolean('is_manual') ? 'required|numeric|gte:dus_awal' : 'nullable',
         ]);
 
         $packNumbers = [];
@@ -444,16 +396,44 @@ class PengemasanController extends Controller
             }
         }
 
-        $lastDus = DetailPengemasan::whereHas('pengemasan', function ($query) use ($request) {
+        $jumlahDus = ($jumlahPack / 4) * 9;
+
+        if ($request->boolean('is_manual')) {
+            $nomorDusAwal = (int)$request->dus_awal;
+            $nomorDusAkhir = (int)$request->dus_akhir;
+
+            // Validasi 1: jumlah dus sesuai range input manual
+            if (($nomorDusAkhir - $nomorDusAwal + 1) !== $jumlahDus) {
+                throw ValidationException::withMessages([
+                    'dus_awal' => "Range nomor dus tidak sesuai dengan jumlah dus hasil pengemasan. Harus tepat $jumlahDus dus untuk $jumlahPack pack ini.",
+                ]);
+            }
+        }
+        else {
+            // Mode Auto: Ambil nomor dus terakhir dari identitas yang sama
+            $lastDus = DetailPengemasan::whereHas('pengemasan', function ($query) use ($request) {
+                $query->where('pecahan', $request->pecahan)
+                    ->where('tahun_anggaran', $request->tahun_anggaran)
+                    ->where('tahun_emisi', $request->tahun_emisi);
+            })->orderBy('no_dus', 'desc')
+                ->first();
+
+            $nomorDusAwal = $lastDus ? $lastDus->no_dus + 1 : 1;
+            $nomorDusAkhir = $nomorDusAwal + $jumlahDus - 1;
+        }
+
+        // Validasi 2: Cek apakah ada nomor dus di range ini yang sudah dipakai (Berlaku untuk Manual & Auto)
+        $usedDusExists = DetailPengemasan::whereHas('pengemasan', function ($query) use ($request) {
             $query->where('pecahan', $request->pecahan)
                 ->where('tahun_anggaran', $request->tahun_anggaran)
                 ->where('tahun_emisi', $request->tahun_emisi);
-        })->orderBy('no_dus', 'desc')
-            ->first();
+        })->whereBetween('no_dus', [$nomorDusAwal, $nomorDusAkhir])->exists();
 
-        $nomorDusAwal = $lastDus ? $lastDus->no_dus + 1 : 1;
-        $jumlahDus = ($jumlahPack / 4) * 9;
-        $nomorDusAkhir = $nomorDusAwal + $jumlahDus - 1;
+        if ($usedDusExists) {
+            throw ValidationException::withMessages([
+                'dus_awal' => "Nomor dus sudah digunakan pada pengemasan lain untuk pecahan, tahun emisi, dan tahun anggaran yang sama.",
+            ]);
+        }
 
         DB::beginTransaction();
         try {
@@ -617,5 +597,57 @@ class PengemasanController extends Controller
             DB::rollBack();
             return back()->with('error', 'Terjadi kesalahan sistem saat menghapus: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Deteksi gap/celah nomor dus yang hilang per identitas (Pecahan, TA, TE).
+     */
+    private function detectMissingDusGaps(): array
+    {
+        $detailList = DB::table('detail_pengemasans')
+            ->join('pengemasans', 'detail_pengemasans.id_pengemasan', '=', 'pengemasans.id')
+            ->select('pengemasans.pecahan', 'pengemasans.tahun_anggaran', 'pengemasans.tahun_emisi', 'detail_pengemasans.no_dus')
+            ->orderBy('pengemasans.pecahan')
+            ->orderBy('pengemasans.tahun_anggaran')
+            ->orderBy('pengemasans.tahun_emisi')
+            ->orderBy('detail_pengemasans.no_dus')
+            ->get();
+
+        $groupedDus = [];
+        foreach ($detailList as $d) {
+            $key = $d->pecahan . '|' . $d->tahun_anggaran . '|' . $d->tahun_emisi;
+            if (!isset($groupedDus[$key]))
+                $groupedDus[$key] = [];
+            $groupedDus[$key][] = $d->no_dus;
+        }
+
+        $missingGaps = [];
+        foreach ($groupedDus as $key => $numbers) {
+            list($pecahan, $ta, $te) = explode('|', $key);
+            $expected = 1;
+            $missingRanges = [];
+
+            foreach ($numbers as $num) {
+                if ($num > $expected) {
+                    $startGap = $expected;
+                    $endGap = $num - 1;
+                    $missingRanges[] = ($startGap == $endGap) ? $startGap : $startGap . '-' . $endGap;
+                }
+                if ($num >= $expected) {
+                    $expected = $num + 1;
+                }
+            }
+
+            if (!empty($missingRanges)) {
+                $missingGaps[] = [
+                    'pecahan' => $pecahan,
+                    'tahun_anggaran' => $ta,
+                    'tahun_emisi' => $te,
+                    'ranges' => implode(', ', $missingRanges)
+                ];
+            }
+        }
+
+        return $missingGaps;
     }
 }
