@@ -195,6 +195,22 @@
             <span x-show="!sidebarCollapsed" x-transition class="ml-3 text-sm font-medium whitespace-nowrap overflow-hidden">Laporan Harian</span>
         </a>
 
+        @if(auth()->user()->role === 'admin')
+            <div class="pt-4 pb-2">
+                <div x-show="!sidebarCollapsed" class="px-3 text-[10px] font-bold text-indigo-200 uppercase tracking-[0.2em] mb-2 opacity-50">Admin Panel</div>
+                <a href="{{ route('targets.index') }}"
+                   class="flex items-center py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('targets.*') ? 'bg-white/20 text-white font-semibold shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
+                   title="Manajemen Target">
+                    <div class="shrink-0 w-8 flex justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                    </div>
+                    <span x-show="!sidebarCollapsed" x-transition class="ml-3 text-sm font-medium whitespace-nowrap overflow-hidden">Manajemen Target</span>
+                </a>
+            </div>
+        @endif
+
     </div>
 
     <!-- Bottom Attribution -->

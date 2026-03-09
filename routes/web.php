@@ -89,6 +89,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/laporan-harian', [\App\Http\Controllers\LaporanHarianController::class , 'index'])->name('laporan-harian.index');
         Route::get('/laporan-harian/print', [\App\Http\Controllers\LaporanHarianController::class , 'print'])->name('laporan-harian.print');
         Route::get('/laporan-harian/export', [\App\Http\Controllers\LaporanHarianController::class , 'export'])->name('laporan-harian.export');
+
+        // Manajemen Target (Admin Only)
+        Route::middleware('role:admin')->group(function () {
+            Route::get('/targets', [\App\Http\Controllers\TargetController::class , 'index'])->name('targets.index');
+            Route::get('/targets/create', [\App\Http\Controllers\TargetController::class , 'create'])->name('targets.create');
+            Route::post('/targets', [\App\Http\Controllers\TargetController::class , 'store'])->name('targets.store');
+            Route::get('/targets/{id}/edit', [\App\Http\Controllers\TargetController::class , 'edit'])->name('targets.edit');
+            Route::put('/targets/{id}', [\App\Http\Controllers\TargetController::class , 'update'])->name('targets.update');
+            Route::delete('/targets/{id}', [\App\Http\Controllers\TargetController::class , 'destroy'])->name('targets.destroy');
+        }
+        );
     });
 
 require __DIR__ . '/auth.php';
