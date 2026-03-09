@@ -139,13 +139,19 @@
                 const header = document.getElementById('top-header');
 
                 if(scrollContainer && header) {
+                    let isShrunk = false;
+                    
                     scrollContainer.addEventListener('scroll', () => {
-                        if (scrollContainer.scrollTop > 10) {
-                            header.classList.add('shadow-md', 'h-14', 'border-b', 'border-gray-200');
-                            header.classList.remove('h-20');
-                        } else {
-                            header.classList.remove('shadow-md', 'h-14', 'border-b', 'border-gray-200');
-                            header.classList.add('h-20');
+                        // Menggunakan sistem threshold/hysteresis untuk mencegah jitter:
+                        // Selisih h-20 (80px) dan h-14 (56px) adalah 24px. Jarak antara batas atas dan batas bawah harus > 24px.
+                        if (scrollContainer.scrollTop > 40 && !isShrunk) {
+                            header.classList.add('shadow-md', 'h-14', 'border-gray-200');
+                            header.classList.remove('h-20', 'border-white/10');
+                            isShrunk = true;
+                        } else if (scrollContainer.scrollTop <= 10 && isShrunk) {
+                            header.classList.remove('shadow-md', 'h-14', 'border-gray-200');
+                            header.classList.add('h-20', 'border-white/10');
+                            isShrunk = false;
                         }
                     });
                 }

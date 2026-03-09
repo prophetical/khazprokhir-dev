@@ -60,6 +60,16 @@ class PenyerahanBiController extends Controller
     }
 
     /**
+     * Form edit penyerahan.
+     */
+    public function edit($id)
+    {
+        $penyerahan = PenyerahanBi::findOrFail($id);
+        $missingWarnings = $this->getIncompletePenyerahanWarnings();
+        return view('penyerahan-bi.edit', compact('penyerahan', 'missingWarnings'));
+    }
+
+    /**
      * Menghitung daftar nomor dus yang belum ada di pengemasans
      * untuk setiap record penyerahan yang statusnya Belum Lengkap.
      * Re-cek secara dinamis (bukan dari nilai status_data tersimpan).
@@ -165,18 +175,24 @@ class PenyerahanBiController extends Controller
         $tahunAnggaran = $request->tahun_anggaran;
         $noAwal = (int)$request->nomor_dus_awal;
         $noAkhir = (int)$request->nomor_dus_akhir;
+        $excludeId = $request->exclude_id;
 
         if (!$pecahan || !$tahunEmisi || !$tahunAnggaran || !$noAwal || !$noAkhir || $noAkhir < $noAwal) {
             return response()->json(['duplicate' => false]);
         }
 
         // Cek overlap range di tabel penyerahan_bi
-        $overlap = PenyerahanBi::where('pecahan', $pecahan)
+        $query = PenyerahanBi::where('pecahan', $pecahan)
             ->where('tahun_emisi', $tahunEmisi)
             ->where('tahun_anggaran', $tahunAnggaran)
             ->where('nomor_dus_awal', '<=', $noAkhir)
-            ->where('nomor_dus_akhir', '>=', $noAwal)
-            ->first();
+            ->where('nomor_dus_akhir', '>=', $noAwal);
+
+        if ($excludeId) {
+            $query->where('id', '!=', $excludeId);
+        }
+
+        $overlap = $query->first();
 
         if ($overlap) {
             return response()->json([
@@ -270,6 +286,97 @@ class PenyerahanBiController extends Controller
 
         return redirect()->route('penyerahan-bi.index')
             ->with('success', 'Data penyerahan berhasil disimpan.');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $penyerahan = PenyerahanBi::findOrFail($id);
+
+        $request->validate([
+            'tanggal_penyerahan' => 'required|date',
+            'nomor_ba' => 'required|string|max:255',
+            'pecahan' => 'required|string|max:10',
+            'tahun_emisi' => 'required|digits:4',
+            'tahun_anggaran' => 'required|string|max:10',
+            'nomor_dus_awal' => 'required|integer|min:1',
+            'nomor_dus_akhir' => 'required|integer|gte:nomor_dus_awal',
+            'jumlah_bilyet' => 'required|integer|min:1',
+        ]);
+
+        $awal = (int)$request->nomor_dus_awal;
+        $akhir = (int)$request->nomor_dus_akhir;
+
+        // --- Validasi Hard: Cegah duplikasi range nomor dus (kecuali dirinya sendiri) ---
+        $overlap = PenyerahanBi::where('id', '!=', $id)
+            ->where('pecahan', $request->pecahan)
+            ->where('tahun_emisi', $request->tahun_emisi)
+            ->where('tahun_anggaran', $request->tahun_anggaran)
+            ->where('nomor_dus_awal', '<=', $akhir)
+            ->where('nomor_dus_akhir', '>=', $awal)
+            ->first();
+
+        if ($overlap) {
+            return back()->withInput()->withErrors([
+                'nomor_dus_awal' => "Range dus {$awal}–{$akhir} sudah tercatat dalam penyerahan Nomor BA: {$overlap->nomor_ba} (Range: {$overlap->nomor_dus_awal}–{$overlap->nomor_dus_akhir}). Tidak dapat menyimpan data duplikat.",
+            ]);
+        }
+
+        $jumlah = $akhir - $awal + 1;
+
+        // --- Validasi informatif: cek coverage dus di tabel pengemasans ---
+        $covering = Pengemasan::where('pecahan', $request->pecahan)
+            ->where('tahun_emisi', $request->tahun_emisi)
+            ->where('tahun_anggaran', $request->tahun_anggaran)
+            ->get(['dus_awal', 'dus_akhir']);
+
+        $existing = collect();
+        foreach ($covering as $p) {
+            foreach (range($p->dus_awal, $p->dus_akhir) as $n) {
+                $existing->push($n);
+            }
+        }
+        $existing = $existing->unique();
+
+        $rangeRequested = collect(range($awal, $akhir));
+        $jumlahAda = $rangeRequested->filter(fn($n) => $existing->contains($n))->count();
+        $jumlahBelumAda = $jumlah - $jumlahAda;
+        $statusData = $jumlahBelumAda === 0 ? 'Lengkap' : 'Belum Lengkap';
+
+        $penyerahan->update([
+            'tanggal_penyerahan' => $request->tanggal_penyerahan,
+            'nomor_ba' => $request->nomor_ba,
+            'pecahan' => $request->pecahan,
+            'tahun_emisi' => $request->tahun_emisi,
+            'tahun_anggaran' => $request->tahun_anggaran,
+            'nomor_dus_awal' => $awal,
+            'nomor_dus_akhir' => $akhir,
+            'jumlah_dus' => $jumlah,
+            'jumlah_bilyet' => $request->jumlah_bilyet,
+            'status_data' => $statusData,
+        ]);
+
+        if ($jumlahBelumAda > 0) {
+            $estimasiBilyet = $jumlahBelumAda * 45000;
+            session()->flash('warning_penyerahan', [
+                'range_diminta' => "{$awal} – {$akhir}",
+                'jumlah_diminta' => $jumlah,
+                'jumlah_ada' => $jumlahAda,
+                'jumlah_belum_ada' => $jumlahBelumAda,
+                'estimasi_bilyet' => $estimasiBilyet,
+            ]);
+        }
+
+        return redirect()->route('penyerahan-bi.index')
+            ->with('success', 'Data penyerahan berhasil diperbarui.');
+    }
+
+    public function destroy($id)
+    {
+        $penyerahan = PenyerahanBi::findOrFail($id);
+        $penyerahan->delete();
+
+        return redirect()->route('penyerahan-bi.index')
+            ->with('success', 'Data penyerahan berhasil dihapus.');
     }
 
     /**

@@ -70,6 +70,10 @@
                    class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('hcs-receiving.index') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
                     Data Receiving
                 </a>
+                <a href="{{ route('rekomendasi-penerimaan.index') }}" 
+                   class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('rekomendasi-penerimaan.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                    Rekomendasi Penerimaan
+                </a>
                 <a href="{{ route('batch-tracking.index') }}" 
                    class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('batch-tracking.index') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
                     Batch Tracking

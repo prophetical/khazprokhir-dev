@@ -233,6 +233,7 @@
                                         </th>
                                     @endforeach
                                     <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider bg-gray-50 border-b border-gray-200">Petugas</th>
+                                    <th class="px-4 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider bg-gray-50 border-b border-gray-200">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-100">
@@ -294,13 +295,28 @@
                                                 <span class="truncate max-w-[70px]">{{ $row->user->name ?? '-' }}</span>
                                             </div>
                                         </td>
+                                        <td class="px-4 py-3 whitespace-nowrap text-center">
+                                            <div class="flex items-center justify-center gap-2">
+                                                <a href="{{ route('penyerahan-bi.edit', $row->id) }}" class="p-1.5 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title="Edit Data">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                                </a>
+                                                <form id="delete-form-{{ $row->id }}" action="{{ route('penyerahan-bi.destroy', $row->id) }}" method="POST" class="inline-block">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" onclick="confirmDelete({{ $row->id }})" class="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg transition-colors" title="Hapus Data">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v2m3 4h.01"/></svg>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="8" class="px-6 py-12 text-center">
-                                            <svg class="mx-auto h-12 w-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
-                                            <h3 class="mt-2 text-sm font-medium text-gray-900">Belum ada data penyerahan</h3>
-                                            <p class="mt-1 text-sm text-gray-500">Klik <a href="{{ route('penyerahan-bi.create') }}" class="text-indigo-600 font-bold">Input Penyerahan</a> untuk menambahkan data.</p>
+                                        <td colspan="10" class="px-4 py-8 text-center text-gray-400">
+                                            <div class="flex flex-col items-center justify-center">
+                                                <svg class="w-12 h-12 mb-3 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+                                                <p class="text-sm font-medium">Belum ada data penyerahan untuk filter ini.</p>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforelse
@@ -308,12 +324,37 @@
                         </table>
                     </div>
 
-                    <div class="mt-6 border-t border-gray-100 pt-4">
-                        {{ $penyerahans->links() }}
+                    <div class="mt-6">
+                        {{ $penyerahans->onEachSide(1)->links() }}
                     </div>
                 </div>
             </div>
 
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        function confirmDelete(id) {
+            Swal.fire({
+                title: 'Hapus Data Penyerahan?',
+                text: "Data yang dihapus tidak dapat dikembalikan!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e11d48',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal',
+                customClass: {
+                    confirmButton: 'font-bold uppercase tracking-widest text-xs px-6 py-2.5 rounded-lg shadow-md',
+                    cancelButton: 'font-bold uppercase tracking-widest text-xs px-6 py-2.5 rounded-lg shadow-sm'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-form-' + id).submit();
+                }
+            })
+        }
+    </script>
+    @endpush
 </x-app-layout>

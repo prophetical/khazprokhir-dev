@@ -1,0 +1,241 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Edit Penyerahan ke BI') }}
+        </h2>
+    </x-slot>
+
+    @php
+        $themeClasses = [
+            'S' => ['bg' => 'bg-lime-500',   'border' => 'border-lime-500',   'ring' => 'focus:ring-lime-500',   'focus' => 'focus:border-lime-500',   'btn' => 'bg-lime-500'],
+            'T' => ['bg' => 'bg-gray-400',   'border' => 'border-gray-400',   'ring' => 'focus:ring-gray-400',   'focus' => 'focus:border-gray-400',   'btn' => 'bg-gray-400'],
+            'U' => ['bg' => 'bg-amber-400',  'border' => 'border-amber-400',  'ring' => 'focus:ring-amber-400',  'focus' => 'focus:border-amber-400',  'btn' => 'bg-amber-400'],
+            'V' => ['bg' => 'bg-purple-500', 'border' => 'border-purple-500', 'ring' => 'focus:ring-purple-500', 'focus' => 'focus:border-purple-500', 'btn' => 'bg-purple-500'],
+            'W' => ['bg' => 'bg-green-500',  'border' => 'border-green-500',  'ring' => 'focus:ring-green-500',  'focus' => 'focus:border-green-500',  'btn' => 'bg-green-500'],
+            'X' => ['bg' => 'bg-blue-500',   'border' => 'border-blue-500',   'ring' => 'focus:ring-blue-500',   'focus' => 'focus:border-blue-500',   'btn' => 'bg-blue-500'],
+            'Y' => ['bg' => 'bg-red-500',    'border' => 'border-red-500',    'ring' => 'focus:ring-red-500',    'focus' => 'focus:border-red-500',    'btn' => 'bg-red-500'],
+        ];
+    @endphp
+
+    <div class="py-6">
+        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
+
+            {{-- Panel: Warning nomor dus belum dikemas --}}
+            @if($missingWarnings->isNotEmpty())
+                <div class="mb-6 bg-red-50 border border-red-200 rounded-xl shadow-sm overflow-hidden">
+                    <div class="flex items-center gap-3 px-5 py-3 bg-red-100 border-b border-red-200">
+                        <svg class="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <h3 class="font-bold text-red-800 text-sm">{{ $missingWarnings->count() }} Penyerahan Belum Lengkap — Nomor Dus Belum Dikemas</h3>
+                    </div>
+                </div>
+            @endif
+
+            <div x-data="{
+                selectedPecahan: '{{ old('pecahan', $penyerahan->pecahan) }}',
+                tahunEmisi: '{{ old('tahun_emisi', $penyerahan->tahun_emisi) }}',
+                tahunAnggaran: '{{ old('tahun_anggaran', $penyerahan->tahun_anggaran) }}',
+                themes: {{ json_encode($themeClasses) }},
+                noAwal: {{ old('nomor_dus_awal', $penyerahan->nomor_dus_awal) }},
+                noAkhir: {{ old('nomor_dus_akhir', $penyerahan->nomor_dus_akhir) }},
+                bilyetRaw: {{ old('jumlah_bilyet', $penyerahan->jumlah_bilyet) }},
+                bilyetFormatted: '',
+                dupWarning: null,
+                isChecking: false,
+                checkTimeout: null,
+                penyerahanId: {{ $penyerahan->id }},
+
+                get currentTheme() { return this.themes[this.selectedPecahan] || null },
+                get jumlahDus() {
+                    let a = parseInt(this.noAwal) || 0;
+                    let b = parseInt(this.noAkhir) || 0;
+                    return (b >= a && a > 0) ? (b - a + 1) : 0;
+                },
+                init() {
+                    if (this.bilyetRaw > 0) this.bilyetFormatted = this.formatRibuan(this.bilyetRaw);
+                    this.$watch('bilyetFormatted', (val) => {
+                        let numeric = val.replace(/\./g, '');
+                        this.bilyetRaw = parseInt(numeric) || 0;
+                    });
+                    ['selectedPecahan','tahunEmisi','tahunAnggaran','noAwal','noAkhir'].forEach(f => {
+                        this.$watch(f, () => this.scheduleDupCheck());
+                    });
+                },
+                formatRibuan(n) {
+                    if (!n) return '';
+                    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                },
+                onBilyetInput(e) {
+                    let raw = e.target.value.replace(/\./g, '');
+                    if (raw === '' || isNaN(raw)) { this.bilyetFormatted = ''; this.bilyetRaw = 0; return; }
+                    this.bilyetFormatted = this.formatRibuan(parseInt(raw));
+                    e.target.value = this.bilyetFormatted;
+                },
+                scheduleDupCheck() {
+                    clearTimeout(this.checkTimeout);
+                    this.dupWarning = null;
+                    if (!this.selectedPecahan || !this.tahunEmisi || !this.tahunAnggaran || !this.noAwal || !this.noAkhir) return;
+                    this.checkTimeout = setTimeout(() => this.checkDuplicate(), 600);
+                },
+                async checkDuplicate() {
+                    if (parseInt(this.noAkhir) < parseInt(this.noAwal)) return;
+                    this.isChecking = true;
+                    try {
+                        const params = new URLSearchParams({
+                            pecahan: this.selectedPecahan,
+                            tahun_emisi: this.tahunEmisi,
+                            tahun_anggaran: this.tahunAnggaran,
+                            nomor_dus_awal: this.noAwal,
+                            nomor_dus_akhir: this.noAkhir,
+                            exclude_id: this.penyerahanId
+                        });
+                        const res = await fetch('/api/penyerahan-bi/check-duplicate?' + params.toString(), {
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                        });
+                        const data = await res.json();
+                        this.dupWarning = data.duplicate ? data : null;
+                    } catch(e) {}
+                    this.isChecking = false;
+                }
+            }"
+            class="bg-white overflow-hidden shadow-sm rounded-xl border-t-4 transition-all duration-500"
+            :class="currentTheme ? currentTheme.border : 'border-indigo-500'">
+                <div class="p-6 text-gray-900">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-md font-bold text-indigo-800">Edit Data Penyerahan ke BI</h2>
+                        <a href="{{ route('penyerahan-bi.index') }}" class="text-sm text-gray-500 hover:text-indigo-600 flex items-center gap-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                            Batal & Kembali
+                        </a>
+                    </div>
+
+                    @if($errors->any())
+                        <div class="mb-4 bg-red-50 border-l-4 border-red-400 p-4 rounded-r-lg">
+                            <ul class="text-red-700 text-sm space-y-1">
+                                @foreach($errors->all() as $err)
+                                    <li>• {{ $err }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    <template x-if="dupWarning">
+                        <div class="mb-5 bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg shadow-sm">
+                            <div class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-red-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+                                <div>
+                                    <h4 class="font-bold text-red-800 text-sm">Range Nomor Dus Sudah Digunakan!</h4>
+                                    <p class="text-red-700 text-xs mt-1">Range nomor dus ini sudah tercatat di sistem pada penyerahan lain. Periksa kembali range Anda.</p>
+                                    <div class="mt-2 grid grid-cols-3 gap-2 text-xs">
+                                        <div class="bg-red-100 rounded p-2"><span class="text-red-400">Nomor BA</span><div class="font-bold text-red-800 font-mono text-[11px]" x-text="dupWarning.nomor_ba"></div></div>
+                                        <div class="bg-red-100 rounded p-2"><span class="text-red-400">Range Tersimpan</span><div class="font-bold text-red-800" x-text="dupWarning.range_tersimpan"></div></div>
+                                        <div class="bg-red-100 rounded p-2"><span class="text-red-400">Tanggal</span><div class="font-bold text-red-800" x-text="dupWarning.tanggal"></div></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <form method="POST" action="{{ route('penyerahan-bi.update', $penyerahan->id) }}">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="jumlah_bilyet" :value="bilyetRaw">
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Tanggal Penyerahan</label>
+                                <input type="date" name="tanggal_penyerahan" value="{{ old('tanggal_penyerahan', $penyerahan->tanggal_penyerahan->format('Y-m-d')) }}"
+                                    class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-2.5 px-3 transition-all focus:ring-opacity-50"
+                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'" required>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Nomor Berita Acara (BA)</label>
+                                <input type="text" name="nomor_ba" value="{{ old('nomor_ba', $penyerahan->nomor_ba) }}"
+                                    class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-2.5 px-3 transition-all focus:ring-opacity-50 font-mono"
+                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'" required>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-5 mb-5">
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Pecahan</label>
+                                <select name="pecahan" x-model="selectedPecahan"
+                                    class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-2.5 px-3 transition-all font-bold focus:ring-opacity-50"
+                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'" required>
+                                    <option value="">-- Pilih --</option>
+                                    @foreach(['S','T','U','V','W','X','Y'] as $p)
+                                        <option value="{{ $p }}">Pecahan {{ $p }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Tahun Anggaran</label>
+                                <select name="tahun_anggaran" x-model="tahunAnggaran"
+                                    class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-2.5 px-3 transition-all font-bold focus:ring-opacity-50"
+                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'" required>
+                                    <option value="">-- Pilih --</option>
+                                    @foreach(['2024','2025','2026','2027'] as $ta)
+                                        <option value="{{ $ta }}">{{ $ta }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Tahun Emisi</label>
+                                <select name="tahun_emisi" x-model="tahunEmisi"
+                                    class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-2.5 px-3 transition-all font-bold focus:ring-opacity-50"
+                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'" required>
+                                    <option value="">-- Pilih --</option>
+                                    @foreach(['2016','2017','2018','2019','2020','2021','2022','2023','2024','2025'] as $te)
+                                        <option value="{{ $te }}">{{ $te }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Jumlah Bilyet</label>
+                                <input type="text" inputmode="numeric"
+                                    x-model="bilyetFormatted"
+                                    @input="onBilyetInput($event)"
+                                    class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-2.5 px-3 transition-all focus:ring-opacity-50 font-bold text-right"
+                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'" required>
+                            </div>
+                        </div>
+
+                        <div class="bg-indigo-50/70 border border-indigo-100 rounded-xl p-4 mb-5">
+                            <label class="block text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-3">Range Nomor Dus</label>
+                            <div class="grid grid-cols-3 gap-4 items-center">
+                                <div>
+                                    <label class="block text-[10px] text-gray-400 mb-1">Nomor Dus Awal</label>
+                                    <input type="number" name="nomor_dus_awal" x-model.number="noAwal" min="1"
+                                        class="block w-full border-indigo-200 bg-white rounded-lg shadow-sm text-sm py-2.5 px-3 font-bold transition-all focus:ring-opacity-50"
+                                        :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'" required>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] text-gray-400 mb-1">Nomor Dus Akhir</label>
+                                    <input type="number" name="nomor_dus_akhir" x-model.number="noAkhir" min="1"
+                                        class="block w-full border-indigo-200 bg-white rounded-lg shadow-sm text-sm py-2.5 px-3 font-bold transition-all focus:ring-opacity-50"
+                                        :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'" required>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-[10px] text-indigo-400 uppercase font-bold mb-1">Jumlah Dus</div>
+                                    <div class="font-black text-indigo-800 text-2xl" x-text="jumlahDus.toLocaleString('id-ID')">0</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3">
+                            <button type="submit"
+                                :disabled="!!dupWarning || isChecking"
+                                class="flex-1 flex justify-center items-center px-6 py-3 border border-transparent rounded-lg font-bold text-sm text-white uppercase tracking-widest shadow-md active:scale-95 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                                :class="currentTheme ? currentTheme.btn : 'bg-indigo-600 hover:bg-indigo-700'">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                Update Data Penyerahan
+                            </button>
+                            <a href="{{ route('penyerahan-bi.index') }}" class="px-6 py-3 bg-gray-100 border border-gray-200 rounded-lg font-bold text-sm text-gray-600 uppercase tracking-widest shadow-sm hover:bg-gray-200 transition-all">
+                                Batal
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</x-app-layout>
