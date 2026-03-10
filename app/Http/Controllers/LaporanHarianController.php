@@ -3,33 +3,48 @@
 namespace App\Http\Controllers;
 
 use App\Models\HcsReceiving;
-use App\Models\HcsSorting;
 use App\Models\Pengemasan;
 use App\Models\PenyerahanBi;
+use App\Models\TargetTahunan;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class LaporanHarianController extends Controller
 {
-    private array $pecahans = ['S', 'T', 'U', 'V', 'W', 'X', 'Y'];
-
     public function index(Request $request)
     {
-        $data = $this->aggregateData($request);
-        return view('laporan-harian.index', $data);
-    }
+        $filters = $this->getFilters($request);
+        $data = $this->getReportData($filters);
 
-    public function print(Request $request)
-    {
-        $data = $this->aggregateData($request);
-        return view('laporan-harian.print', $data);
+        $reportData = $data['reportData'];
+        $totals = $data['totals'];
+        $tanggalLaporan = $filters['tanggal_laporan'];
+        $tahunAnggaran = $filters['tahun_anggaran'];
+        $tahunEmisi = $filters['tahun_emisi'];
+
+        $tahunAnggaranOptions = collect(range(date('Y') - 2, date('Y') + 2))->toArray();
+        $tahunEmisiOptions = HcsReceiving::select('emisi')->distinct()->pluck('emisi')->toArray();
+
+        return view('laporan-harian.index', compact(
+            'reportData',
+            'totals',
+            'tanggalLaporan',
+            'tahunAnggaran',
+            'tahunEmisi',
+            'tahunAnggaranOptions',
+            'tahunEmisiOptions'
+        ));
     }
 
     public function export(Request $request)
     {
-        $data = $this->aggregateData($request);
-        $filename = "laporan_harian_" . \Carbon\Carbon::parse($data['tanggal'])->format('Y-m-d') . ".csv";
+        $filters = $this->getFilters($request);
+        $data = $this->getReportData($filters);
+        $reportData = $data['reportData'];
+        $totals = $data['totals'];
+
+        $filename = "laporan_harian_operasional_" . $filters['tanggal_laporan'] . ".csv";
 
         $headers = [
             "Content-type" => "text/csv",
@@ -39,67 +54,56 @@ class LaporanHarianController extends Controller
             "Expires" => "0"
         ];
 
-        $callback = function () use ($data) {
+        $callback = function () use ($reportData, $totals) {
             $file = fopen('php://output', 'w');
+            fputcsv($file, [
+                'Pecahan', 
+                'Siap Kemas (Bilyet)', 
+                'Siap Kirim (Bilyet)', 
+                'Siap Kirim (Dus)', 
+                'Total Persediaan (Bilyet)', 
+                'Penyerahan Hari Ini (Bilyet)', 
+                'Penyerahan Hari Ini (Dus)', 
+                'Akumulasi Penyerahan (Bilyet)', 
+                'Target', 
+                'Sisa Target', 
+                'Persentase (%)', 
+                'Akumulasi Penerimaan HCS'
+            ]);
 
-            // Header Info
-            fputcsv($file, ['LAPORAN HARIAN TERINTEGRASI']);
-            fputcsv($file, ['Tanggal', \Carbon\Carbon::parse($data['tanggal'])->format('d/m/Y')]);
-            if ($data['pecahan'])
-                fputcsv($file, ['Pecahan', $data['pecahan']]);
-            if ($data['tahunAnggaran'])
-                fputcsv($file, ['TA', $data['tahunAnggaran']]);
-            if ($data['tahunEmisi'])
-                fputcsv($file, ['TE', $data['tahunEmisi']]);
-            fputcsv($file, []);
-
-            // Summary per Pecahan
-            fputcsv($file, ['RINGKASAN PER PECAHAN']);
-            fputcsv($file, ['Pecahan', 'Penerimaan (Bilyet)', 'Sortir (Pack)', 'Sortir (Bilyet)', 'Kemas (Pack)', 'Kemas (Dus)', 'Serah BI (Bilyet)', 'Serah BI (Dus)']);
-            foreach ($this->pecahans as $p) {
+            foreach ($reportData as $row) {
                 fputcsv($file, [
-                    $p,
-                    $data['penerimaanPerPecahan'][$p]['jumlah'],
-                    $data['sortirPerPecahan'][$p]['jumlah_pack'],
-                    $data['sortirPerPecahan'][$p]['jumlah_bilyet'],
-                    $data['pengemasanPerPecahan'][$p]['jumlah_pack'],
-                    $data['pengemasanPerPecahan'][$p]['jumlah_dus'],
-                    $data['penyerahanPerPecahan'][$p]['jumlah_bilyet'],
-                    $data['penyerahanPerPecahan'][$p]['jumlah_dus'],
+                    $row['pecahan'],
+                    $row['siap_kemas_bilyet'],
+                    $row['siap_kirim_bilyet'],
+                    $row['siap_kirim_dus'],
+                    $row['total_persediaan_bilyet'],
+                    $row['penyerahan_hari_ini_bilyet'],
+                    $row['penyerahan_hari_ini_dus'],
+                    $row['akumulasi_penyerahan'],
+                    $row['target'],
+                    $row['sisa_target'],
+                    number_format($row['persentase_target'], 1, ',', '.'),
+                    $row['akumulasi_penerimaan_hcs'],
                 ]);
             }
-            fputcsv($file, []);
 
-            // Detail Penerimaan
-            fputcsv($file, ['DETAIL PENERIMAAN']);
-            fputcsv($file, ['Nomor Bon', 'Pecahan', 'Emisi', 'TA', 'Jumlah', 'Gilir']);
-            foreach ($data['penerimaans'] as $row) {
-                fputcsv($file, [$row->nomor_bon, $row->pecahan, $row->emisi, $row->tahun_anggaran, $row->jumlah, $row->gilir]);
-            }
-            fputcsv($file, []);
-
-            // Detail Penyortiran
-            fputcsv($file, ['DETAIL PENYORTIRAN']);
-            fputcsv($file, ['Pecahan', 'Batch', 'Seri', 'Emisi', 'TA', 'Pack', 'Bilyet', 'Gilir']);
-            foreach ($data['sortirs'] as $row) {
-                fputcsv($file, [$row->pecahan, $row->batch, $row->seri, $row->emisi, $row->tahun_anggaran, $row->jumlah_pack, $row->jumlah_bilyet, $row->gilir]);
-            }
-            fputcsv($file, []);
-
-            // Detail Pengemasan
-            fputcsv($file, ['DETAIL PENGEMASAN']);
-            fputcsv($file, ['Pecahan', 'Batch', 'Seri', 'TE', 'TA', 'Pack', 'Dus', 'Gilir']);
-            foreach ($data['pengemasans'] as $row) {
-                fputcsv($file, [$row->pecahan, $row->batch, $row->seri, $row->tahun_emisi, $row->tahun_anggaran, $row->jumlah_pack, $row->jumlah_dus, $row->gilir]);
-            }
-            fputcsv($file, []);
-
-            // Detail Penyerahan BI
-            fputcsv($file, ['DETAIL PENYERAHAN BI']);
-            fputcsv($file, ['Nomor BA', 'Pecahan', 'TE', 'TA', 'Bilyet', 'Dus', 'Status']);
-            foreach ($data['penyerahans'] as $row) {
-                fputcsv($file, [$row->nomor_ba, $row->pecahan, $row->tahun_emisi, $row->tahun_anggaran, $row->jumlah_bilyet, $row->jumlah_dus, $row->status_data]);
-            }
+            // Total Row
+            $totalPct = $totals['target'] > 0 ? ($totals['akumulasi_penyerahan_bilyet'] / $totals['target']) * 100 : 0;
+            fputcsv($file, [
+                'TOTAL',
+                $totals['siap_kemas_bilyet'],
+                $totals['siap_kirim_bilyet'],
+                $totals['siap_kirim_bilyet'] / 20000,
+                $totals['total_persediaan_bilyet'],
+                $totals['penyerahan_hari_ini_bilyet'],
+                $totals['penyerahan_hari_ini_bilyet'] / 20000,
+                $totals['akumulasi_penyerahan_bilyet'],
+                $totals['target'],
+                $totals['sisa_target'],
+                number_format($totalPct, 1, ',', '.'),
+                $totals['akumulasi_penerimaan_hcs'],
+            ]);
 
             fclose($file);
         };
@@ -107,122 +111,106 @@ class LaporanHarianController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
-    private function aggregateData(Request $request): array
+    public function print(Request $request)
     {
-        $tanggal = $request->get('tanggal', Carbon::today()->format('Y-m-d'));
-        $pecahan = $request->get('pecahan', '');
-        $tahunAnggaran = $request->get('tahun_anggaran', '');
-        $tahunEmisi = $request->get('tahun_emisi', '');
+        $filters = $this->getFilters($request);
+        $data = $this->getReportData($filters);
+        
+        return view('laporan-harian.print-operasional', array_merge($filters, $data));
+    }
 
-        // --- 1. PENERIMAAN ---
-        $penerimaanQuery = HcsReceiving::whereDate('tanggal_penerimaan', $tanggal);
-        if ($pecahan)
-            $penerimaanQuery->where('pecahan', $pecahan);
-        if ($tahunAnggaran)
-            $penerimaanQuery->where('tahun_anggaran', $tahunAnggaran);
-        if ($tahunEmisi)
-            $penerimaanQuery->where('emisi', $tahunEmisi);
-        $penerimaans = $penerimaanQuery->get();
-
-        $penerimaanPerPecahan = [];
-        foreach ($this->pecahans as $p) {
-            $filtered = $penerimaans->where('pecahan', $p);
-            $penerimaanPerPecahan[$p] = [
-                'jumlah' => $filtered->sum('jumlah'),
-                'records' => $filtered->count(),
-            ];
-        }
-
-        // --- 2. PENYORTIRAN ---
-        $sortirQuery = HcsSorting::whereDate('tanggal_sortir', $tanggal);
-        if ($pecahan)
-            $sortirQuery->where('pecahan', $pecahan);
-        if ($tahunAnggaran)
-            $sortirQuery->where('tahun_anggaran', $tahunAnggaran);
-        if ($tahunEmisi)
-            $sortirQuery->where('emisi', $tahunEmisi);
-        $sortirs = $sortirQuery->get();
-
-        $sortirPerPecahan = [];
-        foreach ($this->pecahans as $p) {
-            $filtered = $sortirs->where('pecahan', $p);
-            $sortirPerPecahan[$p] = [
-                'jumlah_bilyet' => $filtered->sum('jumlah_bilyet'),
-                'jumlah_pack' => $filtered->sum('jumlah_pack'),
-                'records' => $filtered->count(),
-            ];
-        }
-
-        // --- 3. PENGEMASAN ---
-        $pengemasanQuery = Pengemasan::whereDate('tanggal_pengemasan', $tanggal);
-        if ($pecahan)
-            $pengemasanQuery->where('pecahan', $pecahan);
-        if ($tahunAnggaran)
-            $pengemasanQuery->where('tahun_anggaran', $tahunAnggaran);
-        if ($tahunEmisi)
-            $pengemasanQuery->where('tahun_emisi', $tahunEmisi);
-        $pengemasans = $pengemasanQuery->get();
-
-        $pengemasanPerPecahan = [];
-        foreach ($this->pecahans as $p) {
-            $filtered = $pengemasans->where('pecahan', $p);
-            $pengemasanPerPecahan[$p] = [
-                'jumlah_pack' => $filtered->sum('jumlah_pack'),
-                'jumlah_dus' => $filtered->sum('jumlah_dus'),
-                'records' => $filtered->count(),
-            ];
-        }
-
-        // --- 4. PENYERAHAN KE BI ---
-        $penyerahanQuery = PenyerahanBi::whereDate('tanggal_penyerahan', $tanggal);
-        if ($pecahan)
-            $penyerahanQuery->where('pecahan', $pecahan);
-        if ($tahunAnggaran)
-            $penyerahanQuery->where('tahun_anggaran', $tahunAnggaran);
-        if ($tahunEmisi)
-            $penyerahanQuery->where('tahun_emisi', $tahunEmisi);
-        $penyerahans = $penyerahanQuery->get();
-
-        $penyerahanPerPecahan = [];
-        foreach ($this->pecahans as $p) {
-            $filtered = $penyerahans->where('pecahan', $p);
-            $penyerahanPerPecahan[$p] = [
-                'jumlah_bilyet' => $filtered->sum('jumlah_bilyet'),
-                'jumlah_dus' => $filtered->sum('jumlah_dus'),
-                'records' => $filtered->count(),
-            ];
-        }
-
-        // --- Dropdown Options ---
-        $allYearsAnggaran = collect(
-            HcsReceiving::distinct()->pluck('tahun_anggaran')
-            ->merge(HcsSorting::distinct()->pluck('tahun_anggaran'))
-            ->merge(Pengemasan::distinct()->pluck('tahun_anggaran'))
-            ->merge(PenyerahanBi::distinct()->pluck('tahun_anggaran'))
-        )->unique()->filter()->sort()->values();
-
-        $allYearsEmisi = collect(
-            HcsReceiving::distinct()->pluck('emisi')
-            ->merge(HcsSorting::distinct()->pluck('emisi'))
-            ->merge(Pengemasan::distinct()->pluck('tahun_emisi'))
-            ->merge(PenyerahanBi::distinct()->pluck('tahun_emisi'))
-        )->unique()->filter()->sort()->values();
-
+    private function getFilters(Request $request)
+    {
         return [
-            'tanggal' => $tanggal,
-            'pecahan' => $pecahan,
-            'tahunAnggaran' => $tahunAnggaran,
-            'tahunEmisi' => $tahunEmisi,
-            'penerimaanPerPecahan' => $penerimaanPerPecahan,
-            'sortirPerPecahan' => $sortirPerPecahan,
-            'pengemasanPerPecahan' => $pengemasanPerPecahan,
-            'penyerahanPerPecahan' => $penyerahanPerPecahan,
-            'penerimaans' => $penerimaans,
-            'sortirs' => $sortirs,
-            'pengemasans' => $pengemasans,
-            'penyerahans' => $penyerahans,
-            'allYearsAnggaran' => $allYearsAnggaran,
-            'allYearsEmisi' => $allYearsEmisi,
+            'tanggal_laporan' => $request->get('tanggal_laporan', Carbon::today()->toDateString()),
+            'tahun_anggaran' => $request->get('tahun_anggaran', date('Y')),
+            'tahun_emisi' => $request->get('tahun_emisi', ''),
         ];
     }
+
+    private function getReportData(array $filters)
+    {
+        $tanggalLaporan = $filters['tanggal_laporan'];
+        $tahunAnggaran = $filters['tahun_anggaran'];
+        $tahunEmisi = $filters['tahun_emisi'];
+
+        $pecahanList = ['S', 'T', 'U', 'V', 'W', 'X', 'Y'];
+        $reportData = [];
+
+        $totals = [
+            'siap_kemas_bilyet' => 0,
+            'siap_kirim_bilyet' => 0,
+            'total_persediaan_bilyet' => 0,
+            'penyerahan_hari_ini_bilyet' => 0,
+            'akumulasi_penyerahan_bilyet' => 0,
+            'target' => 0,
+            'sisa_target' => 0,
+            'akumulasi_penerimaan_hcs' => 0,
+        ];
+
+        foreach ($pecahanList as $pecahan) {
+            $penerimaanQuery = HcsReceiving::where('pecahan', $pecahan)
+                ->whereDate('tanggal_penerimaan', '<=', $tanggalLaporan);
+            $totalPenerimaan = $penerimaanQuery->sum('jumlah');
+
+            $pengemasanQuery = Pengemasan::where('pecahan', $pecahan)
+                ->whereDate('tanggal_pengemasan', '<=', $tanggalLaporan);
+            $totalPengemasan = $pengemasanQuery->sum('jumlah_dus') * 20000;
+
+            $penyerahanQuery = PenyerahanBi::where('pecahan', $pecahan);
+
+            $penyerahanHariIniBilyet = (clone $penyerahanQuery)
+                ->whereDate('tanggal_penyerahan', $tanggalLaporan)
+                ->sum('jumlah_bilyet');
+            $penyerahanHariIniDus = $penyerahanHariIniBilyet / 20000;
+
+            $akumulasiPenyerahan = (clone $penyerahanQuery)
+                ->whereDate('tanggal_penyerahan', '<=', $tanggalLaporan)
+                ->sum('jumlah_bilyet');
+
+            $siapKirimBilyet = $totalPengemasan - $akumulasiPenyerahan;
+            $siapKirimDus = $siapKirimBilyet / 20000;
+
+            $siapKemasBilyet = $totalPenerimaan - $totalPengemasan;
+
+            $totalPersediaanBilyet = $siapKemasBilyet + $siapKirimBilyet;
+
+            $targetQuery = TargetTahunan::where('pecahan', $pecahan)
+                ->where('tahun_anggaran', $tahunAnggaran);
+            if ($tahunEmisi) {
+                $targetQuery->where('tahun_emisi', $tahunEmisi);
+            }
+            $target = $targetQuery->sum('target');
+
+            $sisaTarget = $target - $akumulasiPenyerahan;
+            $persentaseTarget = $target > 0 ? ($akumulasiPenyerahan / $target) * 100 : 0;
+
+            $reportData[] = [
+                'pecahan' => $pecahan,
+                'siap_kemas_bilyet' => $siapKemasBilyet,
+                'siap_kirim_bilyet' => $siapKirimBilyet,
+                'siap_kirim_dus' => $siapKirimDus,
+                'total_persediaan_bilyet' => $totalPersediaanBilyet,
+                'penyerahan_hari_ini_bilyet' => $penyerahanHariIniBilyet,
+                'penyerahan_hari_ini_dus' => $penyerahanHariIniDus,
+                'akumulasi_penyerahan' => $akumulasiPenyerahan,
+                'target' => $target,
+                'sisa_target' => $sisaTarget,
+                'persentase_target' => $persentaseTarget,
+                'akumulasi_penerimaan_hcs' => $totalPenerimaan,
+            ];
+
+            $totals['siap_kemas_bilyet'] += $siapKemasBilyet;
+            $totals['siap_kirim_bilyet'] += $siapKirimBilyet;
+            $totals['total_persediaan_bilyet'] += $totalPersediaanBilyet;
+            $totals['penyerahan_hari_ini_bilyet'] += $penyerahanHariIniBilyet;
+            $totals['akumulasi_penyerahan_bilyet'] += $akumulasiPenyerahan;
+            $totals['target'] += $target;
+            $totals['sisa_target'] += $sisaTarget;
+            $totals['akumulasi_penerimaan_hcs'] += $totalPenerimaan;
+        }
+
+        return ['reportData' => $reportData, 'totals' => $totals];
+    }
+
 }

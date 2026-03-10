@@ -100,6 +100,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::delete('/targets/{id}', [\App\Http\Controllers\TargetController::class , 'destroy'])->name('targets.destroy');
         }
         );
+        // HCTS Receiving Routes
+        Route::middleware('role:sortir')->group(function () {
+            Route::get('/hcts-receiving/create', [\App\Http\Controllers\HctsReceivingController::class, 'create'])->name('hcts-receiving.create');
+            Route::post('/hcts-receiving', [\App\Http\Controllers\HctsReceivingController::class, 'store'])->name('hcts-receiving.store');
+            Route::get('/hcts-receiving/get-hcs-total', [\App\Http\Controllers\HctsReceivingController::class, 'getHcsTotal'])->name('hcts-receiving.get-hcs-total');
+            Route::get('/hcts-receiving/{hcts_receiving}/edit', [\App\Http\Controllers\HctsReceivingController::class, 'edit'])->name('hcts-receiving.edit');
+            Route::put('/hcts-receiving/{hcts_receiving}', [\App\Http\Controllers\HctsReceivingController::class, 'update'])->name('hcts-receiving.update');
+            Route::delete('/hcts-receiving/{hcts_receiving}', [\App\Http\Controllers\HctsReceivingController::class, 'destroy'])->name('hcts-receiving.destroy');
+        });
+        Route::get('/hcts-receiving/export', [\App\Http\Controllers\HctsReceivingController::class, 'export'])->name('hcts-receiving.export');
+        Route::get('/hcts-receiving/print', [\App\Http\Controllers\HctsReceivingController::class, 'print'])->name('hcts-receiving.print');
+        Route::get('/hcts-receiving', [\App\Http\Controllers\HctsReceivingController::class, 'index'])->name('hcts-receiving.index');
+        Route::get('/hcts-hcts-summary/export', [\App\Http\Controllers\HctsReceivingController::class, 'summaryExport'])->name('hcts-receiving.summary-export');
+        Route::get('/hcts-hcts-summary/print', [\App\Http\Controllers\HctsReceivingController::class, 'summaryPrint'])->name('hcts-receiving.summary-print');
+        Route::get('/hcts-hcts-summary', [\App\Http\Controllers\HctsReceivingController::class, 'summary'])->name('hcts-receiving.summary');
+
     });
 
 require __DIR__ . '/auth.php';

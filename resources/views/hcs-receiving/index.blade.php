@@ -12,7 +12,7 @@
                     
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                         <h3 class="text-lg font-medium text-gray-900">Data Receiving</h3>
-                        @if(auth()->user()->role === 'sortir')
+                        @if(in_array(auth()->user()->role, ['sortir', 'admin']))
                             <a href="{{ route('hcs-receiving.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 shrink-0">
                                 Tambah Data
                             </a>
