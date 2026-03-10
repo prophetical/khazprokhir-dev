@@ -71,23 +71,38 @@
                                 </div>
                             </div>
                             
-                            <!-- Action Buttons -->
-                            <div class="mt-6 pt-4 border-t border-gray-100 flex flex-wrap gap-2 justify-end">
-                                <a href="{{ route('rekomendasi-penerimaan.export', request()->all()) }}" 
-                                   class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors shadow-sm" title="Export Excel">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                                    Excel
-                                </a>
-                                <a href="{{ route('rekomendasi-penerimaan.print', request()->all()) }}" target="_blank"
-                                   class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium bg-rose-50 text-rose-700 border border-rose-200 rounded-lg hover:bg-rose-100 transition-colors shadow-sm" title="Export PDF / Print">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
-                                    PDF
-                                </a>
-                                <a href="{{ route('rekomendasi-penerimaan.print', request()->all()) }}" target="_blank"
-                                   class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium bg-gray-50 text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors shadow-sm" title="Cetak / PDF">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 00-2 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
-                                    Print
-                                </a>
+                            <!-- Action Buttons & Legend -->
+                            <div class="mt-6 pt-4 border-t border-gray-100 flex flex-wrap items-center justify-between gap-4">
+                                <!-- Legend -->
+                                <div class="flex flex-wrap items-center gap-4 bg-gray-50/50 px-4 py-2 rounded-lg border border-gray-100">
+                                    <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Keterangan:</span>
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-3 h-3 rounded bg-emerald-500 border border-emerald-600"></div>
+                                        <span class="text-[10px] font-bold text-gray-600 uppercase tracking-tighter">Pack dari Cutpack</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-3 h-3 rounded bg-sky-500 border border-sky-600"></div>
+                                        <span class="text-[10px] font-bold text-gray-600 uppercase tracking-tighter">Pack dari Rikyet</span>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-wrap gap-2 justify-end">
+                                    <a href="{{ route('rekomendasi-penerimaan.export', request()->all()) }}" 
+                                       class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors shadow-sm" title="Export Excel">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                        Excel
+                                    </a>
+                                    <a href="{{ route('rekomendasi-penerimaan.print', request()->all()) }}" target="_blank"
+                                       class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium bg-rose-50 text-rose-700 border border-rose-200 rounded-lg hover:bg-rose-100 transition-colors shadow-sm" title="Export PDF / Print">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                                        PDF
+                                    </a>
+                                    <a href="{{ route('rekomendasi-penerimaan.print', request()->all()) }}" target="_blank"
+                                       class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium bg-gray-50 text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors shadow-sm" title="Cetak / PDF">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 00-2 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                                        Print
+                                    </a>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -129,22 +144,66 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-700">{{ $batch->tahun_anggaran }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-700">{{ $batch->emisi }}</td>
                                         <td class="px-6 py-4">
-                                            <div class="flex flex-wrap gap-1.5 max-w-[250px]">
+                                            <div class="flex flex-wrap gap-2 max-w-[280px]">
                                                 @forelse($batch->existing_unsorted_single as $pack)
-                                                    <span class="inline-flex items-center justify-center w-7 h-7 rounded shadow-sm text-[10px] font-black {{ $pack['supplier'] === 'Cutpack' ? 'bg-emerald-500 text-white border border-emerald-600' : 'bg-sky-500 text-white border border-sky-600' }}" title="{{ $pack['supplier'] }}">
-                                                        {{ $pack['number'] }}
-                                                    </span>
+                                                    <div x-data="{ open: false }" class="relative">
+                                                        <span @mouseenter="open = true" @mouseleave="open = false" 
+                                                              class="inline-flex items-center justify-center w-8 h-8 rounded-lg shadow-sm text-[10px] font-black cursor-pointer transition-all duration-300 transform hover:scale-110 hover:-translate-y-0.5 {{ $pack['supplier'] === 'Cutpack' ? 'bg-emerald-500 text-white border border-emerald-600' : 'bg-sky-500 text-white border border-sky-600' }}">
+                                                            {{ $pack['number'] }}
+                                                        </span>
+                                                        <!-- Tooltip -->
+                                                        <div x-show="open" 
+                                                             x-transition:enter="transition ease-out duration-200"
+                                                             x-transition:enter-start="opacity-0 translate-y-1"
+                                                             x-transition:enter-end="opacity-100 translate-y-0"
+                                                             x-transition:leave="transition ease-in duration-150"
+                                                             x-transition:leave-start="opacity-100 translate-y-0"
+                                                             x-transition:leave-end="opacity-0 translate-y-1"
+                                                             class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 w-32 shadow-xl pointer-events-none"
+                                                             style="display: none;">
+                                                            <div class="bg-gray-900 text-white rounded-lg p-2 text-[9px] text-center border border-white/10 backdrop-blur-sm">
+                                                                <div class="font-black text-rose-400 border-b border-white/10 pb-1 mb-1 uppercase tracking-tighter">{{ $pack['supplier'] }} Existing</div>
+                                                                <div class="flex flex-col gap-0.5">
+                                                                    <span class="text-white/60">Diterima Pada:</span>
+                                                                    <span class="font-black text-emerald-400">{{ $pack['received_at'] }}</span>
+                                                                </div>
+                                                                <div class="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-gray-900"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 @empty
                                                     <span class="text-xs text-gray-400 font-medium italic">-</span>
                                                 @endforelse
                                             </div>
                                         </td>
                                         <td class="px-6 py-4">
-                                            <div class="flex flex-wrap gap-1.5 max-w-[250px]">
+                                            <div class="flex flex-wrap gap-2 max-w-[280px]">
                                                 @forelse($batch->recommended_packs as $pack)
-                                                    <span class="inline-flex items-center justify-center w-7 h-7 rounded shadow-sm text-[10px] font-black {{ $pack['supplier'] === 'Cutpack' ? 'bg-emerald-500 text-white border border-emerald-600' : 'bg-sky-500 text-white border border-sky-600' }}" title="{{ $pack['supplier'] }}">
-                                                        {{ $pack['number'] }}
-                                                    </span>
+                                                    <div x-data="{ open: false }" class="relative">
+                                                        <span @mouseenter="open = true" @mouseleave="open = false" 
+                                                              class="inline-flex items-center justify-center w-8 h-8 rounded-lg shadow-sm text-[10px] font-black cursor-pointer transition-all duration-300 transform hover:scale-110 hover:-translate-y-0.5 {{ $pack['supplier'] === 'Cutpack' ? 'bg-emerald-500 text-white border border-emerald-600' : 'bg-sky-500 text-white border border-sky-600' }}">
+                                                            {{ $pack['number'] }}
+                                                        </span>
+                                                        <!-- Tooltip -->
+                                                        <div x-show="open" 
+                                                             x-transition:enter="transition ease-out duration-200"
+                                                             x-transition:enter-start="opacity-0 translate-y-1"
+                                                             x-transition:enter-end="opacity-100 translate-y-0"
+                                                             x-transition:leave="transition ease-in duration-150"
+                                                             x-transition:leave-start="opacity-100 translate-y-0"
+                                                             x-transition:leave-end="opacity-0 translate-y-1"
+                                                             class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 w-32 shadow-xl pointer-events-none"
+                                                             style="display: none;">
+                                                            <div class="bg-gray-900 text-white rounded-lg p-2 text-[9px] text-center border border-white/10 backdrop-blur-sm">
+                                                                <div class="font-black text-sky-400 border-b border-white/10 pb-1 mb-1 uppercase tracking-tighter">Rekomendasi</div>
+                                                                <div class="flex flex-col gap-0.5">
+                                                                    <span class="text-white/60">Supplier:</span>
+                                                                    <span class="font-black text-amber-400 uppercase">{{ $pack['supplier'] }}</span>
+                                                                </div>
+                                                                <div class="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-gray-900"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 @empty
                                                     <span class="text-xs text-gray-400 font-medium italic">-</span>
                                                 @endforelse

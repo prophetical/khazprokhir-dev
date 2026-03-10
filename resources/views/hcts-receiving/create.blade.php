@@ -48,11 +48,29 @@
                             }
                         },
                         formatSeri(value) {
-                            let val = value.toUpperCase();
-                            if (val.length > 2 && val[2] !== '-') {
-                                val = val.slice(0, 2) + '-' + val.slice(2);
+                            // Strip non-alphanumeric, convert to uppercase
+                            let val = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                            let formatted = '';
+                            
+                            for (let i = 0; i < val.length && formatted.length < 6; i++) {
+                                let char = val[i];
+                                if (formatted.length === 0 || formatted.length === 1 || formatted.length === 3 || formatted.length === 4) {
+                                    if (/[A-Z]/.test(char)) formatted += char;
+                                } else if (formatted.length === 5) {
+                                    if (/[0-9]/.test(char)) formatted += char;
+                                }
+                                
+                                if (formatted.length === 2 && i < val.length - 1) {
+                                    formatted += '-';
+                                }
                             }
-                            this.seriValue = val;
+                            
+                            // Ensure hyphen is there if we have 3 or more chars
+                            if (formatted.length >= 2 && !formatted.includes('-') && val.length > 2) {
+                                formatted = formatted.slice(0, 2) + '-' + formatted.slice(2);
+                            }
+
+                            this.seriValue = formatted;
                             this.fetchHcsTotal();
                         },
                         async fetchHcsTotal() {
@@ -173,11 +191,11 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <x-input-label for="batch" value="Batch" class="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2 ml-1" />
-                                    <x-text-input id="batch" name="batch" type="text" maxlength="10" placeholder="Contoh: 1322019" x-model="batchValue" class="block w-full border-gray-200 rounded-xl focus:border-rose-500 focus:ring-rose-500 font-bold transition-all py-2 text-center" required />
+                                    <x-text-input id="batch" name="batch" type="text" maxlength="10" placeholder="INPUT BATCH" x-model="batchValue" class="block w-full border-gray-200 rounded-xl focus:border-rose-500 focus:ring-rose-500 font-bold transition-all py-2 text-center" required />
                                 </div>
                                 <div>
                                     <x-input-label for="seri" value="Seri" class="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2 ml-1" />
-                                    <x-text-input id="seri" name="seri" type="text" placeholder="Contoh: TF-AU9" 
+                                    <x-text-input id="seri" name="seri" type="text" placeholder="Input Seri" maxlength="6"
                                         x-model="seriValue"
                                         @input="formatSeri($event.target.value)"
                                         class="block w-full border-gray-200 rounded-xl focus:border-rose-500 focus:ring-rose-500 font-bold transition-all py-3 uppercase text-center" required />

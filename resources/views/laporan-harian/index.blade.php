@@ -1,3 +1,15 @@
+@php
+    $colorMap = [
+        'S' => 'bg-emerald-500 border-emerald-600 text-white',
+        'T' => 'bg-gray-400 border-gray-500 text-white',
+        'U' => 'bg-amber-400 border-amber-500 text-white',
+        'V' => 'bg-purple-500 border-purple-600 text-white',
+        'W' => 'bg-green-500 border-green-600 text-white',
+        'X' => 'bg-blue-500 border-blue-600 text-white',
+        'Y' => 'bg-red-500 border-red-600 text-white',
+    ];
+@endphp
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-white leading-tight">
@@ -70,21 +82,24 @@
                 <div class="bg-indigo-600 rounded-2xl p-6 shadow-xl shadow-indigo-100 relative overflow-hidden group hover:scale-[1.02] transition duration-300">
                     <div class="absolute -right-4 -bottom-4 bg-white/10 w-24 h-24 rounded-full group-hover:scale-150 transition duration-500"></div>
                     <p class="text-indigo-100 text-xs font-black uppercase tracking-widest mb-1">Total Persediaan</p>
-                    <p class="text-white text-2xl font-black mb-1">{{ number_format($totals['total_persediaan_bilyet'], 0, ',', '.') }}</p>
+                    <p class="text-white text-2xl font-black mb-1">{{ $totals['total_persediaan_bilyet'] == 0 ? '-' : number_format($totals['total_persediaan_bilyet'], 0, ',', '.') }}</p>
                     <p class="text-indigo-100/70 text-[10px] font-bold">Bilyet (Siap Kemas + Kirim)</p>
                 </div>
 
                 <div class="bg-pink-600 rounded-2xl p-6 shadow-xl shadow-pink-100 relative overflow-hidden group hover:scale-[1.02] transition duration-300">
                     <div class="absolute -right-4 -bottom-4 bg-white/10 w-24 h-24 rounded-full group-hover:scale-150 transition duration-500"></div>
                     <p class="text-pink-100 text-xs font-black uppercase tracking-widest mb-1">Penyerahan Hari Ini</p>
-                    <p class="text-white text-2xl font-black mb-1">{{ number_format($totals['penyerahan_hari_ini_bilyet'], 0, ',', '.') }}</p>
-                    <p class="text-pink-100/70 text-[10px] font-bold">{{ number_format($totals['penyerahan_hari_ini_bilyet'] / 20000, 2, ',', '.') }} Dus</p>
+                    <p class="text-white text-2xl font-black mb-1">{{ $totals['penyerahan_hari_ini_bilyet'] == 0 ? '-' : number_format($totals['penyerahan_hari_ini_bilyet'], 0, ',', '.') }}</p>
+                    <p class="text-pink-100/70 text-[10px] font-bold">
+                        @php $penyerahanTotalDus = $totals['penyerahan_hari_ini_bilyet'] / 20000; @endphp
+                        {{ $penyerahanTotalDus == 0 ? '-' : number_format($penyerahanTotalDus, 2, ',', '.') . ' Dus' }}
+                    </p>
                 </div>
 
                 <div class="bg-emerald-600 rounded-2xl p-6 shadow-xl shadow-emerald-100 relative overflow-hidden group hover:scale-[1.02] transition duration-300">
                     <div class="absolute -right-4 -bottom-4 bg-white/10 w-24 h-24 rounded-full group-hover:scale-150 transition duration-500"></div>
                     <p class="text-emerald-100 text-xs font-black uppercase tracking-widest mb-1">Akumulasi Penyerahan</p>
-                    <p class="text-white text-2xl font-black mb-1">{{ number_format($totals['akumulasi_penyerahan_bilyet'], 0, ',', '.') }}</p>
+                    <p class="text-white text-2xl font-black mb-1">{{ $totals['akumulasi_penyerahan_bilyet'] == 0 ? '-' : number_format($totals['akumulasi_penyerahan_bilyet'], 0, ',', '.') }}</p>
                     <p class="text-emerald-100/70 text-[10px] font-bold">Progress Penyerahan S/D Hari Ini</p>
                 </div>
 
@@ -140,24 +155,25 @@
                                 <th class="px-3 py-2 text-center w-24">%</th>
                             </tr>
                         </thead>
+                        
                         <tbody class="bg-white divide-y divide-gray-100">
                             @foreach($reportData as $row)
                                 <tr x-show="search === '' || '{{ $row['pecahan'] }}'.toLowerCase().includes(search.toLowerCase())"
                                     class="hover:bg-indigo-50/40 transition duration-150 group">
                                     <td class="px-4 py-4 text-center sticky left-0 bg-white group-hover:bg-indigo-50/40 z-10 border-r border-gray-100">
-                                        <span class="inline-flex items-center justify-center h-10 w-10 rounded-xl bg-gray-900 text-white font-black text-lg shadow-md">
+                                        <span class="inline-flex items-center justify-center h-7 w-7 rounded-lg shadow-sm font-black text-xs border {{ (is_array($colorMap) && isset($colorMap[$row['pecahan']])) ? $colorMap[$row['pecahan']] : 'bg-gray-900 text-white' }}">
                                             {{ $row['pecahan'] }}
                                         </span>
                                     </td>
-                                    <td class="px-4 py-4 text-right text-xs font-bold text-gray-600 border-r border-gray-100">{{ number_format($row['siap_kemas_bilyet'], 0, ',', '.') }}</td>
-                                    <td class="px-4 py-4 text-right text-xs font-bold text-gray-600 border-r border-gray-100">{{ number_format($row['siap_kirim_bilyet'], 0, ',', '.') }}</td>
-                                    <td class="px-4 py-4 text-right text-[10px] font-black text-gray-400 border-r border-gray-100 italic">{{ number_format($row['siap_kirim_dus'], 0, ',', '.') }} Dus</td>
-                                    <td class="px-4 py-4 text-right text-sm font-black text-indigo-700 bg-indigo-50/10 border-r border-gray-100">{{ number_format($row['total_persediaan_bilyet'], 0, ',', '.') }}</td>
-                                    <td class="px-4 py-4 text-right text-xs font-bold text-gray-600 border-r border-gray-100">{{ number_format($row['penyerahan_hari_ini_bilyet'], 0, ',', '.') }}</td>
-                                    <td class="px-4 py-4 text-right text-[10px] font-black text-pink-600 border-r border-gray-100 italic">{{ number_format($row['penyerahan_hari_ini_dus'], 2, ',', '.') }} Dus</td>
-                                    <td class="px-4 py-4 text-right text-xs font-black text-pink-700 bg-pink-50/10 border-r border-gray-100">{{ number_format($row['akumulasi_penyerahan'], 0, ',', '.') }}</td>
-                                    <td class="px-4 py-4 text-right text-xs font-bold text-gray-600 border-r border-gray-100">{{ number_format($row['target'], 0, ',', '.') }}</td>
-                                    <td class="px-4 py-4 text-right text-xs font-bold text-gray-600 border-r border-gray-100">{{ number_format($row['sisa_target'], 0, ',', '.') }}</td>
+                                    <td class="px-4 py-4 text-right text-xs font-bold text-gray-600 border-r border-gray-100">{{ $row['siap_kemas_bilyet'] == 0 ? '-' : number_format($row['siap_kemas_bilyet'], 0, ',', '.') }}</td>
+                                    <td class="px-4 py-4 text-right text-xs font-bold text-gray-600 border-r border-gray-100">{{ $row['siap_kirim_bilyet'] == 0 ? '-' : number_format($row['siap_kirim_bilyet'], 0, ',', '.') }}</td>
+                                    <td class="px-4 py-4 text-right text-[10px] font-black text-gray-400 border-r border-gray-100 italic">{{ $row['siap_kirim_dus'] == 0 ? '-' : number_format($row['siap_kirim_dus'], 0, ',', '.') . ' Dus' }}</td>
+                                    <td class="px-4 py-4 text-right text-sm font-black text-indigo-700 bg-indigo-50/10 border-r border-gray-100">{{ $row['total_persediaan_bilyet'] == 0 ? '-' : number_format($row['total_persediaan_bilyet'], 0, ',', '.') }}</td>
+                                    <td class="px-4 py-4 text-right text-xs font-bold text-gray-600 border-r border-gray-100">{{ $row['penyerahan_hari_ini_bilyet'] == 0 ? '-' : number_format($row['penyerahan_hari_ini_bilyet'], 0, ',', '.') }}</td>
+                                    <td class="px-4 py-4 text-right text-[10px] font-black text-pink-600 border-r border-gray-100 italic">{{ $row['penyerahan_hari_ini_dus'] == 0 ? '-' : number_format($row['penyerahan_hari_ini_dus'], 2, ',', '.') . ' Dus' }}</td>
+                                    <td class="px-4 py-4 text-right text-xs font-black text-pink-700 bg-pink-50/10 border-r border-gray-100">{{ $row['akumulasi_penyerahan'] == 0 ? '-' : number_format($row['akumulasi_penyerahan'], 0, ',', '.') }}</td>
+                                    <td class="px-4 py-4 text-right text-xs font-bold text-gray-600 border-r border-gray-100">{{ $row['target'] == 0 ? '-' : number_format($row['target'], 0, ',', '.') }}</td>
+                                    <td class="px-4 py-4 text-right text-xs font-bold text-gray-600 border-r border-gray-100">{{ $row['sisa_target'] == 0 ? '-' : number_format($row['sisa_target'], 0, ',', '.') }}</td>
                                     <td class="px-4 py-4 text-center border-r border-gray-100">
                                         <div class="space-y-1">
                                             <div class="flex justify-between items-center px-1">
@@ -171,31 +187,40 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-4 py-4 text-right text-xs font-black text-gray-800 bg-gray-50/30">{{ number_format($row['akumulasi_penerimaan_hcs'], 0, ',', '.') }}</td>
+                                    <td class="px-4 py-4 text-right text-xs font-black text-gray-800 bg-gray-50/30">{{ $row['akumulasi_penerimaan_hcs'] == 0 ? '-' : number_format($row['akumulasi_penerimaan_hcs'], 0, ',', '.') }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
+                        @php
+                            $totalPct = $totals['target'] > 0 ? ($totals['akumulasi_penyerahan_bilyet'] / $totals['target']) * 100 : 0;
+                        @endphp
                         <tfoot class="bg-gray-900 text-white font-black text-sm">
                             <tr class="divide-x divide-gray-700">
                                 <td class="px-4 py-6 text-center uppercase tracking-widest sticky left-0 bg-gray-900 z-10">TOTAL</td>
-                                <td class="px-4 py-6 text-right">{{ number_format($totals['siap_kemas_bilyet'], 0, ',', '.') }}</td>
-                                <td class="px-4 py-6 text-right">{{ number_format($totals['siap_kirim_bilyet'], 0, ',', '.') }}</td>
-                                <td class="px-4 py-6 text-right text-[10px] text-gray-400 italic">{{ number_format($totals['siap_kirim_bilyet'] / 20000, 0, ',', '.') }} Dus</td>
-                                <td class="px-4 py-6 text-right text-indigo-300">{{ number_format($totals['total_persediaan_bilyet'], 0, ',', '.') }}</td>
-                                <td class="px-4 py-6 text-right">{{ number_format($totals['penyerahan_hari_ini_bilyet'], 0, ',', '.') }}</td>
-                                <td class="px-4 py-6 text-right text-[10px] text-pink-300 italic">{{ number_format($totals['penyerahan_hari_ini_bilyet'] / 20000, 2, ',', '.') }} Dus</td>
-                                <td class="px-4 py-6 text-right text-pink-300">{{ number_format($totals['akumulasi_penyerahan_bilyet'], 0, ',', '.') }}</td>
-                                <td class="px-4 py-6 text-right">{{ number_format($totals['target'], 0, ',', '.') }}</td>
-                                <td class="px-4 py-6 text-right">{{ number_format($totals['sisa_target'], 0, ',', '.') }}</td>
+                                <td class="px-4 py-6 text-right">{{ $totals['siap_kemas_bilyet'] == 0 ? '-' : number_format($totals['siap_kemas_bilyet'], 0, ',', '.') }}</td>
+                                <td class="px-4 py-6 text-right">{{ $totals['siap_kirim_bilyet'] == 0 ? '-' : number_format($totals['siap_kirim_bilyet'], 0, ',', '.') }}</td>
+                                <td class="px-4 py-6 text-right text-[10px] text-gray-400 italic">
+                                    @php $siapKirimTotalDus = $totals['siap_kirim_bilyet'] / 20000; @endphp
+                                    {{ $siapKirimTotalDus == 0 ? '-' : number_format($siapKirimTotalDus, 0, ',', '.') . ' Dus' }}
+                                </td>
+                                <td class="px-4 py-6 text-right text-indigo-300">{{ $totals['total_persediaan_bilyet'] == 0 ? '-' : number_format($totals['total_persediaan_bilyet'], 0, ',', '.') }}</td>
+                                <td class="px-4 py-6 text-right">{{ $totals['penyerahan_hari_ini_bilyet'] == 0 ? '-' : number_format($totals['penyerahan_hari_ini_bilyet'], 0, ',', '.') }}</td>
+                                <td class="px-4 py-6 text-right text-[10px] text-pink-300 italic">
+                                    @php $penyerahanTotalDus = $totals['penyerahan_hari_ini_bilyet'] / 20000; @endphp
+                                    {{ $penyerahanTotalDus == 0 ? '-' : number_format($penyerahanTotalDus, 2, ',', '.') . ' Dus' }}
+                                </td>
+                                <td class="px-4 py-6 text-right text-pink-300">{{ $totals['akumulasi_penyerahan_bilyet'] == 0 ? '-' : number_format($totals['akumulasi_penyerahan_bilyet'], 0, ',', '.') }}</td>
+                                <td class="px-4 py-6 text-right">{{ $totals['target'] == 0 ? '-' : number_format($totals['target'], 0, ',', '.') }}</td>
+                                <td class="px-4 py-6 text-right">{{ $totals['sisa_target'] == 0 ? '-' : number_format($totals['sisa_target'], 0, ',', '.') }}</td>
                                 <td class="px-4 py-6 text-center text-xs">
                                     <div class="flex items-center gap-2">
-                                        {{ number_format($totalPct, 1, ',', '.') }}%
+                                        {{ $totalPct == 0 ? '-' : number_format($totalPct, 1, ',', '.') . '%' }}
                                         <div class="flex-grow bg-white/10 h-1.5 rounded-full overflow-hidden max-w-[60px]">
                                             <div class="bg-indigo-400 h-full rounded-full" style="width: {{ min(100, $totalPct) }}%"></div>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-4 py-6 text-right text-amber-300">{{ number_format($totals['akumulasi_penerimaan_hcs'], 0, ',', '.') }}</td>
+                                <td class="px-4 py-6 text-right text-amber-300">{{ $totals['akumulasi_penerimaan_hcs'] == 0 ? '-' : number_format($totals['akumulasi_penerimaan_hcs'], 0, ',', '.') }}</td>
                             </tr>
                         </tfoot>
                     </table>

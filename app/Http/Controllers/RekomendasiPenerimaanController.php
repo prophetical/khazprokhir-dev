@@ -35,7 +35,7 @@ class RekomendasiPenerimaanController extends Controller
 
         $batches = $query->get()->map(function ($item) {
             // Ambil semua pack yang BELUM DISORTIR untuk batch & seri ini
-            $unsortedPacks = Pack::where([
+            $unsortedPacks = Pack::with('hcsReceiving')->where([
                 'batch' => $item->batch,
                 'seri' => $item->seri,
             ])->whereNull('hcs_sorting_id')->get();
@@ -53,18 +53,21 @@ class RekomendasiPenerimaanController extends Controller
                     $count = $packsInGroup->count();
                     if ($count >= 1 && $count < 4) {
                         // Masuk kategori: belum disortir & belum lengkap pasanganya
-                        $supplier = $packsInGroup->first()->supplier;
-                        $nums = $packsInGroup->pluck('pack_number')->toArray();
-                        foreach ($nums as $n) {
+                        $firstPack = $packsInGroup->first();
+                        $supplier = $firstPack->supplier;
+                        
+                        foreach ($packsInGroup as $pack) {
                             $existingUnsortedSingle[] = [
-                                'number' => $n,
-                                'supplier' => $supplier
+                                'number' => $pack->pack_number,
+                                'supplier' => $supplier,
+                                'received_at' => $pack->hcsReceiving ? $pack->hcsReceiving->created_at->format('d M Y') : '-'
                             ];
                         }
 
                         // Rekomendasi pelengkap
                         $startRange = ($groupNumber - 1) * 4 + 1;
                         $endRange = $groupNumber * 4;
+                        $nums = $packsInGroup->pluck('pack_number')->toArray();
                         for ($i = $startRange; $i <= $endRange; $i++) {
                             if (!in_array($i, $nums)) {
                                 $recommendedPacks[] = [

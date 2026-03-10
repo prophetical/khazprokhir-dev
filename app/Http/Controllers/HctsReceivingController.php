@@ -32,7 +32,7 @@ class HctsReceivingController extends Controller
         }
 
         if ($search) {
-            $query->where(function(\Illuminate\Database\Eloquent\Builder $q) use ($search) {
+            $query->where(function($q) use ($search) {
                 $q->where('nomor_bon', 'like', "%{$search}%")
                   ->orWhere('batch', 'like', "%{$search}%")
                   ->orWhere('seri', 'like', "%{$search}%");
@@ -62,6 +62,7 @@ class HctsReceivingController extends Controller
             $file = fopen('php://output', 'w');
             fputcsv($file, ['Tanggal', 'Nomor Bon', 'Pecahan', 'Gilir', 'Jumlah', 'Batch', 'Seri', 'Emisi', 'TA', 'Nomor Segel', 'Petugas']);
 
+            /** @var \Illuminate\Database\Eloquent\Builder $query */
             $query = HctsReceiving::with('user');
             if ($request->filled('start_date') && $request->filled('end_date')) {
                 $query->whereBetween('tanggal_penerimaan', [$request->start_date, $request->end_date]);
@@ -123,7 +124,7 @@ class HctsReceivingController extends Controller
             $query->where('gilir', $gilirFilter);
         }
         if ($search) {
-            $query->where(function(\Illuminate\Database\Eloquent\Builder $q) use ($search) {
+            $query->where(function($q) use ($search) {
                 $q->where('nomor_bon', 'like', "%{$search}%")
                   ->orWhere('batch', 'like', "%{$search}%")
                   ->orWhere('seri', 'like', "%{$search}%");
@@ -165,7 +166,7 @@ class HctsReceivingController extends Controller
             'gilir' => 'required|in:Gilir 1,Gilir 2,Gilir 3',
             'jumlah' => 'required|integer|min:0',
             'batch' => 'required|string|max:10',
-            'seri' => 'required|string',
+            'seri' => 'required|string|regex:/^[A-Z]{2}-[A-Z]{2}[0-9]$/',
             'emisi' => 'required|integer',
             'tahun_anggaran' => 'required|integer',
             'nomor_segel' => 'required|string',
@@ -208,7 +209,7 @@ class HctsReceivingController extends Controller
             'gilir' => 'required|in:Gilir 1,Gilir 2,Gilir 3',
             'jumlah' => 'required|integer|min:0',
             'batch' => 'required|string|max:10',
-            'seri' => 'required|string',
+            'seri' => 'required|string|regex:/^[A-Z]{2}-[A-Z]{2}[0-9]$/',
             'emisi' => 'required|integer',
             'tahun_anggaran' => 'required|integer',
             'nomor_segel' => 'required|string',
@@ -326,11 +327,11 @@ class HctsReceivingController extends Controller
         }
 
         if ($search) {
-            $hcsSub->where(function(\Illuminate\Database\Query\Builder $q) use ($search) {
+            $hcsSub->where(function($q) use ($search) {
                 $q->where('batch', 'like', "%{$search}%")
                   ->orWhere('seri', 'like', "%{$search}%");
             });
-            $hctsSub->where(function(\Illuminate\Database\Query\Builder $q) use ($search) {
+            $hctsSub->where(function($q) use ($search) {
                 $q->where('batch', 'like', "%{$search}%")
                   ->orWhere('seri', 'like', "%{$search}%");
             });

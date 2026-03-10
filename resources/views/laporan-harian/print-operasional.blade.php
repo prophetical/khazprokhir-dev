@@ -16,7 +16,18 @@
         body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background-color: #f9fafb; }
         .table-tight th, .table-tight td { padding: 8px 10px; border: 1px solid #e5e7eb; }
     </style>
-</head>
+@php
+    $colorMap = [
+        'S' => 'bg-emerald-500 border-emerald-600 text-white',
+        'T' => 'bg-gray-400 border-gray-500 text-white',
+        'U' => 'bg-amber-400 border-amber-500 text-white',
+        'V' => 'bg-purple-500 border-purple-600 text-white',
+        'W' => 'bg-green-500 border-green-600 text-white',
+        'X' => 'bg-blue-500 border-blue-600 text-white',
+        'Y' => 'bg-red-500 border-red-600 text-white',
+    ];
+@endphp
+
 <body class="p-4 md:p-10">
     <div class="print-container max-w-7xl mx-auto bg-white p-8 border border-gray-100 shadow-sm rounded-2xl min-h-screen relative overflow-hidden">
         <div class="absolute top-0 right-0 w-40 h-40 rounded-bl-[80px] opacity-[0.08] pointer-events-none" style="background: linear-gradient(135deg, #1e40af 0%, #7c3aed 55%, #db2877 100%);"></div>
@@ -90,42 +101,52 @@
                 <tbody class="text-xs font-medium text-gray-700 divide-y divide-gray-200">
                     @foreach($reportData as $row)
                         <tr class="hover:bg-gray-50">
-                            <td class="text-center font-black bg-gray-50">{{ $row['pecahan'] }}</td>
-                            <td class="text-right">{{ number_format($row['siap_kemas_bilyet'], 0, ',', '.') }}</td>
-                            <td class="text-right">{{ number_format($row['siap_kirim_bilyet'], 0, ',', '.') }}</td>
-                            <td class="text-right">{{ number_format($row['siap_kirim_dus'], 0, ',', '.') }}</td>
-                            <td class="text-right font-black text-indigo-700 bg-indigo-50/30">{{ number_format($row['total_persediaan_bilyet'], 0, ',', '.') }}</td>
-                            <td class="text-right">{{ number_format($row['penyerahan_hari_ini_bilyet'], 0, ',', '.') }}</td>
-                            <td class="text-right">{{ number_format($row['penyerahan_hari_ini_dus'], 2, ',', '.') }}</td>
-                            <td class="text-right font-bold text-pink-700 bg-pink-50/30">{{ number_format($row['akumulasi_penyerahan'], 0, ',', '.') }}</td>
-                            <td class="text-right">{{ number_format($row['target'], 0, ',', '.') }}</td>
-                            <td class="text-right">{{ number_format($row['sisa_target'], 0, ',', '.') }}</td>
-                            <td class="text-center font-black {{ $row['persentase_target'] >= 80 ? 'text-green-600' : ($row['persentase_target'] >= 50 ? 'text-amber-600' : 'text-rose-600') }}">
-                                {{ number_format($row['persentase_target'], 1, ',', '.') }}%
+                            <td class="text-center bg-gray-50 p-1">
+                                <span class="inline-flex items-center justify-center w-6 h-6 rounded shadow-sm text-[10px] font-black border {{ $colorMap[$row['pecahan']] ?? 'bg-gray-700 text-white' }}">
+                                    {{ $row['pecahan'] }}
+                                </span>
                             </td>
-                            <td class="text-right font-bold bg-gray-50">{{ number_format($row['akumulasi_penerimaan_hcs'], 0, ',', '.') }}</td>
+                            <td class="text-right">{{ $row['siap_kemas_bilyet'] == 0 ? '-' : number_format($row['siap_kemas_bilyet'], 0, ',', '.') }}</td>
+                            <td class="text-right">{{ $row['siap_kirim_bilyet'] == 0 ? '-' : number_format($row['siap_kirim_bilyet'], 0, ',', '.') }}</td>
+                            <td class="text-right">{{ $row['siap_kirim_dus'] == 0 ? '-' : number_format($row['siap_kirim_dus'], 0, ',', '.') }}</td>
+                            <td class="text-right font-black text-indigo-700 bg-indigo-50/30">{{ $row['total_persediaan_bilyet'] == 0 ? '-' : number_format($row['total_persediaan_bilyet'], 0, ',', '.') }}</td>
+                            <td class="text-right">{{ $row['penyerahan_hari_ini_bilyet'] == 0 ? '-' : number_format($row['penyerahan_hari_ini_bilyet'], 0, ',', '.') }}</td>
+                            <td class="text-right">{{ $row['penyerahan_hari_ini_dus'] == 0 ? '-' : number_format($row['penyerahan_hari_ini_dus'], 2, ',', '.') }}</td>
+                            <td class="text-right font-bold text-pink-700 bg-pink-50/30">{{ $row['akumulasi_penyerahan'] == 0 ? '-' : number_format($row['akumulasi_penyerahan'], 0, ',', '.') }}</td>
+                            <td class="text-right">{{ $row['target'] == 0 ? '-' : number_format($row['target'], 0, ',', '.') }}</td>
+                            <td class="text-right">{{ $row['sisa_target'] == 0 ? '-' : number_format($row['sisa_target'], 0, ',', '.') }}</td>
+                            <td class="text-center font-black {{ $row['persentase_target'] >= 80 ? 'text-green-600' : ($row['persentase_target'] >= 50 ? 'text-amber-600' : 'text-rose-600') }}">
+                                {{ $row['persentase_target'] == 0 ? '-' : number_format($row['persentase_target'], 1, ',', '.') . '%' }}
+                            </td>
+                            <td class="text-right font-bold bg-gray-50">{{ $row['akumulasi_penerimaan_hcs'] == 0 ? '-' : number_format($row['akumulasi_penerimaan_hcs'], 0, ',', '.') }}</td>
                         </tr>
                     @endforeach
                 </tbody>
                 <tfoot class="bg-gray-900 text-white text-[10px] font-black uppercase">
                     <tr>
                         <td class="text-center py-3">TOTAL</td>
-                        <td class="text-right">{{ number_format($totals['siap_kemas_bilyet'], 0, ',', '.') }}</td>
-                        <td class="text-right">{{ number_format($totals['siap_kirim_bilyet'], 0, ',', '.') }}</td>
-                        <td class="text-right">{{ number_format($totals['siap_kirim_bilyet'] / 20000, 0, ',', '.') }}</td>
-                        <td class="text-right text-indigo-300">{{ number_format($totals['total_persediaan_bilyet'], 0, ',', '.') }}</td>
-                        <td class="text-right">{{ number_format($totals['penyerahan_hari_ini_bilyet'], 0, ',', '.') }}</td>
-                        <td class="text-right">{{ number_format($totals['penyerahan_hari_ini_bilyet'] / 20000, 2, ',', '.') }}</td>
-                        <td class="text-right text-pink-300">{{ number_format($totals['akumulasi_penyerahan_bilyet'], 0, ',', '.') }}</td>
-                        <td class="text-right">{{ number_format($totals['target'], 0, ',', '.') }}</td>
-                        <td class="text-right">{{ number_format($totals['sisa_target'], 0, ',', '.') }}</td>
+                        <td class="text-right">{{ $totals['siap_kemas_bilyet'] == 0 ? '-' : number_format($totals['siap_kemas_bilyet'], 0, ',', '.') }}</td>
+                        <td class="text-right">{{ $totals['siap_kirim_bilyet'] == 0 ? '-' : number_format($totals['siap_kirim_bilyet'], 0, ',', '.') }}</td>
+                        <td class="text-right">
+                            @php $siapKirimTotalDus = $totals['siap_kirim_bilyet'] / 20000; @endphp
+                            {{ $siapKirimTotalDus == 0 ? '-' : number_format($siapKirimTotalDus, 0, ',', '.') }}
+                        </td>
+                        <td class="text-right text-indigo-300">{{ $totals['total_persediaan_bilyet'] == 0 ? '-' : number_format($totals['total_persediaan_bilyet'], 0, ',', '.') }}</td>
+                        <td class="text-right">{{ $totals['penyerahan_hari_ini_bilyet'] == 0 ? '-' : number_format($totals['penyerahan_hari_ini_bilyet'], 0, ',', '.') }}</td>
+                        <td class="text-right">
+                            @php $penyerahanTotalDus = $totals['penyerahan_hari_ini_bilyet'] / 20000; @endphp
+                            {{ $penyerahanTotalDus == 0 ? '-' : number_format($penyerahanTotalDus, 2, ',', '.') }}
+                        </td>
+                        <td class="text-right text-pink-300">{{ $totals['akumulasi_penyerahan_bilyet'] == 0 ? '-' : number_format($totals['akumulasi_penyerahan_bilyet'], 0, ',', '.') }}</td>
+                        <td class="text-right">{{ $totals['target'] == 0 ? '-' : number_format($totals['target'], 0, ',', '.') }}</td>
+                        <td class="text-right">{{ $totals['sisa_target'] == 0 ? '-' : number_format($totals['sisa_target'], 0, ',', '.') }}</td>
                         <td class="text-center">
                             @php
                                 $totalPct = $totals['target'] > 0 ? ($totals['akumulasi_penyerahan_bilyet'] / $totals['target']) * 100 : 0;
                             @endphp
-                            {{ number_format($totalPct, 1, ',', '.') }}%
+                            {{ $totalPct == 0 ? '-' : number_format($totalPct, 1, ',', '.') . '%' }}
                         </td>
-                        <td class="text-right">{{ number_format($totals['akumulasi_penerimaan_hcs'], 0, ',', '.') }}</td>
+                        <td class="text-right">{{ $totals['akumulasi_penerimaan_hcs'] == 0 ? '-' : number_format($totals['akumulasi_penerimaan_hcs'], 0, ',', '.') }}</td>
                     </tr>
                 </tfoot>
             </table>

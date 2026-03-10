@@ -58,28 +58,43 @@
                     ];
                 @endphp
 
-                <!-- Filter Context -->
-                <div class="flex items-center space-x-3 text-xs">
-                    @if(request('pecahan'))
-                    <div class="bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100 flex items-center">
-                        <span class="text-gray-400 mr-2">Pecahan:</span>
-                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border {{ $colorMap[request('pecahan')] ?? 'bg-indigo-600 text-white' }}">
-                            {{ request('pecahan') }}
-                        </span>
+                <!-- Filter Context & Legend -->
+                <div class="flex items-center justify-between mt-6">
+                    <div class="flex items-center space-x-3 text-xs">
+                        @if(request('pecahan'))
+                        <div class="bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100 flex items-center">
+                            <span class="text-gray-400 mr-2">Pecahan:</span>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border {{ $colorMap[request('pecahan')] ?? 'bg-indigo-600 text-white' }}">
+                                {{ request('pecahan') }}
+                            </span>
+                        </div>
+                        @endif
+                        @if(request('batch'))
+                        <div class="bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100 flex items-center">
+                            <span class="text-emerald-400 mr-2">Batch:</span>
+                            <span class="font-bold text-emerald-700 uppercase">{{ request('batch') }}</span>
+                        </div>
+                        @endif
+                        @if(request('seri'))
+                        <div class="bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-100 flex items-center">
+                            <span class="text-amber-400 mr-2">Seri:</span>
+                            <span class="font-bold text-amber-700 uppercase italic">{{ request('seri') }}</span>
+                        </div>
+                        @endif
                     </div>
-                    @endif
-                    @if(request('batch'))
-                    <div class="bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100 flex items-center">
-                        <span class="text-emerald-400 mr-2">Batch:</span>
-                        <span class="font-bold text-emerald-700 uppercase">{{ request('batch') }}</span>
+
+                    <!-- Legend -->
+                    <div class="flex items-center gap-4 bg-gray-50/50 px-4 py-1.5 rounded-lg border border-gray-100">
+                        <span class="text-[9px] font-black uppercase tracking-widest text-gray-400">Keterangan:</span>
+                        <div class="flex items-center gap-2">
+                            <div class="w-2.5 h-2.5 rounded bg-emerald-500 border border-emerald-600"></div>
+                            <span class="text-[9px] font-bold text-gray-600 uppercase tracking-tighter">Pack Cutpack</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-2.5 h-2.5 rounded bg-sky-500 border border-sky-600"></div>
+                            <span class="text-[9px] font-bold text-gray-600 uppercase tracking-tighter">Pack Rikyet</span>
+                        </div>
                     </div>
-                    @endif
-                    @if(request('seri'))
-                    <div class="bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-100 flex items-center">
-                        <span class="text-amber-400 mr-2">Seri:</span>
-                        <span class="font-bold text-amber-700 uppercase italic">{{ request('seri') }}</span>
-                    </div>
-                    @endif
                 </div>
             </div>
             <div class="text-right">

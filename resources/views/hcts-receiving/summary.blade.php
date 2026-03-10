@@ -23,7 +23,7 @@
                             </div>
                             <div>
                                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Cari Batch/Seri</label>
-                                <input name="search" type="text" value="{{ $search }}" placeholder="Contoh: 1322019..." class="block w-full border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-indigo-500 text-sm py-3 transition-all text-center">
+                                <input name="search" type="text" value="{{ $search }}" placeholder="INPUT BATCH" class="block w-full border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-indigo-500 text-sm py-3 transition-all text-center">
                             </div>
                             <div class="flex gap-2">
                                 <button type="submit" class="flex-1 bg-gray-900 text-white font-black px-6 py-3 rounded-xl hover:bg-gray-800 transition-all active:scale-95 uppercase text-[10px] tracking-widest">
