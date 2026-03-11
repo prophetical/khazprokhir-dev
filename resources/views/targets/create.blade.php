@@ -25,27 +25,38 @@
     <div class="py-12" x-data="{
         selectedPecahan: '{{ old('pecahan', '') }}',
         themes: {{ json_encode($themeClasses) }},
-        annualTarget: {{ old('target_tahunan', 0) }},
+        annualTarget: {{ (float)old('target_tahunan', 0) }},
         monthlyTargets: {
             @foreach($months as $num => $name)
-                {{ $num }}: {{ old('bulan_'.$num, 0) }},
+                {{ $num }}: {{ (float)old('bulan_'.$num, 0) }},
+            @endforeach
+        },
+        pengemasanMonthlyTargets: {
+            @foreach($months as $num => $name)
+                {{ $num }}: {{ (float)old('pengemasan_bulan_'.$num, 0) }},
             @endforeach
         },
         annualFormatted: '',
         monthlyFormatted: {},
+        pengemasanMonthlyFormatted: {},
 
         get currentTheme() { return this.themes[this.selectedPecahan] || null },
         get totalMonthly() {
             return Object.values(this.monthlyTargets).reduce((a, b) => (parseInt(a) || 0) + (parseInt(b) || 0), 0);
         },
+        get totalPengemasanMonthly() {
+            return Object.values(this.pengemasanMonthlyTargets).reduce((a, b) => (parseInt(a) || 0) + (parseInt(b) || 0), 0);
+        },
         formatRibuan(n) {
+            if (n === 0 || n === '0') return '0';
             if (!n || isNaN(n)) return '';
-            return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            return n.toString().split('.')[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
         },
         init() {
             this.annualFormatted = this.formatRibuan(this.annualTarget);
             @foreach($months as $num => $name)
                 this.monthlyFormatted[{{ $num }}] = this.formatRibuan(this.monthlyTargets[{{ $num }}]);
+                this.pengemasanMonthlyFormatted[{{ $num }}] = this.formatRibuan(this.pengemasanMonthlyTargets[{{ $num }}]);
             @endforeach
         },
         updateAnnual(val) {
@@ -57,6 +68,11 @@
             let numeric = val.replace(/\./g, '');
             this.monthlyTargets[num] = parseInt(numeric) || 0;
             this.monthlyFormatted[num] = this.formatRibuan(this.monthlyTargets[num]);
+        },
+        updatePengemasanMonthly(num, val) {
+            let numeric = val.replace(/\./g, '');
+            this.pengemasanMonthlyTargets[num] = parseInt(numeric) || 0;
+            this.pengemasanMonthlyFormatted[num] = this.formatRibuan(this.pengemasanMonthlyTargets[num]);
         }
     }">
         <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
@@ -89,6 +105,7 @@
                         <input type="hidden" name="target_tahunan" :value="annualTarget">
                         @foreach($months as $num => $name)
                             <input type="hidden" name="bulan_{{ $num }}" :value="monthlyTargets[{{ $num }}]">
+                            <input type="hidden" name="pengemasan_bulan_{{ $num }}" :value="pengemasanMonthlyTargets[{{ $num }}]">
                         @endforeach
 
                         {{-- Section 1: Identitas & Target Tahunan --}}
@@ -117,7 +134,7 @@
                                     :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'" required>
                             </div>
                             <div>
-                                <label class="block text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-2">Target Tahunan</label>
+                                <label class="block text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-2">Target Tahunan (Penyerahan)</label>
                                 <input type="text" x-model="annualFormatted" @input="updateAnnual($event.target.value)"
                                     class="block w-full border-indigo-100 bg-indigo-50/30 rounded-lg shadow-sm text-sm py-2.5 px-3 transition-all font-black text-indigo-700 text-right focus:ring-indigo-500 focus:border-indigo-500" placeholder="0" required>
                                 <div class="text-[9px] text-gray-400 mt-1 text-right italic" x-show="annualTarget > 50000000000">Maksimal 50 Milyar</div>
@@ -129,17 +146,37 @@
                                 <div class="w-full border-t border-gray-100"></div>
                             </div>
                             <div class="relative flex justify-start">
-                                <span class="pr-3 bg-white text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Rincian Target Bulanan</span>
+                                <span class="pr-3 bg-white text-[10px] font-bold text-emerald-600 uppercase tracking-[0.2em]">Rincian Target Penyerahan Bulanan</span>
                             </div>
                         </div>
 
-                        {{-- Section 2: Target Bulanan --}}
+                        {{-- Section 2: Target Bulanan Penyerahan --}}
                         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-x-6 gap-y-5 mb-10">
                             @foreach($months as $num => $name)
                                 <div>
                                     <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">{{ $name }}</label>
                                     <input type="text" x-model="monthlyFormatted[{{ $num }}]" @input="updateMonthly({{ $num }}, $event.target.value)"
-                                        class="block w-full border-gray-100 bg-gray-50/50 rounded-lg shadow-sm text-xs py-2 px-3 transition-all font-bold text-right focus:ring-gray-300 focus:border-gray-300" placeholder="0">
+                                        class="block w-full border-gray-100 bg-gray-50/50 rounded-lg shadow-sm text-xs py-2 px-3 transition-all font-bold text-right focus:ring-emerald-300 focus:border-emerald-300" placeholder="0">
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <div class="relative mb-8">
+                            <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                                <div class="w-full border-t border-gray-100"></div>
+                            </div>
+                            <div class="relative flex justify-start">
+                                <span class="pr-3 bg-white text-[10px] font-bold text-indigo-600 uppercase tracking-[0.2em]">Rincian Target Pengemasan Bulanan</span>
+                            </div>
+                        </div>
+
+                        {{-- Section 3: Target Bulanan Pengemasan --}}
+                        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-x-6 gap-y-5 mb-10">
+                            @foreach($months as $num => $name)
+                                <div>
+                                    <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">{{ $name }}</label>
+                                    <input type="text" x-model="pengemasanMonthlyFormatted[{{ $num }}]" @input="updatePengemasanMonthly({{ $num }}, $event.target.value)"
+                                        class="block w-full border-gray-100 bg-gray-50/50 rounded-lg shadow-sm text-xs py-2 px-3 transition-all font-bold text-right focus:ring-indigo-300 focus:border-indigo-300" placeholder="0">
                                 </div>
                             @endforeach
                         </div>

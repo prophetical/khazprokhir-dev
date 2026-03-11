@@ -143,12 +143,12 @@
                                 <th rowspan="2" class="px-4 py-4 text-center">Akumulasi<br>Terima HCS</th>
                             </tr>
                             <tr class="text-[9px] font-bold uppercase text-gray-400 divide-x divide-gray-200">
-                                <th class="px-3 py-2 text-center">Siap Kemas<br>(Blyt)</th>
-                                <th class="px-3 py-2 text-center">Siap Kirim<br>(Blyt)</th>
+                                <th class="px-3 py-2 text-center">Siap Kemas<br>(Bilyet)</th>
+                                <th class="px-3 py-2 text-center">Siap Kirim<br>(Bilyet)</th>
                                 <th class="px-3 py-2 text-center">Siap Kirim<br>(Dus)</th>
-                                <th class="px-3 py-2 text-center">Hari Ini<br>(Blyt)</th>
+                                <th class="px-3 py-2 text-center">Hari Ini<br>(Bilyet)</th>
                                 <th class="px-3 py-2 text-center">Hari Ini<br>(Dus)</th>
-                                <th class="px-3 py-2 text-center">Akumulasi<br>(Blyt)</th>
+                                <th class="px-3 py-2 text-center">Akumulasi<br>(Bilyet)</th>
                                 <th class="px-3 py-2 text-center w-32">Target</th>
                                 <th class="px-3 py-2 text-center w-32">Sisa</th>
                                 <th class="px-3 py-2 text-center w-24">%</th>
@@ -167,7 +167,7 @@
                                     <td class="px-4 py-4 text-right text-xs font-bold text-gray-600 border-r border-gray-100">{{ $row['siap_kemas_bilyet'] == 0 ? '-' : number_format($row['siap_kemas_bilyet'], 0, ',', '.') }}</td>
                                     <td class="px-4 py-4 text-right text-xs font-bold text-gray-600 border-r border-gray-100">{{ $row['siap_kirim_bilyet'] == 0 ? '-' : number_format($row['siap_kirim_bilyet'], 0, ',', '.') }}</td>
                                     <td class="px-4 py-4 text-right text-[10px] font-black text-gray-400 border-r border-gray-100 italic">{{ $row['siap_kirim_dus'] == 0 ? '-' : number_format($row['siap_kirim_dus'], 0, ',', '.') . ' Dus' }}</td>
-                                    <td class="px-4 py-4 text-right text-sm font-black text-indigo-700 bg-indigo-50/10 border-r border-gray-100">{{ $row['total_persediaan_bilyet'] == 0 ? '-' : number_format($row['total_persediaan_bilyet'], 0, ',', '.') }}</td>
+                                    <td class="px-4 py-4 text-right text-xs font-black text-indigo-700 bg-indigo-50/10 border-r border-gray-100">{{ $row['total_persediaan_bilyet'] == 0 ? '-' : number_format($row['total_persediaan_bilyet'], 0, ',', '.') }}</td>
                                     <td class="px-4 py-4 text-right text-xs font-bold text-gray-600 border-r border-gray-100">{{ $row['penyerahan_hari_ini_bilyet'] == 0 ? '-' : number_format($row['penyerahan_hari_ini_bilyet'], 0, ',', '.') }}</td>
                                     <td class="px-4 py-4 text-right text-[10px] font-black text-pink-600 border-r border-gray-100 italic">{{ $row['penyerahan_hari_ini_dus'] == 0 ? '-' : number_format($row['penyerahan_hari_ini_dus'], 2, ',', '.') . ' Dus' }}</td>
                                     <td class="px-4 py-4 text-right text-xs font-black text-pink-700 bg-pink-50/10 border-r border-gray-100">{{ $row['akumulasi_penyerahan'] == 0 ? '-' : number_format($row['akumulasi_penyerahan'], 0, ',', '.') }}</td>
@@ -193,7 +193,7 @@
                         @php
                             $totalPct = $totals['target'] > 0 ? ($totals['akumulasi_penyerahan_bilyet'] / $totals['target']) * 100 : 0;
                         @endphp
-                        <tfoot class="bg-gray-900 text-white font-black text-sm">
+                        <tfoot class="bg-gray-900 text-white text-xs font-black uppercase">
                             <tr class="divide-x divide-gray-700">
                                 <td class="px-4 py-6 text-center uppercase tracking-widest sticky left-0 bg-gray-900 z-10">TOTAL</td>
                                 <td class="px-4 py-6 text-right">{{ $totals['siap_kemas_bilyet'] == 0 ? '-' : number_format($totals['siap_kemas_bilyet'], 0, ',', '.') }}</td>
@@ -220,6 +220,101 @@
                                     </div>
                                 </td>
                                 <td class="px-4 py-6 text-right text-amber-300">{{ $totals['akumulasi_penerimaan_hcs'] == 0 ? '-' : number_format($totals['akumulasi_penerimaan_hcs'], 0, ',', '.') }}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Secondary Table Section: Monitoring & Production -->
+            <div class="bg-white overflow-hidden shadow-2xl sm:rounded-2xl border border-gray-100 mt-8">
+                <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                    <h3 class="text-lg font-black text-gray-800 tracking-tight flex items-center text-rose-600">
+                        <span class="w-2 h-6 bg-rose-600 rounded-full mr-3"></span>
+                        Monitoring Target & Produksi HCS
+                    </h3>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-100/80">
+                            <tr class="text-[10px] font-black uppercase text-gray-500 tracking-widest divide-x divide-gray-200">
+                                <th rowspan="2" class="px-4 py-4 text-center sticky left-0 bg-gray-100 z-10 w-20">Pecahan</th>
+                                <th colspan="4" class="px-4 py-2 text-center text-blue-600 bg-blue-50/50">Target & Progress Pengemasan Bulan Ini</th>
+                                <th class="px-4 py-2 text-center bg-amber-50/50">
+                                    <span class="block text-amber-700 text-[10px] font-black uppercase tracking-tight">Target Produksi</span>
+                                    <span class="text-[9px] font-bold text-amber-500 italic">{{ $sisaHariKerja }} Hari Kerja</span>
+                                </th>
+                                <th colspan="4" class="px-4 py-2 text-center bg-emerald-50/50">
+                                    <span class="block text-emerald-700 text-[10px] font-black uppercase tracking-tight">Pengemasan</span>
+                                    <span class="text-[9px] font-bold text-emerald-500 italic">{{ \Carbon\Carbon::parse($tanggalLaporan)->subDay()->locale('id')->isoFormat('D MMMM Y') }}</span>
+                                </th>
+                                <th colspan="3" class="px-4 py-2 text-center bg-purple-50/50">
+                                    <span class="block text-purple-700 text-[10px] font-black uppercase tracking-tight">Penerimaan HCS</span>
+                                    <span class="text-[9px] font-bold text-purple-500 italic">{{ \Carbon\Carbon::parse($tanggalLaporan)->subDay()->locale('id')->isoFormat('D MMMM Y') }}</span>
+                                </th>
+                            </tr>
+                            <tr class="text-[9px] font-bold uppercase text-gray-400 divide-x divide-gray-200">
+                                <th class="px-3 py-2 text-center">Target<br>(Bilyet)</th>
+                                <th class="px-3 py-2 text-center">Realisasi<br>(Bilyet)</th>
+                                <th class="px-3 py-2 text-center">Sisa<br>(Bilyet)</th>
+                                <th class="px-3 py-2 text-center">Sisa<br>(Dus)</th>
+                                <th class="px-3 py-2 text-center bg-amber-100/50 text-amber-900">Target / Hari<br>(Bilyet)</th>
+                                <th class="px-3 py-2 text-center">Gilir 1</th>
+                                <th class="px-3 py-2 text-center">Gilir 2</th>
+                                <th class="px-3 py-2 text-center">Gilir 3</th>
+                                <th class="px-3 py-2 text-center font-black text-emerald-700">Total</th>
+                                <th class="px-3 py-2 text-center">Rikyet</th>
+                                <th class="px-3 py-2 text-center">Cutpack</th>
+                                <th class="px-3 py-2 text-center font-black text-purple-700">Total</th>
+                            </tr>
+                        </thead>
+                        
+                        <tbody class="bg-white divide-y divide-gray-100">
+                            @foreach($secondaryData as $row)
+                                <tr class="hover:bg-gray-50 transition duration-150 group divide-x divide-gray-100">
+                                    <td class="px-4 py-4 text-center sticky left-0 bg-white group-hover:bg-gray-50 z-10">
+                                        <span class="inline-flex items-center justify-center h-7 w-7 rounded-lg shadow-sm font-black text-xs border {{ (is_array($colorMap) && isset($colorMap[$row['pecahan']])) ? $colorMap[$row['pecahan']] : 'bg-gray-900 text-white' }}">
+                                            {{ $row['pecahan'] }}
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-4 text-right text-xs font-bold text-gray-600">{{ $row['target_penyerahan_bulan'] == 0 ? '-' : number_format($row['target_penyerahan_bulan'], 0, ',', '.') }}</td>
+                                    <td class="px-4 py-4 text-right text-xs font-bold text-gray-600">{{ $row['penyerahan_bulan'] == 0 ? '-' : number_format($row['penyerahan_bulan'], 0, ',', '.') }}</td>
+                                    <td class="px-4 py-4 text-right text-xs font-black text-blue-700">{{ $row['sisa_target_bilyet'] <= 0 ? '-' : number_format($row['sisa_target_bilyet'], 0, ',', '.') }}</td>
+                                    <td class="px-4 py-4 text-right text-[10px] font-black text-gray-400 italic">{{ $row['sisa_target_doos'] <= 0 ? '-' : number_format($row['sisa_target_doos'], 0, ',', '.') . ' Dus' }}</td>
+                                    
+                                    <td class="px-4 py-4 text-right text-xs font-black text-amber-900 bg-amber-50/50">{{ $row['target_produksi_harian'] <= 0 ? '-' : number_format($row['target_produksi_harian'], 0, ',', '.') }}</td>
+
+                                    <td class="px-4 py-4 text-right text-[10px] font-bold text-gray-500">{{ $row['kemas_g1'] == 0 ? '-' : number_format($row['kemas_g1'], 0, ',', '.') }}</td>
+                                    <td class="px-4 py-4 text-right text-[10px] font-bold text-gray-500">{{ $row['kemas_g2'] == 0 ? '-' : number_format($row['kemas_g2'], 0, ',', '.') }}</td>
+                                    <td class="px-4 py-4 text-right text-[10px] font-bold text-gray-500">{{ $row['kemas_g3'] == 0 ? '-' : number_format($row['kemas_g3'], 0, ',', '.') }}</td>
+                                    <td class="px-4 py-4 text-right text-xs font-black text-emerald-700 bg-emerald-50/20">{{ $row['total_kemas'] == 0 ? '-' : number_format($row['total_kemas'], 0, ',', '.') }}</td>
+
+                                    <td class="px-4 py-4 text-right text-[10px] font-bold text-gray-500">{{ $row['hcs_rikyet'] == 0 ? '-' : number_format($row['hcs_rikyet'], 0, ',', '.') }}</td>
+                                    <td class="px-4 py-4 text-right text-[10px] font-bold text-gray-500">{{ $row['hcs_cutpack'] == 0 ? '-' : number_format($row['hcs_cutpack'], 0, ',', '.') }}</td>
+                                    <td class="px-4 py-4 text-right text-xs font-black text-purple-700 bg-purple-50/20">{{ $row['total_hcs'] == 0 ? '-' : number_format($row['total_hcs'], 0, ',', '.') }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+
+                        <tfoot class="bg-gray-800 text-white font-black text-xs divide-x divide-gray-700">
+                            <tr class="divide-x divide-gray-700">
+                                <td class="px-4 py-4 text-center uppercase sticky left-0 bg-gray-800 z-10 tracking-widest">TOTAL</td>
+                                <td class="px-4 py-4 text-right">{{ $secondaryTotals['target_penyerahan_bulan'] == 0 ? '-' : number_format($secondaryTotals['target_penyerahan_bulan'], 0, ',', '.') }}</td>
+                                <td class="px-4 py-4 text-right">{{ $secondaryTotals['penyerahan_bulan'] == 0 ? '-' : number_format($secondaryTotals['penyerahan_bulan'], 0, ',', '.') }}</td>
+                                <td class="px-4 py-4 text-right text-blue-300">{{ $secondaryTotals['sisa_target_bilyet'] <= 0 ? '-' : number_format($secondaryTotals['sisa_target_bilyet'], 0, ',', '.') }}</td>
+                                <td class="px-4 py-4 text-right text-gray-400 font-normal italic">{{ $secondaryTotals['sisa_target_doos'] <= 0 ? '-' : number_format($secondaryTotals['sisa_target_doos'], 0, ',', '.') . ' Dus' }}</td>
+                                
+                                <td class="px-4 py-4 text-right text-amber-400">{{ $secondaryTotals['target_produksi_harian'] <= 0 ? '-' : number_format($secondaryTotals['target_produksi_harian'], 0, ',', '.') }}</td>
+
+                                <td class="px-4 py-4 text-right">{{ $secondaryTotals['kemas_g1'] == 0 ? '-' : number_format($secondaryTotals['kemas_g1'], 0, ',', '.') }}</td>
+                                <td class="px-4 py-4 text-right">{{ $secondaryTotals['kemas_g2'] == 0 ? '-' : number_format($secondaryTotals['kemas_g2'], 0, ',', '.') }}</td>
+                                <td class="px-4 py-4 text-right">{{ $secondaryTotals['kemas_g3'] == 0 ? '-' : number_format($secondaryTotals['kemas_g3'], 0, ',', '.') }}</td>
+                                <td class="px-4 py-4 text-right text-emerald-400">{{ $secondaryTotals['total_kemas'] == 0 ? '-' : number_format($secondaryTotals['total_kemas'], 0, ',', '.') }}</td>
+
+                                <td class="px-4 py-4 text-right">{{ $secondaryTotals['hcs_rikyet'] == 0 ? '-' : number_format($secondaryTotals['hcs_rikyet'], 0, ',', '.') }}</td>
+                                <td class="px-4 py-4 text-right">{{ $secondaryTotals['hcs_cutpack'] == 0 ? '-' : number_format($secondaryTotals['hcs_cutpack'], 0, ',', '.') }}</td>
+                                <td class="px-4 py-4 text-right text-purple-400">{{ $secondaryTotals['total_hcs'] == 0 ? '-' : number_format($secondaryTotals['total_hcs'], 0, ',', '.') }}</td>
                             </tr>
                         </tfoot>
                     </table>

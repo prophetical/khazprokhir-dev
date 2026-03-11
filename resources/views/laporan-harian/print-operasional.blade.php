@@ -85,13 +85,13 @@
                         <th rowspan="2" class="text-center bg-gray-50">Akumulasi<br>Terima HCS</th>
                     </tr>
                     <tr class="bg-gray-50 text-[9px] font-bold uppercase text-gray-500">
-                        <th class="text-center">Siap Kemas (Blyt)</th>
-                        <th class="text-center">Siap Kirim (Blyt)</th>
+                        <th class="text-center">Siap Kemas (Bilyet)</th>
+                        <th class="text-center">Siap Kirim (Bilyet)</th>
                         <th class="text-center">Siap Kirim (Dus)</th>
                         
-                        <th class="text-center">Hari Ini (Blyt)</th>
+                        <th class="text-center">Hari Ini (Bilyet)</th>
                         <th class="text-center">Hari Ini (Dus)</th>
-                        <th class="text-center">Akumulasi (Blyt)</th>
+                        <th class="text-center">Akumulasi (Bilyet)</th>
                         
                         <th class="text-center">Target</th>
                         <th class="text-center">Sisa</th>
@@ -122,7 +122,7 @@
                         </tr>
                     @endforeach
                 </tbody>
-                <tfoot class="bg-gray-900 text-white text-[10px] font-black uppercase">
+                <tfoot class="bg-gray-900 text-white text-xs font-black uppercase">
                     <tr>
                         <td class="text-center py-3">TOTAL</td>
                         <td class="text-right">{{ $totals['siap_kemas_bilyet'] == 0 ? '-' : number_format($totals['siap_kemas_bilyet'], 0, ',', '.') }}</td>

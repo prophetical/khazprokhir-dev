@@ -6,6 +6,8 @@ use App\Models\HcsReceiving;
 use App\Models\Pengemasan;
 use App\Models\PenyerahanBi;
 use App\Models\TargetTahunan;
+use App\Models\TargetBulanan;
+use App\Models\TargetBulananPengemasan;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -24,6 +26,10 @@ class LaporanHarianController extends Controller
 
         $reportData = $data['reportData'];
         $totals = $data['totals'];
+        $secondaryData = $data['secondaryData'];
+        $secondaryTotals = $data['secondaryTotals'];
+        $sisaHariKerja = $data['sisaHariKerja'];
+        
         $tanggalLaporan = $filters['tanggal_laporan'];
         $tahunAnggaran = $filters['tahun_anggaran'];
         $tahunEmisi = $filters['tahun_emisi'];
@@ -33,6 +39,9 @@ class LaporanHarianController extends Controller
         return view('laporan-harian.index', compact(
             'reportData',
             'totals',
+            'secondaryData',
+            'secondaryTotals',
+            'sisaHariKerja',
             'tanggalLaporan',
             'tahunAnggaran',
             'tahunEmisi',
@@ -229,7 +238,168 @@ class LaporanHarianController extends Controller
             $totals['akumulasi_penerimaan_hcs'] += $totalPenerimaan;
         }
 
-        return ['reportData' => $reportData, 'totals' => $totals];
+        $secondaryData = $this->getSecondaryReportData($filters);
+        
+        return ['reportData' => $reportData, 'totals' => $totals, 'secondaryData' => $secondaryData['data'], 'secondaryTotals' => $secondaryData['totals'], 'sisaHariKerja' => $secondaryData['sisaHariKerja']];
+    }
+
+    private function getSecondaryReportData(array $filters)
+    {
+        $tanggalLaporan = Carbon::parse($filters['tanggal_laporan']);
+        $tahunAnggaran = $filters['tahun_anggaran'];
+        $tahunEmisi = $filters['tahun_emisi'];
+        
+        $pecahanList = ['S', 'T', 'U', 'V', 'W', 'X', 'Y'];
+        $month = $tanggalLaporan->month;
+        $targetColumn = "bulan_" . $month;
+        $startOfMonth = $tanggalLaporan->copy()->startOfMonth();
+        $kemasDate = $tanggalLaporan->copy()->subDay()->toDateString();
+        
+        $sisaHariKerja = $this->calculateSisaHariKerja($tanggalLaporan);
+        
+        $data = [];
+        $totals = [
+            'target_penyerahan_bulan' => 0,
+            'penyerahan_bulan' => 0,
+            'sisa_target_bilyet' => 0,
+            'sisa_target_doos' => 0,
+            'target_produksi_harian' => 0,
+            'kemas_g1' => 0,
+            'kemas_g2' => 0,
+            'kemas_g3' => 0,
+            'total_kemas' => 0,
+            'hcs_rikyet' => 0,
+            'hcs_cutpack' => 0,
+            'total_hcs' => 0,
+        ];
+
+        foreach ($pecahanList as $pecahan) {
+            // 1. Target Pengemasan Bulan
+            $target = TargetBulananPengemasan::where('pecahan', $pecahan)
+                ->where('tahun_anggaran', $tahunAnggaran)
+                ->where('tahun_emisi', $tahunEmisi)
+                ->first();
+            $targetBulan = $target ? ($target->{$targetColumn} ?? 0) : 0;
+
+            // 2. Realisasi Pengemasan Bulan (Accumulation in current month up to tanggalLaporan)
+            $pengemasanBulanBilyet = Pengemasan::where('pecahan', $pecahan)
+                ->where('tahun_anggaran', $tahunAnggaran)
+                ->where('tahun_emisi', $tahunEmisi)
+                ->whereBetween('tanggal_pengemasan', [$startOfMonth->toDateString(), $tanggalLaporan->toDateString()])
+                ->sum(DB::raw('jumlah_dus * 20000'));
+
+            // 3. Sisa Target
+            $sisaTargetBilyet = $targetBulan - $pengemasanBulanBilyet;
+            $sisaTargetDoos = ceil($sisaTargetBilyet / 20000);
+
+            // 6. Target Produksi Harian
+            $targetProduksiHarian = $sisaHariKerja > 0 ? floor($sisaTargetBilyet / $sisaHariKerja) : 0;
+
+            // 7. Data Kemas (H-1)
+            $kemasG1Query = Pengemasan::where('pecahan', $pecahan)
+                ->where('tahun_anggaran', $tahunAnggaran)
+                ->whereDate('tanggal_pengemasan', $kemasDate)
+                ->where('gilir', '1');
+            if ($tahunEmisi) {
+                $kemasG1Query->where('tahun_emisi', $tahunEmisi);
+            }
+            $kemasG1 = $kemasG1Query->sum(DB::raw('jumlah_dus * 20000'));
+            
+            $kemasG2Query = Pengemasan::where('pecahan', $pecahan)
+                ->where('tahun_anggaran', $tahunAnggaran)
+                ->whereDate('tanggal_pengemasan', $kemasDate)
+                ->where('gilir', '2');
+            if ($tahunEmisi) {
+                $kemasG2Query->where('tahun_emisi', $tahunEmisi);
+            }
+            $kemasG2 = $kemasG2Query->sum(DB::raw('jumlah_dus * 20000'));
+
+            $kemasG3Query = Pengemasan::where('pecahan', $pecahan)
+                ->where('tahun_anggaran', $tahunAnggaran)
+                ->whereDate('tanggal_pengemasan', $kemasDate)
+                ->where('gilir', '3');
+            if ($tahunEmisi) {
+                $kemasG3Query->where('tahun_emisi', $tahunEmisi);
+            }
+            $kemasG3 = $kemasG3Query->sum(DB::raw('jumlah_dus * 20000'));
+            
+            $totalKemas = $kemasG1 + $kemasG2 + $kemasG3;
+
+            // 9. Penerimaan HCS (H-1)
+            $hcsRikyetQuery = HcsReceiving::where('pecahan', $pecahan)
+                ->where('tahun_anggaran', $tahunAnggaran)
+                ->whereDate('tanggal_penerimaan', $kemasDate)
+                ->where('supplier', 'Rikyet');
+            if ($tahunEmisi) {
+                $hcsRikyetQuery->where('emisi', $tahunEmisi);
+            }
+            $hcsRikyet = $hcsRikyetQuery->sum('jumlah');
+
+            $hcsCutpackQuery = HcsReceiving::where('pecahan', $pecahan)
+                ->where('tahun_anggaran', $tahunAnggaran)
+                ->whereDate('tanggal_penerimaan', $kemasDate)
+                ->where('supplier', 'Cutpack');
+            if ($tahunEmisi) {
+                $hcsCutpackQuery->where('emisi', $tahunEmisi);
+            }
+            $hcsCutpack = $hcsCutpackQuery->sum('jumlah');
+            
+            $totalHcs = $hcsRikyet + $hcsCutpack;
+
+            $row = [
+                'pecahan' => $pecahan,
+                'target_penyerahan_bulan' => $targetBulan,
+                'penyerahan_bulan' => $pengemasanBulanBilyet,
+                'sisa_target_bilyet' => $sisaTargetBilyet,
+                'sisa_target_doos' => $sisaTargetDoos,
+                'target_produksi_harian' => $targetProduksiHarian,
+                'kemas_g1' => $kemasG1,
+                'kemas_g2' => $kemasG2,
+                'kemas_g3' => $kemasG3,
+                'total_kemas' => $totalKemas,
+                'hcs_rikyet' => $hcsRikyet,
+                'hcs_cutpack' => $hcsCutpack,
+                'total_hcs' => $totalHcs,
+            ];
+
+            $data[] = $row;
+
+            // Aggregate totals
+            $totals['target_penyerahan_bulan'] += $targetBulan;
+            $totals['penyerahan_bulan'] += $pengemasanBulanBilyet;
+            $totals['sisa_target_bilyet'] += $sisaTargetBilyet;
+            $totals['sisa_target_doos'] += $sisaTargetDoos;
+            $totals['target_produksi_harian'] += $targetProduksiHarian;
+            $totals['kemas_g1'] += $kemasG1;
+            $totals['kemas_g2'] += $kemasG2;
+            $totals['kemas_g3'] += $kemasG3;
+            $totals['total_kemas'] += $totalKemas;
+            $totals['hcs_rikyet'] += $hcsRikyet;
+            $totals['hcs_cutpack'] += $hcsCutpack;
+            $totals['total_hcs'] += $totalHcs;
+        }
+
+        return [
+            'data' => $data, 
+            'totals' => $totals, 
+            'sisaHariKerja' => $sisaHariKerja
+        ];
+    }
+
+    private function calculateSisaHariKerja(Carbon $date)
+    {
+        $endOfMonth = $date->copy()->endOfMonth();
+        $count = 0;
+        
+        $current = $date->copy();
+        while ($current <= $endOfMonth) {
+            if ($current->isWeekday()) {
+                $count++;
+            }
+            $current->addDay();
+        }
+        
+        return $count;
     }
 
 }

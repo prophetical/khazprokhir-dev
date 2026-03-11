@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\TargetTahunan;
 use App\Models\TargetBulanan;
+use App\Models\TargetBulananPengemasan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -44,6 +45,7 @@ class TargetController extends Controller
         for ($i = 1; $i <= 12; $i++) {
             $request->validate([
                 "bulan_{$i}" => 'required|numeric|min:0',
+                "pengemasan_bulan_{$i}" => 'required|numeric|min:0',
             ]);
         }
 
@@ -72,11 +74,15 @@ class TargetController extends Controller
                 'tahun_emisi' => $request->tahun_emisi,
             ];
 
+            $targetPengemasanData = $targetBulananData;
+
             for ($i = 1; $i <= 12; $i++) {
                 $targetBulananData["bulan_{$i}"] = $request->input("bulan_{$i}");
+                $targetPengemasanData["bulan_{$i}"] = $request->input("pengemasan_bulan_{$i}");
             }
 
             TargetBulanan::create($targetBulananData);
+            TargetBulananPengemasan::create($targetPengemasanData);
         });
 
         return redirect()->route('targets.index')->with('success', 'Target berhasil ditambahkan.');
@@ -94,7 +100,13 @@ class TargetController extends Controller
             'tahun_emisi' => $targetTahunan->tahun_emisi,
         ])->firstOrFail();
 
-        return view('targets.edit', compact('targetTahunan', 'targetBulanan'));
+        $targetPengemasan = TargetBulananPengemasan::firstOrCreate([
+            'pecahan' => $targetTahunan->pecahan,
+            'tahun_anggaran' => $targetTahunan->tahun_anggaran,
+            'tahun_emisi' => $targetTahunan->tahun_emisi,
+        ]);
+
+        return view('targets.edit', compact('targetTahunan', 'targetBulanan', 'targetPengemasan'));
     }
 
     /**
@@ -109,6 +121,12 @@ class TargetController extends Controller
             'tahun_emisi' => $targetTahunan->tahun_emisi,
         ])->firstOrFail();
 
+        $targetPengemasan = TargetBulananPengemasan::firstOrCreate([
+            'pecahan' => $targetTahunan->pecahan,
+            'tahun_anggaran' => $targetTahunan->tahun_anggaran,
+            'tahun_emisi' => $targetTahunan->tahun_emisi,
+        ]);
+
         $request->validate([
             'pecahan' => 'required|string|max:10',
             'tahun_anggaran' => 'required|integer|min:2000|max:2100',
@@ -119,6 +137,7 @@ class TargetController extends Controller
         for ($i = 1; $i <= 12; $i++) {
             $request->validate([
                 "bulan_{$i}" => 'required|numeric|min:0',
+                "pengemasan_bulan_{$i}" => 'required|numeric|min:0',
             ]);
         }
 
@@ -134,7 +153,7 @@ class TargetController extends Controller
             return back()->withInput()->withErrors(['pecahan' => 'Kombinasi Pecahan, Tahun Anggaran, dan Tahun Emisi sudah terdaftar pada data lain.']);
         }
 
-        DB::transaction(function () use ($request, $targetTahunan, $targetBulanan) {
+        DB::transaction(function () use ($request, $targetTahunan, $targetBulanan, $targetPengemasan) {
             $targetTahunan->update([
                 'pecahan' => $request->pecahan,
                 'tahun_anggaran' => $request->tahun_anggaran,
@@ -148,11 +167,15 @@ class TargetController extends Controller
                 'tahun_emisi' => $request->tahun_emisi,
             ];
 
+            $targetPengemasanData = $targetBulananData;
+
             for ($i = 1; $i <= 12; $i++) {
                 $targetBulananData["bulan_{$i}"] = $request->input("bulan_{$i}");
+                $targetPengemasanData["bulan_{$i}"] = $request->input("pengemasan_bulan_{$i}");
             }
 
             $targetBulanan->update($targetBulananData);
+            $targetPengemasan->update($targetPengemasanData);
         });
 
         return redirect()->route('targets.index')->with('success', 'Target berhasil diperbarui.');
@@ -166,11 +189,14 @@ class TargetController extends Controller
         $targetTahunan = TargetTahunan::findOrFail($id);
 
         DB::transaction(function () use ($targetTahunan) {
-            TargetBulanan::where([
+            $filter = [
                 'pecahan' => $targetTahunan->pecahan,
                 'tahun_anggaran' => $targetTahunan->tahun_anggaran,
                 'tahun_emisi' => $targetTahunan->tahun_emisi,
-            ])->delete();
+            ];
+
+            TargetBulanan::where($filter)->delete();
+            TargetBulananPengemasan::where($filter)->delete();
 
             $targetTahunan->delete();
         });

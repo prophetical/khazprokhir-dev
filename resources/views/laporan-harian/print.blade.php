@@ -49,12 +49,12 @@
                     <thead>
                         <tr class="bg-gray-50 text-[10px] font-black uppercase text-gray-500 tracking-wider border-b border-gray-200">
                             <th class="px-3 py-2 text-left border-r border-gray-100">Pecahan</th>
-                            <th class="px-3 py-2 text-right border-r border-gray-100 bg-blue-50/30">Terima (Blyt)</th>
+                            <th class="px-3 py-2 text-right border-r border-gray-100 bg-blue-50/30">Terima (Bilyet)</th>
                             <th class="px-3 py-2 text-right border-r border-gray-100 bg-purple-50/30">Sortir (Pack)</th>
-                            <th class="px-3 py-2 text-right border-r border-gray-100 bg-purple-50/30">Sortir (Blyt)</th>
+                            <th class="px-3 py-2 text-right border-r border-gray-100 bg-purple-50/30">Sortir (Bilyet)</th>
                             <th class="px-3 py-2 text-right border-r border-gray-100 bg-green-50/30">Kemas (Pack)</th>
                             <th class="px-3 py-2 text-right border-r border-gray-100 bg-green-50/30">Kemas (Dus)</th>
-                            <th class="px-3 py-2 text-right border-r border-gray-100 bg-rose-50/30">Serah BI (Blyt)</th>
+                            <th class="px-3 py-2 text-right border-r border-gray-100 bg-rose-50/30">Serah BI (Bilyet)</th>
                             <th class="px-3 py-2 text-right bg-rose-50/30">Serah BI (Dus)</th>
                         </tr>
                     </thead>
