@@ -30,21 +30,29 @@
                 <!-- Top Header -->
                 <nav id="top-header" class="px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between shrink-0 sticky top-0 z-50 w-full transition-all duration-300 ease-in-out border-b border-white/10"
                      style="background: linear-gradient(135deg, #1e40af 0%, #7c3aed 55%, #db2777 100%);">
-                    <div class="flex items-center">
-                        <button class="text-white/70 hover:text-white focus:outline-none md:hidden mr-4">
+                    <div class="flex items-center gap-4">
+                        <button class="text-white/70 hover:text-white focus:outline-none md:hidden transition-colors">
                             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                             </svg>
                         </button>
-                    <!-- Page Heading Title (if present) -->
-                    @isset($header)
-                        <div class="flex-1 [&_h2]:text-white [&_h2]:font-extrabold [&_h2]:tracking-tight [&_h2]:drop-shadow">
-                            {{ $header }}
-                        </div>
-                    @else
-                        <div class="flex-1"></div>
-                    @endisset
-                </div>
+
+                        @if(isset($backUrl) && $backUrl)
+                            <a href="{{ $backUrl }}" class="group flex items-center justify-center w-10 h-10 bg-white/10 hover:bg-white text-white hover:text-indigo-600 rounded-xl transition-all duration-300 border border-white/20 hover:border-white shadow-lg hover:shadow-indigo-500/30">
+                                <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+                                </svg>
+                            </a>
+                        @endif
+
+                        @isset($header)
+                            <div class="flex-1 [&_h2]:text-white [&_h2]:font-extrabold [&_h2]:tracking-tight [&_h2]:drop-shadow">
+                                {{ $header }}
+                            </div>
+                        @else
+                            <div class="flex-1"></div>
+                        @endisset
+                    </div>
 
                 <!-- Realtime Jam & Tanggal -->
                 <div class="hidden sm:flex items-center ml-auto mr-4 text-white/80 bg-white/10 border border-white/20 shadow-sm rounded-lg px-3 py-1.5" x-data="{ 

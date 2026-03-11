@@ -27,7 +27,7 @@
             <x-application-logo class="block h-8 w-auto fill-current text-white" />
             <div x-show="!sidebarCollapsed" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="ml-3 flex flex-col justify-center">
                 <span class="font-bold text-white text-lg tracking-wider whitespace-nowrap uppercase leading-none mb-0.5">KHAZPRO</span>
-                <span class="text-[9px] text-indigo-300 font-medium tracking-wide whitespace-nowrap italic">Presisi mengelola, terpercaya menjaga</span>
+                <span class="text-[9px] text-indigo-300 font-medium tracking-wide whitespace-nowrap italic">Presisi mengelola, data terpercaya</span>
             </div>
         </a>
     </div>
@@ -55,7 +55,7 @@
                 <div class="flex items-center">
                     <div class="shrink-0 w-8 flex justify-center">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 13.5h3.86a2.25 2.25 0 012.012 1.244l.256.512a2.25 2.25 0 002.013 1.244h3.218a2.25 2.25 0 002.013-1.244l.256-.512a2.25 2.25 0 012.013-1.244h3.859m-19.5.338V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18v-4.162c0-2.24-1.815-4.062-4.062-4.062h-11.376c-2.247 0-4.062 1.822-4.062 4.062zM15 7.5l-3 3m0 0l-3-3m3 3v-7.5" />
                         </svg>
                     </div>
                     <span x-show="!sidebarCollapsed" x-transition class="ml-3 text-sm font-medium whitespace-nowrap overflow-hidden">Penerimaan HCS</span>
@@ -69,7 +69,7 @@
             <div x-show="hcsOpen && !sidebarCollapsed" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="pl-11 space-y-1">
                 <a href="{{ route('hcs-receiving.index') }}" 
                    class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('hcs-receiving.index') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
-                    Data Receiving
+                    Penerimaan HCS
                 </a>
                 <a href="{{ route('rekomendasi-penerimaan.index') }}" 
                    class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('rekomendasi-penerimaan.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
@@ -81,7 +81,7 @@
                 </a>
                 <a href="{{ route('reports.index') }}" 
                    class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('reports.index') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
-                    Laporan Receiving
+                    Laporan Penerimaan HCS
                 </a>
             </div>
         </div>
@@ -94,7 +94,7 @@
                 <div class="flex items-center">
                     <div class="shrink-0 w-8 flex justify-center">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m8.25 3v6.75m0 0l-3-3m3 3l3-3M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
                         </svg>
                     </div>
                     <span x-show="!sidebarCollapsed" x-transition class="ml-3 text-sm font-medium whitespace-nowrap overflow-hidden">Penerimaan HCTS</span>
@@ -196,7 +196,7 @@
                 <div class="flex items-center">
                     <div class="shrink-0 w-8 flex justify-center">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7.5 7.5h-.75A2.25 2.25 0 004.5 9.75v7.5a2.25 2.25 0 002.25 2.25h7.5a2.25 2.25 0 002.25-2.25v-7.5a2.25 2.25 0 00-2.25-2.25h-.75m0-3l-3-3m0 0l-3 3m3-3v11.25m6-2.25h.75a2.25 2.25 0 012.25 2.25v7.5a2.25 2.25 0 01-2.25 2.25h-7.5a2.25 2.25 0 01-2.25-2.25v-.75" />
                         </svg>
                     </div>
                     <span x-show="!sidebarCollapsed" x-transition class="ml-3 text-sm font-medium whitespace-nowrap overflow-hidden">Penyerahan ke BI</span>

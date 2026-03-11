@@ -62,7 +62,7 @@ class HcsSortingController extends Controller
         }
 
         // Ambil semua pack untuk grup spesifik ini (baik yang udah disortir maupun belum, maks 100)
-        // Catatan: Karena permintaannya "pack 1 sampai 100", kita perlu tau status masing-masing pack 1-100.
+        // Kita perlu tau status masing-masing pack 1-100.
         $packsData = Pack::join('hcs_receivings', 'packs.hcs_receiving_id', '=', 'hcs_receivings.id')
             ->where('hcs_receivings.pecahan', $pecahan)
             ->where('packs.batch', $batch)
