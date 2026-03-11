@@ -295,10 +295,10 @@ class LaporanHarianController extends Controller
             // 6. Target Produksi Harian
             $targetProduksiHarian = $sisaHariKerja > 0 ? floor($sisaTargetBilyet / $sisaHariKerja) : 0;
 
-            // 7. Data Kemas (H-1)
+            // 7. Data Kemas (Accumulation in current month up to tanggalLaporan)
             $kemasG1Query = Pengemasan::where('pecahan', $pecahan)
                 ->where('tahun_anggaran', $tahunAnggaran)
-                ->whereDate('tanggal_pengemasan', $kemasDate)
+                ->whereBetween('tanggal_pengemasan', [$startOfMonth->toDateString(), $tanggalLaporan->toDateString()])
                 ->where('gilir', '1');
             if ($tahunEmisi) {
                 $kemasG1Query->where('tahun_emisi', $tahunEmisi);
@@ -307,7 +307,7 @@ class LaporanHarianController extends Controller
             
             $kemasG2Query = Pengemasan::where('pecahan', $pecahan)
                 ->where('tahun_anggaran', $tahunAnggaran)
-                ->whereDate('tanggal_pengemasan', $kemasDate)
+                ->whereBetween('tanggal_pengemasan', [$startOfMonth->toDateString(), $tanggalLaporan->toDateString()])
                 ->where('gilir', '2');
             if ($tahunEmisi) {
                 $kemasG2Query->where('tahun_emisi', $tahunEmisi);
@@ -316,7 +316,7 @@ class LaporanHarianController extends Controller
 
             $kemasG3Query = Pengemasan::where('pecahan', $pecahan)
                 ->where('tahun_anggaran', $tahunAnggaran)
-                ->whereDate('tanggal_pengemasan', $kemasDate)
+                ->whereBetween('tanggal_pengemasan', [$startOfMonth->toDateString(), $tanggalLaporan->toDateString()])
                 ->where('gilir', '3');
             if ($tahunEmisi) {
                 $kemasG3Query->where('tahun_emisi', $tahunEmisi);
@@ -325,10 +325,10 @@ class LaporanHarianController extends Controller
             
             $totalKemas = $kemasG1 + $kemasG2 + $kemasG3;
 
-            // 9. Penerimaan HCS (H-1)
+            // 9. Penerimaan HCS (Accumulation in current month up to tanggalLaporan)
             $hcsRikyetQuery = HcsReceiving::where('pecahan', $pecahan)
                 ->where('tahun_anggaran', $tahunAnggaran)
-                ->whereDate('tanggal_penerimaan', $kemasDate)
+                ->whereBetween('tanggal_penerimaan', [$startOfMonth->toDateString(), $tanggalLaporan->toDateString()])
                 ->where('supplier', 'Rikyet');
             if ($tahunEmisi) {
                 $hcsRikyetQuery->where('emisi', $tahunEmisi);
@@ -337,7 +337,7 @@ class LaporanHarianController extends Controller
 
             $hcsCutpackQuery = HcsReceiving::where('pecahan', $pecahan)
                 ->where('tahun_anggaran', $tahunAnggaran)
-                ->whereDate('tanggal_penerimaan', $kemasDate)
+                ->whereBetween('tanggal_penerimaan', [$startOfMonth->toDateString(), $tanggalLaporan->toDateString()])
                 ->where('supplier', 'Cutpack');
             if ($tahunEmisi) {
                 $hcsCutpackQuery->where('emisi', $tahunEmisi);

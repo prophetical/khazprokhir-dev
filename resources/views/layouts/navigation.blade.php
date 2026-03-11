@@ -79,13 +79,17 @@
 
             <!-- Sub-menu Items -->
             <div x-show="hcsOpen && !sidebarCollapsed" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="pl-11 space-y-1">
+                <a href="{{ route('hcs-receiving.create') }}" 
+                   class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('hcs-receiving.create') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                    Input Penerimaan HCS
+                </a>
                 <a href="{{ route('hcs-receiving.index') }}" 
                    class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('hcs-receiving.index') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
-                    Penerimaan HCS
+                    Detail Penerimaan HCS
                 </a>
                 <a href="{{ route('rekomendasi-penerimaan.index') }}" 
                    class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('rekomendasi-penerimaan.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
-                    Rekomendasi Penerimaan
+                    Rekomendasi Penerimaan HCS
                 </a>
                 <a href="{{ route('batch-tracking.index') }}" 
                    class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('batch-tracking.index') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
@@ -156,7 +160,7 @@
             <div x-show="sortingOpen && !sidebarCollapsed" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="pl-11 space-y-1">
                 <a href="{{ route('hcs-sorting.index') }}" 
                    class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('hcs-sorting.index', 'hcs-sorting.create', 'hcs-sorting.edit') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
-                    Data Penyortiran
+                    Input & Data Penyortiran HCS
                 </a>
                 <a href="{{ route('rekomendasi-penyortiran.index') }}" 
                    class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('rekomendasi-penyortiran.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
@@ -191,7 +195,7 @@
             <div x-show="pengemasanOpen && !sidebarCollapsed" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="pl-11 space-y-1">
                 <a href="{{ route('pengemasan.index') }}" 
                    class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('pengemasan.index', 'pengemasan.create') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
-                    Pengemasan HCS
+                    Input Pengemasan HCS
                 </a>
                 <a href="{{ route('pengemasan.data') }}" 
                    class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('pengemasan.data', 'pengemasan.show') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">

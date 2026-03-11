@@ -170,7 +170,7 @@
                         <div class="flex items-center">
                             <span class="text-[10px] font-black text-gray-400 uppercase px-4 cursor-default">Tahun Anggaran:</span>
                             <select name="tahun_anggaran" onchange="this.form.submit()" 
-                                    class="bg-white border-0 rounded-xl text-sm font-black text-indigo-600 shadow-sm focus:ring-2 focus:ring-indigo-500 py-2 min-w-[120px] cursor-pointer">
+                                    class="bg-white border-0 rounded-xl text-sm font-black text-indigo-600 shadow-sm focus:ring-2 focus:ring-indigo-500 py-2 min-w-[120px] text-center cursor-pointer">
                                 @foreach($availableYears as $year)
                                     <option value="{{ $year }}" {{ $currentYear == $year ? 'selected' : '' }}>{{ $year }}</option>
                                 @endforeach
@@ -182,7 +182,7 @@
                         <div class="flex items-center">
                             <span class="text-[10px] font-black text-gray-400 uppercase px-4 cursor-default">Tahun Emisi:</span>
                             <select name="tahun_emisi" onchange="this.form.submit()" 
-                                    class="bg-white border-0 rounded-xl text-sm font-black text-pink-600 shadow-sm focus:ring-2 focus:ring-pink-500 py-2 min-w-[120px] cursor-pointer">
+                                    class="bg-white border-0 rounded-xl text-sm font-black text-pink-600 shadow-sm focus:ring-2 focus:ring-pink-500 py-2 min-w-[120px] text-center cursor-pointer">
                                 <option value="">Semua Emisi</option>
                                 @foreach($availableEmissions as $emisi)
                                     <option value="{{ $emisi }}" {{ $currentTE == $emisi ? 'selected' : '' }}>{{ $emisi }}</option>

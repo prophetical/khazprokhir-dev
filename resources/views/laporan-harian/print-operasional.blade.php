@@ -69,7 +69,7 @@
             </div>
             <div class="text-right">
                 <p class="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Waktu Cetak</p>
-                <p class="text-xs font-bold text-gray-700">{{ \Carbon\Carbon::now()->locale('id')->isoFormat('D MMMM YYYY, HH:mm') }}</p>
+                <p class="text-xs font-bold text-indigo-600">Laporan Persediaan HCS {{ \Carbon\Carbon::now()->locale('id')->isoFormat('D MMMM YYYY, HH:mm') }}</p>
             </div>
         </header>
 
