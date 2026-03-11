@@ -83,7 +83,7 @@
                         <th class="text-[9px] font-black uppercase tracking-widest px-4 py-3 text-center">Gilir</th>
                         <th class="text-[9px] font-black uppercase tracking-widest px-4 py-3 text-right">Jumlah</th>
                         <th class="text-[9px] font-black uppercase tracking-widest px-4 py-3 text-center">Batch/Seri</th>
-                        <th class="text-[9px] font-black uppercase tracking-widest px-4 py-3 text-center">TA/Ems</th>
+                        <th class="text-[9px] font-black uppercase tracking-widest px-4 py-3 text-center">TA/TE</th>
                         <th class="text-[9px] font-black uppercase tracking-widest px-4 py-3">No. Segel</th>
                     </tr>
                 </thead>

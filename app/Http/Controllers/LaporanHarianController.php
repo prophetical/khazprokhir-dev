@@ -14,7 +14,12 @@ class LaporanHarianController extends Controller
 {
     public function index(Request $request)
     {
-        $filters = $this->getFilters($request);
+        $tahunEmisiOptions = HcsReceiving::select('emisi')->distinct()->orderBy('emisi', 'desc')->pluck('emisi')->toArray();
+        if (empty($tahunEmisiOptions)) {
+            $tahunEmisiOptions = ['2022', '2016']; // Fallback options
+        }
+
+        $filters = $this->getFilters($request, $tahunEmisiOptions);
         $data = $this->getReportData($filters);
 
         $reportData = $data['reportData'];
@@ -24,7 +29,6 @@ class LaporanHarianController extends Controller
         $tahunEmisi = $filters['tahun_emisi'];
 
         $tahunAnggaranOptions = collect(range(date('Y') - 2, date('Y') + 2))->toArray();
-        $tahunEmisiOptions = HcsReceiving::select('emisi')->distinct()->pluck('emisi')->toArray();
 
         return view('laporan-harian.index', compact(
             'reportData',
@@ -39,7 +43,8 @@ class LaporanHarianController extends Controller
 
     public function export(Request $request)
     {
-        $filters = $this->getFilters($request);
+        $tahunEmisiOptions = HcsReceiving::select('emisi')->distinct()->pluck('emisi')->toArray();
+        $filters = $this->getFilters($request, $tahunEmisiOptions);
         $data = $this->getReportData($filters);
         $reportData = $data['reportData'];
         $totals = $data['totals'];
@@ -113,18 +118,20 @@ class LaporanHarianController extends Controller
 
     public function print(Request $request)
     {
-        $filters = $this->getFilters($request);
+        $tahunEmisiOptions = HcsReceiving::select('emisi')->distinct()->pluck('emisi')->toArray();
+        $filters = $this->getFilters($request, $tahunEmisiOptions);
         $data = $this->getReportData($filters);
         
         return view('laporan-harian.print-operasional', array_merge($filters, $data));
     }
 
-    private function getFilters(Request $request)
+    private function getFilters(Request $request, $tahunEmisiOptions = [])
     {
+        $defaultEmisi = !empty($tahunEmisiOptions) ? $tahunEmisiOptions[0] : '2022';
         return [
             'tanggal_laporan' => $request->get('tanggal_laporan', Carbon::today()->toDateString()),
             'tahun_anggaran' => $request->get('tahun_anggaran', date('Y')),
-            'tahun_emisi' => $request->get('tahun_emisi', ''),
+            'tahun_emisi' => $request->get('tahun_emisi', $defaultEmisi),
         ];
     }
 
@@ -150,14 +157,26 @@ class LaporanHarianController extends Controller
 
         foreach ($pecahanList as $pecahan) {
             $penerimaanQuery = HcsReceiving::where('pecahan', $pecahan)
-                ->whereDate('tanggal_penerimaan', '<=', $tanggalLaporan);
+                ->whereDate('tanggal_penerimaan', '<=', $tanggalLaporan)
+                ->where('tahun_anggaran', $tahunAnggaran);
+            if ($tahunEmisi) {
+                $penerimaanQuery->where('emisi', $tahunEmisi);
+            }
             $totalPenerimaan = $penerimaanQuery->sum('jumlah');
 
             $pengemasanQuery = Pengemasan::where('pecahan', $pecahan)
-                ->whereDate('tanggal_pengemasan', '<=', $tanggalLaporan);
+                ->whereDate('tanggal_pengemasan', '<=', $tanggalLaporan)
+                ->where('tahun_anggaran', $tahunAnggaran);
+            if ($tahunEmisi) {
+                $pengemasanQuery->where('tahun_emisi', $tahunEmisi);
+            }
             $totalPengemasan = $pengemasanQuery->sum('jumlah_dus') * 20000;
 
-            $penyerahanQuery = PenyerahanBi::where('pecahan', $pecahan);
+            $penyerahanQuery = PenyerahanBi::where('pecahan', $pecahan)
+                ->where('tahun_anggaran', $tahunAnggaran);
+            if ($tahunEmisi) {
+                $penyerahanQuery->where('tahun_emisi', $tahunEmisi);
+            }
 
             $penyerahanHariIniBilyet = (clone $penyerahanQuery)
                 ->whereDate('tanggal_penyerahan', $tanggalLaporan)

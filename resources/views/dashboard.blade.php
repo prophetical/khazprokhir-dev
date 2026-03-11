@@ -225,7 +225,7 @@
                         <div class="w-2 h-16 bg-gradient-to-b from-indigo-600 via-pink-500 to-amber-500 rounded-full"></div>
                         <div>
                             <h3 class="text-3xl font-black text-gray-900 tracking-tighter mb-1 uppercase leading-none">Visualisasi Trends</h3>
-                            <p class="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] leading-none">Monitoring Target Pengemasan Bulanan</p>
+                            <p class="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] leading-none">Monitoring Target Penyerahan Bulanan</p>
                         </div>
                     </div>
 
@@ -304,9 +304,30 @@
                                 </div>
                             </div>
                         </div>
-                        <div>
+                        <div x-data="{ 
+                            time: '',
+                            init() {
+                                this.updateClock();
+                                setInterval(() => this.updateClock(), 1000);
+                            },
+                            updateClock() {
+                                const now = new Date();
+                                const options = { 
+                                    weekday: 'short', 
+                                    day: '2-digit', 
+                                    month: 'short', 
+                                    year: 'numeric', 
+                                    hour: '2-digit', 
+                                    minute: '2-digit', 
+                                    second: '2-digit',
+                                    hour12: false,
+                                    timeZone: 'Asia/Jakarta'
+                                };
+                                this.time = now.toLocaleString('id-ID', options).replace(/\./g, ':');
+                            }
+                        }">
                             <p class="text-[10px] font-black text-gray-400 uppercase mb-1">Server time</p>
-                            <p class="text-xs font-black text-gray-700 font-mono">{{ \Carbon\Carbon::now()->format('D, d M Y H:i:s') }}</p>
+                            <p class="text-xs font-black text-gray-700 font-mono" x-text="time"></p>
                         </div>
                     </div>
                     <div class="bg-gray-900 p-4 text-center">
@@ -318,10 +339,11 @@
                 <div class="lg:col-span-3 grid grid-cols-2 sm:grid-cols-3 gap-6">
                     @php
                         $modules = [
-                            ['icon'=>'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10', 'label'=>'Penerimaan HCS', 'color'=>'indigo', 'route'=>'hcs-receiving.index', 'bg'=>'bg-white'],
+                            ['icon'=>'M2.25 13.5h3.86a2.25 2.25 0 012.012 1.244l.256.512a2.25 2.25 0 002.013 1.244h3.218a2.25 2.25 0 002.013-1.244l.256-.512a2.25 2.25 0 012.013-1.244h3.859m-19.5.338V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18v-4.162c0-2.24-1.815-4.062-4.062-4.062h-11.376c-2.247 0-4.062 1.822-4.062 4.062zM15 7.5l-3 3m0 0l-3-3m3 3v-7.5', 'label'=>'Penerimaan HCS', 'color'=>'indigo', 'route'=>'hcs-receiving.index', 'bg'=>'bg-white'],
+                            ['icon'=>'M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m8.25 3v6.75m0 0l-3-3m3 3l3-3M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z', 'label'=>'Penerimaan HCTS', 'color'=>'rose', 'route'=>'hcts-receiving.index', 'bg'=>'bg-white'],
                             ['icon'=>'M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4', 'label'=>'Penyortiran HCS', 'color'=>'pink', 'route'=>'hcs-sorting.index', 'bg'=>'bg-white'],
                             ['icon'=>'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4', 'label'=>'Pengemasan HCS', 'color'=>'emerald', 'route'=>'pengemasan.index', 'bg'=>'bg-white'],
-                            ['icon'=>'M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4', 'label'=>'Penyerahan ke BI', 'color'=>'orange', 'route'=>'penyerahan-bi.index', 'bg'=>'bg-white'],
+                            ['icon'=>'M7.5 7.5h-.75A2.25 2.25 0 004.5 9.75v7.5a2.25 2.25 0 002.25 2.25h7.5a2.25 2.25 0 002.25-2.25v-7.5a2.25 2.25 0 00-2.25-2.25h-.75m0-3l-3-3m0 0l-3 3m3-3v11.25m6-2.25h.75a2.25 2.25 0 012.25 2.25v7.5a2.25 2.25 0 01-2.25 2.25h-7.5a2.25 2.25 0 01-2.25-2.25v-.75', 'label'=>'Penyerahan ke BI', 'color'=>'orange', 'route'=>'penyerahan-bi.index', 'bg'=>'bg-white'],
                             ['icon'=>'M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', 'label'=>'Laporan Harian', 'color'=>'blue', 'route'=>'laporan-harian.index', 'bg'=>'bg-white'],
                             ['icon'=>'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z', 'label'=>'Pengaturan', 'color'=>'gray', 'route'=>'profile.edit', 'bg'=>'bg-white/50 border-dashed'],
                         ];

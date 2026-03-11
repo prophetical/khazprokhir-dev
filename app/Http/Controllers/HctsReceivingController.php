@@ -16,6 +16,12 @@ class HctsReceivingController extends Controller
         $search = $request->input('search');
         $pecahanFilter = $request->input('pecahan');
         $gilirFilter = $request->input('gilir');
+        $taFilter = $request->input('tahun_anggaran');
+        $teFilter = $request->input('tahun_emisi');
+
+        // Get available options for filters
+        $availableYears = HctsReceiving::distinct()->pluck('tahun_anggaran')->sortDesc();
+        $availableEmissions = HctsReceiving::distinct()->pluck('emisi')->sortDesc();
 
         $query = HctsReceiving::with('user');
 
@@ -31,6 +37,14 @@ class HctsReceivingController extends Controller
             $query->where('gilir', $gilirFilter);
         }
 
+        if ($taFilter) {
+            $query->where('tahun_anggaran', $taFilter);
+        }
+
+        if ($teFilter) {
+            $query->where('emisi', $teFilter);
+        }
+
         if ($search) {
             $query->where(function($q) use ($search) {
                 $q->where('nomor_bon', 'like', "%{$search}%")
@@ -39,8 +53,31 @@ class HctsReceivingController extends Controller
             });
         }
 
+        // Summary Calculations (Based on filters, excluding pagination)
+        $summaryQuery = clone $query;
+        $summaryData = $summaryQuery->selectRaw('pecahan, SUM(jumlah) as total')
+            ->groupBy('pecahan')
+            ->pluck('total', 'pecahan')
+            ->toArray();
+
+        $grandTotal = array_sum($summaryData);
+
         $receivings = $query->latest()->paginate(10)->withQueryString();
-        return view('hcts-receiving.index', compact('receivings', 'startDate', 'endDate', 'search', 'pecahanFilter', 'gilirFilter'));
+        
+        return view('hcts-receiving.index', compact(
+            'receivings', 
+            'startDate', 
+            'endDate', 
+            'search', 
+            'pecahanFilter', 
+            'gilirFilter',
+            'taFilter',
+            'teFilter',
+            'availableYears',
+            'availableEmissions',
+            'summaryData',
+            'grandTotal'
+        ));
     }
 
     public function export(Request $request)
@@ -72,6 +109,12 @@ class HctsReceivingController extends Controller
             }
             if ($request->filled('gilir')) {
                 $query->where('gilir', $request->gilir);
+            }
+            if ($request->filled('tahun_anggaran')) {
+                $query->where('tahun_anggaran', $request->tahun_anggaran);
+            }
+            if ($request->filled('tahun_emisi')) {
+                $query->where('emisi', $request->tahun_emisi);
             }
             if ($request->filled('search')) {
                 $search = $request->search;
@@ -122,6 +165,12 @@ class HctsReceivingController extends Controller
         }
         if ($gilirFilter) {
             $query->where('gilir', $gilirFilter);
+        }
+        if ($request->filled('tahun_anggaran')) {
+            $query->where('tahun_anggaran', $request->input('tahun_anggaran'));
+        }
+        if ($request->filled('tahun_emisi')) {
+            $query->where('emisi', $request->input('tahun_emisi'));
         }
         if ($search) {
             $query->where(function($q) use ($search) {

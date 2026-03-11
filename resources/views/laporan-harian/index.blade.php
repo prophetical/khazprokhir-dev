@@ -26,13 +26,13 @@
                         <div>
                             <label for="tanggal_laporan" class="block text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wider">Tanggal Laporan</label>
                             <input type="date" name="tanggal_laporan" id="tanggal_laporan" value="{{ $tanggalLaporan }}"
-                                class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 py-2.5">
+                                class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 py-2.5 text-center font-bold">
                         </div>
 
                         <div>
                             <label for="tahun_anggaran" class="block text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wider">Tahun Anggaran</label>
                             <select name="tahun_anggaran" id="tahun_anggaran"
-                                class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 py-2.5">
+                                class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 py-2.5 text-center font-bold">
                                 @foreach($tahunAnggaranOptions as $year)
                                     <option value="{{ $year }}" {{ $tahunAnggaran == $year ? 'selected' : '' }}>{{ $year }}</option>
                                 @endforeach
@@ -43,8 +43,7 @@
                             <label for="tahun_emisi" class="block text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wider">Tahun Emisi</label>
                             <div class="flex gap-2">
                                 <select name="tahun_emisi" id="tahun_emisi"
-                                    class="flex-grow rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 py-2.5">
-                                    <option value="">Semua Emisi</option>
+                                    class="flex-grow rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 py-2.5 text-center font-bold">
                                     @foreach($tahunEmisiOptions as $emisi)
                                         <option value="{{ $emisi }}" {{ $tahunEmisi == $emisi ? 'selected' : '' }}>{{ $emisi }}</option>
                                     @endforeach
@@ -121,7 +120,7 @@
                 <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                     <h3 class="text-lg font-black text-gray-800 tracking-tight flex items-center">
                         <span class="w-2 h-6 bg-indigo-600 rounded-full mr-3"></span>
-                        Rincian Per Pecahan
+                        Laporan Persediaan HCS {{ \Carbon\Carbon::parse($tanggalLaporan)->locale('id')->isoFormat('dddd, D MMMM Y') }} TA {{ $tahunAnggaran }}
                     </h3>
                     <div class="relative w-64 group">
                         <input type="text" x-model="search" placeholder="Cari Pecahan..." 
