@@ -25,7 +25,7 @@ class UpdateHcsReceivingRequest extends FormRequest
             'nomor_bon' => ['required', 'string'],
             'tanggal_penerimaan' => ['required', 'date'],
             'pecahan' => ['required', 'in:S,T,U,V,W,X,Y'],
-            'jumlah' => ['required', 'integer', 'min:45000'],
+            'jumlah' => ['required', 'integer', 'min:1'],
             'gilir' => ['required', 'in:Gilir 1,Gilir 2,Gilir 3'],
             'mesin' => ['required', 'string'],
             'supplier' => ['required', 'in:Rikyet,Cutpack'],

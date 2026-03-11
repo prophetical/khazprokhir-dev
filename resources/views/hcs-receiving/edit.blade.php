@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Edit Data Penerimaan HCS: ') . $hcsReceiving->batch }}
+            {{ __('Edit Data Penerimaan HCS ') . $hcsReceiving->batch }}
         </h2>
     </x-slot>
 
@@ -40,6 +40,10 @@
                                         <h3 class="text-xl font-black text-gray-900 tracking-tight flex items-center">
                                             <span class="w-2 h-8 mr-4 rounded-full transition-all duration-700" :class="currentTheme ? currentTheme.bg : 'bg-indigo-500'"></span>
                                             Detail Penerimaan
+                                            <span 
+                                                class="ml-3 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider transition-all duration-700" 
+                                                :class="currentTheme ? (currentTheme.soft + ' ' + currentTheme.icon + ' border ' + currentTheme.border) : 'bg-gray-100 text-gray-500 border border-gray-200'"
+                                                x-text="selectedPecahan ? (selectedPecahan) : ''"></span>
                                         </h3>
                                         <div class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all duration-700"
                                             :class="currentTheme ? (currentTheme.border + ' ' + currentTheme.icon + ' ' + currentTheme.soft) : 'border-indigo-200 text-indigo-600 bg-indigo-50'">
@@ -225,11 +229,11 @@
                                             <div class="flex items-center gap-1"><div class="w-4 h-4 bg-green-300 rounded-lg shadow-sm"></div> <span class="text-[10px] font-bold text-gray-600">Rikyet</span></div>
                                             <div class="flex items-center gap-1"><div class="w-4 h-4 bg-red-500 border border-red-600 rounded-lg shadow-lg shadow-red-500/20"></div> <span class="text-[10px] font-bold text-gray-600">Tersortir</span></div>
                                             <div class="flex items-center gap-1">
-                                                <div class="flex -space-x-2">
-                                                    <div class="w-4 h-4 bg-blue-100 border border-blue-200 rounded-full"></div>
-                                                    <div class="w-4 h-4 bg-green-100 border border-green-200 rounded-full"></div>
+                                                <div class="flex -space-x-1">
+                                                    <div class="w-4 h-4 bg-blue-100 border border-blue-200 rounded-lg"></div>
+                                                    <div class="w-4 h-4 bg-green-100 border border-green-200 rounded-lg"></div>
                                                 </div>
-                                                <span class="text-[10px] font-bold text-gray-400 ml-3">Siap Sortir</span>
+                                                <span class="text-[10px] font-bold text-gray-600 ml-2">Siap Sortir</span>
                                             </div>
                                         </div>
                                     </div>
@@ -448,8 +452,8 @@
                     supplierEl.textContent = 'KOSONG';
                     statusEl.textContent = 'Bisa Dipilih';
                     
-                    // Reset to base classes (Removed default text-gray-400)
-                    btn.className = 'pack-btn w-full aspect-square flex items-center justify-center text-[10px] sm:text-xs font-black rounded-lg transition-all duration-300 bg-white border border-gray-100 shadow-sm hover:scale-110 hover:z-10 focus:outline-none focus:ring-4';
+                    // Reset to base classes (Removed persistent background/text colors)
+                    btn.className = 'pack-btn w-full aspect-square flex items-center justify-center text-[10px] sm:text-xs font-black rounded-lg transition-all duration-300 hover:scale-110 hover:z-10 focus:outline-none focus:ring-4';
                     
                     const usedPack = usedPacks.find(p => p.pack_number === num);
                     if (usedPack) {
@@ -464,14 +468,13 @@
                             badge.classList.remove('hidden');
                             btn.classList.add('bg-red-400', 'text-white', 'border-red-500', 'shadow-lg', 'shadow-red-500/20');
                         } else {
-                            btn.classList.remove('rounded-lg');
-                            btn.classList.add('rounded-full', 'border-transparent', 'bg-gray-200'); // BG Abu-aku untuk terpakai
+                            // LIGHT BACKGROUND + DARK FONT for used packs
                             if (usedPack.supplier === 'Cutpack') {
-                                btn.classList.add('text-blue-500'); // Font Biru tetap
+                                btn.classList.add('bg-blue-100', 'text-blue-900', 'border-blue-200');
                             } else if (usedPack.supplier === 'Rikyet') {
-                                btn.classList.add('text-green-600'); // Font Hijau tetap
+                                btn.classList.add('bg-green-100', 'text-green-900', 'border-green-200');
                             } else {
-                                btn.classList.add('text-gray-400');
+                                btn.classList.add('bg-gray-100', 'text-gray-500');
                             }
                         }
                     } else if (lockedPacks.includes(num)) {
@@ -498,7 +501,8 @@
                             btn.classList.add('bg-indigo-600', 'border-indigo-700', 'shadow-indigo-500/20');
                         }
                     } else {
-                        btn.classList.add('text-gray-400', 'hover:bg-gray-50', 'hover:text-gray-600', 'hover:border-gray-200');
+                        // AVAILABLE
+                        btn.classList.add('bg-white', 'text-gray-400', 'border-gray-100', 'shadow-sm', 'hover:bg-gray-50', 'hover:text-gray-600', 'hover:border-gray-200');
                     }
                 });
             }

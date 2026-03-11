@@ -73,17 +73,30 @@ class HcsReceivingController extends Controller
     public function store(StoreHcsReceivingRequest $request)
     {
         $validated = $request->validated();
+        $isManual = $request->has('is_manual');
 
         $jumlah = $validated['jumlah'];
-        $packsNeeded = $jumlah / 45000;
+        
+        if ($isManual) {
+            if ($jumlah > 45000) {
+                return back()->withInput()->withErrors(['jumlah' => 'Jumlah bilyet tidak boleh melebihi 45.000 untuk pack tidak full.']);
+            }
+            $packsNeeded = 1;
+        } else {
+            if ($jumlah % 45000 !== 0) {
+                return back()->withInput()->withErrors(['jumlah' => 'Jumlah bilyet harus kelipatan 45.000.']);
+            }
+            $packsNeeded = $jumlah / 45000;
+        }
 
         $selectedPacksCount = count($validated['packs']);
 
         if ($selectedPacksCount !== (int)$packsNeeded) {
-            return back()->withInput()->withErrors(['packs' => "Jumlah packs yang dipilih ($selectedPacksCount) tidak sesuai dengan jumlah bilyet ($jumlah). Dibutuhkan $packsNeeded packs."]);
+            return back()->withInput()->withErrors(['packs' => "Jumlah packs yang dipilih ($selectedPacksCount) tidak sesuai kebutuhan ($packsNeeded)."]);
         }
 
         try {
+            $validated['is_manual'] = $isManual;
             $this->service->createReceiving($validated, auth()->id());
             return redirect()->route('hcs-receiving.index')->with('success', 'Data Penerimaan HCS berhasil disimpan.');
         }
@@ -111,12 +124,25 @@ class HcsReceivingController extends Controller
     public function update(UpdateHcsReceivingRequest $request, HcsReceiving $hcsReceiving)
     {
         $validated = $request->validated();
+        $isManual = $request->has('is_manual');
         $jumlah = $validated['jumlah'];
-        $packsNeeded = $jumlah / 45000;
+
+        if ($isManual) {
+            if ($jumlah > 45000) {
+                return back()->withInput()->withErrors(['jumlah' => 'Jumlah bilyet tidak boleh melebihi 45.000 untuk pack tidak full.']);
+            }
+            $packsNeeded = 1;
+        } else {
+            if ($jumlah % 45000 !== 0) {
+                return back()->withInput()->withErrors(['jumlah' => 'Jumlah bilyet harus kelipatan 45.000.']);
+            }
+            $packsNeeded = $jumlah / 45000;
+        }
+
         $selectedPacksCount = count($validated['packs']);
 
         if ($selectedPacksCount !== (int)$packsNeeded) {
-            return back()->withInput()->withErrors(['packs' => "Jumlah packs yang dipilih ($selectedPacksCount) tidak sesuai dengan jumlah bilyet ($jumlah). Dibutuhkan $packsNeeded packs."]);
+            return back()->withInput()->withErrors(['packs' => "Jumlah packs yang dipilih ($selectedPacksCount) tidak sesuai kebutuhan ($packsNeeded)."]);
         }
 
         $sortedPacks = $hcsReceiving->packs()->whereNotNull('hcs_sorting_id')->pluck('pack_number')->toArray();
@@ -142,6 +168,7 @@ class HcsReceivingController extends Controller
         }
 
         try {
+            $validated['is_manual'] = $isManual;
             $this->service->updateReceiving($hcsReceiving, $validated, auth()->id());
             return redirect()->route('hcs-receiving.index')->with('success', 'Data Penerimaan HCS berhasil diperbarui.');
         }

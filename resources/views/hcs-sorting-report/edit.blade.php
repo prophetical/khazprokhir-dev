@@ -203,7 +203,7 @@
                                     <div class="relative z-10">
                                         <p class="text-[10px] font-bold text-white/70 uppercase tracking-widest">Total Bilyet</p>
                                         <div class="mt-1">
-                                            <span class="text-2xl font-black tracking-tight" x-text="'Rp ' + formatNumber(totalBilyet)"></span>
+                                            <span class="text-2xl font-black tracking-tight" x-text="formatNumber(totalBilyet)"></span>
                                         </div>
                                     </div>
                                     <svg class="absolute top-6 right-6 w-8 h-8 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -220,6 +220,25 @@
                                 <template x-for="pack in selectedPacks" :key="pack">
                                     <input type="hidden" name="selected_packs[]" :value="pack">
                                 </template>
+
+                                <!-- Manual Toggle Slider -->
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100 transition-all duration-300" 
+                                     :class="isManual ? 'ring-2 ring-red-500/20 border-red-100 bg-red-50/30' : ''">
+                                    <div class="flex items-center">
+                                        <div class="w-8 h-8 rounded-lg flex items-center justify-center mr-3 transition-colors duration-300"
+                                             :class="isManual ? 'bg-red-500 text-white shadow-lg shadow-red-500/30' : 'bg-gray-200 text-gray-400'">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                        </div>
+                                        <span class="text-[10px] font-black uppercase tracking-widest transition-colors duration-300"
+                                              :class="isManual ? 'text-red-600' : 'text-gray-500'">
+                                            Input Sisa Pack (Bukan Kelipatan 4)
+                                        </span>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="is_manual" name="is_manual" class="sr-only peer" x-model="isManual" @change="validateSelection()">
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500 shadow-inner"></div>
+                                    </label>
+                                </div>
 
                                 <div class="space-y-5">
                                     <div>
@@ -320,10 +339,17 @@
                 isDragging: false,
                 dragStart: null,
                 validationError: '',
-                bilyetPerPack: 45000,
+                isManual: {{ (old('is_manual') || $hcs_sorting_report->jumlah_pack % 4 !== 0 || $hcs_sorting_report->jumlah_bilyet !== $hcs_sorting_report->jumlah_pack * 45000) ? 'true' : 'false' }},
+                packQuantities: {
+                    @foreach ($packsData as $pack)
+                        {{ $pack->pack_number }}: {{ $pack->jumlah }},
+                    @endforeach
+                },
                 
                 get totalBilyet() {
-                    return this.selectedPacks.length * this.bilyetPerPack;
+                    return this.selectedPacks.reduce((total, num) => {
+                        return total + (this.packQuantities[num] || 45000);
+                    }, 0);
                 },
 
                 formatNumber(num) {
@@ -389,9 +415,11 @@
                     // Validate each block
                     let hasError = false;
                     for (let block of blocks) {
-                        if (block.length % 4 !== 0 || (block[0] - 1) % 4 !== 0) {
-                            hasError = true;
-                            break;
+                        if (!this.isManual) {
+                            if (block.length % 4 !== 0 || (block[0] - 1) % 4 !== 0) {
+                                hasError = true;
+                                break;
+                            }
                         }
                     }
 

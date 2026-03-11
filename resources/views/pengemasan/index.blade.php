@@ -139,7 +139,19 @@
                                                 <div class="text-xs text-gray-500 text-center">{{ $group['emisi'] }}</div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-center">
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-black bg-gray-100 text-gray-800 border border-gray-200 shadow-sm">
+                                                @php
+                                                    $pecahanColors = [
+                                                        'S' => 'bg-lime-500 text-white',
+                                                        'T' => 'bg-gray-400 text-white',
+                                                        'U' => 'bg-amber-400 text-white',
+                                                        'V' => 'bg-purple-500 text-white',
+                                                        'W' => 'bg-green-500 text-white',
+                                                        'X' => 'bg-blue-500 text-white',
+                                                        'Y' => 'bg-red-500 text-white',
+                                                    ];
+                                                    $badgeColor = $pecahanColors[$group['pecahan']] ?? 'bg-gray-100 text-gray-800';
+                                                @endphp
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-black {{ $badgeColor }} border border-transparent shadow-sm">
                                                     {{ $group['pecahan'] }}
                                                 </span>
                                             </td>
@@ -156,35 +168,53 @@
                                                 {{ $group['jumlah_pack'] }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-center space-x-2">
-                                                @php
-                                                    $maxValidPackAkhir = $group['pack_awal'] + (intdiv($group['jumlah_pack'], 4) * 4) - 1;
-                                                @endphp
-                                                <a href="{{ route('pengemasan.create', [
-                                                    'tahun_anggaran' => $group['tahun_anggaran'],
-                                                    'tahun_emisi' => $group['emisi'],
-                                                    'pecahan' => $group['pecahan'],
-                                                    'batch' => $group['batch'],
-                                                    'seri' => $group['seri'],
-                                                    'pack_awal' => $group['pack_awal'],
-                                                    'pack_akhir' => $maxValidPackAkhir,
-                                                    'max_pack_akhir' => $maxValidPackAkhir
-                                                ]) }}" 
-                                                   class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 border border-transparent rounded-lg font-bold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150 shadow-sm">
-                                                    Kemas Semua
-                                                </a>
-                                                <a href="{{ route('pengemasan.create', [
-                                                    'tahun_anggaran' => $group['tahun_anggaran'],
-                                                    'tahun_emisi' => $group['emisi'],
-                                                    'pecahan' => $group['pecahan'],
-                                                    'batch' => $group['batch'],
-                                                    'seri' => $group['seri'],
-                                                    'pack_awal' => $group['pack_awal'],
-                                                    'pack_akhir' => '',
-                                                    'max_pack_akhir' => $maxValidPackAkhir
-                                                ]) }}"
-                                                   class="inline-flex items-center justify-center px-4 py-2 bg-white border border-gray-300 rounded-lg font-bold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-50 active:bg-gray-100 focus:outline-none focus:border-indigo-900 focus:ring ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150 shadow-sm">
-                                                    Kemas Sebagian
-                                                </a>
+                                                @if($group['has_buntut'])
+                                                    <a href="{{ route('pengemasan.create', [
+                                                        'tahun_anggaran' => $group['tahun_anggaran'],
+                                                        'tahun_emisi' => $group['emisi'],
+                                                        'pecahan' => $group['pecahan'],
+                                                        'batch' => $group['batch'],
+                                                        'seri' => $group['seri'],
+                                                        'pack_awal' => $group['pack_awal'],
+                                                        'pack_akhir' => $group['pack_akhir'],
+                                                        'max_pack_akhir' => $group['pack_akhir'],
+                                                        'is_manual_sisa' => 1
+                                                    ]) }}" 
+                                                       class="inline-flex items-center justify-center px-4 py-2 bg-red-600 border border-transparent rounded-lg font-bold text-xs text-white uppercase tracking-widest hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-red-300 transition ease-in-out duration-150 shadow-sm shadow-red-100">
+                                                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                                                        Kemas Pack Buntut
+                                                    </a>
+                                                @else
+                                                    @php
+                                                        $maxValidPackAkhir = $group['pack_akhir'];
+                                                    @endphp
+                                                    <a href="{{ route('pengemasan.create', [
+                                                        'tahun_anggaran' => $group['tahun_anggaran'],
+                                                        'tahun_emisi' => $group['emisi'],
+                                                        'pecahan' => $group['pecahan'],
+                                                        'batch' => $group['batch'],
+                                                        'seri' => $group['seri'],
+                                                        'pack_awal' => $group['pack_awal'],
+                                                        'pack_akhir' => $maxValidPackAkhir,
+                                                        'max_pack_akhir' => $maxValidPackAkhir
+                                                    ]) }}" 
+                                                       class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 border border-transparent rounded-lg font-bold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150 shadow-sm">
+                                                        Kemas Semua
+                                                    </a>
+                                                    <a href="{{ route('pengemasan.create', [
+                                                        'tahun_anggaran' => $group['tahun_anggaran'],
+                                                        'tahun_emisi' => $group['emisi'],
+                                                        'pecahan' => $group['pecahan'],
+                                                        'batch' => $group['batch'],
+                                                        'seri' => $group['seri'],
+                                                        'pack_awal' => $group['pack_awal'],
+                                                        'pack_akhir' => '',
+                                                        'max_pack_akhir' => $maxValidPackAkhir
+                                                    ]) }}"
+                                                       class="inline-flex items-center justify-center px-4 py-2 bg-white border border-gray-300 rounded-lg font-bold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-50 active:bg-gray-100 focus:outline-none focus:border-indigo-900 focus:ring ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150 shadow-sm">
+                                                        Kemas Sebagian
+                                                    </a>
+                                                @endif
                                             </td>
                                         </tr>
                                     @empty

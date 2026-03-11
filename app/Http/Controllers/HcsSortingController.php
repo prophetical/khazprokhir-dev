@@ -80,6 +80,8 @@ class HcsSortingController extends Controller
 
     public function store(Request $request)
     {
+        $isManual = $request->has('is_manual');
+
         $request->validate([
             'pecahan' => 'required',
             'batch' => 'required',
@@ -91,49 +93,49 @@ class HcsSortingController extends Controller
             'petugas_2' => 'nullable',
             'tanggal' => 'required|date',
             'gilir' => 'required',
-            'selected_packs' => 'required|array|min:4',
+            'selected_packs' => 'required|array|min:' . ($isManual ? '1' : '4'),
         ]);
 
         $selectedPacks = $request->selected_packs;
         sort($selectedPacks);
 
-        // Validasi 1: Harus dalam kelompok berisi 4 dan berurutan
-        // Biar valid, pack yang dipilih harus berurutan, dan panjang tiap kelompoknya kelipatan 4.
-        $contiguousBlocks = [];
-        $currentBlock = [];
-        foreach ($selectedPacks as $packNum) {
-            $packNum = (int)$packNum;
-            if (empty($currentBlock)) {
-                $currentBlock[] = $packNum;
-            }
-            else {
-                $lastNum = end($currentBlock);
-                if ($packNum == $lastNum + 1) {
+        if (!$isManual) {
+            // Validasi: Harus dalam kelompok berisi 4 dan berurutan (Boundary & Multiples of 4)
+            $contiguousBlocks = [];
+            $currentBlock = [];
+            foreach ($selectedPacks as $packNum) {
+                $packNum = (int)$packNum;
+                if (empty($currentBlock)) {
                     $currentBlock[] = $packNum;
                 }
                 else {
-                    $contiguousBlocks[] = $currentBlock;
-                    $currentBlock = [$packNum];
+                    $lastNum = end($currentBlock);
+                    if ($packNum == $lastNum + 1) {
+                        $currentBlock[] = $packNum;
+                    }
+                    else {
+                        $contiguousBlocks[] = $currentBlock;
+                        $currentBlock = [$packNum];
+                    }
                 }
             }
-        }
-        if (!empty($currentBlock)) {
-            $contiguousBlocks[] = $currentBlock;
-        }
-
-        foreach ($contiguousBlocks as $block) {
-            if (count($block) % 4 !== 0) {
-                throw ValidationException::withMessages([
-                    'selected_packs' => 'Pack yang dipilih harus berurutan dan berkelipatan 4 (contoh: 1-4, 5-8, dll).',
-                ]);
+            if (!empty($currentBlock)) {
+                $contiguousBlocks[] = $currentBlock;
             }
 
-            // Pastikan juga kelompoknya dimulai dari batas kelipatan 4 yang benar.
-            // maksudnya, pack 1, 5, 9, 13... jadinya (pack - 1) kelipatan 4
-            if (($block[0] - 1) % 4 !== 0) {
-                throw ValidationException::withMessages([
-                    'selected_packs' => 'Posisi awal pack yang dipilih tidak valid. Harus dimulai dari kelipatan yang benar (misal: 1, 5, 9, dst).',
-                ]);
+            foreach ($contiguousBlocks as $block) {
+                if (count($block) % 4 !== 0) {
+                    throw ValidationException::withMessages([
+                        'selected_packs' => 'Pack yang dipilih harus berurutan dan berkelipatan 4 (contoh: 1-4, 5-8, dll).',
+                    ]);
+                }
+
+                // Pastikan juga kelompoknya dimulai dari batas kelipatan 4 yang benar (1, 5, 9, 13...)
+                if (($block[0] - 1) % 4 !== 0) {
+                    throw ValidationException::withMessages([
+                        'selected_packs' => 'Posisi awal pack yang dipilih tidak valid. Harus dimulai dari kelipatan yang benar (misal: 1, 5, 9, dst).',
+                    ]);
+                }
             }
         }
 
@@ -151,7 +153,10 @@ class HcsSortingController extends Controller
         }
 
         $jumlahPack = count($selectedPacks);
-        $jumlahBilyet = $jumlahPack * 45000;
+        $jumlahBilyet = Pack::where('batch', $request->batch)
+            ->where('seri', $request->seri)
+            ->whereIn('pack_number', $selectedPacks)
+            ->sum('jumlah');
 
         DB::beginTransaction();
 

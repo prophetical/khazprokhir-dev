@@ -30,7 +30,7 @@ class PengemasanController extends Controller
 
     public function data(Request $request)
     {
-        $query = Pengemasan::with('user');
+        $query = Pengemasan::with(['user', 'packs']);
 
         // Handle Filter Pecahan
         if ($request->filled('pecahan')) {
@@ -93,7 +93,7 @@ class PengemasanController extends Controller
 
     public function export(Request $request)
     {
-        $query = Pengemasan::with('user');
+        $query = Pengemasan::with(['user', 'packs']);
 
         if ($request->filled('pecahan')) {
             $query->where('pecahan', $request->pecahan);
@@ -142,7 +142,7 @@ class PengemasanController extends Controller
 
         $callback = function () use ($query) {
             $file = fopen('php://output', 'w');
-            fputcsv($file, ['Tanggal', 'Gilir', 'Thn Anggaran', 'Thn Emisi', 'Pecahan', 'Batch', 'Seri', 'Pack Awal', 'Pack Akhir', 'Jml Pack', 'Jml Dus', 'Dus Awal', 'Dus Akhir', 'Petugas']);
+            fputcsv($file, ['Tanggal', 'Gilir', 'Thn Anggaran', 'Thn Emisi', 'Pecahan', 'Batch', 'Seri', 'Pack Awal', 'Pack Akhir', 'Jml Pack', 'Total Bilyet', 'Jml Dus', 'Dus Awal', 'Dus Akhir', 'Petugas']);
 
             $query->chunk(100, function ($pengemasans) use ($file) {
                     foreach ($pengemasans as $row) {
@@ -157,6 +157,7 @@ class PengemasanController extends Controller
                             $row->pack_awal,
                             $row->pack_akhir,
                             $row->jumlah_pack,
+                            $row->packs->sum('jumlah'),
                             $row->jumlah_dus,
                             $row->dus_awal,
                             $row->dus_akhir,
@@ -174,7 +175,7 @@ class PengemasanController extends Controller
 
     public function print(Request $request)
     {
-        $query = Pengemasan::with('user');
+        $query = Pengemasan::with(['user', 'packs']);
 
         if ($request->filled('pecahan')) {
             $query->where('pecahan', $request->pecahan);
@@ -276,7 +277,7 @@ class PengemasanController extends Controller
 
         foreach ($grouped as $group) {
             $numbers = $group['numbers'];
-            if (count($numbers) < 4)
+            if (count($numbers) < 1)
                 continue;
 
             $contiguousBlocks = [];
@@ -311,9 +312,18 @@ class PengemasanController extends Controller
 
                 $totalInBlock = count($block);
 
-                // Jika total pack dalam range berurutan ini kurang dari 4, lewati
-                if ($totalInBlock < 4)
+                // Jika total pack dalam range berurutan ini kurang dari 1, lewati
+                if ($totalInBlock < 1)
                     continue;
+
+                $packIds = Pack::where('batch', $group['batch'])
+                    ->where('seri', $group['seri'])
+                    ->whereNotNull('hcs_sorting_id')
+                    ->whereNull('id_pengemasan')
+                    ->whereIn('pack_number', $block)
+                    ->pluck('id');
+
+                $hasBuntut = ($totalInBlock % 4 !== 0) || Pack::whereIn('id', $packIds)->where('jumlah', '<', 45000)->exists();
 
                 $readyGroups[] = [
                     'tahun_anggaran' => $group['tahun_anggaran'],
@@ -324,6 +334,7 @@ class PengemasanController extends Controller
                     'pack_awal' => $block[0],
                     'pack_akhir' => end($block),
                     'jumlah_pack' => $totalInBlock,
+                    'has_buntut' => $hasBuntut
                 ];
             }
         }
@@ -345,9 +356,16 @@ class PengemasanController extends Controller
 
         $lastNumber = $lastDus ? $lastDus->no_dus : 0;
 
+        $packsData = Pack::where('batch', $request->batch)
+            ->where('seri', $request->seri)
+            ->whereNotNull('hcs_sorting_id')
+            ->whereNull('id_pengemasan')
+            ->get(['pack_number', 'jumlah']);
+
         return view('pengemasan.create', [
             'auto_fill' => $request->all(),
-            'last_number' => $lastNumber
+            'last_number' => $lastNumber,
+            'packsData' => $packsData
         ]);
     }
 
@@ -361,7 +379,8 @@ class PengemasanController extends Controller
             'pecahan' => 'required',
             'batch' => 'required',
             'seri' => 'required',
-            'selected_chunks' => 'required|array|min:1',
+            'selected_chunks' => 'required_without:selected_packs|array',
+            'selected_packs' => 'required_without:selected_chunks|array',
             'is_manual' => 'nullable|boolean',
             'dus_awal' => $request->boolean('is_manual') ? 'required|numeric|min:1' : 'nullable',
             'dus_akhir' => $request->boolean('is_manual') ? 'required|numeric|gte:dus_awal' : 'nullable',
@@ -370,7 +389,9 @@ class PengemasanController extends Controller
         $packNumbers = [];
         $parsedChunks = [];
 
-        $selectedChunksInput = $request->selected_chunks;
+        // Gabungkan dari selected_chunks (range) dan selected_packs (satuan)
+        $selectedChunksInput = $request->input('selected_chunks', []);
+        $selectedPacksInput = $request->input('selected_packs', []);
 
         // sort by starting pack
         usort($selectedChunksInput, function ($a, $b) {
@@ -391,12 +412,23 @@ class PengemasanController extends Controller
             }
         }
 
+        foreach ($selectedPacksInput as $pNum) {
+            $pNum = (int)$pNum;
+            $packNumbers[] = $pNum;
+            $parsedChunks[] = ['awal' => $pNum, 'akhir' => $pNum];
+        }
+
+        $packNumbers = array_unique($packNumbers);
+
         $jumlahPack = count($packNumbers);
 
-        if ($jumlahPack <= 0 || $jumlahPack % 4 !== 0) {
-            throw ValidationException::withMessages([
-                'selected_chunks' => "Jumlah pack ($jumlahPack) tidak valid. Jumlah pack harus kelipatan 4 untuk dikemas (1 module pengemasan = 4 pack).",
-            ]);
+        if (!$request->boolean('is_manual_sisa')) {
+            if ($jumlahPack <= 0 || $jumlahPack % 4 !== 0) {
+                $field = $request->has('selected_chunks') ? 'selected_chunks' : 'selected_packs';
+                throw ValidationException::withMessages([
+                    $field => "Jumlah pack ($jumlahPack) tidak valid. Jumlah pack harus kelipatan 4 untuk dikemas (1 module pengemasan = 4 pack). Hubungi admin jika ingin mengemas sisa pack.",
+                ]);
+            }
         }
 
         $packAwal = min($packNumbers);
@@ -413,25 +445,35 @@ class PengemasanController extends Controller
             ->get();
 
         if ($packs->count() !== $jumlahPack) {
+            $field = $request->has('selected_chunks') ? 'selected_chunks' : 'selected_packs';
             throw ValidationException::withMessages([
-                'selected_chunks' => "Terdapat ketidaksesuaian jumlah pack dengan yang dipilih. Beberapa pack mungkin tidak tersedia atau identitas berbeda.",
+                $field => "Terdapat ketidaksesuaian jumlah pack dengan yang dipilih. Beberapa pack mungkin tidak tersedia atau identitas berbeda.",
             ]);
         }
 
         foreach ($packs as $pack) {
+            $field = $request->has('selected_chunks') ? 'selected_chunks' : 'selected_packs';
             if (is_null($pack->hcs_sorting_id)) {
                 throw ValidationException::withMessages([
-                    'selected_chunks' => "Pack nomor {$pack->pack_number} belum selesai disortir. Harap selesaikan penyortiran.",
+                    $field => "Pack nomor {$pack->pack_number} belum selesai disortir. Harap selesaikan penyortiran.",
                 ]);
             }
             if (!is_null($pack->id_pengemasan)) {
                 throw ValidationException::withMessages([
-                    'selected_chunks' => "Pack nomor {$pack->pack_number} sudah tercatat dalam riwayat pengemasan sebelumnya.",
+                    $field => "Pack nomor {$pack->pack_number} sudah tercatat dalam riwayat pengemasan sebelumnya.",
                 ]);
             }
         }
 
-        $jumlahDus = ($jumlahPack / 4) * 9;
+        if ($request->boolean('is_manual_sisa')) {
+            $manualDetails = $request->input('manual_details', []);
+            if (empty($manualDetails)) {
+                throw ValidationException::withMessages(['manual_details' => 'Detail dus manual harus diisi jika mode Kemas Sisa Pack aktif.']);
+            }
+            $jumlahDus = count($manualDetails);
+        } else {
+            $jumlahDus = ($jumlahPack / 4) * 9;
+        }
 
         if ($request->boolean('is_manual')) {
             $nomorDusAwal = (int)$request->dus_awal;
@@ -453,20 +495,36 @@ class PengemasanController extends Controller
             })->orderBy('no_dus', 'desc')
                 ->first();
 
-            $nomorDusAwal = $lastDus ? $lastDus->no_dus + 1 : 1;
-            $nomorDusAkhir = $nomorDusAwal + $jumlahDus - 1;
+            if ($request->boolean('is_manual_sisa')) {
+                // Untuk sisa pack, nomor dus awal dan akhir diambil dari input manual details
+                $sudahAdaNoDus = array_column($manualDetails, 'no_dus');
+                $nomorDusAwal = min($sudahAdaNoDus);
+                $nomorDusAkhir = max($sudahAdaNoDus);
+            } else {
+                $nomorDusAwal = $lastDus ? $lastDus->no_dus + 1 : 1;
+                $nomorDusAkhir = $nomorDusAwal + $jumlahDus - 1;
+            }
         }
 
         // Validasi 2: Cek apakah ada nomor dus di range ini yang sudah dipakai (Berlaku untuk Manual & Auto)
-        $usedDusExists = DetailPengemasan::whereHas('pengemasan', function ($query) use ($request) {
-            $query->where('pecahan', $request->pecahan)
-                ->where('tahun_anggaran', $request->tahun_anggaran)
-                ->where('tahun_emisi', $request->tahun_emisi);
-        })->whereBetween('no_dus', [$nomorDusAwal, $nomorDusAkhir])->exists();
+        if ($request->boolean('is_manual_sisa')) {
+            $sudahAdaNoDus = array_column($manualDetails, 'no_dus');
+            $usedDusExists = DetailPengemasan::whereHas('pengemasan', function ($query) use ($request) {
+                $query->where('pecahan', $request->pecahan)
+                    ->where('tahun_anggaran', $request->tahun_anggaran)
+                    ->where('tahun_emisi', $request->tahun_emisi);
+            })->whereIn('no_dus', $sudahAdaNoDus)->exists();
+        } else {
+            $usedDusExists = DetailPengemasan::whereHas('pengemasan', function ($query) use ($request) {
+                $query->where('pecahan', $request->pecahan)
+                    ->where('tahun_anggaran', $request->tahun_anggaran)
+                    ->where('tahun_emisi', $request->tahun_emisi);
+            })->whereBetween('no_dus', [$nomorDusAwal, $nomorDusAkhir])->exists();
+        }
 
         if ($usedDusExists) {
             throw ValidationException::withMessages([
-                'dus_awal' => "Nomor dus sudah digunakan pada pengemasan lain untuk pecahan, tahun emisi, dan tahun anggaran yang sama.",
+                'dus_awal' => "Satu atau lebih nomor dus sudah digunakan pada pengemasan lain untuk pecahan, tahun emisi, dan tahun anggaran yang sama.",
             ]);
         }
 
@@ -497,10 +555,25 @@ class PengemasanController extends Controller
                 \App\Models\HcsSorting::whereIn('id', $sortingIds)->update(['status_kunci_pengemasan' => 1]);
             }
 
-            $this->generateDetailPengemasan($pengemasan, $request->seri, $nomorDusAwal, $request->batch, $parsedChunks);
+            if ($request->boolean('is_manual_sisa')) {
+                foreach ($manualDetails as $detail) {
+                    DetailPengemasan::create([
+                        'id_pengemasan' => $pengemasan->id,
+                        'no_dus' => $detail['no_dus'],
+                        'pack_awal' => $detail['pack_awal'] ?? $packAwal,
+                        'pack_akhir' => $detail['pack_akhir'] ?? $packAkhir,
+                        'seri_awal' => $detail['seri_awal'] ?? $request->seri,
+                        'seri_akhir' => $detail['seri_akhir'] ?? $request->seri,
+                        'batch' => $request->batch,
+                        'jumlah_bilyet' => $detail['jumlah_bilyet'] ?? 0,
+                    ]);
+                }
+            } else {
+                $this->generateDetailPengemasan($pengemasan, $request->seri, $nomorDusAwal, $request->batch, $parsedChunks);
+            }
 
             DB::commit();
-            return redirect()->route('pengemasan.index')->with('success', 'Data pengemasan berhasil diproses secara otomatis.');
+            return redirect()->route('pengemasan.index')->with('success', 'Data pengemasan berhasil diproses.');
         }
         catch (\Exception $e) {
             DB::rollBack();

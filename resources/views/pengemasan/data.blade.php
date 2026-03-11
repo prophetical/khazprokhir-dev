@@ -256,7 +256,7 @@
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-[10px] font-black text-emerald-600 text-center">
-                                            {{ number_format($p->jumlah_pack * 45000, 0, ',', '.') }}
+                                            {{ number_format($p->packs->sum('jumlah'), 0, ',', '.') }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-bold text-center">
                                             {{ $p->dus_awal }} - {{ $p->dus_akhir }}

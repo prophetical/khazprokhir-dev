@@ -195,7 +195,7 @@
             <div x-show="pengemasanOpen && !sidebarCollapsed" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="pl-11 space-y-1">
                 <a href="{{ route('pengemasan.index') }}" 
                    class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('pengemasan.index', 'pengemasan.create') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
-                    Input Pengemasan HCS
+                    Input & Data Pengemasan HCS
                 </a>
                 <a href="{{ route('pengemasan.data') }}" 
                    class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('pengemasan.data', 'pengemasan.show') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">

@@ -144,6 +144,24 @@
                             </template>
 
                             <div class="space-y-6">
+                                <!-- Manual Toggle Slider -->
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100 transition-all duration-300" 
+                                     :class="isManual ? 'ring-2 ring-red-500/20 border-red-100 bg-red-50/30' : ''">
+                                    <div class="flex items-center">
+                                        <div class="w-8 h-8 rounded-lg flex items-center justify-center mr-3 transition-colors duration-300"
+                                             :class="isManual ? 'bg-red-500 text-white shadow-lg shadow-red-500/30' : 'bg-gray-200 text-gray-400'">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                        </div>
+                                        <span class="text-[10px] font-black uppercase tracking-widest transition-colors duration-300"
+                                              :class="isManual ? 'text-red-600' : 'text-gray-500'">
+                                            Input Sisa Pack (Bukan Kelipatan 4)
+                                        </span>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="is_manual" name="is_manual" class="sr-only peer" x-model="isManual" @change="validateSelection()">
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500 shadow-inner"></div>
+                                    </label>
+                                </div>
                                 <!-- Summary Info -->
                                 <div class="bg-gray-50/50 p-5 rounded-xl border border-gray-100 space-y-3 shadow-inner">
                                     <div class="flex justify-between items-center">
@@ -250,10 +268,17 @@
                 isDragging: false,
                 dragStart: null,
                 validationError: '',
-                bilyetPerPack: 45000,
+                isManual: {{ old('is_manual') ? 'true' : 'false' }},
+                packQuantities: {
+                    @foreach ($packsData as $pack)
+                        {{ $pack->pack_number }}: {{ $pack->jumlah }},
+                    @endforeach
+                },
                 
                 get totalBilyet() {
-                    return this.selectedPacks.length * this.bilyetPerPack;
+                    return this.selectedPacks.reduce((total, num) => {
+                        return total + (this.packQuantities[num] || 45000);
+                    }, 0);
                 },
 
                 formatNumber(num) {
@@ -344,9 +369,12 @@
                     // Validate each block
                     let hasError = false;
                     for (let block of blocks) {
-                        if (block.length % 4 !== 0 || (block[0] - 1) % 4 !== 0) {
-                            hasError = true;
-                            break;
+                        // Jika mode manual (sisa pack) dimatikan, baru cek kelipatan 4 dan boundary-nya
+                        if (!this.isManual) {
+                            if (block.length % 4 !== 0 || (block[0] - 1) % 4 !== 0) {
+                                hasError = true;
+                                break;
+                            }
                         }
                     }
 

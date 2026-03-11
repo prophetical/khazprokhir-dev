@@ -39,6 +39,10 @@
                                         <h3 class="text-xl font-black text-gray-900 tracking-tight flex items-center">
                                             <span class="w-2 h-8 mr-4 rounded-full transition-all duration-700" :class="currentTheme ? currentTheme.bg : 'bg-indigo-500'"></span>
                                             Detail Penerimaan
+                                            <span 
+                                                class="ml-3 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider transition-all duration-700" 
+                                                :class="currentTheme ? (currentTheme.soft + ' ' + currentTheme.icon + ' border ' + currentTheme.border) : 'bg-gray-100 text-gray-500 border border-gray-200'"
+                                                x-text="selectedPecahan ? (selectedPecahan) : ''"></span>
                                         </h3>
                                         <div class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all duration-700"
                                             :class="currentTheme ? (currentTheme.border + ' ' + currentTheme.icon + ' ' + currentTheme.soft) : 'border-indigo-200 text-indigo-600 bg-indigo-50'">
@@ -161,34 +165,59 @@
                                             <div class="p-6 rounded-[2rem] border border-gray-100 bg-white/80 shadow-inner flex flex-col sm:flex-row items-center justify-between gap-6 overflow-hidden relative group">
                                                 <div class="absolute -right-4 -top-4 w-24 h-24 bg-gray-50 rounded-full blur-3xl transition-all duration-700 group-hover:bg-indigo-50"></div>
                                                 
-                                                <div class="flex items-center relative gap-4">
-                                                    <div class="relative inline-flex items-center cursor-pointer group">
-                                                        <input id="repass" name="repass" value="repass" type="checkbox" 
-                                                            class="w-5 h-5 rounded-lg border-gray-300 shadow-sm transition-all duration-300 text-indigo-600 focus:ring-indigo-500" 
-                                                            {{ old('repass') ? 'checked' : '' }}>
-                                                        <label for="repass" class="ml-3 text-sm font-bold text-gray-600 cursor-pointer">Tandai sebagai Repass</label>
+                                                <div class="flex flex-col gap-3 relative" x-data="{ isManual: {{ old('is_manual') ? 'true' : 'false' }} }">
+                                                    <!-- Toggle Slider for Manual -->
+                                                    <div class="flex items-center justify-between bg-white/50 border border-gray-200 p-2 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 min-w-[280px]">
+                                                         <div class="flex items-center mr-4">
+                                                            <span class="text-xs font-black transition-colors duration-300"
+                                                                :class="isManual ? 'text-red-600' : 'text-gray-500'">
+                                                                Input Pack Tidak Full ( < 45.000 )
+                                                            </span>
+                                                        </div>
+                                                        <label class="relative inline-flex items-center cursor-pointer">
+                                                            <input type="checkbox" id="is_manual" name="is_manual" value="1" 
+                                                                x-model="isManual" 
+                                                                @change="handleToggleManual()"
+                                                                class="sr-only peer"
+                                                                {{ old('is_manual') ? 'checked' : '' }}>
+                                                            <div class="w-10 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-amber-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-red-500"></div>
+                                                        </label>
                                                     </div>
-                                                    <div class="h-8 w-[1px] bg-gray-100 hidden sm:block"></div>
-                                                    <div class="text-[10px] font-black uppercase tracking-widest text-gray-400 leading-tight">
-                                                        Total Packs:<br>
-                                                        <span id="packs_needed_display" class="text-xl transition-colors duration-500" :class="currentTheme ? currentTheme.icon : 'text-indigo-600'">0</span>
+
+                                                    <div class="flex items-center relative gap-4 ml-1">
+                                                        <div class="relative inline-flex items-center cursor-pointer group">
+                                                            <input id="repass" name="repass" value="repass" type="checkbox" 
+                                                                class="w-5 h-5 rounded-lg border-gray-300 shadow-sm transition-all duration-300 text-indigo-600 focus:ring-indigo-500" 
+                                                                {{ old('repass') ? 'checked' : '' }}>
+                                                            <label for="repass" class="ml-3 text-sm font-bold text-gray-600 cursor-pointer">Tandai sebagai Repass</label>
+                                                        </div>
+                                                        <div class="h-8 w-[1px] bg-gray-100 hidden sm:block"></div>
+                                                        <div class="text-[10px] font-black uppercase tracking-widest text-gray-400 leading-tight">
+                                                            Total Packs:<br>
+                                                            <span id="packs_needed_display" class="text-xl transition-colors duration-500" :class="currentTheme ? currentTheme.icon : 'text-indigo-600'">0</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="pt-2">
+                                                        <button type="submit" 
+                                                                class="w-full sm:w-auto flex justify-center items-center py-3.5 px-10 border border-transparent shadow-xl text-xs font-black rounded-xl transition-all duration-300 uppercase tracking-[0.2em] relative overflow-hidden group min-w-[200px] hover:scale-[1.02] active:scale-[0.98] hover:shadow-2xl"
+                                                                :class="currentTheme ? (currentTheme.btn + ' ' + currentTheme.text) : 'bg-indigo-600 text-white'">
+                                                            <!-- Shine Effect -->
+                                                            <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shine_1.5s_infinite]"></div>
+                                                            
+                                                            <span class="relative z-10">Simpan Penerimaan</span>
+                                                            <svg class="relative z-10 ml-2 w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                                                        </button>
                                                     </div>
                                                 </div>
-
-                                                <button type="submit" 
-                                                        class="w-full sm:w-auto inline-flex justify-center items-center py-3 px-8 border border-transparent shadow-xl text-xs font-black rounded-xl transition-all duration-500 uppercase tracking-[0.2em] relative overflow-hidden group"
-                                                        :class="currentTheme ? (currentTheme.btn + ' ' + currentTheme.text) : 'bg-indigo-600 text-white hover:bg-indigo-700'">
-                                                    <span>Simpan Penerimaan</span>
-                                                    <svg class="ml-2 w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-                                                </button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 
                                 <!-- Right: Pack Grid -->
-                                <div class="w-full lg:w-[55%] p-8 lg:p-10 bg-gray-50/20 backdrop-blur-sm">
-                                    <div class="mb-1">
+                                <div class="w-full lg:w-[55%] p-8 lg:p-10 bg-gray-50/20 backdrop-blur-sm flex flex-col">
+                                    <div class="mb-4">
                                         <h3 class="text-xl font-black text-gray-900 tracking-tight flex items-center">
                                             <svg class="w-6 h-6 mr-3 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
                                             Tabel Penerimaan HCS
@@ -196,37 +225,42 @@
                                     </div>
                                     
                                     <!-- Summary Cards -->
-                                    <div class="grid grid-cols-2 gap-2 mb-1">
-                                        <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm transition-all duration-500 hover:shadow-md">
+                                    <div class="grid grid-cols-2 gap-3 mb-6">
+                                        <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm transition-all duration-500 hover:shadow-md">
                                             <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest block mb-1">Pack Dipilih</span>
                                             <div class="flex items-end gap-1">
-                                                <span id="selected_packs_length" class="text-xl font-black leading-none transition-colors duration-500" :class="currentTheme ? currentTheme.icon : 'text-indigo-600'">0</span>
+                                                <span id="selected_packs_length" class="text-2xl font-black leading-none transition-colors duration-500" :class="currentTheme ? currentTheme.icon : 'text-indigo-600'">0</span>
                                                 <span class="text-[10px] font-bold text-gray-300 mb-1 uppercase tracking-tight">Pack</span>
                                             </div>
                                         </div>
-                                        <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                                        <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
                                             <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest block mb-1">Dibutuhkan</span>
                                             <div class="flex items-end gap-1">
-                                                <span id="packs_needed_length" class="text-xl font-black leading-none text-gray-900">0</span>
+                                                <span id="packs_needed_length" class="text-2xl font-black leading-none text-gray-900">0</span>
                                                 <span class="text-[10px] font-bold text-gray-300 mb-1 uppercase tracking-tight">Pack</span>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <!-- Legend -->
+                                    <!-- Legend updated for distinction -->
                                     <div class="bg-white/40 p-4 rounded-xl border border-white mb-1">
                                         <h4 class="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-1">Keterangan</h4>
                                         <div class="flex flex-wrap gap-x-6 gap-y-3">
                                             <div class="flex items-center gap-1"><div class="w-4 h-4 bg-white border border-gray-200 rounded-lg shadow-sm"></div> <span class="text-[10px] font-bold text-gray-600">Kosong</span></div>
-                                            <div class="flex items-center gap-1"><div class="w-4 h-4 bg-blue-300 rounded-lg shadow-sm"></div> <span class="text-[10px] font-bold text-gray-600">Cutpack</span></div>
-                                            <div class="flex items-center gap-1"><div class="w-4 h-4 bg-green-300 rounded-lg shadow-sm"></div> <span class="text-[10px] font-bold text-gray-600">Rikyet</span></div>
-                                            <div class="flex items-center gap-1"><div class="w-4 h-4 bg-red-400 border border-red-500 rounded-lg shadow-lg shadow-red-500/20"></div> <span class="text-[10px] font-bold text-gray-600">Tersortir</span></div>
                                             <div class="flex items-center gap-1">
-                                                <div class="flex -space-x-2">
-                                                    <div class="w-4 h-4 bg-blue-100 border border-blue-200 rounded-full"></div>
-                                                    <div class="w-4 h-4 bg-green-100 border border-green-200 rounded-full"></div>
+                                                <div class="flex -space-x-1">
+                                                    <div class="w-4 h-4 bg-blue-700 rounded-lg shadow-sm"></div>
+                                                    <div class="w-4 h-4 bg-green-700 rounded-lg shadow-sm"></div>
                                                 </div>
-                                                <span class="text-[10px] font-bold text-gray-400 ml-3">Siap Sortir</span>
+                                                <span class="text-[10px] font-bold text-gray-600 ml-2">Sudah Terisi</span>
+                                            </div>
+                                            <div class="flex items-center gap-1"><div class="w-4 h-4 bg-red-600 border border-red-700 rounded-lg shadow-lg shadow-red-500/20"></div> <span class="text-[10px] font-bold text-gray-600">Tersortir</span></div>
+                                            <div class="flex items-center gap-1">
+                                                <div class="flex -space-x-1">
+                                                    <div class="w-4 h-4 bg-blue-400 rounded-lg shadow-blue-300/50 shadow-md"></div>
+                                                    <div class="w-4 h-4 bg-green-400 rounded-lg shadow-emerald-300/50 shadow-md"></div>
+                                                </div>
+                                                <span class="text-[10px] font-bold text-gray-600 ml-2">Pilihan Sesi Ini</span>
                                             </div>
                                         </div>
                                     </div>
@@ -234,18 +268,49 @@
                                     <!-- Hidden Inputs to submit the array -->
                                     <div id="hidden_packs_container"></div>
 
-                                    <!-- Grid Container -->
-                                    <div class="relative group/grid">
-                                        <div class="absolute inset-0 bg-indigo-500/5 blur-[100px] rounded-full opacity-0 group-hover/grid:opacity-100 transition-opacity duration-1000"></div>
+                                    <!-- Grid Container with Rich Tooltips -->
+                                    <div class="relative group/grid flex-grow mt-4">
                                         <div class="grid grid-rows-10 grid-flow-col gap-1 sm:gap-1.5 auto-cols-[minmax(0,_1fr)] relative" id="pack_grid">
                                             @for ($i = 1; $i <= 100; $i++)
-                                                <button 
-                                                    type="button" 
-                                                    data-pack="{{ $i }}"
-                                                    class="pack-btn aspect-square flex items-center justify-center text-[10px] sm:text-xs font-black rounded-lg transition-all duration-300 bg-white text-gray-400 border border-gray-100 shadow-sm hover:scale-105 hover:z-10 focus:outline-none focus:ring-4"
-                                                    :class="currentTheme ? (currentTheme.ring.replace('focus:', '')) : 'focus:ring-indigo-500/20'">
-                                                    <span>{{ $i }}</span>
-                                                </button>
+                                                @php
+                                                    $row = ($i - 1) % 10;
+                                                    $col = floor(($i - 1) / 10);
+                                                    
+                                                    // Positioning logic mirroring edit view to prevent clipping
+                                                    $vClass = ($row < 4) ? 'top-full mt-2 flex-col-reverse' : 'bottom-full mb-2 flex-col';
+                                                    $arrowV = ($row < 4) ? '-mb-1' : '-mt-1';
+                                                    
+                                                    if ($col < 3) {
+                                                        $hClass = 'left-0 translate-x-0';
+                                                        $arrowH = 'left-3 translate-x-0';
+                                                    } elseif ($col > 6) {
+                                                        $hClass = 'right-0 left-auto translate-x-0';
+                                                        $arrowH = 'right-3 translate-x-0';
+                                                    } else {
+                                                        $hClass = 'left-1/2 -translate-x-1/2';
+                                                        $arrowH = 'left-1/2 -translate-x-1/2';
+                                                    }
+                                                @endphp
+                                                <div class="relative group">
+                                                    <button 
+                                                        type="button" 
+                                                        data-pack="{{ $i }}"
+                                                        class="pack-btn w-full aspect-square flex items-center justify-center text-[10px] sm:text-xs font-black rounded-lg transition-all duration-300 hover:scale-110 hover:z-10 focus:outline-none focus:ring-4"
+                                                        :class="currentTheme ? (currentTheme.ring.replace('focus:', '')) : 'focus:ring-indigo-500/20'">
+                                                        <span>{{ $i }}</span>
+                                                    </button>
+                                                    <div class="pack-tooltip pointer-events-none absolute {{ $vClass }} {{ $hClass }} z-[100] hidden group-hover:flex items-center">
+                                                        <div class="bg-gray-900/95 backdrop-blur-sm text-white text-[10px] rounded-xl px-3 py-2 whitespace-nowrap shadow-2xl text-center leading-tight border border-white/10 min-w-[140px]">
+                                                            <div class="tooltip-header font-black border-b border-white/20 pb-1.5 mb-1.5 flex items-center justify-center gap-2">
+                                                                PACK {{ $i }}
+                                                                <span class="tooltip-badge hidden px-2 py-0.5 rounded-full text-[8px] text-white"></span>
+                                                            </div>
+                                                            <div class="tooltip-supplier font-bold uppercase tracking-tighter text-indigo-300">KOSONG</div>
+                                                            <div class="tooltip-status text-gray-400 text-[9px] mt-1 font-medium">Bisa Dipilih</div>
+                                                        </div>
+                                                        <div class="w-2 h-2 bg-gray-900 rotate-45 {{ $arrowV }} {{ $arrowH }}"></div>
+                                                    </div>
+                                                </div>
                                             @endfor
                                         </div>
                                     </div>
@@ -255,17 +320,16 @@
                             </div>
                         </form>
                     </div>
-
                 </div>
             </div>
         </div>
-    </div>
 
     @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const inputJumlahDisplay = document.getElementById('jumlah_display');
             const inputJumlahOriginal = document.getElementById('jumlah_original');
+            const toggleManual = document.getElementById('is_manual');
             const spanPacksNeededDisplay = document.getElementById('packs_needed_display');
             const spanSelectedPacksLength = document.getElementById('selected_packs_length');
             const spanPacksNeededLength = document.getElementById('packs_needed_length');
@@ -277,10 +341,14 @@
             const hiddenPacksContainer = document.getElementById('hidden_packs_container');
             const form = document.getElementById('hcs-form');
 
+            const selectPecahan = document.getElementById('pecahan');
+            const inputEmisi = document.getElementById('emisi');
+            const selectTA = document.getElementById('tahun_anggaran');
+
             let jumlahOriginal = parseInt(inputJumlahOriginal.value, 10) || 0;
             let packsNeeded = 0;
             let selectedPacks = {!! json_encode(array_map('intval', old('packs', []))) !!} || [];
-            let usedPacks = []; // array of { pack_number, supplier }
+            let usedPacks = []; // array of { pack_number, supplier, hcs_sorting_id, nomor_bon }
 
             function init() {
                 if (jumlahOriginal > 0) {
@@ -288,9 +356,31 @@
                 }
                 updateCalculations(jumlahOriginal);
                 
-                if (inputBatch.value.length === 7 && inputSeri.value.length > 5) {
+                if (inputBatch.value.length === 7 && inputSeri.value.length > 0) {
                     fetchUsedPacks();
                 }
+                renderGrid();
+            }
+
+            function handleToggleManual() {
+                const isChecked = toggleManual.checked;
+                if (isChecked) {
+                    if (jumlahOriginal > 45000) {
+                        Swal.fire({
+                            title: 'Batas Terlampaui',
+                            text: 'Untuk pack tidak full, jumlah bilyet tidak boleh melebihi 45.000.',
+                            icon: 'warning',
+                            confirmButtonColor: '#4f46e5'
+                        });
+                        jumlahOriginal = 45000;
+                        inputJumlahOriginal.value = 45000;
+                        inputJumlahDisplay.value = jumlahOriginal.toLocaleString('id-ID');
+                    }
+                    if (selectedPacks.length > 1) {
+                        selectedPacks = selectedPacks.slice(0, 1);
+                    }
+                }
+                updateCalculations(jumlahOriginal);
                 renderGrid();
             }
 
@@ -298,6 +388,10 @@
                 let textValue = String(e.target.value);
                 let rawDigits = textValue.replace(/\D/g, '');
                 let number = parseInt(rawDigits, 10) || 0;
+                
+                if (toggleManual.checked && number > 45000) {
+                    number = 45000;
+                }
                 
                 jumlahOriginal = number;
                 inputJumlahOriginal.value = number;
@@ -313,7 +407,12 @@
             }
 
             function updateCalculations(numVal) {
-                packsNeeded = Math.floor(numVal / 45000) || 0;
+                if (toggleManual.checked) {
+                    packsNeeded = numVal > 0 ? 1 : 0;
+                } else {
+                    packsNeeded = Math.floor(numVal / 45000) || 0;
+                }
+                
                 spanPacksNeededDisplay.textContent = packsNeeded;
                 spanPacksNeededLength.textContent = packsNeeded;
                 
@@ -325,12 +424,25 @@
             function fetchUsedPacks() {
                 const batchVal = inputBatch.value.toUpperCase();
                 const seriVal = inputSeri.value.toUpperCase();
+                const pecahanVal = selectPecahan.value;
+                const emisiVal = inputEmisi.value;
+                const taVal = selectTA.value;
                 
                 if (batchVal.length === 7 && seriVal.length > 0) {
-                    fetch(`/api/packs/used?batch=${batchVal}&seri=${seriVal}`)
+                    let url = `/api/packs/used?batch=${batchVal}&seri=${seriVal}`;
+                    if (pecahanVal) url += `&pecahan=${pecahanVal}`;
+                    if (emisiVal) url += `&emisi=${emisiVal}`;
+                    if (taVal) url += `&tahun_anggaran=${taVal}`;
+
+                    fetch(url)
                     .then(res => res.json())
                     .then(data => {
-                        usedPacks = data.map(p => ({ pack_number: parseInt(p.pack_number, 10), supplier: p.supplier, hcs_sorting_id: p.hcs_sorting_id }));
+                        usedPacks = data.map(p => ({ 
+                            pack_number: parseInt(p.pack_number, 10), 
+                            supplier: p.supplier, 
+                            hcs_sorting_id: p.hcs_sorting_id,
+                            nomor_bon: (p.hcs_receiving && p.hcs_receiving.nomor_bon) ? p.hcs_receiving.nomor_bon : '-'
+                        }));
                         const usedPackNumbers = usedPacks.map(p => p.pack_number);
                         selectedPacks = selectedPacks.filter(p => !usedPackNumbers.includes(p));
                         renderGrid();
@@ -386,52 +498,87 @@
 
                 const currentSupplier = selectSupplier.value;
 
-                // Update button classes
+                // Update button and tooltip classes (Mirroring Edit View EXACTLY)
                 const buttons = gridContainer.querySelectorAll('.pack-btn');
                 buttons.forEach(btn => {
                     const num = parseInt(btn.getAttribute('data-pack'), 10);
+                    const group = btn.closest('.group');
+                    const tooltip = group.querySelector('.pack-tooltip');
+                    const badge = tooltip.querySelector('.tooltip-badge');
+                    const supplierEl = tooltip.querySelector('.tooltip-supplier');
+                    const statusEl = tooltip.querySelector('.tooltip-status');
+
+                    // Reset tooltip
+                    badge.classList.add('hidden');
+                    supplierEl.className = 'tooltip-supplier font-bold uppercase tracking-tighter text-indigo-300';
+                    supplierEl.textContent = 'KOSONG';
+                    statusEl.textContent = 'Bisa Dipilih';
                     
-                    // Reset to base classes
-                    btn.className = 'pack-btn aspect-square flex items-center justify-center text-[10px] sm:text-xs font-black rounded-lg transition-all duration-300 bg-white text-gray-400 border border-gray-100 shadow-sm hover:scale-110 hover:z-10 focus:outline-none focus:ring-4';
+                    // Reset to a clean base list with NO background or text color
+                    const baseClasses = 'pack-btn w-full aspect-square flex items-center justify-center text-[10px] sm:text-xs font-black rounded-lg transition-all duration-300 focus:outline-none focus:ring-4';
+                    btn.className = baseClasses;
                     
                     const usedPack = usedPacks.find(p => p.pack_number === num);
                     if (usedPack) {
-                        btn.setAttribute('title', usedPack.supplier + (usedPack.hcs_sorting_id ? ' - Sudah Disortir' : ' - Terpakai'));
-                        btn.classList.add('cursor-not-allowed', 'shadow-none');
+                        supplierEl.textContent = usedPack.supplier || 'HCS';
+                        supplierEl.className = 'tooltip-supplier font-bold uppercase tracking-tighter ' + (usedPack.supplier === 'Cutpack' ? 'text-blue-300' : 'text-green-300');
+                        
+                        btn.classList.add('cursor-not-allowed', 'shadow-none', 'text-white');
                         if (usedPack.hcs_sorting_id) {
-                            btn.classList.add('bg-red-400', 'text-white', 'border-red-500', 'shadow-lg', 'shadow-red-500/20');
+                            statusEl.textContent = 'Sudah Disortir (Record Lain)';
+                            badge.textContent = 'TERSORTIR';
+                            badge.className = 'tooltip-badge px-2 py-0.5 rounded-full text-[8px] text-white bg-red-500';
+                            badge.classList.remove('hidden');
+                            // RED - SORTED (Solid deep red)
+                            btn.classList.add('bg-red-600', 'border-red-700', 'shadow-lg');
                         } else {
-                            btn.classList.remove('rounded-lg');
-                            btn.classList.add('rounded-full', 'border-transparent');
+                            statusEl.textContent = 'Terpakai (Record Lain)';
+                            badge.textContent = 'TERPAKAI';
+                            badge.className = 'tooltip-badge px-2 py-0.5 rounded-full text-[8px] text-white ' + (usedPack.supplier === 'Cutpack' ? 'bg-blue-600' : 'bg-green-600');
+                            badge.classList.remove('hidden');
+
+                            // DEEP SOLID COLORS for previous inputs (Record Lain)
                             if (usedPack.supplier === 'Cutpack') {
-                                btn.classList.add('bg-blue-100', 'text-blue-400');
+                                btn.classList.add('bg-blue-700', 'border-blue-800', 'shadow-md');
                             } else if (usedPack.supplier === 'Rikyet') {
-                                btn.classList.add('bg-green-100', 'text-green-400');
+                                btn.classList.add('bg-green-700', 'border-green-800', 'shadow-md');
                             } else {
-                                btn.classList.add('bg-gray-100', 'text-gray-300');
+                                btn.classList.add('bg-gray-600', 'border-gray-700');
                             }
                         }
                     } else if (selectedPacks.includes(num)) {
-                        btn.classList.add('shadow-lg', 'text-white');
+                        // CURRENTLY SELECTED (Vibrant colors to distinguish from deep used colors)
+                        supplierEl.textContent = currentSupplier || 'HCS';
+                        supplierEl.className = 'tooltip-supplier font-bold uppercase tracking-tighter ' + (currentSupplier === 'Cutpack' ? 'text-blue-200' : (currentSupplier === 'Rikyet' ? 'text-green-200' : 'text-indigo-200'));
+                        statusEl.textContent = 'Dipilih (Penerimaan)';
+                        badge.textContent = 'DIPILIH';
+                        badge.className = 'tooltip-badge px-2 py-0.5 rounded-full text-[8px] text-white bg-indigo-500';
+                        badge.classList.remove('hidden');
+
+                        btn.classList.add('shadow-xl', 'text-white', 'scale-105', 'z-10');
                         if (currentSupplier === 'Cutpack') {
-                            btn.classList.add('bg-blue-400', 'border-blue-500', 'shadow-blue-500/20');
+                            btn.classList.add('bg-sky-450', 'bg-blue-400', 'border-blue-500', 'shadow-blue-300/50');
                         } else if (currentSupplier === 'Rikyet') {
-                            btn.classList.add('bg-green-400', 'border-green-500', 'shadow-green-500/20');
+                            btn.classList.add('bg-emerald-400', 'border-emerald-500', 'shadow-emerald-300/50');
                         } else {
-                            btn.classList.add('bg-indigo-500', 'border-indigo-600', 'shadow-indigo-500/20');
+                            btn.classList.add('bg-indigo-500', 'border-indigo-600', 'shadow-indigo-300/50');
                         }
                     } else {
-                        btn.classList.add('hover:bg-gray-50', 'hover:text-gray-600', 'hover:border-gray-200');
+                        // AVAILABLE (White background, Gray text)
+                        btn.classList.add('bg-white', 'text-gray-400', 'border-gray-100', 'shadow-sm', 'hover:bg-gray-50', 'hover:text-gray-600', 'hover:border-gray-200');
                     }
                 });
             }
 
             // Bind Events
             inputJumlahDisplay.addEventListener('input', handleJumlahInput);
+            toggleManual.addEventListener('change', handleToggleManual);
             
-            inputBatch.addEventListener('input', () => {
-                inputBatch.value = inputBatch.value.toUpperCase();
-                fetchUsedPacks();
+            [inputBatch, selectPecahan, inputEmisi, selectTA].forEach(el => {
+                el.addEventListener('input', () => {
+                    if (el === inputBatch) inputBatch.value = inputBatch.value.toUpperCase();
+                    fetchUsedPacks();
+                });
             });
             
             inputSeri.addEventListener('input', (e) => {
@@ -489,7 +636,18 @@
                     e.preventDefault();
                     Swal.fire({
                         title: 'Jumlah Pack Tidak Sesuai',
-                        text: `Jumlah packs yang dipilih (${selectedPacks.length}) tidak sesuai dengan jumlah bilyet (${jumlahOriginal}). Dibutuhkan ${packsNeeded} packs.`,
+                        text: `Jumlah packs yang dipilih (${selectedPacks.length}) tidak sesuai kebutuhan. Dibutuhkan ${packsNeeded} pack(s).`,
+                        icon: 'error',
+                        confirmButtonColor: '#4f46e5'
+                    });
+                    return;
+                }
+
+                if (!toggleManual.checked && (jumlahOriginal % 45000 !== 0)) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: 'Jumlah Bilyet Tidak Valid',
+                        text: 'Jumlah bilyet harus kelipatan 45.000 jika tidak menggunakan mode pack tidak full.',
                         icon: 'error',
                         confirmButtonColor: '#4f46e5'
                     });
@@ -500,5 +658,14 @@
             init();
         });
     </script>
+    @endpush
+
+    @push('css')
+    <style>
+        @keyframes shine {
+            0% { transform: translateX(-100%) skewX(-15deg); }
+            100% { transform: translateX(200%) skewX(-15deg); }
+        }
+    </style>
     @endpush
 </x-app-layout>

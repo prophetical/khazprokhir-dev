@@ -42,6 +42,8 @@ class HcsReceivingService
 
             // Create Packs
             $selectedPacksCount = count($data['packs']);
+            $isManual = $data['is_manual'] ?? false;
+            
             foreach ($data['packs'] as $packNumber) {
                 Pack::create([
                     'hcs_receiving_id' => $hcs->id,
@@ -49,6 +51,7 @@ class HcsReceivingService
                     'seri' => $data['seri'],
                     'pack_number' => $packNumber,
                     'supplier' => $data['supplier'],
+                    'jumlah' => $isManual ? $data['jumlah'] : 45000,
                     'created_by' => $userId,
                 ]);
             }
@@ -131,6 +134,8 @@ class HcsReceivingService
 
             // 4. Create New Packs (Avoid re-creating sorted ones)
             $selectedPacksCount = count($data['packs']);
+            $isManual = $data['is_manual'] ?? false;
+            
             foreach ($data['packs'] as $packNumber) {
                 if (!$sortedPacks->has($packNumber)) {
                     Pack::create([
@@ -139,6 +144,7 @@ class HcsReceivingService
                         'seri' => $data['seri'],
                         'pack_number' => $packNumber,
                         'supplier' => $data['supplier'],
+                        'jumlah' => $isManual ? $data['jumlah'] : 45000,
                         'created_by' => $userId,
                     ]);
                 }
