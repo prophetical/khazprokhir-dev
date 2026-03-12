@@ -163,26 +163,50 @@
                                             <div class="p-6 rounded-[2rem] border border-gray-100 bg-white/80 shadow-inner flex flex-col sm:flex-row items-center justify-between gap-6 overflow-hidden relative group">
                                                 <div class="absolute -right-4 -top-4 w-24 h-24 bg-gray-50 rounded-full blur-3xl transition-all duration-700 group-hover:bg-indigo-50"></div>
                                                 
-                                                <div class="flex items-center relative gap-4">
-                                                    <div class="relative inline-flex items-center cursor-pointer group">
-                                                        <input id="repass" name="repass" value="repass" type="checkbox" 
-                                                            class="w-5 h-5 rounded-lg border-gray-300 shadow-sm transition-all duration-300 text-indigo-600 focus:ring-indigo-500" 
-                                                            {{ old('repass', $hcsReceiving->repass) ? 'checked' : '' }}>
-                                                        <label for="repass" class="ml-3 text-sm font-bold text-gray-600 cursor-pointer">Tandai sebagai Repass</label>
+                                                <div class="flex flex-col gap-3 relative" x-data="{ isManual: {{ ($hcsReceiving->is_manual || ($hcsReceiving->jumlah % 45000 !== 0)) ? 'true' : 'false' }} }">
+                                                    <!-- Toggle Slider for Manual -->
+                                                    <div class="flex items-center justify-between bg-white/50 border border-gray-200 p-2 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 min-w-[280px]">
+                                                         <div class="flex items-center mr-4">
+                                                            <span class="text-xs font-black transition-colors duration-300"
+                                                                :class="isManual ? 'text-red-600' : 'text-gray-500'">
+                                                                Input Pack Tidak Full ( < 45.000 )
+                                                            </span>
+                                                        </div>
+                                                        <label class="relative inline-flex items-center cursor-pointer">
+                                                            <input type="checkbox" id="is_manual" name="is_manual" value="1" 
+                                                                x-model="isManual" 
+                                                                @change="typeof updateCalculations === 'function' ? updateCalculations(jumlahOriginal, isManual) : null; typeof renderGrid === 'function' ? renderGrid() : null"
+                                                                class="sr-only peer">
+                                                            <div class="w-10 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-amber-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-red-500"></div>
+                                                        </label>
                                                     </div>
-                                                    <div class="h-8 w-[1px] bg-gray-100 hidden sm:block"></div>
-                                                    <div class="text-[10px] font-black uppercase tracking-widest text-gray-400 leading-tight">
-                                                        Total Packs:<br>
-                                                        <span id="packs_needed_display" class="text-xl transition-colors duration-500" :class="currentTheme ? currentTheme.icon : 'text-indigo-600'">0</span>
+
+                                                    <div class="flex items-center relative gap-4 ml-1">
+                                                        <div class="relative inline-flex items-center cursor-pointer group">
+                                                            <input id="repass" name="repass" value="repass" type="checkbox" 
+                                                                class="w-5 h-5 rounded-lg border-gray-300 shadow-sm transition-all duration-300 text-indigo-600 focus:ring-indigo-500" 
+                                                                {{ old('repass', $hcsReceiving->repass) ? 'checked' : '' }}>
+                                                            <label for="repass" class="ml-3 text-sm font-bold text-gray-600 cursor-pointer">Tandai sebagai Repass</label>
+                                                        </div>
+                                                        <div class="h-8 w-[1px] bg-gray-100 hidden sm:block"></div>
+                                                        <div class="text-[10px] font-black uppercase tracking-widest text-gray-400 leading-tight">
+                                                            Total Packs:<br>
+                                                            <span id="packs_needed_display" class="text-xl transition-colors duration-500" :class="currentTheme ? currentTheme.icon : 'text-indigo-600'">0</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="pt-2">
+                                                        <button type="submit" 
+                                                                class="w-full sm:w-auto flex justify-center items-center py-3.5 px-10 border border-transparent shadow-xl text-xs font-black rounded-xl transition-all duration-300 uppercase tracking-[0.2em] relative overflow-hidden group min-w-[200px] hover:scale-[1.02] active:scale-[0.98] hover:shadow-2xl"
+                                                                :class="currentTheme ? (currentTheme.btn + ' ' + currentTheme.text) : 'bg-indigo-600 text-white'">
+                                                            <!-- Shine Effect -->
+                                                            <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shine_1.5s_infinite]"></div>
+                                                            
+                                                            <span class="relative z-10">Update Penerimaan</span>
+                                                            <svg class="relative z-10 ml-2 w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                                                        </button>
                                                     </div>
                                                 </div>
-
-                                                <button type="submit" 
-                                                        class="w-full sm:w-auto inline-flex justify-center items-center py-3 px-8 border border-transparent shadow-xl text-xs font-black rounded-xl transition-all duration-500 uppercase tracking-[0.2em] relative overflow-hidden group"
-                                                        :class="currentTheme ? (currentTheme.btn + ' ' + currentTheme.text) : 'bg-indigo-600 text-white hover:bg-indigo-700'">
-                                                    <span>Update Penerimaan</span>
-                                                    <svg class="ml-2 w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-                                                </button>
                                             </div>
                                             @if($hasSortedPacks)
                                                 <p class="mt-4 px-6 text-[10px] text-red-500 font-black uppercase tracking-widest text-center animate-pulse">
@@ -207,14 +231,14 @@
                                         <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm transition-all duration-500 hover:shadow-md">
                                             <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest block mb-1">Pack Dipilih</span>
                                             <div class="flex items-end gap-1">
-                                                <span id="selected_packs_length" class="text-xl font-black leading-none transition-colors duration-500" :class="currentTheme ? (currentTheme.icon || currentTheme.text.replace('text-', 'text-')) : 'text-indigo-600'">0</span>
+                                                <span id="selected_packs_length" class="text-2xl font-black leading-none transition-colors duration-500" :class="currentTheme ? (currentTheme.blue || 'text-indigo-600') : 'text-indigo-600'">0</span>
                                                 <span class="text-[10px] font-bold text-gray-300 mb-1 uppercase tracking-tight">Pack</span>
                                             </div>
                                         </div>
                                         <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
                                             <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest block mb-1">Dibutuhkan</span>
                                             <div class="flex items-end gap-1">
-                                                <span id="packs_needed_length" class="text-xl font-black leading-none text-gray-900">0</span>
+                                                <span id="packs_needed_length" class="text-2xl font-black leading-none text-gray-900">0</span>
                                                 <span class="text-[10px] font-bold text-gray-300 mb-1 uppercase tracking-tight">Pack</span>
                                             </div>
                                         </div>
@@ -230,10 +254,10 @@
                                             <div class="flex items-center gap-1"><div class="w-4 h-4 bg-red-500 border border-red-600 rounded-lg shadow-lg shadow-red-500/20"></div> <span class="text-[10px] font-bold text-gray-600">Tersortir</span></div>
                                             <div class="flex items-center gap-1">
                                                 <div class="flex -space-x-1">
-                                                    <div class="w-4 h-4 bg-blue-100 border border-blue-200 rounded-lg"></div>
-                                                    <div class="w-4 h-4 bg-green-100 border border-green-200 rounded-lg"></div>
+                                                    <div class="w-4 h-4 bg-sky-400 rounded-lg shadow-sm"></div>
+                                                    <div class="w-4 h-4 bg-emerald-400 rounded-lg shadow-sm"></div>
                                                 </div>
-                                                <span class="text-[10px] font-bold text-gray-600 ml-2">Siap Sortir</span>
+                                                <span class="text-[10px] font-bold text-gray-600 ml-2">Pilihan Sesi Ini</span>
                                             </div>
                                         </div>
                                     </div>
@@ -311,14 +335,16 @@
             const inputBatch = document.getElementById('batch');
             const inputSeri = document.getElementById('seri');
             const gridContainer = document.getElementById('pack_grid');
-            const hiddenPacksContainer = document.getElementById('hidden_packs_container');
+             const hiddenPacksContainer = document.getElementById('hidden_packs_container');
             const form = document.getElementById('hcs-form');
+            const toggleManual = document.getElementById('is_manual');
 
             let jumlahOriginal = parseInt(inputJumlahOriginal.value, 10) || 0;
-            let packsNeeded = 0;
+            let isInitialManual = {{ ($hcsReceiving->is_manual || ($hcsReceiving->jumlah % 45000 !== 0)) ? 'true' : 'false' }};
+            let packsNeeded = isInitialManual ? (jumlahOriginal > 0 ? 1 : 0) : (Math.floor(jumlahOriginal / 45000) || 0);
             let dbPacks = {!! json_encode($hcsReceiving->packs->pluck('pack_number')->toArray()) !!};
             let oldPacks = {!! json_encode(old('packs', null)) !!};
-            let selectedPacks = oldPacks ? oldPacks.map(Number) : dbPacks;
+            let selectedPacks = oldPacks ? oldPacks.map(Number) : dbPacks.map(Number);
             let usedPacks = [];
             const lockedPacks = {!! json_encode($sortedPacks) !!}.map(Number);
             const minPacks = {{ $hasSortedPacks ? $sortedPacksCount : 0 }};
@@ -327,18 +353,30 @@
                 if (jumlahOriginal > 0) {
                     inputJumlahDisplay.value = jumlahOriginal.toLocaleString('id-ID');
                 }
-                updateCalculations(jumlahOriginal);
                 
+                // Set initial display values based on pre-calculated packsNeeded
+                spanPacksNeededDisplay.textContent = packsNeeded;
+                spanPacksNeededLength.textContent = packsNeeded;
+
                 if (inputBatch.value.length === 7 && inputSeri.value.length > 5) {
                     fetchUsedPacks();
                 }
                 renderGrid();
             }
 
+            // Expose logic to Alpine
+                                            window.jumlahOriginal = jumlahOriginal;
+                                            window.updateCalculations = updateCalculations;
+                                            window.renderGrid = renderGrid;
+
             function handleJumlahInput(e) {
                 let textValue = String(e.target.value);
                 let rawDigits = textValue.replace(/\D/g, '');
                 let number = parseInt(rawDigits, 10) || 0;
+                
+                if (toggleManual.checked && number > 45000) {
+                    number = 45000;
+                }
                 
                 jumlahOriginal = number;
                 inputJumlahOriginal.value = number;
@@ -353,13 +391,26 @@
                 renderGrid();
             }
 
-            function updateCalculations(numVal) {
-                packsNeeded = Math.floor(numVal / 45000) || 0;
+            function updateCalculations(numVal, isManualOverride = null) {
+                const isManual = isManualOverride !== null ? isManualOverride : toggleManual.checked;
+                if (isManual) {
+                    packsNeeded = numVal > 0 ? 1 : 0;
+                } else {
+                    packsNeeded = Math.floor(numVal / 45000) || 0;
+                }
+                
                 spanPacksNeededDisplay.textContent = packsNeeded;
                 spanPacksNeededLength.textContent = packsNeeded;
                 
                 if (selectedPacks.length > packsNeeded) {
-                    selectedPacks = selectedPacks.slice(0, packsNeeded);
+                    const lockedInSelection = selectedPacks.filter(p => lockedPacks.includes(p));
+                    const nonLockedInSelection = selectedPacks.filter(p => !lockedPacks.includes(p));
+                    
+                    if (lockedInSelection.length >= packsNeeded) {
+                        selectedPacks = lockedInSelection.slice(0, packsNeeded);
+                    } else {
+                        selectedPacks = [...lockedInSelection, ...nonLockedInSelection.slice(0, packsNeeded - lockedInSelection.length)];
+                    }
                 }
             }
 
@@ -368,7 +419,16 @@
                 const seriVal = inputSeri.value.toUpperCase();
                 
                 if (batchVal.length === 7 && seriVal.length > 0) {
-                    fetch(`/api/packs/used?batch=${batchVal}&seri=${seriVal}&exclude_hcs_id={{ $hcsReceiving->id }}`)
+                    const pecahanVal = document.getElementById('pecahan_select')?.value || '';
+                    const emisiVal = document.getElementById('emisi')?.value || '';
+                    const taVal = document.getElementById('tahun_anggaran')?.value || '';
+                    
+                    let url = `/api/packs/used?batch=${batchVal}&seri=${seriVal}&exclude_hcs_id={{ $hcsReceiving->id }}`;
+                    if (pecahanVal) url += `&pecahan=${pecahanVal}`;
+                    if (emisiVal) url += `&emisi=${emisiVal}`;
+                    if (taVal) url += `&tahun_anggaran=${taVal}`;
+
+                    fetch(url)
                     .then(res => res.json())
                     .then(data => {
                         usedPacks = data.map(p => ({ pack_number: parseInt(p.pack_number, 10), supplier: p.supplier, hcs_sorting_id: p.hcs_sorting_id }));
@@ -422,7 +482,6 @@
             }
 
             function renderGrid() {
-                // Update hidden inputs
                 hiddenPacksContainer.innerHTML = '';
                 selectedPacks.forEach(pack => {
                     const input = document.createElement('input');
@@ -433,11 +492,9 @@
                 });
 
                 spanSelectedPacksLength.textContent = selectedPacks.length;
-
                 const currentSupplier = selectSupplier.value;
-
-                // Update button classes
                 const buttons = gridContainer.querySelectorAll('.pack-btn');
+
                 buttons.forEach(btn => {
                     const num = parseInt(btn.getAttribute('data-pack'), 10);
                     const group = btn.closest('.group');
@@ -446,13 +503,11 @@
                     const supplierEl = tooltip.querySelector('.tooltip-supplier');
                     const statusEl = tooltip.querySelector('.tooltip-status');
 
-                    // Reset tooltip
                     badge.classList.add('hidden');
                     supplierEl.className = 'tooltip-supplier font-bold uppercase tracking-tighter text-indigo-300';
                     supplierEl.textContent = 'KOSONG';
                     statusEl.textContent = 'Bisa Dipilih';
                     
-                    // Reset to base classes (Removed persistent background/text colors)
                     btn.className = 'pack-btn w-full aspect-square flex items-center justify-center text-[10px] sm:text-xs font-black rounded-lg transition-all duration-300 hover:scale-110 hover:z-10 focus:outline-none focus:ring-4';
                     
                     const usedPack = usedPacks.find(p => p.pack_number === num);
@@ -468,7 +523,6 @@
                             badge.classList.remove('hidden');
                             btn.classList.add('bg-red-400', 'text-white', 'border-red-500', 'shadow-lg', 'shadow-red-500/20');
                         } else {
-                            // LIGHT BACKGROUND + DARK FONT for used packs
                             if (usedPack.supplier === 'Cutpack') {
                                 btn.classList.add('bg-blue-100', 'text-blue-900', 'border-blue-200');
                             } else if (usedPack.supplier === 'Rikyet') {
@@ -487,21 +541,20 @@
                     } else if (selectedPacks.includes(num)) {
                         supplierEl.textContent = currentSupplier;
                         supplierEl.className = 'tooltip-supplier font-bold uppercase tracking-tighter ' + (currentSupplier === 'Cutpack' ? 'text-blue-300' : (currentSupplier === 'Rikyet' ? 'text-green-300' : 'text-indigo-300'));
-                        statusEl.textContent = 'Dipilih (Siap Kemas)';
+                        statusEl.textContent = 'Dipilih (Penerimaan)';
                         badge.textContent = 'DIPILIH';
                         badge.className = 'tooltip-badge px-2 py-0.5 rounded-full text-[8px] text-white bg-indigo-500';
                         badge.classList.remove('hidden');
 
-                        btn.classList.add('shadow-lg', 'text-white');
+                        btn.classList.add('shadow-xl', 'text-white', 'scale-105', 'z-10');
                         if (currentSupplier === 'Cutpack') {
-                            btn.classList.add('bg-blue-500', 'border-blue-600', 'shadow-blue-500/20');
+                            btn.classList.add('bg-blue-400', 'border-blue-500', 'shadow-blue-300/50');
                         } else if (currentSupplier === 'Rikyet') {
-                            btn.classList.add('bg-green-500', 'border-green-600', 'shadow-green-500/20');
+                            btn.classList.add('bg-emerald-400', 'border-emerald-500', 'shadow-emerald-300/50');
                         } else {
-                            btn.classList.add('bg-indigo-600', 'border-indigo-700', 'shadow-indigo-500/20');
+                            btn.classList.add('bg-indigo-500', 'border-indigo-600', 'shadow-indigo-300/50');
                         }
                     } else {
-                        // AVAILABLE
                         btn.classList.add('bg-white', 'text-gray-400', 'border-gray-100', 'shadow-sm', 'hover:bg-gray-50', 'hover:text-gray-600', 'hover:border-gray-200');
                     }
                 });
@@ -518,7 +571,6 @@
             inputSeri.addEventListener('input', (e) => {
                 let val = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
                 let formatted = '';
-                
                 if (val.length > 0) {
                     formatted = val.substring(0, 2).replace(/[^A-Z]/g, '');
                     if (val.length > 2) {
@@ -528,7 +580,6 @@
                         }
                     }
                 }
-                
                 e.target.value = formatted.substring(0, 6);
                 fetchUsedPacks();
             });
@@ -570,7 +621,18 @@
                     e.preventDefault();
                     Swal.fire({
                         title: 'Jumlah Pack Tidak Sesuai',
-                        text: `Jumlah packs yang dipilih (${selectedPacks.length}) tidak sesuai dengan jumlah bilyet (${jumlahOriginal}). Dibutuhkan ${packsNeeded} packs.`,
+                        text: `Jumlah packs yang dipilih (${selectedPacks.length}) tidak sesuai kebutuhan. Dibutuhkan ${packsNeeded} pack(s).`,
+                        icon: 'error',
+                        confirmButtonColor: '#4f46e5'
+                    });
+                    return;
+                }
+
+                if (!toggleManual.checked && (jumlahOriginal % 45000 !== 0)) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: 'Jumlah Bilyet Tidak Valid',
+                        text: 'Jumlah bilyet harus kelipatan 45.000 jika tidak menggunakan mode pack tidak full.',
                         icon: 'error',
                         confirmButtonColor: '#4f46e5'
                     });
