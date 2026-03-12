@@ -16,10 +16,9 @@ class LaporanHarianController extends Controller
 {
     public function index(Request $request)
     {
-        $tahunEmisiOptions = HcsReceiving::select('emisi')->distinct()->orderBy('emisi', 'desc')->pluck('emisi')->toArray();
-        if (empty($tahunEmisiOptions)) {
-            $tahunEmisiOptions = ['2022', '2016']; // Fallback options
-        }
+        $options = $this->getYearOptions();
+        $tahunAnggaranOptions = $options['tahun_anggaran'];
+        $tahunEmisiOptions = $options['tahun_emisi'];
 
         $filters = $this->getFilters($request, $tahunEmisiOptions);
         $data = $this->getReportData($filters);
@@ -33,8 +32,6 @@ class LaporanHarianController extends Controller
         $tanggalLaporan = $filters['tanggal_laporan'];
         $tahunAnggaran = $filters['tahun_anggaran'];
         $tahunEmisi = $filters['tahun_emisi'];
-
-        $tahunAnggaranOptions = collect(range(date('Y') - 2, date('Y') + 2))->toArray();
 
         return view('laporan-harian.index', compact(
             'reportData',
@@ -52,7 +49,8 @@ class LaporanHarianController extends Controller
 
     public function export(Request $request)
     {
-        $tahunEmisiOptions = HcsReceiving::select('emisi')->distinct()->pluck('emisi')->toArray();
+        $options = $this->getYearOptions();
+        $tahunEmisiOptions = $options['tahun_emisi'];
         $filters = $this->getFilters($request, $tahunEmisiOptions);
         $data = $this->getReportData($filters);
         $reportData = $data['reportData'];
@@ -127,7 +125,8 @@ class LaporanHarianController extends Controller
 
     public function print(Request $request)
     {
-        $tahunEmisiOptions = HcsReceiving::select('emisi')->distinct()->pluck('emisi')->toArray();
+        $options = $this->getYearOptions();
+        $tahunEmisiOptions = $options['tahun_emisi'];
         $filters = $this->getFilters($request, $tahunEmisiOptions);
         $data = $this->getReportData($filters);
 
@@ -400,6 +399,38 @@ class LaporanHarianController extends Controller
         }
 
         return $count;
+    }
+
+    private function getYearOptions()
+    {
+        // Fetch unique budget years from all major tables
+        $ta = DB::table('hcs_receivings')->distinct()->pluck('tahun_anggaran')
+            ->merge(DB::table('pengemasans')->distinct()->pluck('tahun_anggaran'))
+            ->merge(DB::table('penyerahan_bi')->distinct()->pluck('tahun_anggaran'))
+            ->merge(DB::table('target_tahunan')->distinct()->pluck('tahun_anggaran'))
+            ->unique()
+            ->sortDesc()
+            ->values()
+            ->toArray();
+
+        // Fetch unique emission years from all major tables
+        $te = DB::table('hcs_receivings')->distinct()->pluck('emisi')
+            ->merge(DB::table('pengemasans')->distinct()->pluck('tahun_emisi'))
+            ->merge(DB::table('penyerahan_bi')->distinct()->pluck('tahun_emisi'))
+            ->merge(DB::table('target_tahunan')->distinct()->pluck('tahun_emisi'))
+            ->unique()
+            ->sortDesc()
+            ->values()
+            ->toArray();
+
+        // Fallback to current year if empty
+        if (empty($ta)) $ta = [date('Y')];
+        if (empty($te)) $te = ['2022', '2016'];
+
+        return [
+            'tahun_anggaran' => $ta,
+            'tahun_emisi' => $te
+        ];
     }
 
 }

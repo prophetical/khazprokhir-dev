@@ -106,7 +106,7 @@
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-gray-50/50">
-                                <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-100">Pecahan</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-100 text-center">Pecahan</th>
                                 <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-100">TA/TE</th>
                                 <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-100 text-right">Total Penerimaan</th>
                                 <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-100 text-right">Total Penyerahan</th>
@@ -117,8 +117,8 @@
                         <tbody class="divide-y divide-gray-100">
                             @forelse($inventory as $item)
                                 <tr class="hover:bg-indigo-50/30 transition-colors group cursor-pointer" @click="toggleDetail('{{ $item->pecahan }}', '{{ $item->tahun_anggaran }}', '{{ $item->tahun_emisi }}')">
-                                    <td class="px-6 py-4">
-                                        <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 font-black text-sm">
+                                    <td class="px-6 py-4 text-center">
+                                        <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl font-black text-sm text-white {{ $denomThemes[$item->pecahan]['bg'] ?? 'bg-gray-500' }} shadow-lg shadow-{{ str_replace('bg-', '', $denomThemes[$item->pecahan]['bg'] ?? 'gray-500') }}/20 uppercase">
                                             {{ $item->pecahan }}
                                         </span>
                                     </td>
