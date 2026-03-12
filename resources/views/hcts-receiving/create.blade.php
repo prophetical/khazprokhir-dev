@@ -132,40 +132,40 @@
                     <div class="bg-gray-50/50 p-6 rounded-[2rem] border transition-all duration-500"
                         :class="currentTheme ? currentTheme.border : 'border-gray-100'">
 
-                        <form action="{{ route('hcts-receiving.store') }}" method="POST" class="space-y-6">
+                        <form action="{{ route('hcts-receiving.store') }}" method="POST" class="space-y-4">
                             @csrf
 
-                            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                            <div class="grid grid-cols-1 lg:grid-cols-12 gap-3">
                                 <!-- LEFT COLUMN: Informasi Administrasi (Sidebar style) -->
-                                <div class="lg:col-span-4 space-y-6">
-                                    <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden h-full">
+                                <div class="lg:col-span-4 space-y-4">
+                                    <div class="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden h-full">
                                         <div class="absolute top-0 left-0 w-1 h-full" :class="currentTheme ? currentTheme.bg : 'bg-rose-500'"></div>
-                                        <div class="flex items-center gap-3 mb-6">
+                                        <div class="flex items-center gap-3 mb-3">
                                             <div class="p-2 rounded-xl bg-gray-50 text-gray-400">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                                             </div>
-                                            <span class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Administrasi</span>
+                                            <span class="text-[10px] font-bold text-gray-400">Administrasi</span>
                                         </div>
                                         
-                                        <div class="space-y-4">
+                                        <div class="space-y-3">
                                             <div class="relative group">
-                                                <x-input-label for="nomor_bon" value="Nomor Bon" class="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1 ml-1" />
+                                                <x-input-label for="nomor_bon" value="Nomor Bon" class="text-[10px] font-bold text-gray-400 mb-1 ml-1" />
                                                 <x-text-input id="nomor_bon" name="nomor_bon" type="text" 
-                                                    class="block w-full border-gray-100 bg-gray-50/30 rounded-2xl focus:bg-white transition-all py-2 text-center font-black group-hover:border-gray-300" 
+                                                    class="block w-full border-gray-200 bg-gray-50 rounded-2xl focus:bg-white transition-all py-1.5 text-center font-black group-hover:border-gray-300" 
                                                     x-bind:class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-rose-500 focus:ring-rose-500'"
                                                     value="{{ old('nomor_bon') }}" required />
                                             </div>
                                             <div class="relative group">
-                                                <x-input-label for="tanggal_penerimaan" value="Tanggal Penerimaan" class="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1 ml-1" />
+                                                <x-input-label for="tanggal_penerimaan" value="Tanggal Penerimaan" class="text-[10px] font-bold text-gray-400 mb-1 ml-1" />
                                                 <x-text-input id="tanggal_penerimaan" name="tanggal_penerimaan" type="date" 
-                                                    class="block w-full border-gray-100 bg-gray-50/30 rounded-2xl focus:bg-white transition-all py-2 text-center font-black group-hover:border-gray-300" 
+                                                    class="block w-full border-gray-200 bg-gray-50 rounded-2xl focus:bg-white transition-all py-1.5 text-center font-black group-hover:border-gray-300" 
                                                     x-bind:class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-rose-500 focus:ring-rose-500'"
                                                     value="{{ old('tanggal_penerimaan', date('Y-m-d')) }}" required />
                                             </div>
-                                            <div class="group-inner p-3 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
-                                                <x-input-label for="nomor_segel" value="Nomor Segel" class="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1 ml-1" />
+                                            <div class="group-inner p-2.5 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+                                                <x-input-label for="nomor_segel" value="Nomor Segel" class="text-[10px] font-bold text-gray-400 mb-1 ml-1" />
                                                 <x-text-input id="nomor_segel" name="nomor_segel" type="text" 
-                                                    class="block w-full border-gray-100 bg-white rounded-xl focus:border-rose-500 focus:ring-rose-500 font-bold transition-all py-2 text-center" 
+                                                    class="block w-full border-gray-200 bg-white rounded-xl focus:border-rose-500 focus:ring-rose-500 font-bold transition-all py-1.5 text-center" 
                                                     value="{{ old('nomor_segel') }}" required />
                                             </div>
                                         </div>
@@ -173,24 +173,24 @@
                                 </div>
 
                                 <!-- RIGHT COLUMN: Detail Spesifikasi & Amount -->
-                                <div class="lg:col-span-8 space-y-6">
+                                <div class="lg:col-span-8 space-y-4">
                                     <!-- Detailed Specs Row -->
-                                    <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden">
+                                    <div class="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden">
                                         <div class="absolute top-0 left-0 w-1 h-full" :class="currentTheme ? currentTheme.bg : 'bg-rose-500'"></div>
-                                        <div class="flex items-center gap-3 mb-6">
+                                        <div class="flex items-center gap-3 mb-3">
                                             <div class="p-2 rounded-xl bg-gray-50 text-gray-400">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                                             </div>
-                                            <span class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Spesifikasi Detail</span>
+                                            <span class="text-[10px] font-bold text-gray-400">Spesifikasi Detail</span>
                                         </div>
 
-                                        <div class="space-y-6">
+                                        <div class="space-y-4">
                                             <!-- Consolidated Grid 1: Basic Specs -->
-                                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                            <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
                                                 <div>
-                                                    <x-input-label for="pecahan" value="Pecahan" class="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1 ml-1" />
+                                                    <x-input-label for="pecahan" value="Pecahan" class="text-[10px] font-bold text-gray-400 mb-1 ml-1" />
                                                     <select id="pecahan" name="pecahan" x-model="selectedPecahan"
-                                                            class="block w-full border-gray-100 rounded-xl transition-all py-1.5 text-center font-black"
+                                                            class="block w-full border-gray-100 rounded-xl transition-all py-1 text-center font-black"
                                                             :class="currentTheme ? (currentTheme.bg + ' ' + currentTheme.text + ' ' + currentTheme.border) : 'focus:border-rose-500 focus:ring-rose-500'"
                                                             required>
                                                         <option value="" class="bg-white text-gray-900">Pilih Pecahan</option>
@@ -200,8 +200,8 @@
                                                     </select>
                                                 </div>
                                                 <div>
-                                                    <x-input-label for="gilir" value="Gilir" class="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1 ml-1" />
-                                                    <select id="gilir" name="gilir" class="block w-full border-gray-100 rounded-xl bg-white transition-all py-1.5 text-center font-black group-hover:border-gray-300" 
+                                                    <x-input-label for="gilir" value="Gilir" class="text-[10px] font-bold text-gray-400 mb-1 ml-1" />
+                                                    <select id="gilir" name="gilir" class="block w-full border-gray-200 rounded-xl bg-gray-50 transition-all py-1 text-center font-black group-hover:border-gray-300 focus:bg-white" 
                                                         :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-rose-500 focus:ring-rose-500'" required>
                                                         <option value="">Pilih Gilir</option>
                                                         @foreach(['Gilir 1', 'Gilir 2', 'Gilir 3'] as $g)
@@ -210,16 +210,16 @@
                                                     </select>
                                                 </div>
                                                 <div>
-                                                    <x-input-label for="emisi" value="Emisi" class="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1 ml-1" />
-                                                    <select id="emisi" name="emisi" x-model="emisiValue" class="block w-full border-gray-100 rounded-xl bg-white transition-all py-1.5 text-center font-black" 
+                                                    <x-input-label for="emisi" value="Emisi" class="text-[10px] font-bold text-gray-400 mb-1 ml-1" />
+                                                    <select id="emisi" name="emisi" x-model="emisiValue" class="block w-full border-gray-200 rounded-xl bg-gray-50 transition-all py-1 text-center font-black focus:bg-white" 
                                                         :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-rose-500 focus:ring-rose-500'" required>
                                                         <option value="2016">2016</option>
                                                         <option value="2022">2022</option>
                                                     </select>
                                                 </div>
                                                 <div>
-                                                    <x-input-label for="tahun_anggaran" value="Tahun Anggaran" class="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1 ml-1" />
-                                                    <select id="tahun_anggaran" name="tahun_anggaran" x-model="tahunAnggaranValue" class="block w-full border-gray-100 rounded-xl bg-white transition-all py-1.5 text-center font-black" 
+                                                    <x-input-label for="tahun_anggaran" value="Tahun Anggaran" class="text-[10px] font-bold text-gray-400 mb-1 ml-1" />
+                                                    <select id="tahun_anggaran" name="tahun_anggaran" x-model="tahunAnggaranValue" class="block w-full border-gray-200 rounded-xl bg-gray-50 transition-all py-1 text-center font-black focus:bg-white" 
                                                         :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-rose-500 focus:ring-rose-500'" required>
                                                         @foreach(['2024','2025','2026','2027'] as $yr)
                                                             <option value="{{ $yr }}">{{ $yr }}</option>
@@ -229,32 +229,32 @@
                                             </div>
 
                                             <!-- Consolidated Grid 2: Batch & Seri -->
-                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                                                 <div class="group">
-                                                    <x-input-label for="batch" value="Batch" class="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1 ml-1" />
-                                                    <x-text-input id="batch" name="batch" type="text" maxlength="10" placeholder="INPUT BATCH" x-model="batchValue" 
-                                                        class="block w-full border-gray-100 bg-gray-50/30 rounded-2xl focus:bg-white transition-all py-2 text-center font-black group-hover:border-gray-300" 
+                                                    <x-input-label for="batch" value="Batch" class="text-[6px] text-gray-400 mb-1 ml-1" />
+                                                    <x-text-input id="batch" name="batch" type="text" maxlength="10" placeholder="Input Batch" x-model="batchValue" 
+                                                        class="block w-full border-gray-200 bg-gray-50 rounded-2xl focus:bg-white transition-all py-1.5 text-center font-black group-hover:border-gray-300" 
                                                         x-bind:class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-rose-500 focus:ring-rose-500'" required />
                                                 </div>
                                                 <div class="group">
-                                                    <x-input-label for="seri" value="Seri" class="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1 ml-1" />
-                                                    <x-text-input id="seri" name="seri" type="text" placeholder="Format: AA-AA1" maxlength="6"
+                                                    <x-input-label for="seri" value="Seri" class="text-[6px] text-gray-400 mb-1 ml-1" />
+                                                    <x-text-input id="seri" name="seri" type="text" placeholder="Isi Seri" maxlength="6"
                                                         x-model="seriValue"
                                                         @input="formatSeri($event.target.value)"
-                                                        class="block w-full border-gray-100 bg-gray-50/30 rounded-2xl focus:bg-white transition-all py-2 uppercase text-center font-black group-hover:border-gray-300" 
+                                                        class="block w-full border-gray-200 bg-gray-50 rounded-2xl focus:bg-white transition-all py-1.5 text-center font-black group-hover:border-gray-300" 
                                                         x-bind:class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-rose-500 focus:ring-rose-500'" required />
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-
+                                    
                                     <!-- Amount & Limit Progress Row -->
-                                    <div class="p-6 bg-rose-50/50 rounded-3xl border border-rose-100 relative group transition-all"
+                                    <div class="p-4 bg-rose-50/50 rounded-3xl border border-rose-100 relative group transition-all"
                                          :class="currentTheme ? ('bg-' + currentTheme.soft.replace('bg-', '') + '/50 border-' + currentTheme.border.replace('border-', '') + '/20') : ''">
-                                        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-                                            <div class="md:col-span-5 space-y-4">
+                                        <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+                                            <div class="md:col-span-5 space-y-3">
                                                 <div>
-                                                    <x-input-label for="jumlah_display" value="Jumlah Bilyet" class="text-[11px] font-black uppercase text-rose-600/70 tracking-widest mb-1.5 ml-1" 
+                                                    <x-input-label for="jumlah_display" value="Jumlah Bilyet" class="text-[10px] font-bold text-rose-600/70 mb-1.5 ml-1" 
                                                                    x-bind:class="currentTheme ? currentTheme.icon : 'text-rose-600/70'"/>
                                                     <div class="relative">
                                                         <x-text-input id="jumlah_display" type="text" 
@@ -262,24 +262,24 @@
                                                             @input="formatJumlah($event.target.value)"
                                                             placeholder="0"
                                                             x-bind:class="(hcsTotal + (parseInt(rawJumlah) || 0)) > 4500000 ? 'border-rose-500 ring-rose-500 text-rose-600 bg-white' : 'border-gray-300 text-gray-900 bg-white'"
-                                                            class="block w-full rounded-2xl focus:border-rose-500 focus:ring-rose-500 font-black transition-all py-2.5 text-center text-xl" required />
+                                                            class="block w-full rounded-2xl focus:border-rose-500 focus:ring-rose-500 font-black transition-all py-2 text-center text-xl" required />
                                                         <input type="hidden" name="jumlah" x-model="rawJumlah">
                                                         <div class="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 font-black text-[10px] uppercase tracking-widest">Bil</div>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div class="md:col-span-7 space-y-3">
+                                            <div class="md:col-span-7 space-y-2">
                                                 <div class="flex justify-between items-end mb-1">
                                                     <div>
-                                                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Akumulasi Batch</p>
+                                                        <p class="text-[10px] font-bold text-gray-400">Akumulasi Batch</p>
                                                         <p class="text-sm font-black" :class="(hcsTotal + (parseInt(rawJumlah) || 0)) > 4500000 ? 'text-rose-600' : 'text-gray-900'">
                                                             <span x-text="new Intl.NumberFormat('id-ID').format(hcsTotal + (parseInt(rawJumlah) || 0))"></span>
-                                                            <span class="text-gray-300 font-bold">/ 4.5M</span>
+                                                            <span class="text-gray-300 font-bold">/ 4.500.000</span>
                                                         </p>
                                                     </div>
                                                     <div class="text-right">
-                                                        <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Sisa Kuota</p>
+                                                        <p class="text-[10px] font-bold text-gray-400">Sisa Kuota</p>
                                                         <p class="text-sm font-black text-emerald-500" x-text="new Intl.NumberFormat('id-ID').format(Math.max(0, 4500000 - (hcsTotal + (parseInt(rawJumlah) || 0))))"></p>
                                                     </div>
                                                 </div>
@@ -293,14 +293,14 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="grid grid-cols-2 gap-3">
+                                                <div class="grid grid-cols-2 gap-2">
                                                     <div class="bg-white/60 px-3 py-2 rounded-xl border border-white/50 shadow-sm flex justify-between items-center">
-                                                        <span class="text-[9px] font-black text-gray-400 uppercase">HCS</span>
+                                                        <span class="text-[10px] font-bold text-gray-400">HCS</span>
                                                         <span class="text-xs font-black text-blue-600" x-show="!isLoadingHcs" x-text="new Intl.NumberFormat('id-ID').format(hcsTotal)"></span>
-                                                        <span class="text-[9px] font-black text-blue-400 animate-pulse" x-show="isLoadingHcs">...</span>
+                                                        <span class="text-[8px] font-black text-blue-400 animate-pulse" x-show="isLoadingHcs">...</span>
                                                     </div>
                                                     <div class="bg-white/60 px-3 py-2 rounded-xl border border-white/50 shadow-sm flex justify-between items-center">
-                                                        <span class="text-[9px] font-black text-gray-400 uppercase">HCTS</span>
+                                                        <span class="text-[10px] font-bold text-gray-400">HCTS</span>
                                                         <span class="text-xs font-black" :class="currentTheme ? currentTheme.icon : 'text-rose-600'" x-text="new Intl.NumberFormat('id-ID').format(parseInt(rawJumlah) || 0)"></span>
                                                     </div>
                                                 </div>

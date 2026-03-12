@@ -36,14 +36,14 @@
                         isLoadingHcs: false,
                         
                         formatJumlah(value) {
-                            let raw = value.replace(/\./g, '');
-                            if (!isNaN(raw) && raw !== '') {
-                                this.rawJumlah = raw;
-                                this.formattedJumlah = new Intl.NumberFormat('id-ID').format(raw);
-                            } else {
-                                this.rawJumlah = '';
-                                this.formattedJumlah = '';
-                            }
+                            let raw = value.replace(/\D/g, '');
+                            this.rawJumlah = raw;
+                            this.formattedJumlah = this.numberFormat(raw);
+                            if (this.rawJumlah === '0' || this.rawJumlah === '') this.formattedJumlah = '';
+                        },
+                        numberFormat(x) {
+                            if (!x && x !== 0) return "";
+                            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                         },
                         formatSeri(value) {
                             // Strip non-alphanumeric, convert to uppercase
@@ -89,7 +89,7 @@
                         },
                         init() {
                             if (this.rawJumlah) {
-                                this.formattedJumlah = new Intl.NumberFormat('id-ID').format(this.rawJumlah);
+                                this.formattedJumlah = this.numberFormat(this.rawJumlah);
                             }
                             this.fetchHcsTotal(); // Initial fetch
                             this.$watch('selectedPecahan', () => this.fetchHcsTotal());
@@ -271,7 +271,7 @@
                                                             <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Akumulasi Batch</p>
                                                             <p class="text-sm font-black" :class="(hcsTotal + (parseInt(rawJumlah) || 0)) > 4500000 ? 'text-rose-600' : 'text-gray-900'">
                                                                 <span x-text="new Intl.NumberFormat('id-ID').format(hcsTotal + (parseInt(rawJumlah) || 0))"></span>
-                                                                <span class="text-gray-300 font-bold">/ 4.5M</span>
+                                                                <span class="text-gray-300 font-bold">/ 4.500.000</span>
                                                             </p>
                                                         </div>
                                                         <div class="text-right">

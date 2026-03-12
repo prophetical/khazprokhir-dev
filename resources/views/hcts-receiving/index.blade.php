@@ -176,25 +176,25 @@
                     <div class="overflow-x-auto border border-gray-100 rounded-2xl shadow-sm">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50/50">
-                                <tr>
-                                    <th class="px-6 py-4 text-left text-[10px] font-black text-gray-500 uppercase tracking-widest">Tanggal</th>
-                                    <th class="px-6 py-4 text-left text-[10px] font-black text-gray-500 uppercase tracking-widest">No. Bon</th>
-                                    <th class="px-6 py-4 text-center text-[10px] font-black text-gray-500 uppercase tracking-widest">Pecahan</th>
-                                    <th class="px-6 py-4 text-center text-[10px] font-black text-gray-500 uppercase tracking-widest">Gilir</th>
-                                    <th class="px-6 py-4 text-right text-[10px] font-black text-gray-500 uppercase tracking-widest">Jumlah</th>
-                                    <th class="px-6 py-4 text-center text-[10px] font-black text-gray-500 uppercase tracking-widest">Batch/Seri</th>
-                                    <th class="px-6 py-4 text-center text-[10px] font-black text-gray-500 uppercase tracking-widest">Emisi/TA</th>
-                                    <th class="px-6 py-4 text-left text-[10px] font-black text-gray-500 uppercase tracking-widest">No. Segel</th>
-                                    <th class="px-6 py-4 text-left text-[10px] font-black text-gray-500 uppercase tracking-widest">Petugas</th>
-                                    <th class="px-6 py-4 text-center text-[10px] font-black text-gray-500 uppercase tracking-widest">Aksi</th>
-                                </tr>
+                                    <tr>
+                                        <th class="px-3 py-3 text-left text-[10px] font-black text-gray-500 uppercase tracking-widest">Tanggal</th>
+                                        <th class="px-3 py-3 text-left text-[10px] font-black text-gray-500 uppercase tracking-widest">No. Bon</th>
+                                        <th class="px-2 py-3 text-center text-[10px] font-black text-gray-500 uppercase tracking-widest">Pec</th>
+                                        <th class="px-3 py-3 text-center text-[10px] font-black text-gray-500 uppercase tracking-widest">Gilir</th>
+                                        <th class="px-3 py-3 text-right text-[10px] font-black text-gray-500 uppercase tracking-widest">Jumlah</th>
+                                        <th class="px-3 py-3 text-center text-[10px] font-black text-gray-500 uppercase tracking-widest">Batch/Seri</th>
+                                        <th class="px-3 py-3 text-center text-[10px] font-black text-gray-500 uppercase tracking-widest">Emisi/TA</th>
+                                        <th class="px-3 py-3 text-left text-[10px] font-black text-gray-500 uppercase tracking-widest">No. Segel</th>
+                                        <th class="px-3 py-3 text-left text-[10px] font-black text-gray-500 uppercase tracking-widest">Petugas</th>
+                                        <th class="px-3 py-3 text-center text-[10px] font-black text-gray-500 uppercase tracking-widest">Aksi</th>
+                                    </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-100">
                                 @forelse ($receivings as $receiving)
                                     <tr class="hover:bg-rose-50/30 transition-colors group">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ \Carbon\Carbon::parse($receiving->tanggal_penerimaan)->format('d/m/Y') }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-black text-gray-900 underline decoration-gray-200 underline-offset-4">{{ $receiving->nomor_bon }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-center">
+                                        <td class="px-3 py-3 whitespace-nowrap text-[11px] font-medium text-gray-600">{{ \Carbon\Carbon::parse($receiving->tanggal_penerimaan)->format('d/m/y') }}</td>
+                                        <td class="px-3 py-3 whitespace-nowrap text-[11px] font-black text-gray-900 underline decoration-gray-200">{{ $receiving->nomor_bon }}</td>
+                                        <td class="px-2 py-3 whitespace-nowrap text-center">
                                             @php
                                                 $pchClasses = [
                                                     'S' => 'bg-lime-500 text-white',
@@ -207,15 +207,15 @@
                                                 ];
                                                 $currentClass = $pchClasses[$receiving->pecahan] ?? 'bg-gray-900 text-white';
                                             @endphp
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-black {{ $currentClass }} shadow-sm">{{ $receiving->pecahan }}</span>
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black {{ $currentClass }} shadow-sm">{{ $receiving->pecahan }}</span>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-center text-xs font-bold text-gray-500 uppercase italic">{{ $receiving->gilir }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-black text-rose-600">{{ number_format($receiving->jumlah, 0, ',', '.') }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-bold text-gray-700">{{ $receiving->batch }} / {{ $receiving->seri }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-center text-[11px] font-bold text-gray-400 uppercase tracking-tighter">{{ $receiving->emisi }} / {{ $receiving->tahun_anggaran }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-indigo-600">{{ $receiving->nomor_segel }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-xs font-bold text-gray-500 uppercase tracking-tight">{{ $receiving->user->name ?? '-' }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-center">
+                                        <td class="px-3 py-3 whitespace-nowrap text-center text-[10px] font-bold text-gray-500 uppercase italic">{{ $receiving->gilir }}</td>
+                                        <td class="px-3 py-3 whitespace-nowrap text-right text-[11px] font-black text-rose-600">{{ number_format($receiving->jumlah, 0, ',', '.') }}</td>
+                                        <td class="px-3 py-3 whitespace-nowrap text-center text-[11px] font-bold text-gray-700 uppercase">{{ $receiving->batch }} / {{ $receiving->seri }}</td>
+                                        <td class="px-3 py-3 whitespace-nowrap text-center text-[10px] font-bold text-gray-400 uppercase tracking-tighter">{{ $receiving->emisi }} / {{ $receiving->tahun_anggaran }}</td>
+                                        <td class="px-3 py-3 whitespace-nowrap text-[10px] font-mono text-indigo-600">{{ $receiving->nomor_segel }}</td>
+                                        <td class="px-3 py-3 whitespace-nowrap text-[10px] font-bold text-gray-500 uppercase tracking-tight">{{ $receiving->user->name ?? '-' }}</td>
+                                        <td class="px-3 py-3 whitespace-nowrap text-center">
                                             @if(in_array(auth()->user()->role, ['sortir', 'admin']))
                                                 <div class="flex justify-center items-center space-x-3 transition-opacity">
                                                     <a href="{{ route('hcts-receiving.edit', $receiving->id) }}" class="text-indigo-400 hover:text-indigo-600 transition-colors p-1.5 hover:bg-indigo-50 rounded-lg">

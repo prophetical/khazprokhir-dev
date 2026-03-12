@@ -116,6 +116,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/hcts-hcts-summary/print', [\App\Http\Controllers\HctsReceivingController::class, 'summaryPrint'])->name('hcts-receiving.summary-print');
         Route::get('/hcts-hcts-summary', [\App\Http\Controllers\HctsReceivingController::class, 'summary'])->name('hcts-receiving.summary');
 
+        // HCTS Submission Routes
+        Route::middleware('role:sortir')->group(function () {
+            Route::get('/hcts-submission/create', [\App\Http\Controllers\HctsSubmissionController::class, 'create'])->name('hcts-submission.create');
+            Route::post('/hcts-submission', [\App\Http\Controllers\HctsSubmissionController::class, 'store'])->name('hcts-submission.store');
+            Route::get('/hcts-submission/{hcts_submission}/edit', [\App\Http\Controllers\HctsSubmissionController::class, 'edit'])->name('hcts-submission.edit');
+            Route::put('/hcts-submission/{hcts_submission}', [\App\Http\Controllers\HctsSubmissionController::class, 'update'])->name('hcts-submission.update');
+            Route::delete('/hcts-submission/{hcts_submission}', [\App\Http\Controllers\HctsSubmissionController::class, 'destroy'])->name('hcts-submission.destroy');
+            Route::get('/hcts-submission/batches', [\App\Http\Controllers\HctsSubmissionController::class, 'getAvailableBatches'])->name('hcts-submission.available-batches');
+        });
+        Route::get('/hcts-submission/export', [\App\Http\Controllers\HctsSubmissionController::class, 'export'])->name('hcts-submission.export');
+        Route::get('/hcts-submission/print', [\App\Http\Controllers\HctsSubmissionController::class, 'print'])->name('hcts-submission.print');
+        Route::get('/hcts-submission', [\App\Http\Controllers\HctsSubmissionController::class, 'index'])->name('hcts-submission.index');
+
+        // HCTS Inventory Routes
+        Route::get('/hcts-inventory/export', [\App\Http\Controllers\HctsInventoryController::class, 'export'])->name('hcts-inventory.export');
+        Route::get('/hcts-inventory/print', [\App\Http\Controllers\HctsInventoryController::class, 'print'])->name('hcts-inventory.print');
+        Route::get('/hcts-inventory', [\App\Http\Controllers\HctsInventoryController::class, 'index'])->name('hcts-inventory.index');
+        Route::get('/hcts-inventory/batch-detail', [\App\Http\Controllers\HctsInventoryController::class, 'getBatchDetail'])->name('hcts-inventory.batch-detail');
     });
 
 require __DIR__ . '/auth.php';
