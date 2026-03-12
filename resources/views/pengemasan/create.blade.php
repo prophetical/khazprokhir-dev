@@ -302,7 +302,7 @@
                                             <th class="px-4 py-3 text-xs font-black text-red-500 uppercase text-center w-24">No Dus</th>
                                             <th class="px-4 py-3 text-xs font-black text-red-500 uppercase text-center">Rentang Pack</th>
                                             <th class="px-4 py-3 text-xs font-black text-red-500 uppercase text-center">Rentang Seri</th>
-                                            <th class="px-4 py-3 text-xs font-black text-red-500 uppercase text-center">Jumlah Bilyet (Lbr)</th>
+                                            <th class="px-4 py-3 text-xs font-black text-red-500 uppercase text-center">Jumlah Bilyet</th>
                                             <th class="px-4 py-3 w-14"></th>
                                         </tr>
                                     </thead>
@@ -321,9 +321,9 @@
                                                 </td>
                                                 <td class="px-4 py-3">
                                                     <div class="flex gap-2 items-center">
-                                                        <input type="text" :name="'manual_details['+index+'][seri_awal]'" x-model="box.seri_awal" required class="w-full border-gray-200 rounded-xl text-center text-sm py-2 px-2 uppercase font-bold focus:ring-red-500 focus:border-red-500" placeholder="Seri Awal">
+                                                        <input type="text" :name="'manual_details['+index+'][seri_awal]'" x-model="box.seri_awal" required class="w-full border-gray-200 rounded-xl text-center text-sm py-2 px-2 font-bold focus:ring-red-500 focus:border-red-500" placeholder="Seri Awal">
                                                         <span class="text-gray-400 font-black">-</span>
-                                                        <input type="text" :name="'manual_details['+index+'][seri_akhir]'" x-model="box.seri_akhir" required class="w-full border-gray-200 rounded-xl text-center text-sm py-2 px-2 uppercase font-bold focus:ring-red-500 focus:border-red-500" placeholder="Seri Akhir">
+                                                        <input type="text" :name="'manual_details['+index+'][seri_akhir]'" x-model="box.seri_akhir" required class="w-full border-gray-200 rounded-xl text-center text-sm py-2 px-2 font-bold focus:ring-red-500 focus:border-red-500" placeholder="Seri Akhir">
                                                     </div>
                                                 </td>
                                                 <td class="px-4 py-3">

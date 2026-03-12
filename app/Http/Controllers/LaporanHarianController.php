@@ -29,7 +29,7 @@ class LaporanHarianController extends Controller
         $secondaryData = $data['secondaryData'];
         $secondaryTotals = $data['secondaryTotals'];
         $sisaHariKerja = $data['sisaHariKerja'];
-        
+
         $tanggalLaporan = $filters['tanggal_laporan'];
         $tahunAnggaran = $filters['tahun_anggaran'];
         $tahunEmisi = $filters['tahun_emisi'];
@@ -71,17 +71,17 @@ class LaporanHarianController extends Controller
         $callback = function () use ($reportData, $totals) {
             $file = fopen('php://output', 'w');
             fputcsv($file, [
-                'Pecahan', 
-                'Siap Kemas (Bilyet)', 
-                'Siap Kirim (Bilyet)', 
-                'Siap Kirim (Dus)', 
-                'Total Persediaan (Bilyet)', 
-                'Penyerahan Hari Ini (Bilyet)', 
-                'Penyerahan Hari Ini (Dus)', 
-                'Akumulasi Penyerahan (Bilyet)', 
-                'Target', 
-                'Sisa Target', 
-                'Persentase (%)', 
+                'Pecahan',
+                'Siap Kemas (Bilyet)',
+                'Siap Kirim (Bilyet)',
+                'Siap Kirim (Dus)',
+                'Total Persediaan (Bilyet)',
+                'Penyerahan Hari Ini (Bilyet)',
+                'Penyerahan Hari Ini (Dus)',
+                'Akumulasi Penyerahan (Bilyet)',
+                'Target',
+                'Sisa Target',
+                'Persentase (%)',
                 'Akumulasi Penerimaan HCS'
             ]);
 
@@ -130,7 +130,7 @@ class LaporanHarianController extends Controller
         $tahunEmisiOptions = HcsReceiving::select('emisi')->distinct()->pluck('emisi')->toArray();
         $filters = $this->getFilters($request, $tahunEmisiOptions);
         $data = $this->getReportData($filters);
-        
+
         return view('laporan-harian.print-operasional', array_merge($filters, $data));
     }
 
@@ -190,14 +190,14 @@ class LaporanHarianController extends Controller
             $penyerahanHariIniBilyet = (clone $penyerahanQuery)
                 ->whereDate('tanggal_penyerahan', $tanggalLaporan)
                 ->sum('jumlah_bilyet');
-            $penyerahanHariIniDus = $penyerahanHariIniBilyet / 20000;
+            $penyerahanHariIniDus = ceil($penyerahanHariIniBilyet / 20000);
 
             $akumulasiPenyerahan = (clone $penyerahanQuery)
                 ->whereDate('tanggal_penyerahan', '<=', $tanggalLaporan)
                 ->sum('jumlah_bilyet');
 
             $siapKirimBilyet = $totalPengemasan - $akumulasiPenyerahan;
-            $siapKirimDus = $siapKirimBilyet / 20000;
+            $siapKirimDus = ceil($siapKirimBilyet / 20000);
 
             $siapKemasBilyet = $totalPenerimaan - $totalPengemasan;
 
@@ -239,7 +239,7 @@ class LaporanHarianController extends Controller
         }
 
         $secondaryData = $this->getSecondaryReportData($filters);
-        
+
         return ['reportData' => $reportData, 'totals' => $totals, 'secondaryData' => $secondaryData['data'], 'secondaryTotals' => $secondaryData['totals'], 'sisaHariKerja' => $secondaryData['sisaHariKerja']];
     }
 
@@ -248,15 +248,15 @@ class LaporanHarianController extends Controller
         $tanggalLaporan = Carbon::parse($filters['tanggal_laporan']);
         $tahunAnggaran = $filters['tahun_anggaran'];
         $tahunEmisi = $filters['tahun_emisi'];
-        
+
         $pecahanList = ['S', 'T', 'U', 'V', 'W', 'X', 'Y'];
         $month = $tanggalLaporan->month;
         $targetColumn = "bulan_" . $month;
         $startOfMonth = $tanggalLaporan->copy()->startOfMonth();
         $kemasDate = $tanggalLaporan->copy()->subDay()->toDateString();
-        
+
         $sisaHariKerja = $this->calculateSisaHariKerja($tanggalLaporan);
-        
+
         $data = [];
         $totals = [
             'target_penyerahan_bulan' => 0,
@@ -279,7 +279,7 @@ class LaporanHarianController extends Controller
                 ->where('tahun_anggaran', $tahunAnggaran)
                 ->where('tahun_emisi', $tahunEmisi)
                 ->first();
-            $targetBulan = $target ? ($target->{$targetColumn} ?? 0) : 0;
+            $targetBulan = $target ? ($target->{ $targetColumn} ?? 0) : 0;
 
             // 2. Realisasi Pengemasan Bulan (Accumulation in current month up to tanggalLaporan)
             $pengemasanBulanBilyet = Pengemasan::where('pecahan', $pecahan)
@@ -304,7 +304,7 @@ class LaporanHarianController extends Controller
                 $kemasG1Query->where('tahun_emisi', $tahunEmisi);
             }
             $kemasG1 = $kemasG1Query->sum(DB::raw('jumlah_dus * 20000'));
-            
+
             $kemasG2Query = Pengemasan::where('pecahan', $pecahan)
                 ->where('tahun_anggaran', $tahunAnggaran)
                 ->whereBetween('tanggal_pengemasan', [$startOfMonth->toDateString(), $tanggalLaporan->toDateString()])
@@ -322,7 +322,7 @@ class LaporanHarianController extends Controller
                 $kemasG3Query->where('tahun_emisi', $tahunEmisi);
             }
             $kemasG3 = $kemasG3Query->sum(DB::raw('jumlah_dus * 20000'));
-            
+
             $totalKemas = $kemasG1 + $kemasG2 + $kemasG3;
 
             // 9. Penerimaan HCS (Accumulation in current month up to tanggalLaporan)
@@ -343,7 +343,7 @@ class LaporanHarianController extends Controller
                 $hcsCutpackQuery->where('emisi', $tahunEmisi);
             }
             $hcsCutpack = $hcsCutpackQuery->sum('jumlah');
-            
+
             $totalHcs = $hcsRikyet + $hcsCutpack;
 
             $row = [
@@ -380,8 +380,8 @@ class LaporanHarianController extends Controller
         }
 
         return [
-            'data' => $data, 
-            'totals' => $totals, 
+            'data' => $data,
+            'totals' => $totals,
             'sisaHariKerja' => $sisaHariKerja
         ];
     }
@@ -390,7 +390,7 @@ class LaporanHarianController extends Controller
     {
         $endOfMonth = $date->copy()->endOfMonth();
         $count = 0;
-        
+
         $current = $date->copy();
         while ($current <= $endOfMonth) {
             if ($current->isWeekday()) {
@@ -398,7 +398,7 @@ class LaporanHarianController extends Controller
             }
             $current->addDay();
         }
-        
+
         return $count;
     }
 
