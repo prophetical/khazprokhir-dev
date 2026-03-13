@@ -160,7 +160,6 @@
                             <div class="{{ $pData['soft'] }} border {{ $pData['border'] ?? 'border-gray-100' }} rounded-2xl p-4 transition-all hover:shadow-md">
                                 <div class="flex items-center justify-between mb-2">
                                     <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black {{ $pData['bg'] }} text-white shadow-sm">{{ $p }}</span>
-                                    <svg class="w-4 h-4 {{ $pData['icon'] }} opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m.599-2c-.516.494-1.284.814-2.128.814-1.47 0-2.678-.813-2.678-2.013 0-1.125.833-1.874 1.944-2.115" /></svg>
                                 </div>
                                 <p class="text-sm font-black text-gray-900">{{ number_format($totalP, 0, ',', '.') }}</p>
                             </div>
@@ -221,7 +220,7 @@
                                                     <a href="{{ route('hcts-receiving.edit', $receiving->id) }}" class="text-indigo-400 hover:text-indigo-600 transition-colors p-1.5 hover:bg-indigo-50 rounded-lg">
                                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                                                     </a>
-                                                    <form action="{{ route('hcts-receiving.destroy', $receiving->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                                    <form action="{{ route('hcts-receiving.destroy', $receiving->id) }}" method="POST" class="delete-confirm">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="text-rose-400 hover:text-rose-600 transition-colors p-1.5 hover:bg-rose-50 rounded-lg">

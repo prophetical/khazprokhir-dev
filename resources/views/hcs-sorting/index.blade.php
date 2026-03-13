@@ -9,8 +9,8 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-lg font-bold text-gray-900 uppercase">Total Jumlah Pack Siap Sortir</h3>
+                    <div class="flex justify-center items-center mb-6">
+                        <h3 class="text-md text-center font-bold text-gray-900">Total Jumlah Pack Siap Sortir</h3>
                     </div>
 
                     @php
@@ -117,8 +117,8 @@
                     }" 
                     class="mb-8 bg-white p-6 rounded-xl border-t-4 shadow-sm transition-all duration-500"
                     :class="currentTheme ? currentTheme.border : 'border-gray-100'">
-                        <form method="GET" action="{{ route('hcs-sorting.index') }}" class="flex flex-col md:flex-row gap-5 items-end">
-                            <div class="w-full md:w-1/4">
+                        <form method="GET" action="{{ route('hcs-sorting.index') }}" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+                            <div class="relative">
                                 <label for="pecahan" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 text-center">Pecahan</label>
                                 <select name="pecahan" id="pecahan" x-model="selectedPecahan"
                                         class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 text-center transition-all duration-300"
@@ -129,29 +129,50 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="w-full md:w-1/4">
-                                <label for="batch" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 text-center">Batch</label>
-                                <input id="batch" name="batch" type="text" 
-                                       class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 text-center transition-all duration-300"
-                                       :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
-                                       value="{{ request('batch') }}" placeholder="Batch" />
+                            <div class="relative">
+                                <label for="tahun_anggaran" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 text-center">Tahun Anggaran</label>
+                                <select name="tahun_anggaran" id="tahun_anggaran"
+                                        class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 text-center transition-all duration-300"
+                                        :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
+                                    <option value="">Semua</option>
+                                    @foreach($availableYears as $year)
+                                        <option value="{{ $year }}" {{ request('tahun_anggaran') == $year ? 'selected' : '' }}>{{ $year }}</option>
+                                    @endforeach
+                                </select>
                             </div>
-                            <div class="w-full md:w-1/4">
-                                <label for="seri" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 text-center">Seri</label>
-                                <input id="seri" name="seri" type="text" 
-                                       class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 text-center transition-all duration-300"
-                                       :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
-                                       value="{{ request('seri') }}" placeholder="Seri" />
+                            <div class="relative">
+                                <label for="emisi" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 text-center">Tahun Emisi</label>
+                                <select name="emisi" id="emisi"
+                                        class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 text-center transition-all duration-300"
+                                        :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
+                                    <option value="">Semua</option>
+                                    @foreach($availableEmissions as $emisi)
+                                        <option value="{{ $emisi }}" {{ request('emisi') == $emisi ? 'selected' : '' }}>{{ $emisi }}</option>
+                                    @endforeach
+                                </select>
                             </div>
-                            <div class="w-full md:w-1/4 flex gap-2">
+                            <div class="relative">
+                                <label for="batch" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 text-center">Batch / Seri</label>
+                                <div class="flex gap-2">
+                                    <input id="batch" name="batch" type="text" 
+                                           class="block w-1/2 border-gray-200 rounded-lg shadow-sm text-sm py-3 text-center transition-all duration-300"
+                                           :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
+                                           value="{{ request('batch') }}" placeholder="Batch" />
+                                    <input id="seri" name="seri" type="text" 
+                                           class="block w-1/2 border-gray-200 rounded-lg shadow-sm text-sm py-3 text-center transition-all duration-300"
+                                           :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
+                                           value="{{ request('seri') }}" placeholder="Seri" />
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
                                 <button type="submit" 
                                         class="flex-1 inline-flex justify-center items-center px-4 py-3 rounded-lg font-bold text-xs uppercase tracking-widest transition-all shadow-md active:scale-95"
                                         :class="currentTheme ? (currentTheme.btn + ' ' + currentTheme.text + ' brightness-95 hover:brightness-105') : 'bg-gray-800 text-white hover:bg-gray-700'">
                                     Cari
                                 </button>
                                 <a href="{{ route('hcs-sorting.index') }}" 
-                                   class="flex-1 inline-flex justify-center items-center px-4 py-3 bg-gray-100 border border-gray-200 rounded-lg font-bold text-xs text-gray-400 uppercase tracking-widest shadow-sm hover:bg-gray-200 transition-all text-center">
-                                    Reset
+                                   class="inline-flex justify-center items-center px-4 py-3 bg-gray-100 border border-gray-200 rounded-lg font-bold text-xs text-gray-400 uppercase tracking-widest shadow-sm hover:bg-gray-200 transition-all text-center">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                                 </a>
                             </div>
                         </form>

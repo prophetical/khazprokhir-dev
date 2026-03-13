@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\PenyerahanBi;
 use App\Models\Pengemasan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PenyerahanBiController extends Controller
 {
@@ -13,6 +14,9 @@ class PenyerahanBiController extends Controller
      */
     public function index(Request $request)
     {
+        $availableYears = DB::table('hcs_receivings')->distinct()->whereNotNull('tahun_anggaran')->orderBy('tahun_anggaran', 'desc')->pluck('tahun_anggaran');
+        $availableEmissions = DB::table('hcs_receivings')->distinct()->whereNotNull('emisi')->orderBy('emisi', 'desc')->pluck('emisi');
+
         $query = PenyerahanBi::with('user');
 
         if ($request->filled('pecahan'))
@@ -47,7 +51,7 @@ class PenyerahanBiController extends Controller
         $penyerahans = $query->paginate(20)->withQueryString();
         $missingWarnings = $this->getIncompletePenyerahanWarnings();
 
-        return view('penyerahan-bi.index', compact('penyerahans', 'missingWarnings'));
+        return view('penyerahan-bi.index', compact('penyerahans', 'missingWarnings', 'availableYears', 'availableEmissions'));
     }
 
     /**
@@ -55,8 +59,11 @@ class PenyerahanBiController extends Controller
      */
     public function create()
     {
+        $availableYears = DB::table('hcs_receivings')->distinct()->whereNotNull('tahun_anggaran')->orderBy('tahun_anggaran', 'desc')->pluck('tahun_anggaran');
+        $availableEmissions = DB::table('hcs_receivings')->distinct()->whereNotNull('emisi')->orderBy('emisi', 'desc')->pluck('emisi');
+
         $missingWarnings = $this->getIncompletePenyerahanWarnings();
-        return view('penyerahan-bi.create', compact('missingWarnings'));
+        return view('penyerahan-bi.create', compact('missingWarnings', 'availableYears', 'availableEmissions'));
     }
 
     /**
@@ -65,8 +72,12 @@ class PenyerahanBiController extends Controller
     public function edit($id)
     {
         $penyerahan = PenyerahanBi::findOrFail($id);
+        
+        $availableYears = DB::table('hcs_receivings')->distinct()->whereNotNull('tahun_anggaran')->orderBy('tahun_anggaran', 'desc')->pluck('tahun_anggaran');
+        $availableEmissions = DB::table('hcs_receivings')->distinct()->whereNotNull('emisi')->orderBy('emisi', 'desc')->pluck('emisi');
+
         $missingWarnings = $this->getIncompletePenyerahanWarnings();
-        return view('penyerahan-bi.edit', compact('penyerahan', 'missingWarnings'));
+        return view('penyerahan-bi.edit', compact('penyerahan', 'missingWarnings', 'availableYears', 'availableEmissions'));
     }
 
     /**
@@ -82,17 +93,17 @@ class PenyerahanBiController extends Controller
         $candidates = PenyerahanBi::all();
         $warningsArray = [];
 
-        foreach ($candidates as $p) {
-            // Kumpulkan semua nomor dus dalam range penyerahan ini
-            $rangeRequested = range($p->nomor_dus_awal, $p->nomor_dus_akhir);
-
-            // Cari pengemasan yang memenuhi identitas + overlap range
-            $pengemasans = Pengemasan::where('pecahan', $p->pecahan)
-                ->where('tahun_emisi', $p->tahun_emisi)
-                ->where('tahun_anggaran', $p->tahun_anggaran)
-                ->where('dus_awal', '<=', $p->nomor_dus_akhir)
-                ->where('dus_akhir', '>=', $p->nomor_dus_awal)
-                ->get(['dus_awal', 'dus_akhir']);
+            foreach ($candidates as $p) {
+                // Kumpulkan semua nomor dus dalam range penyerahan ini
+                $rangeRequested = range($p->nomor_dus_awal, $p->nomor_dus_akhir);
+    
+                // Cari pengemasan yang memenuhi identitas + overlap range
+                $pengemasans = Pengemasan::where('pecahan', $p->pecahan)
+                    ->where('tahun_emisi', $p->tahun_emisi)
+                    ->where('tahun_anggaran', $p->tahun_anggaran)
+                    ->where('dus_awal', '<=', $p->nomor_dus_akhir)
+                    ->where('dus_akhir', '>=', $p->nomor_dus_awal)
+                    ->get(['dus_awal', 'dus_akhir']);
 
             // Kumpulkan nomor yang sudah ada
             $existingNums = collect();

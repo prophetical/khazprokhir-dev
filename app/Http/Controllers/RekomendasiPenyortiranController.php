@@ -11,11 +11,23 @@ class RekomendasiPenyortiranController extends Controller
 {
     public function index(Request $request)
     {
+        // 0. Ambil daftar tahun dan emisi untuk dropdown
+        $availableYears = DB::table('hcs_receivings')->distinct()->whereNotNull('tahun_anggaran')->orderBy('tahun_anggaran', 'desc')->pluck('tahun_anggaran');
+        $availableEmissions = DB::table('hcs_receivings')->distinct()->whereNotNull('emisi')->orderBy('emisi', 'desc')->pluck('emisi');
+
         // Ambil semua pack yang belum disortir, dikelompokkan sesuai data penerimaan
         // Karena datanya belum sampai jutaan, kita bisa query semuanya sekaligus dengan aman.
-        $unsortedPacksRaw = Pack::whereNull('hcs_sorting_id')
-            ->join('hcs_receivings', 'packs.hcs_receiving_id', '=', 'hcs_receivings.id')
-            ->select('hcs_receivings.pecahan', 'packs.batch', 'packs.seri', 'packs.pack_number', 'packs.supplier')
+        $query = Pack::whereNull('hcs_sorting_id')
+            ->join('hcs_receivings', 'packs.hcs_receiving_id', '=', 'hcs_receivings.id');
+
+        if ($request->filled('tahun_anggaran')) {
+            $query->where('hcs_receivings.tahun_anggaran', $request->tahun_anggaran);
+        }
+        if ($request->filled('emisi')) {
+            $query->where('hcs_receivings.emisi', $request->emisi);
+        }
+
+        $unsortedPacksRaw = $query->select('hcs_receivings.pecahan', 'packs.batch', 'packs.seri', 'packs.pack_number', 'packs.supplier')
             ->orderBy('hcs_receivings.pecahan')
             ->orderBy('packs.batch')
             ->orderBy('packs.seri')
@@ -138,7 +150,7 @@ class RekomendasiPenyortiranController extends Controller
             'query' => $request->query(),
         ]);
 
-        return view('rekomendasi-penyortiran.index', compact('paginator', 'summaries', 'totalAllPacks', 'totalAllBilyet'));
+        return view('rekomendasi-penyortiran.index', compact('paginator', 'summaries', 'totalAllPacks', 'totalAllBilyet', 'availableYears', 'availableEmissions'));
     }
 
     /**

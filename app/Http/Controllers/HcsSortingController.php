@@ -12,6 +12,10 @@ class HcsSortingController extends Controller
 {
     public function index(Request $request)
     {
+        // 0. Ambil daftar tahun dan emisi untuk dropdown
+        $availableYears = DB::table('hcs_receivings')->distinct()->whereNotNull('tahun_anggaran')->orderBy('tahun_anggaran', 'desc')->pluck('tahun_anggaran');
+        $availableEmissions = DB::table('hcs_receivings')->distinct()->whereNotNull('emisi')->orderBy('emisi', 'desc')->pluck('emisi');
+
         // 1. Siapin Query untuk Grup yang Tersedia beserta Filternya
         $query = Pack::whereNull('hcs_sorting_id')
             ->join('hcs_receivings', 'packs.hcs_receiving_id', '=', 'hcs_receivings.id');
@@ -25,6 +29,12 @@ class HcsSortingController extends Controller
         if ($request->filled('seri')) {
             $query->where('packs.seri', 'like', '%' . $request->seri . '%');
         }
+        if ($request->filled('tahun_anggaran')) {
+            $query->where('hcs_receivings.tahun_anggaran', $request->tahun_anggaran);
+        }
+        if ($request->filled('emisi')) {
+            $query->where('hcs_receivings.emisi', $request->emisi);
+        }
 
         $AvailableGroups = $query->select('hcs_receivings.pecahan', 'packs.batch', 'packs.seri', DB::raw('count(*) as total_pack'))
             ->groupBy('hcs_receivings.pecahan', 'packs.batch', 'packs.seri')
@@ -32,9 +42,17 @@ class HcsSortingController extends Controller
             ->paginate(20)->withQueryString();
 
         // 2. Bikin Ringkasan per Pecahan
-        $summaryData = Pack::whereNull('hcs_sorting_id')
-            ->join('hcs_receivings', 'packs.hcs_receiving_id', '=', 'hcs_receivings.id')
-            ->select('hcs_receivings.pecahan', DB::raw('count(*) as total_pack'))
+        $summaryQuery = Pack::whereNull('hcs_sorting_id')
+            ->join('hcs_receivings', 'packs.hcs_receiving_id', '=', 'hcs_receivings.id');
+
+        if ($request->filled('tahun_anggaran')) {
+            $summaryQuery->where('hcs_receivings.tahun_anggaran', $request->tahun_anggaran);
+        }
+        if ($request->filled('emisi')) {
+            $summaryQuery->where('hcs_receivings.emisi', $request->emisi);
+        }
+
+        $summaryData = $summaryQuery->select('hcs_receivings.pecahan', DB::raw('count(*) as total_pack'))
             ->groupBy('hcs_receivings.pecahan')
             ->pluck('total_pack', 'hcs_receivings.pecahan')
             ->toArray();
@@ -48,7 +66,7 @@ class HcsSortingController extends Controller
             $totalAllPacks += $count;
         }
 
-        return view('hcs-sorting.index', compact('AvailableGroups', 'summaries', 'totalAllPacks'));
+        return view('hcs-sorting.index', compact('AvailableGroups', 'summaries', 'totalAllPacks', 'availableYears', 'availableEmissions'));
     }
 
     public function create(Request $request)

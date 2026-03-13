@@ -221,7 +221,7 @@
                                     class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-2.5 px-3 transition-all font-bold focus:ring-opacity-50"
                                     :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'" required>
                                     <option value="">-- Pilih --</option>
-                                    @foreach(['2024','2025','2026','2027'] as $ta)
+                                    @foreach($availableYears as $ta)
                                         <option value="{{ $ta }}" {{ old('tahun_anggaran')==$ta ? 'selected' : '' }}>{{ $ta }}</option>
                                     @endforeach
                                 </select>
@@ -232,7 +232,7 @@
                                     class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-2.5 px-3 transition-all font-bold focus:ring-opacity-50"
                                     :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'" required>
                                     <option value="">-- Pilih --</option>
-                                    @foreach(['2016','2017','2018','2019','2020','2021','2022','2023','2024','2025'] as $te)
+                                    @foreach($availableEmissions as $te)
                                         <option value="{{ $te }}" {{ old('tahun_emisi')==$te ? 'selected' : '' }}>{{ $te }}</option>
                                     @endforeach
                                 </select>

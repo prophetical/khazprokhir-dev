@@ -142,7 +142,7 @@ class PengemasanController extends Controller
 
         $callback = function () use ($query) {
             $file = fopen('php://output', 'w');
-            fputcsv($file, ['Tanggal', 'Gilir', 'Thn Anggaran', 'Thn Emisi', 'Pecahan', 'Batch', 'Seri', 'Pack Awal', 'Pack Akhir', 'Jml Pack', 'Total Bilyet', 'Jml Dus', 'Dus Awal', 'Dus Akhir', 'Petugas']);
+            fputcsv($file, ['Tanggal', 'Gilir', 'Thn Anggaran', 'Thn Emisi', 'Pecahan', 'Batch', 'Seri', 'Pack Awal', 'Pack Akhir', 'Jml Pack', 'Total Bilyet', 'Dus', 'Dus Awal', 'Dus Akhir', 'Petugas']);
 
             $query->chunk(100, function ($pengemasans) use ($file) {
                     foreach ($pengemasans as $row) {
@@ -157,12 +157,13 @@ class PengemasanController extends Controller
                             $row->pack_awal,
                             $row->pack_akhir,
                             $row->jumlah_pack,
-                            $row->packs->sum('jumlah'),
+                            $row->total_bilyet,
                             $row->jumlah_dus,
                             $row->dus_awal,
                             $row->dus_akhir,
                             $row->user->name ?? '-'
                         ]);
+
                     }
                 }
                 );
@@ -306,7 +307,7 @@ class PengemasanController extends Controller
                 // Jangan pecah per 4. Tapi kita harus pastikan bahwa block ini minimal 4.
                 // Jika ingin Kemas Semua, pastikan bisa kelipatan 4.
                 // Namun, validasi form sudah memastikan harus kelipatan 4 ketika store.
-                // Untuk "Kemas Semua", kita bisa batasi block akhir agar selalu kelipatan 4 
+                // Untuk "Kemas Semua", kita bisa batasi block akhir agar selalu kelipatan 4
                 // dari pack_awal, ATAU biarkan index menampilkan keseluruhan range, dan "Kemas Semua"
                 // akan mengirimkan range maksimal yang merupakan kelipatan 4.
 
@@ -471,7 +472,8 @@ class PengemasanController extends Controller
                 throw ValidationException::withMessages(['manual_details' => 'Detail dus manual harus diisi jika mode Kemas Sisa Pack aktif.']);
             }
             $jumlahDus = count($manualDetails);
-        } else {
+        }
+        else {
             $jumlahDus = ($jumlahPack / 4) * 9;
         }
 
@@ -500,7 +502,8 @@ class PengemasanController extends Controller
                 $sudahAdaNoDus = array_column($manualDetails, 'no_dus');
                 $nomorDusAwal = min($sudahAdaNoDus);
                 $nomorDusAkhir = max($sudahAdaNoDus);
-            } else {
+            }
+            else {
                 $nomorDusAwal = $lastDus ? $lastDus->no_dus + 1 : 1;
                 $nomorDusAkhir = $nomorDusAwal + $jumlahDus - 1;
             }
@@ -514,7 +517,8 @@ class PengemasanController extends Controller
                     ->where('tahun_anggaran', $request->tahun_anggaran)
                     ->where('tahun_emisi', $request->tahun_emisi);
             })->whereIn('no_dus', $sudahAdaNoDus)->exists();
-        } else {
+        }
+        else {
             $usedDusExists = DetailPengemasan::whereHas('pengemasan', function ($query) use ($request) {
                 $query->where('pecahan', $request->pecahan)
                     ->where('tahun_anggaran', $request->tahun_anggaran)
@@ -527,6 +531,8 @@ class PengemasanController extends Controller
                 'dus_awal' => "Satu atau lebih nomor dus sudah digunakan pada pengemasan lain untuk pecahan, tahun emisi, dan tahun anggaran yang sama.",
             ]);
         }
+
+        $totalBilyet = $packs->sum('jumlah');
 
         DB::beginTransaction();
         try {
@@ -542,10 +548,12 @@ class PengemasanController extends Controller
                 'pack_akhir' => $packAkhir,
                 'jumlah_pack' => $jumlahPack,
                 'jumlah_dus' => $jumlahDus,
+                'total_bilyet' => $totalBilyet,
                 'dus_awal' => $nomorDusAwal,
                 'dus_akhir' => $nomorDusAkhir,
                 'created_by' => auth()->id(),
             ]);
+
 
             Pack::whereIn('id', $packs->pluck('id'))->update(['id_pengemasan' => $pengemasan->id]);
 
@@ -568,9 +576,11 @@ class PengemasanController extends Controller
                         'jumlah_bilyet' => $detail['jumlah_bilyet'] ?? 0,
                     ]);
                 }
-            } else {
-                $this->generateDetailPengemasan($pengemasan, $request->seri, $nomorDusAwal, $request->batch, $parsedChunks);
             }
+            else {
+                $this->generateDetailPengemasan($pengemasan, $request->seri, $nomorDusAwal, $request->batch, $parsedChunks, $packs);
+            }
+
 
             DB::commit();
             return redirect()->route('pengemasan.index')->with('success', 'Data pengemasan berhasil diproses.');
@@ -581,7 +591,7 @@ class PengemasanController extends Controller
         }
     }
 
-    private function generateDetailPengemasan($pengemasan, $seriRaw, $startNumber, $batch, $parsedChunks)
+    private function generateDetailPengemasan($pengemasan, $seriRaw, $startNumber, $batch, $parsedChunks, $packs)
     {
         // Pola pembacaan seri: format ideal [AAA]-[BBB][No]
         // Contoh: RJ-MJ9 -> AAA = RJ, BBB = MJ
@@ -617,36 +627,73 @@ class PengemasanController extends Controller
             $p3 = $p1 + 2;
             $p4 = $p1 + 3;
 
+            // Hitung total bilyet untuk chunk ini saja (4 pack)
+            $chunkPackNumbers = [$p1, $p2, $p3, $p4];
+            $chunkBilyet = $packs->whereIn('pack_number', $chunkPackNumbers)->sum('jumlah');
+
+            // Standard bilyet per dus adalah total chunk / 9
+            // Jika 180.000, maka 20.000. Jika buntut, sesuaikan.
+            $bilyetPerDus = floor($chunkBilyet / 9);
+            $sisaBilyet = $chunkBilyet % 9;
+
             // Dus 1: Pack 1-4, Pola 3
-            $this->createDusRow($pengemasan->id, $currentNoDus++, $p1, $p4, $pola3Awal, $pola3Akhir, $batch);
+            $dusBilyet = $bilyetPerDus + ($sisaBilyet > 0 ? 1 : 0);
+            if ($sisaBilyet > 0)
+                $sisaBilyet--;
+            $this->createDusRow($pengemasan->id, $currentNoDus++, $p1, $p4, $pola3Awal, $pola3Akhir, $batch, $dusBilyet);
 
             // Dus 2: Pack 1, Pola 2
-            $this->createDusRow($pengemasan->id, $currentNoDus++, $p1, $p1, $pola2Awal, $pola2Akhir, $batch);
+            $dusBilyet = $bilyetPerDus + ($sisaBilyet > 0 ? 1 : 0);
+            if ($sisaBilyet > 0)
+                $sisaBilyet--;
+            $this->createDusRow($pengemasan->id, $currentNoDus++, $p1, $p1, $pola2Awal, $pola2Akhir, $batch, $dusBilyet);
 
             // Dus 3: Pack 1, Pola 1
-            $this->createDusRow($pengemasan->id, $currentNoDus++, $p1, $p1, $pola1Awal, $pola1Akhir, $batch);
+            $dusBilyet = $bilyetPerDus + ($sisaBilyet > 0 ? 1 : 0);
+            if ($sisaBilyet > 0)
+                $sisaBilyet--;
+            $this->createDusRow($pengemasan->id, $currentNoDus++, $p1, $p1, $pola1Awal, $pola1Akhir, $batch, $dusBilyet);
 
             // Dus 4: Pack 2, Pola 2
-            $this->createDusRow($pengemasan->id, $currentNoDus++, $p2, $p2, $pola2Awal, $pola2Akhir, $batch);
+            $dusBilyet = $bilyetPerDus + ($sisaBilyet > 0 ? 1 : 0);
+            if ($sisaBilyet > 0)
+                $sisaBilyet--;
+            $this->createDusRow($pengemasan->id, $currentNoDus++, $p2, $p2, $pola2Awal, $pola2Akhir, $batch, $dusBilyet);
 
             // Dus 5: Pack 2, Pola 1
-            $this->createDusRow($pengemasan->id, $currentNoDus++, $p2, $p2, $pola1Awal, $pola1Akhir, $batch);
+            $dusBilyet = $bilyetPerDus + ($sisaBilyet > 0 ? 1 : 0);
+            if ($sisaBilyet > 0)
+                $sisaBilyet--;
+            $this->createDusRow($pengemasan->id, $currentNoDus++, $p2, $p2, $pola1Awal, $pola1Akhir, $batch, $dusBilyet);
 
             // Dus 6: Pack 3, Pola 2
-            $this->createDusRow($pengemasan->id, $currentNoDus++, $p3, $p3, $pola2Awal, $pola2Akhir, $batch);
+            $dusBilyet = $bilyetPerDus + ($sisaBilyet > 0 ? 1 : 0);
+            if ($sisaBilyet > 0)
+                $sisaBilyet--;
+            $this->createDusRow($pengemasan->id, $currentNoDus++, $p3, $p3, $pola2Awal, $pola2Akhir, $batch, $dusBilyet);
 
             // Dus 7: Pack 3, Pola 1
-            $this->createDusRow($pengemasan->id, $currentNoDus++, $p3, $p3, $pola1Awal, $pola1Akhir, $batch);
+            $dusBilyet = $bilyetPerDus + ($sisaBilyet > 0 ? 1 : 0);
+            if ($sisaBilyet > 0)
+                $sisaBilyet--;
+            $this->createDusRow($pengemasan->id, $currentNoDus++, $p3, $p3, $pola1Awal, $pola1Akhir, $batch, $dusBilyet);
 
             // Dus 8: Pack 4, Pola 2
-            $this->createDusRow($pengemasan->id, $currentNoDus++, $p4, $p4, $pola2Awal, $pola2Akhir, $batch);
+            $dusBilyet = $bilyetPerDus + ($sisaBilyet > 0 ? 1 : 0);
+            if ($sisaBilyet > 0)
+                $sisaBilyet--;
+            $this->createDusRow($pengemasan->id, $currentNoDus++, $p4, $p4, $pola2Awal, $pola2Akhir, $batch, $dusBilyet);
 
             // Dus 9: Pack 4, Pola 1
-            $this->createDusRow($pengemasan->id, $currentNoDus++, $p4, $p4, $pola1Awal, $pola1Akhir, $batch);
+            $dusBilyet = $bilyetPerDus + ($sisaBilyet > 0 ? 1 : 0);
+            if ($sisaBilyet > 0)
+                $sisaBilyet--;
+            $this->createDusRow($pengemasan->id, $currentNoDus++, $p4, $p4, $pola1Awal, $pola1Akhir, $batch, $dusBilyet);
+
         }
     }
 
-    private function createDusRow($id_pengemasan, $noDus, $packAwal, $packAkhir, $seriAwal, $seriAkhir, $batch)
+    private function createDusRow($id_pengemasan, $noDus, $packAwal, $packAkhir, $seriAwal, $seriAkhir, $batch, $jumlahBilyet)
     {
         DetailPengemasan::create([
             'id_pengemasan' => $id_pengemasan,
@@ -656,9 +703,10 @@ class PengemasanController extends Controller
             'seri_awal' => $seriAwal,
             'seri_akhir' => $seriAkhir,
             'batch' => $batch,
-            'jumlah_bilyet' => 20000,
+            'jumlah_bilyet' => $jumlahBilyet,
         ]);
     }
+
 
     public function show($id)
     {

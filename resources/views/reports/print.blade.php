@@ -30,7 +30,7 @@
         
         <!-- Action Toolbar (Hidden on Print) -->
         <div class="no-print flex justify-between items-center mb-8 pb-6 border-b border-gray-100">
-            <a href="{{ route('reports.index', ['start_date' => $startDate, 'end_date' => $endDate, 'gilir' => $gilir, 'pecahan' => $pecahan ?? '']) }}" class="text-sm font-medium text-gray-500 hover:text-indigo-600 flex items-center transition-colors">
+            <a href="{{ route('reports.index', ['start_date' => $startDate, 'end_date' => $endDate, 'gilir' => $gilir, 'pecahan' => $pecahan ?? '', 'tahun_anggaran' => $tahunAnggaran, 'tahun_emisi' => $tahunEmisi]) }}" class="text-sm font-medium text-gray-500 hover:text-indigo-600 flex items-center transition-colors">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
                 Kembali ke Dashboard
             </a>
@@ -47,7 +47,7 @@
                 <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-4">Khazprokhir Management System</p>
                 
                 <!-- Filter Context -->
-                <div class="flex items-center space-x-3 text-xs mb-4">
+                <div class="flex flex-wrap items-center gap-3 text-xs mb-4">
                     <div class="bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100 flex items-center">
                         <span class="text-gray-400 mr-2">Periode:</span>
                         <span class="font-bold text-gray-700">
@@ -58,6 +58,18 @@
                             @endif
                         </span>
                     </div>
+                    @if($tahunAnggaran)
+                    <div class="bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-100 flex items-center">
+                        <span class="text-amber-400 mr-2">TA:</span>
+                        <span class="font-bold text-amber-700 uppercase">{{ $tahunAnggaran }}</span>
+                    </div>
+                    @endif
+                    @if($tahunEmisi)
+                    <div class="bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100 flex items-center">
+                        <span class="text-blue-400 mr-2">TE:</span>
+                        <span class="font-bold text-blue-700 uppercase">{{ $tahunEmisi }}</span>
+                    </div>
+                    @endif
                     @if($gilir)
                     <div class="bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100 flex items-center">
                         <span class="text-indigo-400 mr-2">Shift:</span>
@@ -71,6 +83,7 @@
                     </div>
                     @endif
                 </div>
+
 
                 <!-- Small Global Totals -->
                 <div class="flex items-center gap-2">

@@ -120,10 +120,10 @@
                         @if(isset($pecahan))
                             <input type="hidden" name="pecahan" value="{{ $pecahan }}">
                         @endif
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-end">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 items-end">
                             
                             <!-- Date Range -->
-                            <div class="md:col-span-2 lg:col-span-2 grid grid-cols-2 gap-4">
+                            <div class="md:col-span-2 lg:col-span-1 xl:col-span-2 grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Dari Tanggal</label>
                                     <input id="start_date" name="start_date" type="date" 
@@ -138,6 +138,32 @@
                                            :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
                                            value="{{ $endDate }}" />
                                 </div>
+                            </div>
+
+                            <!-- TA Filter -->
+                            <div class="col-span-1">
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Tahun Anggaran</label>
+                                <select id="tahun_anggaran" name="tahun_anggaran" 
+                                        class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 text-center transition-all duration-300 font-bold"
+                                        :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
+                                    <option value="">Semua TA</option>
+                                    @foreach($availableYears as $year)
+                                        <option value="{{ $year }}" {{ $tahunAnggaran == $year ? 'selected' : '' }}>{{ $year }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- TE Filter -->
+                            <div class="col-span-1">
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Tahun Emisi</label>
+                                <select id="tahun_emisi" name="tahun_emisi" 
+                                        class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 text-center transition-all duration-300 font-bold"
+                                        :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
+                                    <option value="">Semua TE</option>
+                                    @foreach($availableEmissions as $emisi)
+                                        <option value="{{ $emisi }}" {{ $tahunEmisi == $emisi ? 'selected' : '' }}>{{ $emisi }}</option>
+                                    @endforeach
+                                </select>
                             </div>
 
                             <!-- Gilir Filter -->
@@ -161,7 +187,7 @@
                                             :class="currentTheme ? (currentTheme.btn + ' ' + currentTheme.text + ' brightness-95 hover:brightness-105') : 'bg-gray-800 text-white'">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                                     </button>
-                                    <a href="{{ route('reports.index', isset($pecahan) ? ['pecahan' => $pecahan] : []) }}" 
+                                    <a href="{{ route('reports.index', array_filter(['pecahan' => $pecahan ?? null])) }}" 
                                        class="flex-1 inline-flex justify-center items-center px-4 py-3 bg-gray-100 border border-gray-200 rounded-lg font-bold text-xs text-gray-400 uppercase tracking-widest shadow-sm hover:bg-gray-200 transition-all text-center">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                                     </a>
@@ -171,24 +197,35 @@
 
                         <!-- Pemisah antara Form Pencarian dan Tombol Export -->
                         <div class="mt-6 pt-4 border-t border-gray-100 flex flex-wrap gap-2 justify-end lg:justify-end">
-                            <a href="{{ route('reports.export', ['start_date' => $startDate, 'end_date' => $endDate, 'gilir' => $gilir, 'pecahan' => $pecahan ?? '']) }}" 
+                            @php
+                                $exportParams = array_filter([
+                                    'start_date' => $startDate,
+                                    'end_date' => $endDate,
+                                    'gilir' => $gilir,
+                                    'pecahan' => $pecahan ?? null,
+                                    'tahun_anggaran' => $tahunAnggaran,
+                                    'tahun_emisi' => $tahunEmisi
+                                ]);
+                            @endphp
+                            <a href="{{ route('reports.export', $exportParams) }}" 
                                class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors shadow-sm" title="Export Excel (CSV)">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                                 Excel
                             </a>
-                            <a href="{{ route('reports.print', ['start_date' => $startDate, 'end_date' => $endDate, 'gilir' => $gilir, 'pecahan' => $pecahan ?? '']) }}" 
+                            <a href="{{ route('reports.print', $exportParams) }}" 
                                target="_blank"
                                class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium bg-rose-50 text-rose-700 border border-rose-200 rounded-lg hover:bg-rose-100 transition-colors shadow-sm" title="Export PDF / Print">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
                                 PDF
                             </a>
-                            <a href="{{ route('reports.print', ['start_date' => $startDate, 'end_date' => $endDate, 'gilir' => $gilir, 'pecahan' => $pecahan ?? '', 'autoprint' => 1]) }}" 
+                            <a href="{{ route('reports.print', array_merge($exportParams, ['autoprint' => 1])) }}" 
                                target="_blank"
                                class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium bg-gray-50 text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors shadow-sm" title="Cetak Langsung">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 00-2 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
                                 Print
                             </a>
                         </div>
+
                     </form>
                 </div>
             </div>

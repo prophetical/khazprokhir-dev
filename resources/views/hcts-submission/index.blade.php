@@ -38,19 +38,46 @@
                 <div class="p-6">
                     <form action="{{ route('hcts-submission.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
                         <div class="md:col-span-2 grid grid-cols-2 gap-4">
-                            <div>
-                                <x-input-label for="start_date" :value="__('Mulai Tanggal')" class="text-[8px] font-black tracking-widest text-gray-500 mb-1" />
-                                <x-text-input id="start_date" name="start_date" type="date" class="block w-full bg-gray-50/50 border-gray-200 focus:bg-white transition-all duration-200" :value="$startDate" />
+                            <div class="relative group">
+                                <x-input-label for="start_date" :value="__('Mulai Tanggal')" class="text-[9px] font-black tracking-widest text-emerald-600 mb-1.5 uppercase" />
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <svg class="h-4 w-4 text-emerald-400 group-hover:text-emerald-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                    </div>
+                                    <input id="start_date" name="start_date" type="date" 
+                                        class="block w-full pl-10 pr-3 py-2.5 bg-emerald-50/30 border-emerald-100 focus:border-emerald-500 focus:bg-white focus:ring focus:ring-emerald-200 focus:ring-opacity-50 rounded-xl text-xs font-bold text-gray-700 transition-all duration-300 shadow-sm" 
+                                        value="{{ $startDate }}" />
+                                </div>
                             </div>
-                            <div>
-                                <x-input-label for="end_date" :value="__('Sampai Tanggal')" class="text-[8px] font-black tracking-widest text-gray-500 mb-1" />
-                                <x-text-input id="end_date" name="end_date" type="date" class="block w-full bg-gray-50/50 border-gray-200 focus:bg-white transition-all duration-200" :value="$endDate" />
+                            <div class="relative group">
+                                <x-input-label for="end_date" :value="__('Sampai Tanggal')" class="text-[9px] font-black tracking-widest text-emerald-600 mb-1.5 uppercase" />
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <svg class="h-4 w-4 text-emerald-400 group-hover:text-emerald-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                    </div>
+                                    <input id="end_date" name="end_date" type="date" 
+                                        class="block w-full pl-10 pr-3 py-2.5 bg-emerald-50/30 border-emerald-100 focus:border-emerald-500 focus:bg-white focus:ring focus:ring-emerald-200 focus:ring-opacity-50 rounded-xl text-xs font-bold text-gray-700 transition-all duration-300 shadow-sm" 
+                                        value="{{ $endDate }}" />
+                                </div>
                             </div>
                         </div>
 
-                        <div>
-                            <x-input-label for="search" :value="__('Cari Nomor BA')" class="text-[8px] font-black tracking-widest text-gray-500 mb-1" />
-                            <x-text-input id="search" name="search" type="text" class="block w-full bg-gray-50/50 border-gray-200 focus:bg-white transition-all duration-200" :value="$search" placeholder="BA..." />
+                        <div class="relative group">
+                            <x-input-label for="search" :value="__('Cari Data')" class="text-[9px] font-black tracking-widest text-indigo-600 mb-1.5 uppercase" />
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg class="h-4 w-4 text-indigo-400 group-hover:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    </svg>
+                                </div>
+                                <input id="search" name="search" type="text" 
+                                    class="block w-full pl-10 pr-3 py-2.5 bg-indigo-50/30 border-indigo-100 focus:border-indigo-500 focus:bg-white focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-xl text-xs font-bold text-gray-700 transition-all duration-300 shadow-sm" 
+                                    value="{{ $search }}" placeholder="BA, Pecahan, TA..." />
+                            </div>
                         </div>
 
                         <div class="flex flex-col md:flex-row gap-2 h-auto md:h-[42px]">
@@ -116,8 +143,8 @@
                         <tbody class="divide-y divide-gray-100">
                             @forelse($submissions as $submission)
                                 <tr class="hover:bg-gray-50/50 transition-colors group text-[11px]">
-                                    <td class="px-3 py-3 font-bold text-gray-600">
-                                        {{ \Carbon\Carbon::parse($submission->tanggal_penyerahan)->format('d/m/y') }}
+                                    <td class="px-3 py-3 font-bold text-gray-600 whitespace-nowrap">
+                                        {{ \Carbon\Carbon::parse($submission->tanggal_penyerahan)->locale('id')->isoFormat('D MMMM YYYY') }}
                                     </td>
                                     <td class="px-3 py-3 font-black text-gray-600 italic underline decoration-gray-100">{{ $submission->nomor_ba }}</td>
                                     <td class="px-2 py-3 text-center">
@@ -169,7 +196,7 @@
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                     </svg>
                                                 </a>
-                                                <form action="{{ route('hcts-submission.destroy', $submission) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                                <form action="{{ route('hcts-submission.destroy', $submission) }}" method="POST" class="inline-block delete-confirm">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="p-1.5 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all" title="Hapus">

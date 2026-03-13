@@ -126,7 +126,7 @@
                                     class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-3 transition-all font-bold focus:ring-opacity-50"
                                     :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
                                     <option value="">Semua</option>
-                                    @foreach(['2024','2025','2026','2027'] as $ta)
+                                    @foreach($availableYears as $ta)
                                         <option value="{{ $ta }}" {{ request('tahun_anggaran')==$ta ? 'selected' : '' }}>{{ $ta }}</option>
                                     @endforeach
                                 </select>
@@ -219,8 +219,8 @@
                                             'nomor_ba'           => 'Nomor BA',
                                             'pecahan'            => 'Identitas',
                                             'nomor_dus_awal'     => 'Rentang Dus',
-                                            'jumlah_dus'         => 'Jml Dus',
-                                            'jumlah_bilyet'      => 'Jml Bilyet',
+                                            'jumlah_dus'         => 'Dus',
+                                            'jumlah_bilyet'      => 'Bilyet',
                                             'status_data'        => 'Status',
                                         ];
                                     @endphp
@@ -273,7 +273,7 @@
                                             </span>
                                         </td>
                                         <td class="px-4 py-3 whitespace-nowrap text-center">
-                                            <span class="inline-flex items-center justify-center h-7 w-7 rounded-full bg-purple-100 text-purple-800 text-xs font-black">{{ $row->jumlah_dus }}</span>
+                                            <span> {{ number_format($row->jumlah_dus, 0, ',', '.') }}</span>
                                         </td>
                                         <td class="px-4 py-3 whitespace-nowrap text-xs font-black text-emerald-600 text-right">
                                             {{ number_format($row->jumlah_bilyet, 0, ',', '.') }}

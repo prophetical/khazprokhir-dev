@@ -18,12 +18,17 @@ class HctsSubmissionController extends Controller
 
         $query = HctsSubmission::with(['user', 'batches']);
 
-        if ($startDate && $endDate) {
-            $query->whereBetween('tanggal_penyerahan', [$startDate, $endDate]);
-        }
-
         if ($search) {
-            $query->where('nomor_ba', 'like', "%{$search}%");
+            $query->where(function($q) use ($search) {
+                $q->where('nomor_ba', 'like', "%{$search}%")
+                  ->orWhere('pecahan', 'like', "%{$search}%")
+                  ->orWhere('tahun_anggaran', 'like', "%{$search}%")
+                  ->orWhere('tahun_emisi', 'like', "%{$search}%")
+                  ->orWhere('pemasok1', 'like', "%{$search}%")
+                  ->orWhere('pemasok2', 'like', "%{$search}%");
+            });
+        } elseif ($startDate && $endDate) {
+            $query->whereBetween('tanggal_penyerahan', [$startDate, $endDate]);
         }
 
         $submissions = $query->latest()->paginate(10)->withQueryString();
@@ -51,11 +56,18 @@ class HctsSubmissionController extends Controller
             fputcsv($file, ['Tanggal Penyerahan', 'Nomor BA', 'Pecahan', 'Tahun Anggaran', 'Tahun Emisi', 'Jumlah Bilyet', 'Pemasok 1', 'Pemasok 2', 'Batch Detail', 'Petugas']);
 
             $query = HctsSubmission::with(['user', 'batches']);
-            if ($request->filled('start_date') && $request->filled('end_date')) {
-                $query->whereBetween('tanggal_penyerahan', [$request->start_date, $request->end_date]);
-            }
             if ($request->filled('search')) {
-                $query->where('nomor_ba', 'like', "%{$request->search}%");
+                $search = $request->search;
+                $query->where(function($q) use ($search) {
+                    $q->where('nomor_ba', 'like', "%{$search}%")
+                      ->orWhere('pecahan', 'like', "%{$search}%")
+                      ->orWhere('tahun_anggaran', 'like', "%{$search}%")
+                      ->orWhere('tahun_emisi', 'like', "%{$search}%")
+                      ->orWhere('pemasok1', 'like', "%{$search}%")
+                      ->orWhere('pemasok2', 'like', "%{$search}%");
+                });
+            } elseif ($request->filled('start_date') && $request->filled('end_date')) {
+                $query->whereBetween('tanggal_penyerahan', [$request->start_date, $request->end_date]);
             }
 
             $query->latest()->chunk(100, function ($rows) use ($file) {
@@ -93,11 +105,17 @@ class HctsSubmissionController extends Controller
         $search = $request->input('search');
 
         $query = HctsSubmission::with(['user', 'batches']);
-        if ($startDate && $endDate) {
-            $query->whereBetween('tanggal_penyerahan', [$startDate, $endDate]);
-        }
         if ($search) {
-            $query->where('nomor_ba', 'like', "%{$search}%");
+            $query->where(function($q) use ($search) {
+                $q->where('nomor_ba', 'like', "%{$search}%")
+                  ->orWhere('pecahan', 'like', "%{$search}%")
+                  ->orWhere('tahun_anggaran', 'like', "%{$search}%")
+                  ->orWhere('tahun_emisi', 'like', "%{$search}%")
+                  ->orWhere('pemasok1', 'like', "%{$search}%")
+                  ->orWhere('pemasok2', 'like', "%{$search}%");
+            });
+        } elseif ($startDate && $endDate) {
+            $query->whereBetween('tanggal_penyerahan', [$startDate, $endDate]);
         }
 
         $submissions = $query->latest()->get();

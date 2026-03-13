@@ -123,9 +123,9 @@
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-indigo-50/50">
                                     <tr>
-                                        <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-widest">Tahun<br>Anggaran/Emisi</th>
+                                        <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-widest">TA/TE</th>
                                         <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-widest">Pecahan</th>
-                                        <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-widest">Batch & Seri</th>
+                                        <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-widest">Batch/Seri</th>
                                         <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-widest">Rentang Pack</th>
                                         <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-widest">Jumlah Pack</th>
                                         <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-widest">Aksi</th>

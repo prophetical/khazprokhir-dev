@@ -142,7 +142,6 @@
                         confirmButtonColor: '#4f46e5'
                     });
                 @endif
-
                 const scrollContainer = document.getElementById('main-scroll-container');
                 const header = document.getElementById('top-header');
 
@@ -163,6 +162,36 @@
                         }
                     });
                 }
+
+                // Global Delete Confirmation Handler
+                document.addEventListener('submit', (e) => {
+                    const form = e.target;
+                    
+                    if (form.classList.contains('delete-confirm') || form.classList.contains('delete-confirm-double')) {
+                        e.preventDefault();
+                        
+                        Swal.fire({
+                            title: 'Apakah Anda yakin?',
+                            text: "Data yang dihapus tidak dapat dikembalikan!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#e11d48', // rose-600
+                            cancelButtonColor: '#4b5563', // gray-600
+                            confirmButtonText: 'Ya, Hapus!',
+                            cancelButtonText: 'Batal',
+                            borderRadius: '1.5rem',
+                            customClass: {
+                                popup: 'rounded-[2rem] border-0 shadow-2xl p-8',
+                                confirmButton: 'rounded-xl font-bold uppercase tracking-widest text-[10px] px-8 py-3.5',
+                                cancelButton: 'rounded-xl font-bold uppercase tracking-widest text-[10px] px-8 py-3.5'
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                form.submit();
+                            }
+                        });
+                    }
+                });
             });
         </script>
     </body>

@@ -60,76 +60,6 @@
             <span x-show="!sidebarCollapsed" x-transition class="ml-3 text-sm font-medium whitespace-nowrap overflow-hidden">Laporan Harian</span>
         </a>
 
-        <!-- HCTS Receiving Group -->
-        <div class="space-y-1">
-            <button @click="hctsOpen = !hctsOpen; if(sidebarCollapsed) sidebarCollapsed = false;"
-               class="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('hcts-receiving.*') ? 'text-white font-semibold bg-white/10' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
-               title="Penerimaan HCTS">
-                <div class="flex items-center">
-                    <div class="shrink-0 w-8 flex justify-center">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m8.25 3v6.75m0 0l-3-3m3 3l3-3M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
-                        </svg>
-                    </div>
-                    <span x-show="!sidebarCollapsed" x-transition class="ml-3 text-sm font-medium whitespace-nowrap overflow-hidden">Penerimaan HCTS</span>
-                </div>
-                <svg x-show="!sidebarCollapsed" :class="hctsOpen ? 'rotate-180' : ''" class="w-3 h-3 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-            </button>
-
-            <!-- Sub-menu Items -->
-            <div x-show="hctsOpen && !sidebarCollapsed" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="pl-11 space-y-1">
-                <a href="{{ route('hcts-receiving.create') }}" 
-                   class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('hcts-receiving.create') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
-                    Input Penerimaan HCTS
-                </a>
-                <a href="{{ route('hcts-receiving.index') }}" 
-                   class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('hcts-receiving.index') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
-                    Detail Penerimaan HCTS
-                </a>
-                <a href="{{ route('hcts-receiving.summary') }}" 
-                   class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('hcts-receiving.summary') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
-                    HCS – HCTS Summary
-                </a>
-                <a href="{{ route('hcts-inventory.index') }}" 
-                   class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('hcts-inventory.index') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
-                    Persediaan HCTS
-                </a>
-            </div>
-        </div>
-
-        <!-- Penyerahan HCTS Group -->
-        <div class="space-y-1 mt-2">
-            <button @click="penyerahanHctsOpen = !penyerahanHctsOpen; if(sidebarCollapsed) sidebarCollapsed = false;"
-               class="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('hcts-submission.*') ? 'text-white font-semibold bg-white/10' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
-               title="Penyerahan HCTS">
-                <div class="flex items-center">
-                    <div class="shrink-0 w-8 flex justify-center">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                        </svg>
-                    </div>
-                    <span x-show="!sidebarCollapsed" x-transition class="ml-3 text-sm font-medium whitespace-nowrap overflow-hidden">Penyerahan HCTS</span>
-                </div>
-                <svg x-show="!sidebarCollapsed" :class="penyerahanHctsOpen ? 'rotate-180' : ''" class="w-3 h-3 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-            </button>
-
-            <!-- Sub-menu Items -->
-            <div x-show="penyerahanHctsOpen && !sidebarCollapsed" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="pl-11 space-y-1">
-                <a href="{{ route('hcts-submission.create') }}" 
-                   class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('hcts-submission.create') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
-                    Input Penyerahan HCTS ke BI
-                </a>
-                <a href="{{ route('hcts-submission.index') }}" 
-                   class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('hcts-submission.index') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
-                    Detail Penyerahan HCTS
-                </a>
-            </div>
-        </div>
-
         <!-- HCS Receiving Group -->
         <div class="space-y-1">
             <button @click="hcsOpen = !hcsOpen; if(sidebarCollapsed) sidebarCollapsed = false;"
@@ -267,6 +197,76 @@
                 <a href="{{ route('penyerahan-bi.index') }}" 
                    class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('penyerahan-bi.index') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
                     Laporan Penyerahan
+                </a>
+            </div>
+        </div>
+
+        <!-- HCTS Receiving Group -->
+        <div class="space-y-1">
+            <button @click="hctsOpen = !hctsOpen; if(sidebarCollapsed) sidebarCollapsed = false;"
+               class="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('hcts-receiving.*') ? 'text-white font-semibold bg-white/10' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
+               title="Penerimaan HCTS">
+                <div class="flex items-center">
+                    <div class="shrink-0 w-8 flex justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m8.25 3v6.75m0 0l-3-3m3 3l3-3M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+                        </svg>
+                    </div>
+                    <span x-show="!sidebarCollapsed" x-transition class="ml-3 text-sm font-medium whitespace-nowrap overflow-hidden">Penerimaan HCTS</span>
+                </div>
+                <svg x-show="!sidebarCollapsed" :class="hctsOpen ? 'rotate-180' : ''" class="w-3 h-3 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+
+            <!-- Sub-menu Items -->
+            <div x-show="hctsOpen && !sidebarCollapsed" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="pl-11 space-y-1">
+                <a href="{{ route('hcts-receiving.create') }}" 
+                   class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('hcts-receiving.create') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                    Input Penerimaan HCTS
+                </a>
+                <a href="{{ route('hcts-receiving.index') }}" 
+                   class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('hcts-receiving.index') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                    Detail Penerimaan HCTS
+                </a>
+                <a href="{{ route('hcts-receiving.summary') }}" 
+                   class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('hcts-receiving.summary') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                    HCS – HCTS Summary
+                </a>
+                <a href="{{ route('hcts-inventory.index') }}" 
+                   class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('hcts-inventory.index') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                    Persediaan HCTS
+                </a>
+            </div>
+        </div>
+
+        <!-- Penyerahan HCTS Group -->
+        <div class="space-y-1 mt-2 mb-4">
+            <button @click="penyerahanHctsOpen = !penyerahanHctsOpen; if(sidebarCollapsed) sidebarCollapsed = false;"
+               class="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('hcts-submission.*') ? 'text-white font-semibold bg-white/10' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
+               title="Penyerahan HCTS">
+                <div class="flex items-center">
+                    <div class="shrink-0 w-8 flex justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                        </svg>
+                    </div>
+                    <span x-show="!sidebarCollapsed" x-transition class="ml-3 text-sm font-medium whitespace-nowrap overflow-hidden">Penyerahan HCTS</span>
+                </div>
+                <svg x-show="!sidebarCollapsed" :class="penyerahanHctsOpen ? 'rotate-180' : ''" class="w-3 h-3 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+
+            <!-- Sub-menu Items -->
+            <div x-show="penyerahanHctsOpen && !sidebarCollapsed" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="pl-11 space-y-1">
+                <a href="{{ route('hcts-submission.create') }}" 
+                   class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('hcts-submission.create') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                    Input Penyerahan HCTS ke BI
+                </a>
+                <a href="{{ route('hcts-submission.index') }}" 
+                   class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('hcts-submission.index') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                    Detail Penyerahan HCTS
                 </a>
             </div>
         </div>

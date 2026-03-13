@@ -62,6 +62,117 @@
                                 <input type="hidden" name="selected_packs[]" :value="pack">
                             </template>
                         </template>
+
+
+                        <!-- MANUAL DETAIL SECTION (Visible if isManualSisa is TRUE) -->
+                        <div x-show="isManualSisa" x-transition.opacity class="mt-4 mb-8 bg-white border-2 border-red-500 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-red-50 rounded-bl-full -mr-16 -mt-16 opacity-50"></div>
+                            <div class="flex justify-between items-center mb-6 relative z-10">
+                                <div>
+                                    <h4 class="text-xl font-black text-red-600 uppercase tracking-tighter flex items-center">
+                                        <div class="bg-red-600 text-white p-2 rounded-lg mr-3 shadow-lg shadow-red-200">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                                        </div>
+                                        Rincian Dus Manual (Sisa Pack)
+                                    </h4>
+                                    <p class="text-xs text-red-400 font-bold mt-1">Masukkan data distribusi bilyet ke dalam setiap nomor dus secara spesifik.</p>
+                                </div>
+                                <button type="button" @click="addManualBox" class="bg-red-600 text-white px-6 py-2.5 rounded-xl text-sm font-black hover:bg-red-700 transition-all uppercase shadow-lg shadow-red-200 active:scale-95 flex items-center">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                                    Tambah Baris Dus
+                                </button>
+                            </div>
+
+                            <div class="overflow-x-auto rounded-xl border border-red-100 shadow-sm relative z-10">
+                                <table class="min-w-full divide-y divide-red-100">
+                                    <thead class="bg-red-50/50">
+                                        <tr>
+                                            <th class="px-4 py-3 text-xs font-black text-red-500 uppercase text-center w-24">No Dus</th>
+                                            <th class="px-4 py-3 text-xs font-black text-red-500 uppercase text-center">Rentang Pack</th>
+                                            <th class="px-4 py-3 text-xs font-black text-red-500 uppercase text-center">Rentang Seri</th>
+                                            <th class="px-4 py-3 text-xs font-black text-red-500 uppercase text-center">Jumlah Bilyet</th>
+                                            <th class="px-4 py-3 w-14"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-red-50 bg-white">
+                                        <template x-for="(box, index) in manualBoxes" :key="index">
+                                            <tr class="hover:bg-red-50/20 transition-colors">
+                                                <td class="px-4 py-3">
+                                                    <input type="number" :name="'manual_details['+index+'][no_dus]'" x-model.number="box.no_dus" required class="w-full border-red-200 rounded-xl text-center text-sm py-2 px-2 font-black text-red-700 focus:ring-red-500 focus:border-red-500">
+                                                </td>
+                                                <td class="px-4 py-3">
+                                                    <div class="flex gap-2 items-center">
+                                                        <input type="number" :name="'manual_details['+index+'][pack_awal]'" x-model.number="box.pack_awal" required class="w-full border-gray-200 rounded-xl text-center text-sm py-2 px-2 font-bold focus:ring-red-500 focus:border-red-500" placeholder="Awal">
+                                                        <span class="text-gray-400 font-black">-</span>
+                                                        <input type="number" :name="'manual_details['+index+'][pack_akhir]'" x-model.number="box.pack_akhir" required class="w-full border-gray-200 rounded-xl text-center text-sm py-2 px-2 font-bold focus:ring-red-500 focus:border-red-500" placeholder="Akhir">
+                                                    </div>
+                                                </td>
+                                                <td class="px-4 py-3">
+                                                    <div class="flex gap-2 items-center">
+                                                        <input type="text" :name="'manual_details['+index+'][seri_awal]'" x-model="box.seri_awal" required class="w-full border-gray-200 rounded-xl text-center text-sm py-2 px-2 font-bold focus:ring-red-500 focus:border-red-500" placeholder="Seri Awal">
+                                                        <span class="text-gray-400 font-black">-</span>
+                                                        <input type="text" :name="'manual_details['+index+'][seri_akhir]'" x-model="box.seri_akhir" required class="w-full border-gray-200 rounded-xl text-center text-sm py-2 px-2 font-bold focus:ring-red-500 focus:border-red-500" placeholder="Seri Akhir">
+                                                    </div>
+                                                </td>
+                                                <td class="px-4 py-3">
+                                                    <input type="number" :name="'manual_details['+index+'][jumlah_bilyet]'" x-model.number="box.jumlah_bilyet" required class="w-full border-indigo-200 rounded-xl text-right text-sm py-2 px-4 font-black text-indigo-700 bg-indigo-50/30 focus:ring-indigo-500 focus:border-indigo-500">
+                                                </td>
+                                                <td class="px-4 py-3 text-center">
+                                                    <button type="button" @click="removeManualBox(index)" class="bg-gray-100 text-gray-400 hover:bg-red-100 hover:text-red-600 p-2 rounded-lg transition-all active:scale-90">
+                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
+                                <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex justify-between items-center shadow-sm">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 bg-gray-200 rounded-xl flex items-center justify-center mr-4">
+                                            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                                        </div>
+                                        <div>
+                                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest block">Total Bilyet Pack Dipilih</span>
+                                            <span class="text-xl font-black text-gray-800" x-text="formatNumber(totalBilyetPacks)"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-4 rounded-2xl border flex justify-between items-center shadow-md transition-all duration-500" 
+                                     :class="totalBilyetPacks === totalBilyetManualBoxes ? 'border-green-500 bg-green-50 shadow-green-100' : 'border-red-500 bg-red-50 shadow-red-100'">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center mr-4 transition-colors duration-500"
+                                             :class="totalBilyetPacks === totalBilyetManualBoxes ? 'bg-green-500 text-white' : 'bg-red-500 text-white'">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        </div>
+                                        <div>
+                                            <span class="text-[10px] font-black uppercase tracking-widest block" :class="totalBilyetPacks === totalBilyetManualBoxes ? 'text-green-500' : 'text-red-500'" x-text="totalBilyetPacks === totalBilyetManualBoxes ? 'Distribusi Dus (PAS)' : 'Distribusi Dus (SELISIH!)'"></span>
+                                            <span class="text-xl font-black" :class="totalBilyetPacks === totalBilyetManualBoxes ? 'text-green-700' : 'text-red-700'" x-text="formatNumber(totalBilyetManualBoxes)"></span>
+                                        </div>
+                                    </div>
+                                    <template x-if="totalBilyetPacks !== totalBilyetManualBoxes">
+                                        <div class="text-right">
+                                            <span class="text-[9px] font-black text-red-400 uppercase block">Selisih</span>
+                                            <span class="text-sm font-black text-red-600" x-text="formatNumber(totalBilyetPacks - totalBilyetManualBoxes)"></span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                            
+                            <template x-if="totalBilyetPacks !== totalBilyetManualBoxes">
+                                <div class="mt-4 bg-red-600 text-white px-4 py-2 rounded-xl text-center text-xs font-black animate-pulse shadow-lg shadow-red-200">
+                                    PERINGATAN: Total bilyet di rincian dus harus TEPAT SAMA dengan total bilyet pack dipilih!
+                                </div>
+                            </template>
+
+                            <template x-if="isManualSisa && jumlahPack % 4 === 0 && totalBilyetPacks === (jumlahPack * 45000) && jumlahPack > 0">
+                                <div class="mt-4 bg-orange-500 text-white px-4 py-2 rounded-xl text-center text-xs font-black shadow-lg shadow-orange-200">
+                                    INFO: Jumlah pack adalah kelipatan 4 (@{{ jumlahPack }} pack) dan bilyet penuh. Silakan matikan mode "Kemas Sisa Pack" untuk menggunakan pengemasan standar otomatis.
+                                </div>
+                            </template>
+                        </div>
                         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                             
                             <!-- KOLOM KIRI: Identitas Pengemasan (4 kolom) -->
@@ -276,115 +387,6 @@
                             </div>
                         </div>
 
-                        <!-- MANUAL DETAIL SECTION (Visible if isManualSisa is TRUE) -->
-                        <div x-show="isManualSisa" x-transition.opacity class="mt-8 bg-white border-2 border-red-500 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
-                            <div class="absolute top-0 right-0 w-32 h-32 bg-red-50 rounded-bl-full -mr-16 -mt-16 opacity-50"></div>
-                            <div class="flex justify-between items-center mb-6 relative z-10">
-                                <div>
-                                    <h4 class="text-xl font-black text-red-600 uppercase tracking-tighter flex items-center">
-                                        <div class="bg-red-600 text-white p-2 rounded-lg mr-3 shadow-lg shadow-red-200">
-                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                                        </div>
-                                        Rincian Dus Manual (Sisa Pack)
-                                    </h4>
-                                    <p class="text-xs text-red-400 font-bold mt-1">Masukkan data distribusi bilyet ke dalam setiap nomor dus secara spesifik.</p>
-                                </div>
-                                <button type="button" @click="addManualBox" class="bg-red-600 text-white px-6 py-2.5 rounded-xl text-sm font-black hover:bg-red-700 transition-all uppercase shadow-lg shadow-red-200 active:scale-95 flex items-center">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                                    Tambah Baris Dus
-                                </button>
-                            </div>
-
-                            <div class="overflow-x-auto rounded-xl border border-red-100 shadow-sm relative z-10">
-                                <table class="min-w-full divide-y divide-red-100">
-                                    <thead class="bg-red-50/50">
-                                        <tr>
-                                            <th class="px-4 py-3 text-xs font-black text-red-500 uppercase text-center w-24">No Dus</th>
-                                            <th class="px-4 py-3 text-xs font-black text-red-500 uppercase text-center">Rentang Pack</th>
-                                            <th class="px-4 py-3 text-xs font-black text-red-500 uppercase text-center">Rentang Seri</th>
-                                            <th class="px-4 py-3 text-xs font-black text-red-500 uppercase text-center">Jumlah Bilyet</th>
-                                            <th class="px-4 py-3 w-14"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-red-50 bg-white">
-                                        <template x-for="(box, index) in manualBoxes" :key="index">
-                                            <tr class="hover:bg-red-50/20 transition-colors">
-                                                <td class="px-4 py-3">
-                                                    <input type="number" :name="'manual_details['+index+'][no_dus]'" x-model.number="box.no_dus" required class="w-full border-red-200 rounded-xl text-center text-sm py-2 px-2 font-black text-red-700 focus:ring-red-500 focus:border-red-500">
-                                                </td>
-                                                <td class="px-4 py-3">
-                                                    <div class="flex gap-2 items-center">
-                                                        <input type="number" :name="'manual_details['+index+'][pack_awal]'" x-model.number="box.pack_awal" required class="w-full border-gray-200 rounded-xl text-center text-sm py-2 px-2 font-bold focus:ring-red-500 focus:border-red-500" placeholder="Awal">
-                                                        <span class="text-gray-400 font-black">-</span>
-                                                        <input type="number" :name="'manual_details['+index+'][pack_akhir]'" x-model.number="box.pack_akhir" required class="w-full border-gray-200 rounded-xl text-center text-sm py-2 px-2 font-bold focus:ring-red-500 focus:border-red-500" placeholder="Akhir">
-                                                    </div>
-                                                </td>
-                                                <td class="px-4 py-3">
-                                                    <div class="flex gap-2 items-center">
-                                                        <input type="text" :name="'manual_details['+index+'][seri_awal]'" x-model="box.seri_awal" required class="w-full border-gray-200 rounded-xl text-center text-sm py-2 px-2 font-bold focus:ring-red-500 focus:border-red-500" placeholder="Seri Awal">
-                                                        <span class="text-gray-400 font-black">-</span>
-                                                        <input type="text" :name="'manual_details['+index+'][seri_akhir]'" x-model="box.seri_akhir" required class="w-full border-gray-200 rounded-xl text-center text-sm py-2 px-2 font-bold focus:ring-red-500 focus:border-red-500" placeholder="Seri Akhir">
-                                                    </div>
-                                                </td>
-                                                <td class="px-4 py-3">
-                                                    <input type="number" :name="'manual_details['+index+'][jumlah_bilyet]'" x-model.number="box.jumlah_bilyet" required class="w-full border-indigo-200 rounded-xl text-right text-sm py-2 px-4 font-black text-indigo-700 bg-indigo-50/30 focus:ring-indigo-500 focus:border-indigo-500">
-                                                </td>
-                                                <td class="px-4 py-3 text-center">
-                                                    <button type="button" @click="removeManualBox(index)" class="bg-gray-100 text-gray-400 hover:bg-red-100 hover:text-red-600 p-2 rounded-lg transition-all active:scale-90">
-                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        </template>
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
-                                <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex justify-between items-center shadow-sm">
-                                    <div class="flex items-center">
-                                        <div class="w-10 h-10 bg-gray-200 rounded-xl flex items-center justify-center mr-4">
-                                            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-                                        </div>
-                                        <div>
-                                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest block">Total Bilyet Pack Dipilih</span>
-                                            <span class="text-xl font-black text-gray-800" x-text="formatNumber(totalBilyetPacks)"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="p-4 rounded-2xl border flex justify-between items-center shadow-md transition-all duration-500" 
-                                     :class="totalBilyetPacks === totalBilyetManualBoxes ? 'border-green-500 bg-green-50 shadow-green-100' : 'border-red-500 bg-red-50 shadow-red-100'">
-                                    <div class="flex items-center">
-                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center mr-4 transition-colors duration-500"
-                                             :class="totalBilyetPacks === totalBilyetManualBoxes ? 'bg-green-500 text-white' : 'bg-red-500 text-white'">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                        </div>
-                                        <div>
-                                            <span class="text-[10px] font-black uppercase tracking-widest block" :class="totalBilyetPacks === totalBilyetManualBoxes ? 'text-green-500' : 'text-red-500'" x-text="totalBilyetPacks === totalBilyetManualBoxes ? 'Distribusi Dus (PAS)' : 'Distribusi Dus (SELISIH!)'"></span>
-                                            <span class="text-xl font-black" :class="totalBilyetPacks === totalBilyetManualBoxes ? 'text-green-700' : 'text-red-700'" x-text="formatNumber(totalBilyetManualBoxes)"></span>
-                                        </div>
-                                    </div>
-                                    <template x-if="totalBilyetPacks !== totalBilyetManualBoxes">
-                                        <div class="text-right">
-                                            <span class="text-[9px] font-black text-red-400 uppercase block">Selisih</span>
-                                            <span class="text-sm font-black text-red-600" x-text="formatNumber(totalBilyetPacks - totalBilyetManualBoxes)"></span>
-                                        </div>
-                                    </template>
-                                </div>
-                            </div>
-                            
-                            <template x-if="totalBilyetPacks !== totalBilyetManualBoxes">
-                                <div class="mt-4 bg-red-600 text-white px-4 py-2 rounded-xl text-center text-xs font-black animate-pulse shadow-lg shadow-red-200">
-                                    PERINGATAN: Total bilyet di rincian dus harus TEPAT SAMA dengan total bilyet pack dipilih!
-                                </div>
-                            </template>
-
-                            <template x-if="isManualSisa && jumlahPack % 4 === 0 && totalBilyetPacks === (jumlahPack * 45000) && jumlahPack > 0">
-                                <div class="mt-4 bg-orange-500 text-white px-4 py-2 rounded-xl text-center text-xs font-black shadow-lg shadow-orange-200">
-                                    INFO: Jumlah pack adalah kelipatan 4 (@{{ jumlahPack }} pack) dan bilyet penuh. Silakan matikan mode "Kemas Sisa Pack" untuk menggunakan pengemasan standar otomatis.
-                                </div>
-                            </template>
-                        </div>
                     </form>
                 </div>
             </div>

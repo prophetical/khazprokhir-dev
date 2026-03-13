@@ -229,14 +229,16 @@
                                     <!-- Group Data Rows -->
                                     @foreach($groupItems as $receiving)
                                         <tr class="hover:bg-indigo-50/30 transition-colors">
-                                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">{{ $receiving->tanggal_penerimaan }}</td>
+                                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                {{ \Carbon\Carbon::parse($receiving->tanggal_penerimaan)->locale('id')->isoFormat('D MMMM YYYY') }}
+                                            </td>
                                             <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
                                                 {{ $receiving->nomor_bon }}
                                             </td>
                                             <td class="px-4 py-4 whitespace-nowrap text-sm">
                                                 @php
                                                     $pecahanColors = [
-                                                        'S' => 'bg-stone-100 text-stone-700 border-stone-200',
+                                                        'S' => 'bg-lime-100 text-lime-700 border-lime-200',
                                                         'T' => 'bg-slate-100 text-slate-700 border-slate-200',
                                                         'U' => 'bg-orange-100 text-orange-700 border-orange-200',
                                                         'V' => 'bg-purple-100 text-purple-700 border-purple-200',

@@ -10,7 +10,7 @@
 
             @php
                 $pecahanData = [
-                    'S' => ['label' => 'S', 'color' => 'bg-lime-500', 'border' => 'border-lime-100', 'hover' => 'hover:shadow-lime-200'],
+                    'S' => ['label' => 'S', 'color' => 'bg-lime-500', 'border' => 'border-lime-100', 'hover' => 'hover:shadow-lime-200', 'text' => 'text-white'],
                     'T' => ['label' => 'T', 'color' => 'bg-gray-400', 'border' => 'border-gray-200', 'hover' => 'hover:shadow-gray-200'],
                     'U' => ['label' => 'U', 'color' => 'bg-amber-400', 'border' => 'border-amber-100', 'hover' => 'hover:shadow-amber-200'],
                     'V' => ['label' => 'V', 'color' => 'bg-purple-500', 'border' => 'border-purple-100', 'hover' => 'hover:shadow-purple-200'],
@@ -90,7 +90,7 @@
                 
                 // Literals for all possible theme classes to ensure Tailwind JIT includes them
                 $themeClasses = [
-                    'S' => ['bg' => 'bg-lime-500', 'border' => 'border-lime-500', 'ring' => 'focus:ring-lime-500', 'focus' => 'focus:border-lime-500', 'btn' => 'bg-lime-500', 'text' => 'text-gray-900'],
+                    'S' => ['bg' => 'bg-lime-500', 'border' => 'border-lime-500', 'ring' => 'focus:ring-lime-500', 'focus' => 'focus:border-lime-500', 'btn' => 'bg-lime-500', 'text' => 'text-white'],
                     'T' => ['bg' => 'bg-gray-400', 'border' => 'border-gray-400', 'ring' => 'focus:ring-gray-400', 'focus' => 'focus:border-gray-400', 'btn' => 'bg-gray-400', 'text' => 'text-white'],
                     'U' => ['bg' => 'bg-amber-400', 'border' => 'border-amber-400', 'ring' => 'focus:ring-amber-400', 'focus' => 'focus:border-amber-400', 'btn' => 'bg-amber-400', 'text' => 'text-gray-900'],
                     'V' => ['bg' => 'bg-purple-500', 'border' => 'border-purple-500', 'ring' => 'focus:ring-purple-500', 'focus' => 'focus:border-purple-500', 'btn' => 'bg-purple-500', 'text' => 'text-white'],
@@ -126,15 +126,37 @@
                         </h3>
                     </div>
 
-                    <form method="GET" action="{{ route('rekomendasi-penyortiran.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                    <form method="GET" action="{{ route('rekomendasi-penyortiran.index') }}" class="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
                         <div class="relative">
                             <label for="pecahan" class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 ml-1">Pecahan</label>
                             <select name="pecahan" id="pecahan" x-model="selectedPecahan"
                                     class="block w-full rounded-lg border-gray-200 shadow-sm text-sm py-2.5 text-center transition-all duration-300"
                                     :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
-                                <option value="">Semua Pecahan</option>
+                                <option value="">Semua</option>
                                 @foreach(['S', 'T', 'U', 'V', 'W', 'X', 'Y'] as $p)
                                     <option value="{{ $p }}">{{ $p }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="relative">
+                            <label for="tahun_anggaran" class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 ml-1">TA</label>
+                            <select name="tahun_anggaran" id="tahun_anggaran"
+                                    class="block w-full rounded-lg border-gray-200 shadow-sm text-sm py-2.5 text-center transition-all duration-300"
+                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
+                                <option value="">Semua</option>
+                                @foreach($availableYears as $year)
+                                    <option value="{{ $year }}" {{ request('tahun_anggaran') == $year ? 'selected' : '' }}>{{ $year }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="relative">
+                            <label for="emisi" class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 ml-1">Emisi</label>
+                            <select name="emisi" id="emisi"
+                                    class="block w-full rounded-lg border-gray-200 shadow-sm text-sm py-2.5 text-center transition-all duration-300"
+                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
+                                <option value="">Semua</option>
+                                @foreach($availableEmissions as $emisi)
+                                    <option value="{{ $emisi }}" {{ request('emisi') == $emisi ? 'selected' : '' }}>{{ $emisi }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -143,19 +165,19 @@
                             <input type="text" name="batch" id="batch" value="{{ request('batch') }}" 
                                    class="block w-full rounded-lg border-gray-200 shadow-sm text-sm py-2.5 text-center transition-all duration-300"
                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
-                                   placeholder="Cari Batch...">
+                                   placeholder="Batch">
                         </div>
                         <div class="relative">
                             <label for="seri" class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 ml-1">Seri</label>
                             <input type="text" name="seri" id="seri" value="{{ request('seri') }}" 
                                    class="block w-full rounded-lg border-gray-200 shadow-sm text-sm py-2.5 text-center transition-all duration-300"
                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
-                                   placeholder="Cari Seri...">
+                                   placeholder="Seri">
                         </div>
                         <div class="flex gap-2">
                             <button type="submit" class="flex-1 px-4 py-2.5 rounded-lg transition-all duration-300 text-sm font-bold shadow-lg shadow-gray-100 uppercase tracking-wider"
                                     :class="currentTheme ? (currentTheme.btn + ' ' + currentTheme.text + ' brightness-90 hover:brightness-100') : 'bg-indigo-600 text-white hover:bg-indigo-700'">
-                                Cari Data
+                                Cari
                             </button>
                             <a href="{{ route('rekomendasi-penyortiran.index') }}" class="px-4 py-2.5 bg-gray-50 text-gray-400 rounded-lg hover:bg-gray-100 border border-gray-200 transition-all duration-200">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
@@ -175,13 +197,13 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pch</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pec</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Batch</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Seri</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supplier</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/3">Pack Rekomendasi</th>
-                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Jml Pack</th>
-                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Jml Bilyet</th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah Pack</th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah Bilyet</th>
                                 <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-40">
                                     <span class="sr-only">Aksi</span>
                                 </th>
@@ -234,8 +256,10 @@
                                 @endif
 
                                 <tr class="{{ $rowBgClass }} hover:bg-gray-100 transition-colors">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
-                                        {{ $item['pecahan'] }}
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-black {{ $themeClasses[$item['pecahan']]['bg'] }} {{ $themeClasses[$item['pecahan']]['text'] }} shadow-sm">
+                                            {{ $item['pecahan'] }}
+                                        </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                         {{ $item['batch'] }}

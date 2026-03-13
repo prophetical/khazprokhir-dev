@@ -105,13 +105,13 @@
                             <th class="text-[10px] font-bold text-gray-500 uppercase">Gilir</th>
                             <th class="text-[10px] font-bold text-gray-500 uppercase text-center">TA</th>
                             <th class="text-[10px] font-bold text-gray-500 uppercase text-center">Emisi</th>
-                            <th class="text-[10px] font-bold text-gray-500 uppercase text-center">Pch</th>
+                            <th class="text-[10px] font-bold text-gray-500 uppercase text-center">Pec</th>
                             <th class="text-[10px] font-bold text-gray-500 uppercase">Batch</th>
                             <th class="text-[10px] font-bold text-gray-500 uppercase">Seri</th>
                             <th class="text-[10px] font-bold text-gray-500 uppercase text-center">Rentang Pack</th>
                             <th class="text-[10px] font-bold text-gray-500 uppercase text-right">Jml Pack</th>
                             <th class="text-[10px] font-bold text-gray-500 uppercase text-right">Bilyet</th>
-                            <th class="text-[10px] font-bold text-gray-500 uppercase text-right">Jml Dus</th>
+                            <th class="text-[10px] font-bold text-gray-500 uppercase text-right">Dus</th>
                             <th class="text-[10px] font-bold text-gray-500 uppercase text-center">No Dus</th>
                             <th class="text-[10px] font-bold text-gray-500 uppercase">Petugas</th>
                         </tr>
@@ -145,7 +145,8 @@
                                 {{ $row->pack_awal }} - {{ $row->pack_akhir }}
                             </td>
                             <td class="text-[10px] font-bold text-gray-900 text-right">{{ number_format($row->jumlah_pack, 0, ',', '.') }}</td>
-                            <td class="text-[10px] font-bold text-emerald-600 text-right">{{ number_format($row->packs->sum('jumlah'), 0, ',', '.') }}</td>
+                            <td class="text-[10px] font-bold text-emerald-600 text-right">{{ number_format($row->total_bilyet, 0, ',', '.') }}</td>
+
                             <td class="text-[10px] font-bold text-purple-700 text-right">{{ number_format($row->jumlah_dus, 0, ',', '.') }}</td>
                             <td class="text-[10px] font-bold text-green-700 text-center">{{ $row->dus_awal }} - {{ $row->dus_akhir }}</td>
                             <td class="text-[10px] font-medium text-gray-600">
@@ -162,7 +163,7 @@
                         <tr>
                             <td colspan="8" class="text-[10px] font-bold text-gray-700 uppercase p-3 text-right">Total Filter Ini</td>
                             <td class="text-[10px] font-extrabold text-gray-900 text-right p-3">{{ number_format($pengemasans->sum('jumlah_pack'), 0, ',', '.') }}</td>
-                            <td class="text-[10px] font-extrabold text-emerald-600 text-right p-3">{{ number_format($pengemasans->sum(function($p) { return $p->packs->sum('jumlah'); }), 0, ',', '.') }}</td>
+                            <td class="text-[10px] font-extrabold text-emerald-600 text-right p-3">{{ number_format($pengemasans->sum('total_bilyet'), 0, ',', '.') }}</td>
                             <td class="text-[10px] font-extrabold text-purple-700 text-right p-3">{{ number_format($pengemasans->sum('jumlah_dus'), 0, ',', '.') }}</td>
                             <td colspan="2"></td>
                         </tr>
