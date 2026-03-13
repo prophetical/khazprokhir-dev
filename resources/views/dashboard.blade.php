@@ -147,6 +147,17 @@
                         chartInstance.data.datasets[2].data = [...data.target];
                         
                         chartInstance.update();
+                    },
+                    heatmapData: @json($heatmapData),
+                    getHeatmapColor(count) {
+                        if (count === 0) return 'bg-gray-100/50';
+                        if (count < 500000) return 'bg-emerald-200';
+                        if (count < 2000000) return 'bg-emerald-400';
+                        if (count < 5000000) return 'bg-emerald-600';
+                        return 'bg-emerald-800';
+                    },
+                    formatBilyet(num) {
+                        return new Intl.NumberFormat('id-ID').format(num);
                     }
                 };
             }
@@ -160,8 +171,8 @@
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
                     </div>
                     <div>
-                        <h2 class="text-2xl font-black text-gray-900 tracking-tight leading-none mb-1">PRODUKSI & TARGET</h2>
-                        <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest">Real-time Performance Monitoring</p>
+                        <h2 class="text-md font-black text-gray-900 tracking-tight leading-none mb-1">PRODUKSI & TARGET</h2>
+                        <p class="text-[9px] text-gray-400 font-black uppercase tracking-widest">Real-time Performance Monitoring</p>
                     </div>
                 </div>
 
@@ -219,56 +230,132 @@
 
             {{-- Unified Production Chart --}}
             <div :class="colorThemes[selectedPecahan].bg" 
-                 class="p-10 rounded-[3rem] shadow-2xl shadow-gray-200/40 border border-gray-100 relative overflow-hidden transition-colors duration-700">
+                 class="p-8 rounded-[3rem] shadow-2xl shadow-gray-200/40 border border-gray-100 relative overflow-hidden transition-colors duration-700">
                 <div class="flex flex-col xl:flex-row items-start xl:items-center justify-between mb-12 gap-8">
                     <div class="flex items-center gap-6">
-                        <div class="w-2 h-16 bg-gradient-to-b from-indigo-600 via-pink-500 to-amber-500 rounded-full"></div>
+                        <div class="w-1.5 h-12 bg-gradient-to-b from-indigo-600 via-pink-500 to-amber-500 rounded-full"></div>
                         <div>
-                            <h3 class="text-3xl font-black text-gray-900 tracking-tighter mb-1 uppercase leading-none">Visualisasi Trends</h3>
-                            <p class="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] leading-none">Monitoring Target Penyerahan Bulanan</p>
+                            <h3 class="text-xl font-black text-gray-900 tracking-tighter mb-0.5 uppercase leading-none">Visualisasi Trends</h3>
+                            <p class="text-[9px] text-gray-400 font-black uppercase tracking-[0.2em] leading-none">Monitoring Target Penyerahan Bulanan</p>
                         </div>
                     </div>
 
                     {{-- Legend --}}
-                    <div class="flex flex-wrap gap-8 px-4 bg-gray-50/50 p-4 rounded-2xl border border-gray-50">
-                        <div class="flex items-center gap-3 group">
-                            <div class="w-3.5 h-3.5 rounded-full bg-emerald-500 shadow-lg shadow-emerald-200 group-hover:scale-125 transition-transform"></div>
-                            <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Pengemasan</span>
+                    <div class="flex flex-wrap gap-6 px-4 bg-gray-50/50 p-2.5 rounded-xl border border-gray-50">
+                        <div class="flex items-center gap-2.5 group">
+                            <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-lg shadow-emerald-200 group-hover:scale-125 transition-transform"></div>
+                            <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Pengemasan</span>
                         </div>
-                        <div class="flex items-center gap-3 group">
-                            <div class="w-3.5 h-3.5 rounded-full bg-pink-500 shadow-lg shadow-pink-200 group-hover:scale-125 transition-transform"></div>
-                            <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Penyerahan</span>
+                        <div class="flex items-center gap-2.5 group">
+                            <div class="w-2.5 h-2.5 rounded-full bg-pink-500 shadow-lg shadow-pink-200 group-hover:scale-125 transition-transform"></div>
+                            <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Penyerahan</span>
                         </div>
-                        <div class="flex items-center gap-3 group">
-                            <div class="flex gap-1 group-hover:gap-1.5 transition-all">
-                                <div class="w-1.5 h-1.5 rounded-full bg-amber-500"></div>
-                                <div class="w-1.5 h-1.5 rounded-full bg-amber-500"></div>
-                                <div class="w-1.5 h-1.5 rounded-full bg-amber-500"></div>
+                        <div class="flex items-center gap-2.5 group">
+                            <div class="flex gap-0.5 group-hover:gap-1 transition-all">
+                                <div class="w-1 h-1 rounded-full bg-amber-500"></div>
+                                <div class="w-1 h-1 rounded-full bg-amber-500"></div>
+                                <div class="w-1 h-1 rounded-full bg-amber-500"></div>
                             </div>
-                            <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Target Bulanan</span>
+                            <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Target Bulanan</span>
                         </div>
                     </div>
                 </div>
 
                 {{-- Pecahan Selector Buttons --}}
-                <div class="flex flex-wrap items-center gap-2 bg-gray-50/80 p-2 rounded-[2rem] border border-gray-100 mb-10 w-fit mx-auto lg:mx-0">
+                <div class="flex flex-wrap items-center gap-1.5 bg-gray-50/80 p-1.5 rounded-[1.5rem] border border-gray-100 mb-8 w-fit mx-auto lg:mx-0">
                     <button @click="selectedPecahan = 'TOTAL'; updateChart()" 
                             :class="selectedPecahan === 'TOTAL' ? (colorThemes['TOTAL'].button + ' text-white shadow-xl ' + colorThemes['TOTAL'].shadow) : 'text-gray-500 hover:bg-gray-100'"
-                            class="px-8 py-3 rounded-[1.5rem] text-xs font-black uppercase tracking-[0.2em] transition-all duration-500">
+                            class="px-6 py-2 rounded-[1rem] text-[10px] font-black uppercase tracking-[0.15em] transition-all duration-500">
                         OVERVIEW
                     </button>
-                    <div class="w-px h-6 bg-gray-200 mx-2 hidden sm:block"></div>
+                    <div class="w-px h-5 bg-gray-200 mx-1.5 hidden sm:block"></div>
                     @foreach(['S', 'T', 'U', 'V', 'W', 'X', 'Y'] as $pec)
                         <button @click="selectedPecahan = '{{ $pec }}'; updateChart()" 
-                                :class="selectedPecahan === '{{ $pec }}' ? (colorThemes['{{ $pec }}'].button + ' text-white shadow-xl scale-110 ' + colorThemes['{{ $pec }}'].shadow) : 'text-gray-500 hover:bg-gray-100'"
-                                class="w-12 h-12 rounded-2xl text-sm font-black transition-all duration-500 flex items-center justify-center">
+                                :class="selectedPecahan === '{{ $pec }}' ? (colorThemes['{{ $pec }}'].button + ' text-white shadow-lg scale-110 ' + colorThemes['{{ $pec }}'].shadow) : 'text-gray-500 hover:bg-gray-100'"
+                                class="w-9 h-9 rounded-xl text-xs font-black transition-all duration-500 flex items-center justify-center">
                             {{ $pec }}
                         </button>
                     @endforeach
                 </div>
 
-                <div class="h-[520px] w-full relative">
+                <div class="h-[380px] w-full relative">
                     <canvas id="unified-chart"></canvas>
+                </div>
+            </div>
+
+            {{-- Compact Heatmap Section --}}
+            <div class="bg-white p-6 rounded-[2.5rem] shadow-xl shadow-gray-200/20 border border-gray-100 overflow-hidden">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 shadow-inner">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xs font-black text-gray-900 leading-none uppercase tracking-wider">
+                                Heatmap Pengemasan TA {{ $currentYear }} / TE {{ $currentTE ?: 'SEMUA' }}
+                            </h3>
+                            <p class="text-[8px] text-gray-400 font-black uppercase tracking-widest mt-0.5">Visualisasi Intensitas Produksi Harian</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 px-3 py-1.5 bg-gray-50 rounded-xl border border-gray-100 scale-90 origin-right">
+                        <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest">Less</span>
+                        <div class="flex gap-0.5">
+                            <div class="w-2.5 h-2.5 rounded-sm bg-gray-100"></div>
+                            <div class="w-2.5 h-2.5 rounded-sm bg-emerald-200"></div>
+                            <div class="w-2.5 h-2.5 rounded-sm bg-emerald-400"></div>
+                            <div class="w-2.5 h-2.5 rounded-sm bg-emerald-600"></div>
+                            <div class="w-2.5 h-2.5 rounded-sm bg-emerald-800"></div>
+                        </div>
+                        <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest">More</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-12 gap-x-6 gap-y-8">
+                    @foreach($months as $mIdx)
+                        @php
+                            $monthObj = \Carbon\Carbon::create($heatmapYear, $mIdx, 1);
+                            $monthName = $monthObj->translatedFormat('F');
+                            $daysInMonth = $monthObj->daysInMonth;
+                            $firstDayOfMonth = $monthObj->dayOfWeekIso; // 1 (Mon) to 7 (Sun)
+                        @endphp
+                        <div class="space-y-4">
+                            <div class="flex flex-col items-center">
+                                <span class="text-[9px] font-black text-gray-500 uppercase tracking-[0.1em] mb-2">{{ $monthName }}</span>
+                                {{-- Days Initials Header --}}
+                                <div class="grid grid-cols-7 gap-1 w-full text-center px-1 mb-1">
+                                    @foreach(['S','S','R','K','J','S','M'] as $day)
+                                        <span class="text-[7px] font-black text-gray-300">{{ $day }}</span>
+                                    @endforeach
+                                </div>
+                                <div class="grid grid-cols-7 gap-1 w-full justify-items-center">
+                                    {{-- Empty slots before first day of month --}}
+                                    @for($i = 1; $i < $firstDayOfMonth; $i++)
+                                        <div class="w-3 h-3"></div>
+                                    @endfor
+
+                                    {{-- Days --}}
+                                    @for($d = 1; $d <= $daysInMonth; $d++)
+                                        @php
+                                            $dateStr = sprintf('%s-%02d-%02d', $heatmapYear, $mIdx, $d);
+                                            $count = $heatmapData[$dateStr] ?? 0;
+                                        @endphp
+                                        <div x-data="{ count: {{ $count }} }"
+                                             class="w-3 h-3 rounded-sm transition-all duration-300 hover:scale-150 hover:z-10 cursor-help relative group"
+                                             :class="getHeatmapColor(count)">
+                                            {{-- Tooltip --}}
+                                            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-50">
+                                                <div class="bg-gray-900 text-white text-[8px] font-bold py-1.5 px-2 rounded-lg shadow-xl whitespace-nowrap">
+                                                    <p class="mb-0.5 text-gray-400">{{ \Carbon\Carbon::parse($dateStr)->translatedFormat('d M Y') }}</p>
+                                                    <p class="text-emerald-400 leading-none" x-text="formatBilyet(count) + ' Bilyet'"></p>
+                                                </div>
+                                                <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 mx-auto -mt-1"></div>
+                                            </div>
+                                        </div>
+                                    @endfor
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
             </div>
 

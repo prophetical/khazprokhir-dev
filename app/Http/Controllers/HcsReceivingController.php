@@ -67,7 +67,8 @@ class HcsReceivingController extends Controller
 
     public function create()
     {
-        return view('hcs-receiving.create');
+        $lastReceiving = HcsReceiving::latest()->first();
+        return view('hcs-receiving.create', compact('lastReceiving'));
     }
 
     public function store(StoreHcsReceivingRequest $request)
@@ -145,16 +146,18 @@ class HcsReceivingController extends Controller
             return back()->withInput()->withErrors(['packs' => "Jumlah packs yang dipilih ($selectedPacksCount) tidak sesuai kebutuhan ($packsNeeded)."]);
         }
 
+        // Cek field yang gak boleh diedit (read-only) permanen
+        if ($validated['pecahan'] !== $hcsReceiving->pecahan ||
+            $validated['batch'] !== $hcsReceiving->batch ||
+            $validated['seri'] !== $hcsReceiving->seri ||
+            $validated['emisi'] != $hcsReceiving->emisi ||
+            $validated['tahun_anggaran'] != $hcsReceiving->tahun_anggaran) {
+            return back()->withInput()->withErrors(['error' => 'Tahun Anggaran, Emisi, Pecahan, Batch, dan Seri tidak boleh diubah untuk menjaga integritas satu batch.']);
+        }
+
         $sortedPacks = $hcsReceiving->packs()->whereNotNull('hcs_sorting_id')->pluck('pack_number')->toArray();
 
         if (!empty($sortedPacks)) {
-            // Cek field yang gak boleh diedit (read-only)
-            if ($validated['pecahan'] !== $hcsReceiving->pecahan ||
-            $validated['batch'] !== $hcsReceiving->batch ||
-            $validated['seri'] !== $hcsReceiving->seri) {
-                return back()->withInput()->withErrors(['error' => 'Pecahan, Batch, dan Seri tidak boleh diubah karena sudah ada pack yang disortir.']);
-            }
-
             // Validasi minimum pack
             if ($selectedPacksCount < count($sortedPacks)) {
                 return back()->withInput()->withErrors(['packs' => 'Jumlah pack tidak boleh kurang dari pack yang sudah disortir (' . count($sortedPacks) . ' pack).']);

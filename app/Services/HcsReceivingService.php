@@ -36,6 +36,7 @@ class HcsReceivingService
                 'batch' => $data['batch'],
                 'seri' => $data['seri'],
                 'emisi' => $data['emisi'],
+                'tahun_anggaran' => $data['tahun_anggaran'],
                 'repass' => $data['repass'] ?? null,
                 'created_by' => $userId,
             ]);
@@ -128,6 +129,7 @@ class HcsReceivingService
                 'batch' => $data['batch'],
                 'seri' => $data['seri'],
                 'emisi' => $data['emisi'],
+                'tahun_anggaran' => $data['tahun_anggaran'],
                 'repass' => $data['repass'] ?? null,
                 'updated_by' => $userId,
             ]);

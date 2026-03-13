@@ -67,17 +67,21 @@
                                                    value="{{ old('tanggal_penerimaan', $hcsReceiving->tanggal_penerimaan) }}" required />
                                         </div>
 
-                                        <div class="space-y-1.5">
-                                            <label for="pecahan" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Pecahan</label>
-                                            <select id="pecahan" name="pecahan" x-model="selectedPecahan"
-                                                    class="block w-full py-2.5 px-4 border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 font-black text-sm {{ $hasSortedPacks ? 'bg-gray-100 pointer-events-none' : '' }}" 
+                                        <div class="space-y-1.5 relative">
+                                            <label for="pecahan" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-1">
+                                                Pecahan
+                                                <svg class="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg>
+                                            </label>
+                                            <select id="pecahan_select" name="pecahan" x-model="selectedPecahan"
+                                                    class="block w-full py-2.5 px-4 border-gray-200 rounded-xl bg-gray-100/80 pointer-events-none opacity-60 shadow-sm transition-all duration-300 font-black text-sm" 
                                                     :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20 text-indigo-600'"
-                                                    {{ $hasSortedPacks ? 'readonly tabindex="-1"' : '' }} required>
+                                                    tabindex="-1" required>
                                                 <option value="">Pilih Pecahan</option>
                                                 @foreach(['S' => '1.000', 'T' => '2.000', 'U' => '5.000', 'V' => '10.000', 'W' => '20.000', 'X' => '50.000', 'Y' => '100.000'] as $key => $label)
-                                                    <option value="{{ $key }}">{{ $key }} - {{ $label }}</option>
+                                                    <option value="{{ $key }}" {{ $selectedPecahan == $key ? 'selected' : '' }}>{{ $key }} - {{ $label }}</option>
                                                 @endforeach
                                             </select>
+                                            <input type="hidden" name="pecahan" value="{{ $selectedPecahan }}">
                                         </div>
 
                                         <div class="space-y-1.5">
@@ -125,38 +129,51 @@
                                             </select>
                                         </div>
 
-                                        <div class="space-y-1.5">
-                                            <label for="batch" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Batch</label>
+                                        <div class="space-y-1.5 relative">
+                                            <label for="batch" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-1">
+                                                Batch
+                                                <svg class="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg>
+                                            </label>
                                             <input id="batch" name="batch" type="text" maxlength="7" 
-                                                   class="block w-full py-2.5 px-4 font-mono uppercase bg-gray-100/50 border-gray-200 rounded-xl backdrop-blur-sm shadow-sm transition-all duration-300 tracking-tighter placeholder-gray-300 font-bold text-sm opacity-70" 
+                                                   class="block w-full py-2.5 px-4 font-mono uppercase bg-gray-100/50 border-gray-200 rounded-xl backdrop-blur-sm shadow-sm transition-all duration-300 tracking-tighter placeholder-gray-300 font-bold text-sm opacity-60 cursor-not-allowed" 
                                                    value="{{ old('batch', $hcsReceiving->batch) }}" readonly required />
                                         </div>
 
-                                        <div class="space-y-1.5">
-                                            <label for="seri" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Seri</label>
+                                        <div class="space-y-1.5 relative">
+                                            <label for="seri" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-1">
+                                                Seri
+                                                <svg class="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg>
+                                            </label>
                                             <input id="seri" name="seri" type="text" 
-                                                   class="block w-full py-2.5 px-4 font-mono uppercase bg-gray-100/50 border-gray-200 rounded-xl backdrop-blur-sm shadow-sm transition-all duration-300 tracking-[0.2em] placeholder-gray-300 font-bold text-sm opacity-70" 
+                                                   class="block w-full py-2.5 px-4 font-mono uppercase bg-gray-100/50 border-gray-200 rounded-xl backdrop-blur-sm shadow-sm transition-all duration-300 tracking-[0.2em] placeholder-gray-300 font-bold text-sm opacity-60 cursor-not-allowed" 
                                                    placeholder="Seri" value="{{ old('seri', $hcsReceiving->seri) }}" readonly required />
                                         </div>
 
-                                        <div class="space-y-1.5">
-                                            <label for="emisi" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Emisi (Tahun)</label>
+                                        <div class="space-y-1.5 relative">
+                                            <label for="emisi" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-1">
+                                                Emisi (Tahun)
+                                                <svg class="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg>
+                                            </label>
                                             <input id="emisi" name="emisi" type="number" min="2000" max="2100" 
-                                                   class="block w-full py-2.5 px-4 border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 placeholder-gray-300 font-bold text-sm"
+                                                   class="block w-full py-2.5 px-4 border-gray-200 rounded-xl bg-gray-100/80 pointer-events-none opacity-60 shadow-sm transition-all duration-300 font-bold text-sm cursor-not-allowed"
                                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'" 
-                                                   value="{{ old('emisi', $hcsReceiving->emisi) }}" required />
+                                                   value="{{ old('emisi', $hcsReceiving->emisi) }}" readonly required />
                                         </div>
 
-                                        <div class="space-y-1.5">
-                                            <label for="tahun_anggaran" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Tahun Anggaran</label>
+                                        <div class="space-y-1.5 relative">
+                                            <label for="tahun_anggaran" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-1">
+                                                Tahun Anggaran
+                                                <svg class="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg>
+                                            </label>
                                             <select id="tahun_anggaran" name="tahun_anggaran" 
-                                                    class="block w-full py-2.5 px-4 border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 font-bold text-sm"
+                                                    class="block w-full py-2.5 px-4 border-gray-200 rounded-xl bg-gray-100/80 pointer-events-none opacity-60 shadow-sm transition-all duration-300 font-bold text-sm"
                                                     :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'" 
-                                                    required>
+                                                    tabindex="-1" required>
                                                 @foreach(['2024', '2025', '2026', '2027'] as $year)
                                                     <option value="{{ $year }}" {{ old('tahun_anggaran', $hcsReceiving->tahun_anggaran ?? '2025') == $year ? 'selected' : '' }}>{{ $year }}</option>
                                                 @endforeach
                                             </select>
+                                            <input type="hidden" name="tahun_anggaran" value="{{ old('tahun_anggaran', $hcsReceiving->tahun_anggaran) }}">
                                         </div>
                                         
                                         <div class="col-span-1 sm:col-span-2 mt-4">
@@ -208,11 +225,9 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @if($hasSortedPacks)
-                                                <p class="mt-4 px-6 text-[10px] text-red-500 font-black uppercase tracking-widest text-center animate-pulse">
-                                                    ⚠️ Beberapa pack telah disortir! Beberapa bidang dikunci untuk menjaga integritas data.
-                                                </p>
-                                            @endif
+                                            <p class="mt-4 px-6 text-[10px] text-red-500 font-black uppercase tracking-widest text-center animate-pulse">
+                                                ⚠️ Data Batch, Seri, Pecahan, TA, dan TE telah dikunci untuk menjaga integritas satu batch.
+                                            </p>
                                         </div>
                                     </div>
                                 </div>

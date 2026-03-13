@@ -10,6 +10,8 @@
             <div class="bg-white/70 backdrop-blur-xl overflow-hidden shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] sm:rounded-3xl border border-white">
                     @php
                         $selectedPecahan = old('pecahan', request('pecahan', ''));
+                        // Lock if adding to an existing batch (from index plus button)
+                        $isLocked = request()->has('batch');
                         $themeClasses = [
                             'S' => ['bg' => 'bg-lime-500', 'border' => 'border-lime-500', 'ring' => 'focus:ring-lime-500', 'focus' => 'focus:border-lime-500', 'btn' => 'bg-gradient-to-r from-lime-500 to-lime-600', 'text' => 'text-gray-900', 'soft' => 'bg-lime-50', 'icon' => 'text-lime-600'],
                             'T' => ['bg' => 'bg-gray-400', 'border' => 'border-gray-400', 'ring' => 'focus:ring-gray-400', 'focus' => 'focus:border-gray-400', 'btn' => 'bg-gradient-to-r from-gray-400 to-gray-500', 'text' => 'text-white', 'soft' => 'bg-gray-50', 'icon' => 'text-gray-600'],
@@ -67,17 +69,23 @@
                                                    value="{{ old('tanggal_penerimaan', date('Y-m-d')) }}" required />
                                         </div>
 
-                                        <div class="space-y-1.5">
-                                            <label for="pecahan" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Pecahan</label>
+                                        <div class="space-y-1.5 relative">
+                                            <label for="pecahan" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-1">
+                                                Pecahan
+                                                @if($isLocked)
+                                                    <svg class="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg>
+                                                @endif
+                                            </label>
                                             <select id="pecahan" name="pecahan" x-model="selectedPecahan"
-                                                    class="block w-full py-2.5 px-4 border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 font-black text-sm" 
+                                                    class="block w-full py-2.5 px-4 border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 font-black text-sm {{ $isLocked ? 'bg-gray-100/80 pointer-events-none opacity-60' : '' }}" 
                                                     :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20 text-indigo-600'"
-                                                    required>
+                                                    {{ $isLocked ? 'tabindex="-1"' : '' }} required>
                                                 <option value="">Pilih Pecahan</option>
                                                 @foreach(['S' => '1.000', 'T' => '2.000', 'U' => '5.000', 'V' => '10.000', 'W' => '20.000', 'X' => '50.000', 'Y' => '100.000'] as $key => $label)
-                                                    <option value="{{ $key }}">{{ $key }} - {{ $label }}</option>
+                                                    <option value="{{ $key }}" {{ $selectedPecahan == $key ? 'selected' : '' }}>{{ $key }} - {{ $label }}</option>
                                                 @endforeach
                                             </select>
+                                            @if($isLocked) <input type="hidden" name="pecahan" value="{{ $selectedPecahan }}"> @endif
                                         </div>
 
                                         <div class="space-y-1.5">
@@ -125,40 +133,61 @@
                                             </select>
                                         </div>
 
-                                        <div class="space-y-1.5">
-                                            <label for="batch" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Batch</label>
+                                        <div class="space-y-1.5 relative">
+                                            <label for="batch" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-1">
+                                                Batch
+                                                @if($isLocked)
+                                                    <svg class="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg>
+                                                @endif
+                                            </label>
                                             <input id="batch" name="batch" type="text" maxlength="7" 
-                                                   class="block w-full py-2.5 px-4 font-mono uppercase border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 tracking-tighter placeholder-gray-300 font-bold text-sm"
+                                                   class="block w-full py-2.5 px-4 font-mono uppercase border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 tracking-tighter placeholder-gray-300 font-bold text-sm {{ $isLocked ? 'bg-gray-100/80 opacity-60 cursor-not-allowed' : '' }}"
                                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'" 
-                                                   value="{{ old('batch', request('batch')) }}" placeholder="0000000" required />
+                                                   value="{{ old('batch', request('batch')) }}" placeholder="0000000" {{ $isLocked ? 'readonly' : '' }} required />
                                         </div>
 
-                                        <div class="space-y-1.5">
-                                            <label for="seri" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Seri</label>
+                                        <div class="space-y-1.5 relative">
+                                            <label for="seri" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-1">
+                                                Seri
+                                                @if($isLocked)
+                                                    <svg class="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg>
+                                                @endif
+                                            </label>
                                             <input id="seri" name="seri" type="text" 
-                                                   class="block w-full py-2.5 px-4 font-mono uppercase border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 tracking-[0.2em] placeholder-gray-300 font-bold text-sm"
+                                                   class="block w-full py-2.5 px-4 font-mono uppercase border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 tracking-[0.2em] placeholder-gray-300 font-bold text-sm {{ $isLocked ? 'bg-gray-100/80 opacity-60 cursor-not-allowed' : '' }}"
                                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'" 
-                                                   placeholder="Seri" value="{{ old('seri', request('seri')) }}" required />
+                                                   placeholder="Seri" value="{{ old('seri', request('seri')) }}" {{ $isLocked ? 'readonly' : '' }} required />
                                         </div>
 
-                                        <div class="space-y-1.5">
-                                            <label for="emisi" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Emisi (Tahun)</label>
+                                        <div class="space-y-1.5 relative">
+                                            <label for="emisi" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-1">
+                                                Emisi (Tahun)
+                                                @if($isLocked)
+                                                    <svg class="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg>
+                                                @endif
+                                            </label>
                                             <input id="emisi" name="emisi" type="number" min="2000" max="2100" 
-                                                   class="block w-full py-2.5 px-4 border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 placeholder-gray-300 font-bold text-sm"
+                                                   class="block w-full py-2.5 px-4 border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 placeholder-gray-300 font-bold text-sm {{ $isLocked ? 'bg-gray-100/80 opacity-60 cursor-not-allowed' : '' }}"
                                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'" 
-                                                   value="{{ old('emisi', '2022') }}" required />
+                                                   value="{{ old('emisi', request('emisi', $lastReceiving->emisi ?? '2022')) }}" {{ $isLocked ? 'readonly' : '' }} required />
                                         </div>
 
-                                        <div class="space-y-1.5">
-                                            <label for="tahun_anggaran" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Tahun Anggaran</label>
+                                        <div class="space-y-1.5 relative">
+                                            <label for="tahun_anggaran" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-1">
+                                                Tahun Anggaran
+                                                @if($isLocked)
+                                                    <svg class="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg>
+                                                @endif
+                                            </label>
                                             <select id="tahun_anggaran" name="tahun_anggaran" 
-                                                    class="block w-full py-2.5 px-4 border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 font-bold text-sm"
+                                                    class="block w-full py-2.5 px-4 border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 font-bold text-sm {{ $isLocked ? 'bg-gray-100/80 pointer-events-none opacity-60' : '' }}"
                                                     :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'" 
-                                                    required>
+                                                    {{ $isLocked ? 'tabindex="-1"' : '' }} required>
                                                 @foreach(['2024', '2025', '2026', '2027'] as $year)
-                                                    <option value="{{ $year }}" {{ old('tahun_anggaran', '2025') == $year ? 'selected' : '' }}>{{ $year }}</option>
+                                                    <option value="{{ $year }}" {{ old('tahun_anggaran', request('tahun_anggaran', $lastReceiving->tahun_anggaran ?? '2025')) == $year ? 'selected' : '' }}>{{ $year }}</option>
                                                 @endforeach
                                             </select>
+                                            @if($isLocked) <input type="hidden" name="tahun_anggaran" value="{{ request('tahun_anggaran', $lastReceiving->tahun_anggaran ?? '2025') }}"> @endif
                                         </div>
                                         
                                         <div class="col-span-1 sm:col-span-2 mt-4">

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class HcsReceiving extends Model
 {
-    protected $guarded = ['id', 'tahun_anggaran'];
+    protected $guarded = ['id'];
 
     public function packs()
     {

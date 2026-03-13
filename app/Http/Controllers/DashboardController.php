@@ -142,6 +142,18 @@ class DashboardController extends Controller
             'target' => $totalMonthlyTargetArr
         ];
 
+        // 5. Heatmap Data (Daily production based on Pengemasan)
+        $heatmapData = \App\Models\Pengemasan::where('tahun_anggaran', $currentYear)
+            ->when($currentTE, fn($q) => $q->where('tahun_emisi', $currentTE))
+            ->selectRaw("DATE(tanggal_pengemasan) as date, SUM(jumlah_dus * 20000) as total")
+            ->groupBy('date')
+            ->pluck('total', 'date')
+            ->toArray();
+
+        // Determine which year to show for the heatmap calendar
+        $latestHeatmapDate = !empty($heatmapData) ? max(array_keys($heatmapData)) : null;
+        $heatmapYear = $latestHeatmapDate ? Carbon::parse($latestHeatmapDate)->year : $currentYear;
+
         return view('dashboard', compact(
             'totalHcsToday',
             'totalBilyetToday',
@@ -149,6 +161,9 @@ class DashboardController extends Controller
             'cutpackCount',
             'rikyetCount',
             'chartData',
+            'heatmapData',
+            'heatmapYear',
+            'months',
             'currentYear',
             'availableYears',
             'currentTE',

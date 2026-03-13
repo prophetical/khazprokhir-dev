@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Proses Penyortiran HCS') }} - Batch: {{ $batch }}, Seri: {{ $seri }}, Pecahan: {{ $pecahan }}
+            {{ __('Proses Penyortiran HCS') }} - {{ $batch }} / {{ $seri }} / {{ $pecahan }}
         </h2>
     </x-slot>
 
@@ -126,7 +126,7 @@
                      :class="currentTheme ? currentTheme.border : 'border-gray-100'">
                     <div class="p-6 text-gray-900">
                         <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center uppercase tracking-wider">
-                            <div class="w-2 h-6 mr-3 rounded-full transition-all duration-500" :class="currentTheme ? currentTheme.bg : 'bg-gray-400'"></div>
+                            <div class="w-2 h-6 mr-3 rounded-full transition-all duration-500 shadow-[0_0_10px_rgba(0,0,0,0.1)]" :class="currentTheme ? currentTheme.bg : 'bg-gray-400'"></div>
                             Detail Penyortiran
                         </h3>
                         
@@ -145,104 +145,162 @@
 
                             <div class="space-y-6">
                                 <!-- Manual Toggle Slider -->
-                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100 transition-all duration-300" 
-                                     :class="isManual ? 'ring-2 ring-red-500/20 border-red-100 bg-red-50/30' : ''">
+                                <div class="flex items-center justify-between p-4 bg-white/40 backdrop-blur-md rounded-2xl border border-white/60 shadow-sm transition-all duration-300" 
+                                     :class="isManual ? 'ring-2 ring-red-500/20 border-red-100 bg-red-50/50' : ''">
                                     <div class="flex items-center">
-                                        <div class="w-8 h-8 rounded-lg flex items-center justify-center mr-3 transition-colors duration-300"
-                                             :class="isManual ? 'bg-red-500 text-white shadow-lg shadow-red-500/30' : 'bg-gray-200 text-gray-400'">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center mr-3 transition-all duration-300 shadow-sm"
+                                             :class="isManual ? 'bg-red-500 text-white shadow-lg shadow-red-500/30' : 'bg-gray-100 text-gray-400'">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                                         </div>
-                                        <span class="text-[10px] font-black uppercase tracking-widest transition-colors duration-300"
-                                              :class="isManual ? 'text-red-600' : 'text-gray-500'">
-                                            Input Sisa Pack (Bukan Kelipatan 4)
-                                        </span>
+                                        <div class="flex flex-col">
+                                            <span class="text-[10px] font-black uppercase tracking-[0.15em] transition-colors duration-300"
+                                                  :class="isManual ? 'text-red-600' : 'text-gray-500'">
+                                                Mode Sisa Pack
+                                            </span>
+                                            <span class="text-[8px] font-bold text-gray-400 uppercase tracking-widest leading-tight">Gunakan jika < 4 Pack</span>
+                                        </div>
                                     </div>
-                                    <label class="relative inline-flex items-center cursor-pointer">
+                                    <label class="relative inline-flex items-center cursor-pointer scale-110">
                                         <input type="checkbox" id="is_manual" name="is_manual" class="sr-only peer" x-model="isManual" @change="validateSelection()">
                                         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500 shadow-inner"></div>
                                     </label>
                                 </div>
+
                                 <!-- Summary Info -->
-                                <div class="bg-gray-50/50 p-5 rounded-xl border border-gray-100 space-y-3 shadow-inner">
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Pack:</span>
-                                        <span class="text-xl font-black transition-colors duration-500" 
-                                              :class="currentTheme ? currentTheme.text.replace('text-white', 'text-gray-900') : 'text-indigo-700'" 
-                                              x-text="selectedPacks.length"></span>
+                                <div class="relative bg-gradient-to-br from-gray-900 to-gray-800 p-6 rounded-3xl space-y-4 shadow-xl overflow-hidden group">
+                                    <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 blur-2xl transition-transform duration-700 group-hover:scale-150"></div>
+                                    <div class="flex justify-between items-center relative z-10">
+                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] flex items-center">
+                                            <svg class="w-3 h-3 mr-1.5 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                                            Total Pack
+                                        </span>
+                                        <span class="text-2xl font-black text-white" x-text="selectedPacks.length"></span>
                                     </div>
-                                    <div class="flex justify-between items-center border-t border-gray-100 pt-3">
-                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Bilyet:</span>
-                                        <span class="text-2xl font-black text-gray-900" x-text="formatNumber(totalBilyet)"></span>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label for="supplier" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Supplier (Hasil Sortir)</label>
-                                    <select id="supplier" name="supplier" 
-                                            class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 transition-all duration-300"
-                                            :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'" 
-                                            required>
-                                        <option value="">Pilih Supplier</option>
-                                        <option value="Cutpack" {{ old('supplier') == 'Cutpack' ? 'selected' : '' }}>Cutpack</option>
-                                        <option value="Rikyet" {{ old('supplier') == 'Rikyet' ? 'selected' : '' }}>Rikyet</option>
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label for="emisi" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Emisi / TA</label>
-                                    <div class="grid grid-cols-2 gap-2">
-                                        <input type="text" 
-                                               class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 transition-all duration-300 bg-gray-50 opacity-70"
-                                               value="{{ $emisi }}" readonly />
-                                        <input type="text" 
-                                               class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 transition-all duration-300 bg-gray-50 opacity-70"
-                                               value="{{ $tahun_anggaran }}" readonly />
+                                    <div class="flex flex-col relative z-10 border-t border-white/10 pt-4">
+                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-1 flex items-center">
+                                            <svg class="w-3 h-3 mr-1.5 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M12 16V7"/></svg>
+                                            Total Bilyet
+                                        </span>
+                                        <span class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300" x-text="formatNumber(totalBilyet)"></span>
                                     </div>
                                 </div>
 
-                                <div>
-                                    <label for="petugas_1" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Petugas 1</label>
-                                    <input id="petugas_1" name="petugas_1" type="text" 
-                                           class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 transition-all duration-300"
-                                           :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
-                                           value="{{ old('petugas_1') }}" required />
-                                </div>
+                                <!-- Form Fields -->
+                                <div class="grid grid-cols-1 gap-5">
+                                    <div>
+                                        <label for="supplier" class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Supplier (Hasil Sortir)</label>
+                                        <div class="relative group">
+                                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-colors duration-300"
+                                                 :class="currentTheme ? currentTheme.text.replace('text-', 'text-opacity-40 text-') : 'text-gray-300 group-focus-within:text-indigo-500'">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                                            </div>
+                                            <select id="supplier" name="supplier" 
+                                                    class="block w-full border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm text-sm py-3 px-10 transition-all duration-300 focus:ring-4 font-bold text-center appearance-none"
+                                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'" 
+                                                    required>
+                                                <option value="">Pilih Supplier</option>
+                                                <option value="Cutpack" {{ old('supplier') == 'Cutpack' ? 'selected' : '' }}>Cutpack</option>
+                                                <option value="Rikyet" {{ old('supplier') == 'Rikyet' ? 'selected' : '' }}>Rikyet</option>
+                                            </select>
+                                        </div>
+                                    </div>
 
-                                <div>
-                                    <label for="petugas_2" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Petugas 2 (Opsional)</label>
-                                    <input id="petugas_2" name="petugas_2" type="text"
-                                           class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 transition-all duration-300"
-                                           :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
-                                           value="{{ old('petugas_2') }}" />
-                                </div>
+                                    <div>
+                                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Emisi / Tahun Anggaran</label>
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <div class="relative">
+                                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+                                                </div>
+                                                <input type="text" 
+                                                       class="block w-full border-gray-200 rounded-xl bg-gray-100/50 shadow-inner text-sm py-3 px-10 font-bold text-center opacity-70"
+                                                       value="{{ $emisi }}" readonly />
+                                            </div>
+                                            <div class="relative">
+                                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                                </div>
+                                                <input type="text" 
+                                                       class="block w-full border-gray-200 rounded-xl bg-gray-100/50 shadow-inner text-sm py-3 px-10 font-bold text-center opacity-70"
+                                                       value="{{ $tahun_anggaran }}" readonly />
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                <div>
-                                    <label for="tanggal" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Tanggal</label>
-                                    <input id="tanggal" name="tanggal" type="date"
-                                           class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 transition-all duration-300"
-                                           :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
-                                           value="{{ old('tanggal', date('Y-m-d')) }}" required />
-                                </div>
+                                    <div>
+                                        <label for="petugas_1" class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Petugas 1</label>
+                                        <div class="relative group">
+                                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-colors duration-300"
+                                                 :class="currentTheme ? currentTheme.text.replace('text-', 'text-opacity-40 text-') : 'text-gray-300 group-focus-within:text-indigo-500'">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                                            </div>
+                                            <input id="petugas_1" name="petugas_1" type="text" 
+                                                   class="block w-full border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm text-sm py-3 px-10 transition-all duration-300 focus:ring-4 font-bold text-center"
+                                                   :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
+                                                   value="{{ old('petugas_1') }}" placeholder="Input Nama Petugas" required />
+                                        </div>
+                                    </div>
 
-                                <div>
-                                    <label for="gilir" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Gilir</label>
-                                    <select id="gilir" name="gilir" 
-                                            class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 transition-all duration-300"
-                                            :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
-                                            required>
-                                        <option value="">Pilih Gilir</option>
-                                        <option value="Gilir 1" {{ old('gilir') == 'Gilir 1' ? 'selected' : '' }}>Gilir 1</option>
-                                        <option value="Gilir 2" {{ old('gilir') == 'Gilir 2' ? 'selected' : '' }}>Gilir 2</option>
-                                        <option value="Gilir 3" {{ old('gilir') == 'Gilir 3' ? 'selected' : '' }}>Gilir 3</option>
-                                    </select>
+                                    <div>
+                                        <label for="petugas_2" class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Petugas 2 (Opsional)</label>
+                                        <div class="relative group">
+                                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-colors duration-300"
+                                                 :class="currentTheme ? currentTheme.text.replace('text-', 'text-opacity-40 text-') : 'text-gray-300 group-focus-within:text-indigo-500'">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                                            </div>
+                                            <input id="petugas_2" name="petugas_2" type="text"
+                                                   class="block w-full border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm text-sm py-3 px-10 transition-all duration-300 focus:ring-4 font-bold text-center"
+                                                   :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
+                                                   value="{{ old('petugas_2') }}" placeholder="Petugas Pendamping" />
+                                        </div>
+                                    </div>
+
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label for="tanggal" class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Tanggal</label>
+                                            <div class="relative group">
+                                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-colors duration-300"
+                                                     :class="currentTheme ? currentTheme.text.replace('text-', 'text-opacity-40 text-') : 'text-gray-300 group-focus-within:text-indigo-500'">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                                </div>
+                                                <input id="tanggal" name="tanggal" type="date"
+                                                       class="block w-full border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm text-sm py-3 px-8 transition-all duration-300 focus:ring-4 font-bold text-center"
+                                                       :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
+                                                       value="{{ old('tanggal', date('Y-m-d')) }}" required />
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label for="gilir" class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Gilir</label>
+                                            <div class="relative group">
+                                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-colors duration-300"
+                                                     :class="currentTheme ? currentTheme.text.replace('text-', 'text-opacity-40 text-') : 'text-gray-300 group-focus-within:text-indigo-500'">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                                </div>
+                                                <select id="gilir" name="gilir" 
+                                                        class="block w-full border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm text-sm py-3 px-8 transition-all duration-300 focus:ring-4 font-bold text-center appearance-none"
+                                                        :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
+                                                        required>
+                                                    <option value="">Gilir</option>
+                                                    <option value="Gilir 1" {{ old('gilir') == 'Gilir 1' ? 'selected' : '' }}>1</option>
+                                                    <option value="Gilir 2" {{ old('gilir') == 'Gilir 2' ? 'selected' : '' }}>2</option>
+                                                    <option value="Gilir 3" {{ old('gilir') == 'Gilir 3' ? 'selected' : '' }}>3</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 
-                                <div class="pt-6">
+                                <div class="pt-8">
                                     <button type="submit" 
-                                            class="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-xs font-bold uppercase tracking-widest transition-all duration-300 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed disabled:grayscale"
-                                            :class="currentTheme ? (currentTheme.btn + ' ' + currentTheme.text + ' brightness-95 hover:brightness-105') : 'bg-gray-800 text-white'"
+                                            class="w-full relative group overflow-hidden py-4 px-4 rounded-2xl shadow-[0_10px_30px_-10px_rgba(0,0,0,0.3)] text-xs font-black uppercase tracking-[0.2em] transition-all duration-500 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed disabled:grayscale"
+                                            :class="currentTheme ? (currentTheme.btn + ' ' + currentTheme.text) : 'bg-gray-900 text-white'"
                                             :disabled="selectedPacks.length === 0 || validationError !== ''">
-                                        Simpan Data Sortir
+                                        <div class="absolute inset-0 bg-white/20 translate-y-full transition-transform duration-300 group-hover:translate-y-0"></div>
+                                        <span class="relative z-10 flex items-center justify-center">
+                                            Simpan Data Sortir
+                                            <svg class="w-4 h-4 ml-2 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                                        </span>
                                     </button>
                                 </div>
                             </div>
