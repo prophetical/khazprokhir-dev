@@ -135,8 +135,18 @@ class LaporanHarianController extends Controller
         $tahunEmisiOptions = $options['tahun_emisi'];
         $filters = $this->getFilters($request, $tahunEmisiOptions);
         $data = $this->getReportData($filters);
+        
+        $hctsInventoryData = $this->getHctsInventoryData($filters);
+        $targetAchievementData = $this->getTargetAchievementData($filters);
+        $monthlyTargetAchievementData = $this->getMonthlyTargetAchievementData($filters);
+        $sisaHariKerja = $data['sisaHariKerja'] ?? 0;
 
-        return view('laporan-harian.print-operasional', array_merge($filters, $data));
+        return view('laporan-harian.print-operasional', array_merge($filters, $data, [
+            'hctsInventoryData' => $hctsInventoryData,
+            'targetAchievementData' => $targetAchievementData,
+            'monthlyTargetAchievementData' => $monthlyTargetAchievementData,
+            'sisaHariKerja' => $sisaHariKerja,
+        ]));
     }
 
     private function getFilters(Request $request, $tahunEmisiOptions = [])

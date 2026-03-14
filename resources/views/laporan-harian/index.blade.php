@@ -17,7 +17,14 @@
         </h2>
     </x-slot>
 
-    <div class="py-12" x-data="{ search: '' }">
+    <div class="py-12" x-data="{ 
+        search: '', 
+        showHcs: true, 
+        showMonitoring: true, 
+        showHcts: true, 
+        showAnnual: true, 
+        showMonthly: true 
+    }">
         <div class="max-w-full mx-auto sm:px-6 lg:px-8">
             <!-- Filter & Action Row -->
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-xl mb-6 p-6 border border-gray-100">
@@ -64,12 +71,34 @@
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                             Excel
                         </a>
-                        <a href="{{ route('laporan-harian.print', request()->all()) }}" target="_blank" class="inline-flex items-center px-4 py-2.5 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg hover:bg-rose-100 transition shadow-sm font-bold text-sm">
+                        <a :href="'{{ route('laporan-harian.print') }}?' + new URLSearchParams({
+                            tanggal_laporan: '{{ $tanggalLaporan }}',
+                            tahun_anggaran: '{{ $tahunAnggaran }}',
+                            tahun_emisi: '{{ $tahunEmisi }}',
+                            autoprint: 1,
+                            showHcs: showHcs,
+                            showMonitoring: showMonitoring,
+                            showHcts: showHcts,
+                            showAnnual: showAnnual,
+                            showMonthly: showMonthly
+                        }).toString()" 
+                           target="_blank" 
+                           class="inline-flex items-center px-4 py-2.5 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg hover:bg-rose-100 transition shadow-sm font-bold text-sm">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
                             PDF
                         </a>
-                        <a href="{{ route('laporan-harian.print', array_merge(request()->all(), ['autoprint' => 1])) }}" target="_blank" class="inline-flex items-center px-4 py-2.5 bg-gray-50 text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-100 transition shadow-sm font-bold text-sm">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                        <a :href="'{{ route('laporan-harian.print') }}?' + new URLSearchParams({
+                            tanggal_laporan: '{{ $tanggalLaporan }}',
+                            tahun_anggaran: '{{ $tahunAnggaran }}',
+                            tahun_emisi: '{{ $tahunEmisi }}',
+                            showHcs: showHcs,
+                            showMonitoring: showMonitoring,
+                            showHcts: showHcts,
+                            showAnnual: showAnnual,
+                            showMonthly: showMonthly
+                        }).toString()" 
+                           class="inline-flex items-center px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-indigo-100 group">
+                            <svg class="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
                             Print
                         </a>
                     </div>
@@ -84,16 +113,24 @@
                         <span class="w-2 h-6 bg-indigo-600 rounded-full mr-3"></span>
                         Laporan Persediaan HCS {{ \Carbon\Carbon::parse($tanggalLaporan)->locale('id')->isoFormat('dddd, D MMMM Y') }} TA {{ $tahunAnggaran }}
                     </h3>
-                    <div class="relative w-64 group">
-                        <input type="text" x-model="search" placeholder="Cari Pecahan..." 
-                            class="w-full pl-10 pr-4 py-2 rounded-xl border-gray-200 text-sm focus:border-indigo-500 focus:ring-indigo-500 transition-all group-hover:border-indigo-300 shadow-sm">
-                        <div class="absolute left-3 top-2.5 text-gray-400 group-hover:text-indigo-500 transition-colors">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                    <div class="flex items-center gap-4">
+                        <div class="relative w-64 group">
+                            <input type="text" x-model="search" placeholder="Cari Pecahan..." 
+                                class="w-full pl-10 pr-4 py-2 rounded-xl border-gray-200 text-sm focus:border-indigo-500 focus:ring-indigo-500 transition-all group-hover:border-indigo-300 shadow-sm">
+                            <div class="absolute left-3 top-2.5 text-gray-400 group-hover:text-indigo-500 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                            </div>
                         </div>
+                        <button @click="showHcs = !showHcs" class="p-2 hover:bg-indigo-100 rounded-lg transition-colors text-indigo-600">
+                            <svg class="w-6 h-6 transition-transform duration-200" :class="{ 'rotate-180': !showHcs }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                            </svg>
+                        </button>
                     </div>
                 </div>
                 
-                <div class="overflow-x-auto">
+                <div x-show="showHcs" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform -translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 transform translate-y-0" x-transition:leave-end="opacity-0 transform -translate-y-2">
+                    <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-100/80">
                             <tr class="text-[10px] font-black uppercase text-gray-500 tracking-widest divide-x divide-gray-200">
@@ -199,6 +236,7 @@
                             </tr>
                         </tfoot>
                     </table>
+                    </div>
                 </div>
             </div>
 
@@ -209,9 +247,15 @@
                         <span class="w-2 h-6 bg-green-600 rounded-full mr-3"></span>
                         Monitoring Target & Produksi HCS {{ \Carbon\Carbon::parse($tanggalLaporan)->locale('id')->isoFormat('dddd, D MMMM Y') }} TA {{ $tahunAnggaran }}
                     </h3>
+                    <button @click="showMonitoring = !showMonitoring" class="p-2 hover:bg-green-100 rounded-lg transition-colors text-green-600">
+                        <svg class="w-6 h-6 transition-transform duration-200" :class="{ 'rotate-180': !showMonitoring }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                        </svg>
+                    </button>
                 </div>
                 
-                <div class="overflow-x-auto">
+                <div x-show="showMonitoring" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform -translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 transform translate-y-0" x-transition:leave-end="opacity-0 transform -translate-y-2">
+                    <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-100/80">
                             <tr class="text-[10px] font-black uppercase text-gray-500 tracking-widest divide-x divide-gray-200">
@@ -341,6 +385,7 @@
                             </tr>
                         </tfoot>
                     </table>
+                    </div>
                 </div>
             </div>
             <!-- HCTS Inventory Report Section -->
@@ -350,9 +395,15 @@
                         <span class="w-2 h-6 bg-orange-600 rounded-full mr-3"></span>
                         Laporan Persediaan HCTS {{ \Carbon\Carbon::parse($tanggalLaporan)->locale('id')->isoFormat('dddd, D MMMM Y') }} TA {{ $tahunAnggaran }}
                     </h3>
+                    <button @click="showHcts = !showHcts" class="p-2 hover:bg-orange-100 rounded-lg transition-colors text-orange-600">
+                        <svg class="w-6 h-6 transition-transform duration-200" :class="{ 'rotate-180': !showHcts }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                        </svg>
+                    </button>
                 </div>
                 
-                <div class="overflow-x-auto">
+                <div x-show="showHcts" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform -translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 transform translate-y-0" x-transition:leave-end="opacity-0 transform -translate-y-2">
+                    <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-100/80">
                             <tr class="text-[10px] font-black uppercase text-gray-500 tracking-widest divide-x divide-gray-200">
@@ -419,6 +470,7 @@
                             </tr>
                         </tfoot>
                     </table>
+                    </div>
                 </div>
             </div>
 
@@ -429,9 +481,15 @@
                         <span class="w-2 h-6 bg-yellow-600 rounded-full mr-3"></span>
                         Laporan Pencapaian Target Pengemasan Tahunan {{ \Carbon\Carbon::parse($tanggalLaporan)->locale('id')->isoFormat('dddd, D MMMM Y') }} TA {{ $tahunAnggaran }}
                     </h3>
+                    <button @click="showAnnual = !showAnnual" class="p-2 hover:bg-yellow-100 rounded-lg transition-colors text-yellow-600">
+                        <svg class="w-6 h-6 transition-transform duration-200" :class="{ 'rotate-180': !showAnnual }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                        </svg>
+                    </button>
                 </div>
                 
-                <div class="overflow-x-auto">
+                <div x-show="showAnnual" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform -translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 transform translate-y-0" x-transition:leave-end="opacity-0 transform -translate-y-2">
+                    <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-100/80">
                             <tr class="text-[10px] font-black uppercase text-gray-500 tracking-widest divide-x divide-gray-200">
@@ -547,6 +605,7 @@
                             </tr>
                         </tfoot>
                     </table>
+                    </div>
                 </div>
             </div>
             <!-- Laporan Target Pengemasan Bulanan Section -->
@@ -554,11 +613,17 @@
                 <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                     <h3 class="text-lg font-black text-rose-600 tracking-tight flex items-center">
                         <span class="w-2 h-6 bg-rose-600 rounded-full mr-3"></span>
-                        Laporan Pencapaian Target Pengemasan Bulanan {{ \Carbon\Carbon::parse($tanggalLaporan)->locale('id')->isoFormat('MMMM Y') }} TA {{ $tahunAnggaran }}
+                        Laporan Pencapaian Target Pengemasan Bulan {{ \Carbon\Carbon::parse($tanggalLaporan)->locale('id')->isoFormat('MMMM Y') }} TA {{ $tahunAnggaran }}
                     </h3>
+                    <button @click="showMonthly = !showMonthly" class="p-2 hover:bg-rose-100 rounded-lg transition-colors text-rose-600">
+                        <svg class="w-6 h-6 transition-transform duration-200" :class="{ 'rotate-180': !showMonthly }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                        </svg>
+                    </button>
                 </div>
                 
-                <div class="overflow-x-auto">
+                <div x-show="showMonthly" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform -translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 transform translate-y-0" x-transition:leave-end="opacity-0 transform -translate-y-2">
+                    <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-100/80">
                             <tr class="text-[10px] font-black uppercase text-gray-500 tracking-widest divide-x divide-gray-200">
@@ -579,9 +644,9 @@
                             <tr class="text-[9px] lowercase text-gray-400 divide-x divide-gray-200 bg-gray-50/50">
                                 <th class="px-3 py-1 text-center bg-gray-100 italic">a</th>
                                 <th class="px-3 py-1 text-center italic">b</th>
-                                <th class="px-3 py-1 text-center italic">c=ceil(b/20.000)</th>
+                                <th class="px-3 py-1 text-center italic">c=b/20.000</th>
                                 <th class="px-3 py-1 text-center italic">d</th>
-                                <th class="px-3 py-1 text-center italic">e=ceil(d/20.000)</th>
+                                <th class="px-3 py-1 text-center italic">e=d/20.000</th>
                                 <th class="px-3 py-1 text-center italic">f=b-d</th>
                                 <th class="px-3 py-1 text-center italic">g=f/20.000</th>
                                 <th class="px-3 py-1 text-center italic">h=d/b*100%</th>
@@ -674,6 +739,7 @@
                             </tr>
                         </tfoot>
                     </table>
+                    </div>
                 </div>
             </div>
         </div>
