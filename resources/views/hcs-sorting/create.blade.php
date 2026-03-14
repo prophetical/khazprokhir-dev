@@ -47,12 +47,12 @@
                         </h3>
                         
                         <!-- Legend -->
-                        <div class="flex flex-wrap gap-4 mb-8 text-[10px] font-bold uppercase tracking-widest text-gray-500 bg-gray-50/50 p-4 rounded-lg border border-gray-100">
-                            <div class="flex items-center"><div class="w-3 h-3 rounded-sm bg-blue-500 mr-2 shadow-sm"></div> RK (Siap)</div>
-                            <div class="flex items-center"><div class="w-3 h-3 rounded-sm bg-green-500 mr-2 shadow-sm"></div> CP (Siap)</div>
-                            <div class="flex items-center"><div class="w-3 h-3 rounded-sm bg-blue-200 border border-blue-400 mr-2" style="background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 3px, transparent 3px, transparent 6px);"></div> RK (Sortir)</div>
-                            <div class="flex items-center"><div class="w-3 h-3 rounded-sm bg-green-200 border border-green-400 mr-2" style="background-image: repeating-linear-gradient(-45deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 3px, transparent 3px, transparent 6px);"></div> CP (Sortir)</div>
-                            <div class="flex items-center"><div class="w-3 h-3 rounded-sm bg-gray-100 border border-gray-200 mr-2"></div> Kosong</div>
+                        <div class="flex flex-wrap gap-4 mb-8 text-[10px] font-bold tracking-widest text-gray-500 bg-gray-50/50 p-4 rounded-lg border border-gray-100">
+                            <div class="flex items-center"><div class="w-3 h-3 rounded-sm bg-blue-500 mr-2 shadow-sm"></div>Rikyet Siap Sortir</div>
+                            <div class="flex items-center"><div class="w-3 h-3 rounded-sm bg-green-500 mr-2 shadow-sm"></div>Cutpack Siap Sortir</div>
+                            <div class="flex items-center"><div class="w-3 h-3 rounded-sm bg-blue-200 border border-blue-400 mr-2" style="background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 3px, transparent 3px, transparent 6px);"></div>Rikyet Tersortir</div>
+                            <div class="flex items-center"><div class="w-3 h-3 rounded-sm bg-green-200 border border-green-400 mr-2" style="background-image: repeating-linear-gradient(-45deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 3px, transparent 3px, transparent 6px);"></div>Cutpack Tersortir</div>
+                            <div class="flex items-center"><div class="w-3 h-3 rounded-sm bg-gray-100 border border-gray-200 mr-2"></div>Kosong</div>
                         </div>
 
                         <!-- 10x10 Grid -->
@@ -166,27 +166,32 @@
                                     </label>
                                 </div>
 
-                                <!-- Summary Info -->
-                                <div class="relative bg-gradient-to-br from-gray-900 to-gray-800 p-6 rounded-3xl space-y-4 shadow-xl overflow-hidden group">
-                                    <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 blur-2xl transition-transform duration-700 group-hover:scale-150"></div>
-                                    <div class="flex justify-between items-center relative z-10">
-                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] flex items-center">
-                                            <svg class="w-3 h-3 mr-1.5 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                                            Total Pack
-                                        </span>
-                                        <span class="text-2xl font-black text-white" x-text="selectedPacks.length"></span>
-                                    </div>
-                                    <div class="flex flex-col relative z-10 border-t border-white/10 pt-4">
-                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-1 flex items-center">
-                                            <svg class="w-3 h-3 mr-1.5 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M12 16V7"/></svg>
-                                            Total Bilyet
-                                        </span>
-                                        <span class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300" x-text="formatNumber(totalBilyet)"></span>
-                                    </div>
-                                </div>
-
                                 <!-- Form Fields -->
                                 <div class="grid grid-cols-1 gap-5">
+                                    <!-- Total Summary Fields (Stacked to avoid truncation) -->
+                                    <div>
+                                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Total Pack</label>
+                                        <div class="relative group">
+                                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                                            </div>
+                                            <input type="text" :value="selectedPacks.length" 
+                                                   class="block w-full border-gray-200 rounded-xl bg-gray-50 shadow-inner text-sm py-3 px-10 font-bold text-center opacity-80"
+                                                   readonly />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Total Bilyet</label>
+                                        <div class="relative group">
+                                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M12 16V7"/></svg>
+                                            </div>
+                                            <input type="text" :value="formatNumber(totalBilyet)" 
+                                                   class="block w-full border-gray-200 rounded-xl bg-gray-50 shadow-inner text-sm py-3 px-10 font-bold text-center opacity-80"
+                                                   readonly />
+                                        </div>
+                                    </div>
+
                                     <div>
                                         <label for="supplier" class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Supplier (Hasil Sortir)</label>
                                         <div class="relative group">
@@ -255,38 +260,37 @@
                                         </div>
                                     </div>
 
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <label for="tanggal" class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Tanggal</label>
-                                            <div class="relative group">
-                                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-colors duration-300"
-                                                     :class="currentTheme ? currentTheme.text.replace('text-', 'text-opacity-40 text-') : 'text-gray-300 group-focus-within:text-indigo-500'">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                                </div>
-                                                <input id="tanggal" name="tanggal" type="date"
-                                                       class="block w-full border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm text-sm py-3 px-8 transition-all duration-300 focus:ring-4 font-bold text-center"
-                                                       :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
-                                                       value="{{ old('tanggal', date('Y-m-d')) }}" required />
+                                    <!-- Date and Shift (Stacked to avoid truncation) -->
+                                    <div>
+                                        <label for="tanggal" class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Tanggal</label>
+                                        <div class="relative group">
+                                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-colors duration-300"
+                                                 :class="currentTheme ? currentTheme.text.replace('text-', 'text-opacity-40 text-') : 'text-gray-300 group-focus-within:text-indigo-500'">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                                             </div>
+                                            <input id="tanggal" name="tanggal" type="date"
+                                                   class="block w-full border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm text-sm py-3 px-10 font-bold text-center transition-all duration-300 focus:ring-4"
+                                                   :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
+                                                   value="{{ old('tanggal', date('Y-m-d')) }}" required />
                                         </div>
+                                    </div>
 
-                                        <div>
-                                            <label for="gilir" class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Gilir</label>
-                                            <div class="relative group">
-                                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-colors duration-300"
-                                                     :class="currentTheme ? currentTheme.text.replace('text-', 'text-opacity-40 text-') : 'text-gray-300 group-focus-within:text-indigo-500'">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                                </div>
-                                                <select id="gilir" name="gilir" 
-                                                        class="block w-full border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm text-sm py-3 px-8 transition-all duration-300 focus:ring-4 font-bold text-center appearance-none"
-                                                        :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
-                                                        required>
-                                                    <option value="">Gilir</option>
-                                                    <option value="Gilir 1" {{ old('gilir') == 'Gilir 1' ? 'selected' : '' }}>1</option>
-                                                    <option value="Gilir 2" {{ old('gilir') == 'Gilir 2' ? 'selected' : '' }}>2</option>
-                                                    <option value="Gilir 3" {{ old('gilir') == 'Gilir 3' ? 'selected' : '' }}>3</option>
-                                                </select>
+                                    <div>
+                                        <label for="gilir" class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Gilir</label>
+                                        <div class="relative group">
+                                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-colors duration-300"
+                                                 :class="currentTheme ? currentTheme.text.replace('text-', 'text-opacity-40 text-') : 'text-gray-300 group-focus-within:text-indigo-500'">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                             </div>
+                                            <select id="gilir" name="gilir" 
+                                                    class="block w-full border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm text-sm py-3 px-10 transition-all duration-300 focus:ring-4 font-bold text-center appearance-none"
+                                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
+                                                    required>
+                                                <option value="">Gilir</option>
+                                                <option value="Gilir 1" {{ old('gilir') == 'Gilir 1' ? 'selected' : '' }}>1</option>
+                                                <option value="Gilir 2" {{ old('gilir') == 'Gilir 2' ? 'selected' : '' }}>2</option>
+                                                <option value="Gilir 3" {{ old('gilir') == 'Gilir 3' ? 'selected' : '' }}>3</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>

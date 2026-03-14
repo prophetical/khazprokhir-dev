@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\HcsReceiving;
-use App\Services\HcsReceivingService;
 use App\Http\Requests\StoreHcsReceivingRequest;
 use App\Http\Requests\UpdateHcsReceivingRequest;
+use App\Models\HcsReceiving;
+use App\Services\HcsReceivingService;
 use Illuminate\Http\Request;
 
 class HcsReceivingController extends Controller
@@ -54,8 +54,7 @@ class HcsReceivingController extends Controller
 
         if (in_array($sortBy, $sortableColumns)) {
             $query->orderBy($sortBy, $sortDirection === 'asc' ? 'asc' : 'desc');
-        }
-        else {
+        } else {
             $query->latest();
         }
 
@@ -68,6 +67,7 @@ class HcsReceivingController extends Controller
     public function create()
     {
         $lastReceiving = HcsReceiving::latest()->first();
+
         return view('hcs-receiving.create', compact('lastReceiving'));
     }
 
@@ -77,7 +77,7 @@ class HcsReceivingController extends Controller
         $isManual = $request->has('is_manual');
 
         $jumlah = $validated['jumlah'];
-        
+
         if ($isManual) {
             if ($jumlah > 45000) {
                 return back()->withInput()->withErrors(['jumlah' => 'Jumlah bilyet tidak boleh melebihi 45.000 untuk pack tidak full.']);
@@ -92,31 +92,31 @@ class HcsReceivingController extends Controller
 
         $selectedPacksCount = count($validated['packs']);
 
-        if ($selectedPacksCount !== (int)$packsNeeded) {
+        if ($selectedPacksCount !== (int) $packsNeeded) {
             return back()->withInput()->withErrors(['packs' => "Jumlah packs yang dipilih ($selectedPacksCount) tidak sesuai kebutuhan ($packsNeeded)."]);
         }
 
         try {
             $validated['is_manual'] = $isManual;
             $this->service->createReceiving($validated, auth()->id());
+
             return redirect()->route('hcs-receiving.index')->with('success', 'Data Penerimaan HCS berhasil disimpan.');
-        }
-        catch (\Exception $e) {
-            return back()->withInput()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()]);
+        } catch (\Exception $e) {
+            return back()->withInput()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data: '.$e->getMessage()]);
         }
     }
 
     public function edit(HcsReceiving $hcsReceiving)
     {
         // Butuh validasi akses Sortir (biasanya lewat middleware/policy), di sini kita cuma nampilin halamannya aja
-        if (auth()->user()->role !== 'sortir') {
+        if (! in_array(auth()->user()->role, ['sortir', 'admin'])) {
             abort(403, 'Unauthorized action.');
         }
 
         $hcsReceiving->load('packs');
 
         $sortedPacks = $hcsReceiving->packs->whereNotNull('hcs_sorting_id')->pluck('pack_number')->toArray();
-        $hasSortedPacks = !empty($sortedPacks);
+        $hasSortedPacks = ! empty($sortedPacks);
         $sortedPacksCount = count($sortedPacks);
 
         return view('hcs-receiving.edit', compact('hcsReceiving', 'sortedPacks', 'hasSortedPacks', 'sortedPacksCount'));
@@ -142,7 +142,7 @@ class HcsReceivingController extends Controller
 
         $selectedPacksCount = count($validated['packs']);
 
-        if ($selectedPacksCount !== (int)$packsNeeded) {
+        if ($selectedPacksCount !== (int) $packsNeeded) {
             return back()->withInput()->withErrors(['packs' => "Jumlah packs yang dipilih ($selectedPacksCount) tidak sesuai kebutuhan ($packsNeeded)."]);
         }
 
@@ -157,15 +157,15 @@ class HcsReceivingController extends Controller
 
         $sortedPacks = $hcsReceiving->packs()->whereNotNull('hcs_sorting_id')->pluck('pack_number')->toArray();
 
-        if (!empty($sortedPacks)) {
+        if (! empty($sortedPacks)) {
             // Validasi minimum pack
             if ($selectedPacksCount < count($sortedPacks)) {
-                return back()->withInput()->withErrors(['packs' => 'Jumlah pack tidak boleh kurang dari pack yang sudah disortir (' . count($sortedPacks) . ' pack).']);
+                return back()->withInput()->withErrors(['packs' => 'Jumlah pack tidak boleh kurang dari pack yang sudah disortir ('.count($sortedPacks).' pack).']);
             }
 
             // Validasi pack yang sudah disortir tidak boleh di-unselect
             $missingSortedPacks = array_diff($sortedPacks, $validated['packs']);
-            if (!empty($missingSortedPacks)) {
+            if (! empty($missingSortedPacks)) {
                 return back()->withInput()->withErrors(['packs' => 'Pack yang sudah disortir tidak boleh dibuang.']);
             }
         }
@@ -173,16 +173,16 @@ class HcsReceivingController extends Controller
         try {
             $validated['is_manual'] = $isManual;
             $this->service->updateReceiving($hcsReceiving, $validated, auth()->id());
+
             return redirect()->route('hcs-receiving.index')->with('success', 'Data Penerimaan HCS berhasil diperbarui.');
-        }
-        catch (\Exception $e) {
-            return back()->withInput()->withErrors(['error' => 'Terjadi kesalahan saat memperbarui data: ' . $e->getMessage()]);
+        } catch (\Exception $e) {
+            return back()->withInput()->withErrors(['error' => 'Terjadi kesalahan saat memperbarui data: '.$e->getMessage()]);
         }
     }
 
     public function destroy(HcsReceiving $hcsReceiving)
     {
-        if (auth()->user()->role !== 'sortir') {
+        if (! in_array(auth()->user()->role, ['sortir', 'admin'])) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -192,10 +192,10 @@ class HcsReceivingController extends Controller
 
         try {
             $this->service->deleteReceiving($hcsReceiving, auth()->id());
+
             return redirect()->route('hcs-receiving.index')->with('success', 'Data Penerimaan HCS berhasil dihapus secara permanen.');
-        }
-        catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Terjadi kesalahan saat menghapus data: ' . $e->getMessage()]);
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Terjadi kesalahan saat menghapus data: '.$e->getMessage()]);
         }
     }
 }

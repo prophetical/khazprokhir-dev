@@ -192,10 +192,9 @@
                                         <p class="text-[10px] font-bold text-white/70 uppercase tracking-widest">Pilihan Aktif</p>
                                         <div class="flex items-baseline gap-1 mt-1">
                                             <span class="text-4xl font-black" x-text="selectedPacks.length"></span>
-                                            <span class="text-sm font-bold opacity-80">Packs</span>
+                                            <span class="text-sm font-bold opacity-80">Pack</span>
                                         </div>
                                     </div>
-                                    <svg class="absolute top-6 right-6 w-8 h-8 opacity-20" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
                                 </div>
                                 
                                 <div class="bg-gradient-to-br from-emerald-500 to-emerald-700 p-6 rounded-3xl shadow-lg shadow-emerald-100 text-white relative overflow-hidden group">
@@ -206,7 +205,6 @@
                                             <span class="text-2xl font-black tracking-tight" x-text="formatNumber(totalBilyet)"></span>
                                         </div>
                                     </div>
-                                    <svg class="absolute top-6 right-6 w-8 h-8 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                 </div>
                             </div>
                         </div>

@@ -272,7 +272,7 @@
                                             </td>
                                             <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600 font-medium">{{ $receiving->user->name ?? '-' }}</td>
                                             <td class="px-4 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                                @if(auth()->user()->role === 'sortir')
+                                                @if(in_array(auth()->user()->role, ['sortir', 'admin']))
                                                     @php $hasSortedPacks = $receiving->packs->whereNotNull('hcs_sorting_id')->isNotEmpty(); @endphp
                                                     <div class="flex justify-center items-center space-x-4">
                                                         <a href="{{ route('hcs-receiving.create', ['batch' => $receiving->batch, 'seri' => $receiving->seri, 'pecahan' => $receiving->pecahan, 'emisi' => $receiving->emisi, 'tahun_anggaran' => $receiving->tahun_anggaran]) }}" class="text-green-600 hover:text-green-800 transition-all hover:scale-110" title="Input di batch ini">
@@ -337,7 +337,7 @@
         function confirmDelete(id) {
             Swal.fire({
                 title: 'Apakah Anda yakin?',
-                text: "Data ini akan dihapus beserta seluruh packs dan stock ledgernya!",
+                text: "Data ini akan dihapus beserta seluruh pack yang terkait!",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
@@ -354,7 +354,7 @@
         function alertSorted() {
             Swal.fire({
                 title: 'Aksi Ditolak',
-                text: 'Data pack sesuai batch, seri, dan pecahan ini sudah disortir. Anda tidak dapat mengedit ataupun menghapusnya.',
+                text: 'Data pack sesuai batch, seri, dan pecahan ini sudah disortir. Anda tidak dapat menghapusnya.',
                 icon: 'error',
                 confirmButtonColor: '#4f46e5'
             });

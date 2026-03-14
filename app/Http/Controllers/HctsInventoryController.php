@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\HctsReceiving;
-use App\Models\HctsSubmission;
-use App\Models\HctsSubmissionBatch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -13,6 +11,7 @@ class HctsInventoryController extends Controller
     public function index(Request $request)
     {
         $data = $this->getInventoryData($request);
+
         return view('hcts-inventory.index', $data);
     }
 
@@ -20,14 +19,14 @@ class HctsInventoryController extends Controller
     {
         $data = $this->getInventoryData($request);
         $inventory = $data['inventory'];
-        
-        $filename = "laporan_persediaan_hcts_" . date('Ymd_His') . ".csv";
+
+        $filename = 'laporan_persediaan_hcts_'.date('Ymd_His').'.csv';
         $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $callback = function () use ($inventory) {
@@ -41,7 +40,7 @@ class HctsInventoryController extends Controller
                     $row->tahun_emisi,
                     $row->total_received,
                     $row->total_submitted,
-                    $row->stock
+                    $row->stock,
                 ]);
             }
             fclose($file);
@@ -53,6 +52,7 @@ class HctsInventoryController extends Controller
     public function print(Request $request)
     {
         $data = $this->getInventoryData($request);
+
         return view('hcts-inventory.print', $data);
     }
 
@@ -104,16 +104,16 @@ class HctsInventoryController extends Controller
                 ->where('tahun_emisi', $receipt->tahun_emisi)
                 ->first();
 
-            $totalSubmitted = $submission ? (int)$submission->total_submitted : 0;
-            $stock = (int)$receipt->total_received - $totalSubmitted;
+            $totalSubmitted = $submission ? (int) $submission->total_submitted : 0;
+            $stock = (int) $receipt->total_received - $totalSubmitted;
 
             return (object) [
                 'pecahan' => $receipt->pecahan,
                 'tahun_anggaran' => $receipt->tahun_anggaran,
                 'tahun_emisi' => $receipt->tahun_emisi,
-                'total_received' => (int)$receipt->total_received,
+                'total_received' => (int) $receipt->total_received,
                 'total_submitted' => $totalSubmitted,
-                'stock' => $stock
+                'stock' => $stock,
             ];
         })->values();
 
@@ -146,7 +146,7 @@ class HctsInventoryController extends Controller
         $ta = $request->input('tahun_anggaran');
         $te = $request->input('tahun_emisi');
 
-        if (!$pecahan || !$ta || !$te) {
+        if (! $pecahan || ! $ta || ! $te) {
             return response()->json([]);
         }
 
@@ -178,7 +178,7 @@ class HctsInventoryController extends Controller
                 'batch' => $receipt->batch,
                 'total_received' => (int) $receipt->total_received,
                 'total_submitted' => (int) $totalSubmitted,
-                'stock' => (int) $stock
+                'stock' => (int) $stock,
             ];
         })->values();
 

@@ -163,6 +163,34 @@
             }
         </script>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
+            {{-- Summary Stats Grid --}}
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="group bg-indigo-700 rounded-2xl p-4 shadow-lg shadow-indigo-100 relative overflow-hidden flex flex-col justify-center">
+                    <p class="text-indigo-100 text-[9px] font-black uppercase tracking-widest mb-1 opacity-80 leading-none">Total Penerimaan {{ $currentYear }}</p>
+                    <p class="text-white text-xl font-black tracking-tight leading-none">{{ number_format($totalTerimaYear, 0, ',', '.') }}</p>
+                </div>
+
+                <div class="group bg-emerald-600 rounded-2xl p-4 shadow-lg shadow-emerald-100 relative overflow-hidden flex flex-col justify-center">
+                    <p class="text-emerald-100 text-[9px] font-black uppercase tracking-widest mb-1 opacity-80 leading-none">Total Pengemasan {{ $currentYear }}</p>
+                    <p class="text-white text-xl font-black tracking-tight leading-none">{{ number_format($totalKemasYear, 0, ',', '.') }}</p>
+                </div>
+
+                <div class="group bg-pink-600 rounded-2xl p-4 shadow-lg shadow-pink-100 relative overflow-hidden flex flex-col justify-center">
+                    <p class="text-pink-100 text-[9px] font-black uppercase tracking-widest mb-1 opacity-80 leading-none">Total Penyerahan {{ $currentYear }}</p>
+                    <p class="text-white text-xl font-black tracking-tight leading-none">{{ number_format($totalSerahYear, 0, ',', '.') }}</p>
+                </div>
+
+                <div class="group bg-amber-500 rounded-2xl p-4 shadow-lg shadow-amber-100 relative overflow-hidden flex flex-col justify-center">
+                    <div class="flex items-center justify-between mb-1 text-[9px]">
+                        <p class="text-amber-50 font-black uppercase tracking-widest opacity-80 leading-none">Total Target {{ $currentYear }}</p>
+                        <span class="font-black text-white bg-white/20 px-1.5 py-0.5 rounded-full backdrop-blur-sm">{{ $totalTargetYear > 0 ? round(($totalSerahYear / $totalTargetYear) * 100) : 0 }}%</span>
+                    </div>
+                    <p class="text-white text-xl font-black tracking-tight leading-none mb-2">{{ number_format($totalTargetYear, 0, ',', '.') }}</p>
+                    <div class="w-full bg-white/20 h-1 rounded-full overflow-hidden">
+                        <div class="bg-white h-full transition-all duration-1000 rounded-full" style="width: {{ $totalTargetYear > 0 ? min(100, ($totalSerahYear / $totalTargetYear) * 100) : 0 }}%"></div>
+                    </div>
+                </div>
+            </div>
 
             {{-- New Header with Year Filters --}}
             <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
@@ -203,31 +231,6 @@
                     </form>
                 </div>
             </div>
-
-            {{-- Summary Stats Grid --}}
-            <div class="grid grid-cols-3 gap-4">
-                <div class="group bg-emerald-600 rounded-3xl p-5 shadow-lg shadow-emerald-100 relative overflow-hidden flex flex-col justify-center">
-                    <p class="text-emerald-100 text-[10px] font-black uppercase tracking-widest mb-1 opacity-80">Total Kemas {{ $currentYear }}</p>
-                    <p class="text-white text-2xl font-black tracking-tight leading-none">{{ number_format($totalKemasYear, 0, ',', '.') }}</p>
-                </div>
-
-                <div class="group bg-pink-600 rounded-3xl p-5 shadow-lg shadow-pink-100 relative overflow-hidden flex flex-col justify-center">
-                    <p class="text-pink-100 text-[10px] font-black uppercase tracking-widest mb-1 opacity-80">Total Serah {{ $currentYear }}</p>
-                    <p class="text-white text-2xl font-black tracking-tight leading-none">{{ number_format($totalSerahYear, 0, ',', '.') }}</p>
-                </div>
-
-                <div class="group bg-amber-500 rounded-3xl p-5 shadow-lg shadow-amber-100 relative overflow-hidden flex flex-col justify-center">
-                    <div class="flex items-center justify-between mb-1">
-                        <p class="text-amber-50 text-[10px] font-black uppercase tracking-widest opacity-80">Target {{ $currentYear }}</p>
-                        <span class="text-[10px] font-black text-white bg-white/20 px-2 py-0.5 rounded-full backdrop-blur-sm">{{ $totalTargetYear > 0 ? round(($totalSerahYear / $totalTargetYear) * 100) : 0 }}%</span>
-                    </div>
-                    <p class="text-white text-2xl font-black tracking-tight leading-none mb-2">{{ number_format($totalTargetYear, 0, ',', '.') }}</p>
-                    <div class="w-full bg-white/20 h-1.5 rounded-full overflow-hidden">
-                        <div class="bg-white h-full transition-all duration-1000 rounded-full" style="width: {{ $totalTargetYear > 0 ? min(100, ($totalSerahYear / $totalTargetYear) * 100) : 0 }}%"></div>
-                    </div>
-                </div>
-            </div>
-
             {{-- Unified Production Chart --}}
             <div :class="colorThemes[selectedPecahan].bg" 
                  class="p-8 rounded-[3rem] shadow-2xl shadow-gray-200/40 border border-gray-100 relative overflow-hidden transition-colors duration-700">
@@ -340,7 +343,7 @@
                                             $count = $heatmapData[$dateStr] ?? 0;
                                         @endphp
                                         <div x-data="{ count: {{ $count }} }"
-                                             class="w-3 h-3 rounded-sm transition-all duration-300 hover:scale-150 hover:z-10 cursor-help relative group"
+                                             class="w-3 h-3 rounded-sm transition-all duration-300 hover:scale-150 hover:z-10 cursor-pointer relative group"
                                              :class="getHeatmapColor(count)">
                                             {{-- Tooltip --}}
                                             <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-50">

@@ -15,7 +15,7 @@ class Pack extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class , 'created_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function hcsSorting()
@@ -25,6 +25,6 @@ class Pack extends Model
 
     public function pengemasan()
     {
-        return $this->belongsTo(Pengemasan::class , 'id_pengemasan');
+        return $this->belongsTo(Pengemasan::class, 'id_pengemasan');
     }
 }

@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 use App\Models\User;
 use App\Services\HcsReceivingService;
 use Carbon\Carbon;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class HcsReceivingDummySeeder extends Seeder
 {
@@ -16,8 +16,9 @@ class HcsReceivingDummySeeder extends Seeder
     public function run(HcsReceivingService $service): void
     {
         $user = User::where('role', 'sortir')->first() ?? User::first();
-        if (!$user) {
-            $this->command->warn("No users found to assign the records to.");
+        if (! $user) {
+            $this->command->warn('No users found to assign the records to.');
+
             return;
         }
 
@@ -32,16 +33,16 @@ class HcsReceivingDummySeeder extends Seeder
             $jumlah = $packsNeeded * 45000;
 
             // Generate a random, unique-ish batch (migration says 6 chars)
-            $batch = Str::upper(Str::random(3)) . sprintf("%03d", $i);
-            $seri = 'AA-BB' . rand(1, 9);
+            $batch = Str::upper(Str::random(3)).sprintf('%03d', $i);
+            $seri = 'AA-BB'.rand(1, 9);
 
             $data = [
-                'nomor_bon' => 'DUMMY-' . rand(1000, 9999) . '-' . $i,
+                'nomor_bon' => 'DUMMY-'.rand(1000, 9999).'-'.$i,
                 'tanggal_penerimaan' => Carbon::now()->subDays(rand(0, 30))->format('Y-m-d'),
                 'pecahan' => $pecahanList[array_rand($pecahanList)],
                 'jumlah' => $jumlah,
                 'gilir' => $gilirList[array_rand($gilirList)],
-                'mesin' => 'Mesin ' . rand(1, 15),
+                'mesin' => 'Mesin '.rand(1, 15),
                 'supplier' => $supplierList[array_rand($supplierList)],
                 'batch' => $batch,
                 'seri' => $seri,
@@ -52,9 +53,8 @@ class HcsReceivingDummySeeder extends Seeder
 
             try {
                 $service->createReceiving($data, $user->id);
-            }
-            catch (\Exception $e) {
-                $this->command->error("Failed on iteration {$i}: " . $e->getMessage());
+            } catch (\Exception $e) {
+                $this->command->error("Failed on iteration {$i}: ".$e->getMessage());
             }
         }
 

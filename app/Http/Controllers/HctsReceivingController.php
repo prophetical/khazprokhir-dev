@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\HctsReceiving;
 use App\Models\HcsReceiving;
+use App\Models\HctsReceiving;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -46,10 +46,10 @@ class HctsReceivingController extends Controller
         }
 
         if ($search) {
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('nomor_bon', 'like', "%{$search}%")
-                  ->orWhere('batch', 'like', "%{$search}%")
-                  ->orWhere('seri', 'like', "%{$search}%");
+                    ->orWhere('batch', 'like', "%{$search}%")
+                    ->orWhere('seri', 'like', "%{$search}%");
             });
         }
 
@@ -63,13 +63,13 @@ class HctsReceivingController extends Controller
         $grandTotal = array_sum($summaryData);
 
         $receivings = $query->latest()->paginate(10)->withQueryString();
-        
+
         return view('hcts-receiving.index', compact(
-            'receivings', 
-            'startDate', 
-            'endDate', 
-            'search', 
-            'pecahanFilter', 
+            'receivings',
+            'startDate',
+            'endDate',
+            'search',
+            'pecahanFilter',
             'gilirFilter',
             'taFilter',
             'teFilter',
@@ -86,13 +86,13 @@ class HctsReceivingController extends Controller
         $endDate = $request->input('end_date');
         $search = $request->input('search');
 
-        $filename = "laporan_penerimaan_hcts_" . date('Ymd_His') . ".csv";
+        $filename = 'laporan_penerimaan_hcts_'.date('Ymd_His').'.csv';
         $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $callback = function () use ($request) {
@@ -118,10 +118,10 @@ class HctsReceivingController extends Controller
             }
             if ($request->filled('search')) {
                 $search = $request->search;
-                $query->where(function($q) use ($search) {
+                $query->where(function ($q) use ($search) {
                     $q->where('nomor_bon', 'like', "%{$search}%")
-                      ->orWhere('batch', 'like', "%{$search}%")
-                      ->orWhere('seri', 'like', "%{$search}%");
+                        ->orWhere('batch', 'like', "%{$search}%")
+                        ->orWhere('seri', 'like', "%{$search}%");
                 });
             }
 
@@ -138,7 +138,7 @@ class HctsReceivingController extends Controller
                         $row->emisi,
                         $row->tahun_anggaran,
                         $row->nomor_segel,
-                        $row->user->name ?? '-'
+                        $row->user->name ?? '-',
                     ]);
                 }
             });
@@ -173,14 +173,15 @@ class HctsReceivingController extends Controller
             $query->where('emisi', $request->input('tahun_emisi'));
         }
         if ($search) {
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('nomor_bon', 'like', "%{$search}%")
-                  ->orWhere('batch', 'like', "%{$search}%")
-                  ->orWhere('seri', 'like', "%{$search}%");
+                    ->orWhere('batch', 'like', "%{$search}%")
+                    ->orWhere('seri', 'like', "%{$search}%");
             });
         }
 
         $receivings = $query->latest()->get();
+
         return view('hcts-receiving.print', compact('receivings', 'startDate', 'endDate', 'search', 'pecahanFilter', 'gilirFilter'));
     }
 
@@ -239,8 +240,9 @@ class HctsReceivingController extends Controller
 
         if (($hcsTotal + $hctsTotal + $validated['jumlah']) > 4500000) {
             $rem = 4500000 - ($hcsTotal + $hctsTotal);
+
             return back()->withInput()->withErrors([
-                'jumlah' => "Total Penerimaan HCS ($hcsTotal) + HCTS ($hctsTotal) melebihi batas 4.500.000. Sisa kuota: " . number_format($rem, 0, ',', '.')
+                'jumlah' => "Total Penerimaan HCS ($hcsTotal) + HCTS ($hctsTotal) melebihi batas 4.500.000. Sisa kuota: ".number_format($rem, 0, ',', '.'),
             ]);
         }
 
@@ -281,8 +283,9 @@ class HctsReceivingController extends Controller
 
         if (($hcsTotal + $hctsTotal + $validated['jumlah']) > 4500000) {
             $rem = 4500000 - ($hcsTotal + $hctsTotal);
+
             return back()->withInput()->withErrors([
-                'jumlah' => "Total Penerimaan HCS ($hcsTotal) + HCTS ($hctsTotal) melebihi batas 4.500.000. Sisa kuota: " . number_format($rem, 0, ',', '.')
+                'jumlah' => "Total Penerimaan HCS ($hcsTotal) + HCTS ($hctsTotal) melebihi batas 4.500.000. Sisa kuota: ".number_format($rem, 0, ',', '.'),
             ]);
         }
 
@@ -308,14 +311,14 @@ class HctsReceivingController extends Controller
     {
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
-        
-        $filename = "hcs_hcts_summary_" . ($startDate ?: 'all') . "_to_" . ($endDate ?: 'all') . ".csv";
+
+        $filename = 'hcs_hcts_summary_'.($startDate ?: 'all').'_to_'.($endDate ?: 'all').'.csv';
         $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $callback = function () use ($request) {
@@ -336,7 +339,7 @@ class HctsReceivingController extends Controller
                         $row->total_hcs,
                         $row->total_hcts,
                         $grandTotal,
-                        $percent . '%'
+                        $percent.'%',
                     ]);
                 }
             });
@@ -366,7 +369,7 @@ class HctsReceivingController extends Controller
 
         $hcsSub = DB::table('hcs_receivings')
             ->select('pecahan', 'batch', 'seri', 'emisi', 'tahun_anggaran', 'jumlah', 'tanggal_penerimaan', DB::raw("'HCS' as type"));
-        
+
         $hctsSub = DB::table('hcts_receivings')
             ->select('pecahan', 'batch', 'seri', 'emisi', 'tahun_anggaran', 'jumlah', 'tanggal_penerimaan', DB::raw("'HCTS' as type"));
 
@@ -376,13 +379,13 @@ class HctsReceivingController extends Controller
         }
 
         if ($search) {
-            $hcsSub->where(function($q) use ($search) {
+            $hcsSub->where(function ($q) use ($search) {
                 $q->where('batch', 'like', "%{$search}%")
-                  ->orWhere('seri', 'like', "%{$search}%");
+                    ->orWhere('seri', 'like', "%{$search}%");
             });
-            $hctsSub->where(function($q) use ($search) {
+            $hctsSub->where(function ($q) use ($search) {
                 $q->where('batch', 'like', "%{$search}%")
-                  ->orWhere('seri', 'like', "%{$search}%");
+                    ->orWhere('seri', 'like', "%{$search}%");
             });
         }
 
@@ -399,10 +402,11 @@ class HctsReceivingController extends Controller
 
     public function destroy(HctsReceiving $hcts_receiving)
     {
-        if (!in_array(auth()->user()->role, ['sortir', 'admin'])) {
+        if (! in_array(auth()->user()->role, ['sortir', 'admin'])) {
             abort(403);
         }
         $hcts_receiving->delete();
+
         return redirect()->route('hcts-receiving.index')->with('success', 'Data Penerimaan HCTS berhasil dihapus.');
     }
 }

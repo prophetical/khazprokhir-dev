@@ -5,11 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\HcsReceiving;
 use App\Models\Pengemasan;
 use App\Models\PenyerahanBi;
-use App\Models\TargetTahunan;
-use App\Models\TargetBulanan;
 use App\Models\TargetBulananPengemasan;
-use Illuminate\Http\Request;
+use App\Models\TargetTahunan;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class LaporanHarianController extends Controller
@@ -29,6 +28,8 @@ class LaporanHarianController extends Controller
         $secondaryTotals = $data['secondaryTotals'];
         $sisaHariKerja = $data['sisaHariKerja'];
 
+        $hctsInventoryData = $this->getHctsInventoryData($filters);
+
         $tanggalLaporan = $filters['tanggal_laporan'];
         $tahunAnggaran = $filters['tahun_anggaran'];
         $tahunEmisi = $filters['tahun_emisi'];
@@ -39,6 +40,7 @@ class LaporanHarianController extends Controller
             'secondaryData',
             'secondaryTotals',
             'sisaHariKerja',
+            'hctsInventoryData',
             'tanggalLaporan',
             'tahunAnggaran',
             'tahunEmisi',
@@ -56,14 +58,14 @@ class LaporanHarianController extends Controller
         $reportData = $data['reportData'];
         $totals = $data['totals'];
 
-        $filename = "laporan_harian_operasional_" . $filters['tanggal_laporan'] . ".csv";
+        $filename = 'laporan_harian_operasional_'.$filters['tanggal_laporan'].'.csv';
 
         $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $callback = function () use ($reportData, $totals) {
@@ -80,7 +82,7 @@ class LaporanHarianController extends Controller
                 'Target',
                 'Sisa Target',
                 'Persentase (%)',
-                'Akumulasi Penerimaan HCS'
+                'Akumulasi Penerimaan HCS',
             ]);
 
             foreach ($reportData as $row) {
@@ -135,7 +137,8 @@ class LaporanHarianController extends Controller
 
     private function getFilters(Request $request, $tahunEmisiOptions = [])
     {
-        $defaultEmisi = !empty($tahunEmisiOptions) ? $tahunEmisiOptions[0] : '2022';
+        $defaultEmisi = ! empty($tahunEmisiOptions) ? $tahunEmisiOptions[0] : '2022';
+
         return [
             'tanggal_laporan' => $request->get('tanggal_laporan', Carbon::today()->toDateString()),
             'tahun_anggaran' => $request->get('tahun_anggaran', date('Y')),
@@ -250,7 +253,7 @@ class LaporanHarianController extends Controller
 
         $pecahanList = ['S', 'T', 'U', 'V', 'W', 'X', 'Y'];
         $month = $tanggalLaporan->month;
-        $targetColumn = "bulan_" . $month;
+        $targetColumn = 'bulan_'.$month;
         $startOfMonth = $tanggalLaporan->copy()->startOfMonth();
         $kemasDate = $tanggalLaporan->copy()->subDay()->toDateString();
 
@@ -386,7 +389,7 @@ class LaporanHarianController extends Controller
         return [
             'data' => $data,
             'totals' => $totals,
-            'sisaHariKerja' => $sisaHariKerja
+            'sisaHariKerja' => $sisaHariKerja,
         ];
     }
 
@@ -429,13 +432,70 @@ class LaporanHarianController extends Controller
             ->toArray();
 
         // Fallback to current year if empty
-        if (empty($ta)) $ta = [date('Y')];
-        if (empty($te)) $te = ['2022', '2016'];
+        if (empty($ta)) {
+            $ta = [date('Y')];
+        }
+        if (empty($te)) {
+            $te = ['2022', '2016'];
+        }
 
         return [
             'tahun_anggaran' => $ta,
-            'tahun_emisi' => $te
+            'tahun_emisi' => $te,
         ];
     }
 
+    private function getHctsInventoryData(array $filters)
+    {
+        $tanggalLaporan = $filters['tanggal_laporan'];
+        $tahunAnggaran = $filters['tahun_anggaran'];
+        $tahunEmisi = $filters['tahun_emisi'];
+        $previousDay = Carbon::parse($tanggalLaporan)->subDay()->toDateString();
+        $pecahanList = ['S', 'T', 'U', 'V', 'W', 'X', 'Y'];
+
+        $hctsInventoryData = [];
+        foreach ($pecahanList as $pec) {
+            // Penerimaan H-1
+            $penerimaanH1 = \App\Models\HctsReceiving::where('pecahan', $pec)
+                ->where('tahun_anggaran', $tahunAnggaran)
+                ->when($tahunEmisi, fn ($q) => $q->where('emisi', $tahunEmisi))
+                ->whereDate('tanggal_penerimaan', $previousDay)
+                ->sum('jumlah');
+
+            // Penyerahan Hari Ini
+            $penyerahanHariIni = \App\Models\HctsSubmission::where('pecahan', $pec)
+                ->where('tahun_anggaran', $tahunAnggaran)
+                ->when($tahunEmisi, fn ($q) => $q->where('tahun_emisi', $tahunEmisi))
+                ->whereDate('tanggal_penyerahan', $tanggalLaporan)
+                ->sum('jumlah_bilyet');
+
+            // Akumulasi Penerimaan (Sampai Tanggal Laporan)
+            $akumulasiTerima = \App\Models\HctsReceiving::where('pecahan', $pec)
+                ->where('tahun_anggaran', $tahunAnggaran)
+                ->when($tahunEmisi, fn ($q) => $q->where('emisi', $tahunEmisi))
+                ->whereDate('tanggal_penerimaan', '<=', $tanggalLaporan)
+                ->sum('jumlah');
+
+            // Akumulasi Penyerahan (Sampai Tanggal Laporan)
+            $akumulasiSerah = \App\Models\HctsSubmission::where('pecahan', $pec)
+                ->where('tahun_anggaran', $tahunAnggaran)
+                ->when($tahunEmisi, fn ($q) => $q->where('tahun_emisi', $tahunEmisi))
+                ->whereDate('tanggal_penyerahan', '<=', $tanggalLaporan)
+                ->sum('jumlah_bilyet');
+
+            $persediaan = $akumulasiTerima - $akumulasiSerah;
+            $ctSiapHitung = floor($persediaan / 3000000);
+
+            $hctsInventoryData[$pec] = [
+                'penerimaan_h1' => (int) $penerimaanH1,
+                'penyerahan_hari_ini' => (int) $penyerahanHariIni,
+                'akumulasi_penerimaan' => (int) $akumulasiTerima,
+                'akumulasi_penyerahan' => (int) $akumulasiSerah,
+                'persediaan' => (int) $persediaan,
+                'ct_siap_hitung' => (int) $ctSiapHitung,
+            ];
+        }
+
+        return $hctsInventoryData;
+    }
 }

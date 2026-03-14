@@ -2,11 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\HcsReceiving;
-use App\Models\Pack;
-use App\Models\StockLedger;
-use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
@@ -25,9 +22,9 @@ class ReportController extends Controller
 
         // Hitung total KESELURUHAN (sesuai filter TA/TE jika dipilih) buat tiap pecahan untuk ditampilin di kartu ringkasan
         $globalTotalsPerPecahan = collect(['S' => 0, 'T' => 0, 'U' => 0, 'V' => 0, 'W' => 0, 'X' => 0, 'Y' => 0]);
-        
+
         $totalsQuery = HcsReceiving::selectRaw('pecahan, SUM(jumlah) as total');
-        
+
         if ($tahunAnggaran) {
             $totalsQuery->where('tahun_anggaran', $tahunAnggaran);
         }
@@ -70,7 +67,7 @@ class ReportController extends Controller
 
         return view('reports.index', compact(
             'startDate', 'endDate', 'gilir', 'pecahan', 'tahunAnggaran', 'tahunEmisi',
-            'data', 'globalTotalsPerPecahan', 'globalGrandTotal', 
+            'data', 'globalTotalsPerPecahan', 'globalGrandTotal',
             'availableYears', 'availableEmissions'
         ));
     }
@@ -84,13 +81,13 @@ class ReportController extends Controller
         $tahunAnggaran = $request->input('tahun_anggaran');
         $tahunEmisi = $request->input('tahun_emisi');
 
-        $filename = "report_receiving_" . ($startDate ?: 'all') . "_to_" . ($endDate ?: 'all') . ".csv";
+        $filename = 'report_receiving_'.($startDate ?: 'all').'_to_'.($endDate ?: 'all').'.csv';
         $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $callback = function () use ($startDate, $endDate, $gilir, $pecahan, $tahunAnggaran, $tahunEmisi) {
@@ -121,27 +118,27 @@ class ReportController extends Controller
             }
 
             $query->chunk(100, function ($receivings) use ($file) {
-                    foreach ($receivings as $row) {
-                        fputcsv($file, [
-                            $row->tanggal_penerimaan,
-                            $row->nomor_bon,
-                            $row->pecahan,
-                            $row->emisi,
-                            $row->tahun_anggaran,
-                            $row->jumlah,
-                            $row->gilir,
-                            $row->mesin,
-                            $row->supplier,
-                            $row->batch,
-                            $row->seri,
-                            $row->user->name ?? '-'
-                        ]);
-                    }
+                foreach ($receivings as $row) {
+                    fputcsv($file, [
+                        $row->tanggal_penerimaan,
+                        $row->nomor_bon,
+                        $row->pecahan,
+                        $row->emisi,
+                        $row->tahun_anggaran,
+                        $row->jumlah,
+                        $row->gilir,
+                        $row->mesin,
+                        $row->supplier,
+                        $row->batch,
+                        $row->seri,
+                        $row->user->name ?? '-',
+                    ]);
                 }
-                );
+            }
+            );
 
-                fclose($file);
-            };
+            fclose($file);
+        };
 
         return response()->stream($callback, 200, $headers);
     }
@@ -157,7 +154,7 @@ class ReportController extends Controller
 
         // Total Keseluruhan (Sesuai filter TA/TE jika ada)
         $globalTotalsPerPecahan = collect(['S' => 0, 'T' => 0, 'U' => 0, 'V' => 0, 'W' => 0, 'X' => 0, 'Y' => 0]);
-        
+
         $globalTotalsQuery = HcsReceiving::selectRaw('pecahan, SUM(jumlah) as total');
         if ($tahunAnggaran) {
             $globalTotalsQuery->where('tahun_anggaran', $tahunAnggaran);
@@ -211,9 +208,8 @@ class ReportController extends Controller
 
         return view('reports.print', compact(
             'startDate', 'endDate', 'gilir', 'pecahan', 'tahunAnggaran', 'tahunEmisi',
-            'data', 'globalTotalsPerPecahan', 'globalGrandTotal', 
+            'data', 'globalTotalsPerPecahan', 'globalGrandTotal',
             'filteredTotalsPerPecahan', 'filteredGrandTotal'
         ));
     }
-
 }

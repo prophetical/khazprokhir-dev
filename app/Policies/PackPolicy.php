@@ -2,9 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\Pack;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class PackPolicy
 {
@@ -13,7 +11,7 @@ class PackPolicy
      */
     public function create(User $user): bool
     {
-        return $user->role === 'sortir';
+        return in_array($user->role, ['sortir', 'admin']);
     }
 
     /**

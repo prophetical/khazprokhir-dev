@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\TargetTahunan;
 use App\Models\TargetBulanan;
 use App\Models\TargetBulananPengemasan;
+use App\Models\TargetTahunan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -144,10 +144,10 @@ class TargetController extends Controller
         // Check uniqueness excluding current
         $exists = TargetTahunan::where('id', '!=', $id)
             ->where([
-            'pecahan' => $request->pecahan,
-            'tahun_anggaran' => $request->tahun_anggaran,
-            'tahun_emisi' => $request->tahun_emisi,
-        ])->exists();
+                'pecahan' => $request->pecahan,
+                'tahun_anggaran' => $request->tahun_anggaran,
+                'tahun_emisi' => $request->tahun_emisi,
+            ])->exists();
 
         if ($exists) {
             return back()->withInput()->withErrors(['pecahan' => 'Kombinasi Pecahan, Tahun Anggaran, dan Tahun Emisi sudah terdaftar pada data lain.']);

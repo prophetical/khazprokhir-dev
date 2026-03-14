@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\HctsReceiving;
 use App\Models\HctsSubmission;
 use App\Models\HctsSubmissionBatch;
-use App\Models\HctsReceiving;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -19,13 +19,13 @@ class HctsSubmissionController extends Controller
         $query = HctsSubmission::with(['user', 'batches']);
 
         if ($search) {
-            $query->where(function($q) use ($search) {
+            $query->where(function (\Illuminate\Database\Eloquent\Builder $q) use ($search) {
                 $q->where('nomor_ba', 'like', "%{$search}%")
-                  ->orWhere('pecahan', 'like', "%{$search}%")
-                  ->orWhere('tahun_anggaran', 'like', "%{$search}%")
-                  ->orWhere('tahun_emisi', 'like', "%{$search}%")
-                  ->orWhere('pemasok1', 'like', "%{$search}%")
-                  ->orWhere('pemasok2', 'like', "%{$search}%");
+                    ->orWhere('pecahan', 'like', "%{$search}%")
+                    ->orWhere('tahun_anggaran', 'like', "%{$search}%")
+                    ->orWhere('tahun_emisi', 'like', "%{$search}%")
+                    ->orWhere('pemasok1', 'like', "%{$search}%")
+                    ->orWhere('pemasok2', 'like', "%{$search}%");
             });
         } elseif ($startDate && $endDate) {
             $query->whereBetween('tanggal_penyerahan', [$startDate, $endDate]);
@@ -42,13 +42,13 @@ class HctsSubmissionController extends Controller
         $endDate = $request->input('end_date');
         $search = $request->input('search');
 
-        $filename = "laporan_penyerahan_hcts_bi_" . date('Ymd_His') . ".csv";
+        $filename = 'laporan_penyerahan_hcts_bi_'.date('Ymd_His').'.csv';
         $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $callback = function () use ($request) {
@@ -58,42 +58,42 @@ class HctsSubmissionController extends Controller
             $query = HctsSubmission::with(['user', 'batches']);
             if ($request->filled('search')) {
                 $search = $request->search;
-                $query->where(function($q) use ($search) {
+                $query->where(function (\Illuminate\Database\Eloquent\Builder $q) use ($search) {
                     $q->where('nomor_ba', 'like', "%{$search}%")
-                      ->orWhere('pecahan', 'like', "%{$search}%")
-                      ->orWhere('tahun_anggaran', 'like', "%{$search}%")
-                      ->orWhere('tahun_emisi', 'like', "%{$search}%")
-                      ->orWhere('pemasok1', 'like', "%{$search}%")
-                      ->orWhere('pemasok2', 'like', "%{$search}%");
+                        ->orWhere('pecahan', 'like', "%{$search}%")
+                        ->orWhere('tahun_anggaran', 'like', "%{$search}%")
+                        ->orWhere('tahun_emisi', 'like', "%{$search}%")
+                        ->orWhere('pemasok1', 'like', "%{$search}%")
+                        ->orWhere('pemasok2', 'like', "%{$search}%");
                 });
             } elseif ($request->filled('start_date') && $request->filled('end_date')) {
                 $query->whereBetween('tanggal_penyerahan', [$request->start_date, $request->end_date]);
             }
 
             $query->latest()->chunk(100, function ($rows) use ($file) {
-                    foreach ($rows as $row) {
-                        $batchDetail = $row->batches->map(function ($b) {
-                                    return $b->batch . " (" . number_format($b->jumlah) . ")";
-                                }
-                                )->implode('; ');
+                foreach ($rows as $row) {
+                    $batchDetail = $row->batches->map(function ($b) {
+                        return $b->batch.' ('.number_format($b->jumlah).')';
+                    }
+                    )->implode('; ');
 
-                                fputcsv($file, [
-                                    $row->tanggal_penyerahan,
-                                    $row->nomor_ba,
-                                    $row->pecahan,
-                                    $row->tahun_anggaran,
-                                    $row->tahun_emisi,
-                                    $row->jumlah_bilyet,
-                                    $row->pemasok1,
-                                    $row->pemasok2,
-                                    $batchDetail,
-                                    $row->user->name ?? '-'
-                                ]);
-                            }
-                        }
-                        );
-                        fclose($file);
-                    };
+                    fputcsv($file, [
+                        $row->tanggal_penyerahan,
+                        $row->nomor_ba,
+                        $row->pecahan,
+                        $row->tahun_anggaran,
+                        $row->tahun_emisi,
+                        $row->jumlah_bilyet,
+                        $row->pemasok1,
+                        $row->pemasok2,
+                        $batchDetail,
+                        $row->user->name ?? '-',
+                    ]);
+                }
+            }
+            );
+            fclose($file);
+        };
 
         return response()->stream($callback, 200, $headers);
     }
@@ -106,19 +106,20 @@ class HctsSubmissionController extends Controller
 
         $query = HctsSubmission::with(['user', 'batches']);
         if ($search) {
-            $query->where(function($q) use ($search) {
+            $query->where(function (\Illuminate\Database\Eloquent\Builder $q) use ($search) {
                 $q->where('nomor_ba', 'like', "%{$search}%")
-                  ->orWhere('pecahan', 'like', "%{$search}%")
-                  ->orWhere('tahun_anggaran', 'like', "%{$search}%")
-                  ->orWhere('tahun_emisi', 'like', "%{$search}%")
-                  ->orWhere('pemasok1', 'like', "%{$search}%")
-                  ->orWhere('pemasok2', 'like', "%{$search}%");
+                    ->orWhere('pecahan', 'like', "%{$search}%")
+                    ->orWhere('tahun_anggaran', 'like', "%{$search}%")
+                    ->orWhere('tahun_emisi', 'like', "%{$search}%")
+                    ->orWhere('pemasok1', 'like', "%{$search}%")
+                    ->orWhere('pemasok2', 'like', "%{$search}%");
             });
         } elseif ($startDate && $endDate) {
             $query->whereBetween('tanggal_penyerahan', [$startDate, $endDate]);
         }
 
         $submissions = $query->latest()->get();
+
         return view('hcts-submission.print', compact('submissions', 'startDate', 'endDate', 'search'));
     }
 
@@ -155,7 +156,7 @@ class HctsSubmissionController extends Controller
 
         if ($totalBatchAmount != $validated['jumlah_bilyet']) {
             return back()->withInput()->withErrors([
-                'jumlah_bilyet' => 'Total Jumlah Per Batch (' . number_format($totalBatchAmount) . ') tidak sama dengan Jumlah Bilyet (' . number_format($validated['jumlah_bilyet']) . ').'
+                'jumlah_bilyet' => 'Total Jumlah Per Batch ('.number_format($totalBatchAmount).') tidak sama dengan Jumlah Bilyet ('.number_format($validated['jumlah_bilyet']).').',
             ]);
         }
 
@@ -185,10 +186,10 @@ class HctsSubmissionController extends Controller
             DB::commit();
 
             return redirect()->route('hcts-submission.index')->with('success', 'Penyerahan HCTS berhasil disimpan.');
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withInput()->withErrors(['error' => 'Gagal menyimpan data: ' . $e->getMessage()]);
+
+            return back()->withInput()->withErrors(['error' => 'Gagal menyimpan data: '.$e->getMessage()]);
         }
     }
 
@@ -227,7 +228,7 @@ class HctsSubmissionController extends Controller
 
         if ($totalBatchAmount != $validated['jumlah_bilyet']) {
             return back()->withInput()->withErrors([
-                'jumlah_bilyet' => 'Total Jumlah Per Batch (' . number_format($totalBatchAmount) . ') tidak sama dengan Jumlah Bilyet (' . number_format($validated['jumlah_bilyet']) . ').'
+                'jumlah_bilyet' => 'Total Jumlah Per Batch ('.number_format($totalBatchAmount).') tidak sama dengan Jumlah Bilyet ('.number_format($validated['jumlah_bilyet']).').',
             ]);
         }
 
@@ -258,10 +259,10 @@ class HctsSubmissionController extends Controller
             DB::commit();
 
             return redirect()->route('hcts-submission.index')->with('success', 'Penyerahan HCTS berhasil diperbarui.');
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withInput()->withErrors(['error' => 'Gagal memperbarui data: ' . $e->getMessage()]);
+
+            return back()->withInput()->withErrors(['error' => 'Gagal memperbarui data: '.$e->getMessage()]);
         }
     }
 
@@ -272,11 +273,12 @@ class HctsSubmissionController extends Controller
             $hcts_submission->batches()->delete();
             $hcts_submission->delete();
             DB::commit();
+
             return redirect()->route('hcts-submission.index')->with('success', 'Penyerahan HCTS ke BI berhasil dihapus.');
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withErrors(['error' => 'Gagal menghapus data: ' . $e->getMessage()]);
+
+            return back()->withErrors(['error' => 'Gagal menghapus data: '.$e->getMessage()]);
         }
     }
 
@@ -287,7 +289,7 @@ class HctsSubmissionController extends Controller
         $tahun_emisi = $request->input('tahun_emisi');
         $exclude_id = $request->input('exclude_id');
 
-        if (!$pecahan || !$tahun_anggaran || !$tahun_emisi) {
+        if (! $pecahan || ! $tahun_anggaran || ! $tahun_emisi) {
             return response()->json([]);
         }
 
@@ -321,10 +323,10 @@ class HctsSubmissionController extends Controller
             $stock = $receipt->total_received - $totalSubmitted;
 
             return [
-            'batch' => $receipt->batch,
-            'total_received' => (int)$receipt->total_received,
-            'total_submitted' => (int)$totalSubmitted,
-            'stock' => (int)$stock
+                'batch' => $receipt->batch,
+                'total_received' => (int) $receipt->total_received,
+                'total_submitted' => (int) $totalSubmitted,
+                'stock' => (int) $stock,
             ];
         })->filter(function ($item) {
             return $item['stock'] > 0;

@@ -19,19 +19,19 @@ class PackController extends Controller
             ->where('seri', $request->seri);
 
         if ($request->filled('pecahan')) {
-            $query->whereHas('hcsReceiving', function($q) use ($request) {
+            $query->whereHas('hcsReceiving', function ($q) use ($request) {
                 $q->where('pecahan', $request->pecahan);
             });
         }
 
         if ($request->filled('emisi')) {
-            $query->whereHas('hcsReceiving', function($q) use ($request) {
+            $query->whereHas('hcsReceiving', function ($q) use ($request) {
                 $q->where('emisi', $request->emisi);
             });
         }
 
         if ($request->filled('tahun_anggaran')) {
-            $query->whereHas('hcsReceiving', function($q) use ($request) {
+            $query->whereHas('hcsReceiving', function ($q) use ($request) {
                 $q->where('tahun_anggaran', $request->tahun_anggaran);
             });
         }

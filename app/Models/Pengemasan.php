@@ -17,16 +17,16 @@ class Pengemasan extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class , 'created_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function detailPengemasans()
     {
-        return $this->hasMany(DetailPengemasan::class , 'id_pengemasan');
+        return $this->hasMany(DetailPengemasan::class, 'id_pengemasan');
     }
 
     public function packs()
     {
-        return $this->hasMany(Pack::class , 'id_pengemasan');
+        return $this->hasMany(Pack::class, 'id_pengemasan');
     }
 }

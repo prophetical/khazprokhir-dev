@@ -31,6 +31,6 @@ class PenyerahanBi extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class , 'created_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

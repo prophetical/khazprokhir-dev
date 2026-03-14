@@ -49,7 +49,7 @@ class User extends Authenticatable
 
     public function hcsReceivings()
     {
-        return $this->hasMany(HcsReceiving::class , 'created_by');
+        return $this->hasMany(HcsReceiving::class, 'created_by');
     }
 
     public function auditLogs()

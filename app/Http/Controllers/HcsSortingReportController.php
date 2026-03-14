@@ -18,10 +18,10 @@ class HcsSortingReportController extends Controller
             $query->whereDate('tanggal_sortir', '<=', $request->tanggal_sampai);
         }
         if ($request->filled('batch')) {
-            $query->where('batch', 'like', '%' . $request->batch . '%');
+            $query->where('batch', 'like', '%'.$request->batch.'%');
         }
         if ($request->filled('seri')) {
-            $query->where('seri', 'like', '%' . $request->seri . '%');
+            $query->where('seri', 'like', '%'.$request->seri.'%');
         }
         if ($request->filled('gilir')) {
             $query->where('gilir', $request->gilir);
@@ -72,33 +72,31 @@ class HcsSortingReportController extends Controller
             'petugas_2' => 'nullable',
             'tanggal_sortir' => 'required|date',
             'gilir' => 'required',
-            'selected_packs' => 'required|array|min:' . ($isManual ? '1' : '4'),
+            'selected_packs' => 'required|array|min:'.($isManual ? '1' : '4'),
         ]);
 
         $selectedPacks = $request->selected_packs;
         sort($selectedPacks);
 
-        if (!$isManual) {
+        if (! $isManual) {
             // Validasi: Harus dalam kelompok berisi 4 dan berurutan
             $contiguousBlocks = [];
             $currentBlock = [];
             foreach ($selectedPacks as $packNum) {
-                $packNum = (int)$packNum;
+                $packNum = (int) $packNum;
                 if (empty($currentBlock)) {
                     $currentBlock[] = $packNum;
-                }
-                else {
+                } else {
                     $lastNum = end($currentBlock);
                     if ($packNum == $lastNum + 1) {
                         $currentBlock[] = $packNum;
-                    }
-                    else {
+                    } else {
                         $contiguousBlocks[] = $currentBlock;
                         $currentBlock = [$packNum];
                     }
                 }
             }
-            if (!empty($currentBlock)) {
+            if (! empty($currentBlock)) {
                 $contiguousBlocks[] = $currentBlock;
             }
 
@@ -163,11 +161,12 @@ class HcsSortingReportController extends Controller
             ]);
 
             \Illuminate\Support\Facades\DB::commit();
+
             return redirect()->route('hcs-sorting-reports.index')->with('success', 'Data laporan penyortiran berhasil diubah.');
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             \Illuminate\Support\Facades\DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())->withInput();
+
+            return back()->with('error', 'Terjadi kesalahan: '.$e->getMessage())->withInput();
         }
     }
 
@@ -187,11 +186,12 @@ class HcsSortingReportController extends Controller
             $hcs_sorting_report->delete();
 
             \Illuminate\Support\Facades\DB::commit();
+
             return redirect()->route('hcs-sorting-reports.index')->with('success', 'Data laporan penyortiran berhasil dihapus.');
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             \Illuminate\Support\Facades\DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan saat menghapus data: ' . $e->getMessage());
+
+            return back()->with('error', 'Terjadi kesalahan saat menghapus data: '.$e->getMessage());
         }
     }
 
@@ -206,10 +206,10 @@ class HcsSortingReportController extends Controller
             $query->whereDate('tanggal_sortir', '<=', $request->tanggal_sampai);
         }
         if ($request->filled('batch')) {
-            $query->where('batch', 'like', '%' . $request->batch . '%');
+            $query->where('batch', 'like', '%'.$request->batch.'%');
         }
         if ($request->filled('seri')) {
-            $query->where('seri', 'like', '%' . $request->seri . '%');
+            $query->where('seri', 'like', '%'.$request->seri.'%');
         }
         if ($request->filled('gilir')) {
             $query->where('gilir', $request->gilir);
@@ -217,14 +217,14 @@ class HcsSortingReportController extends Controller
 
         $tanggalDari = $request->tanggal_dari ?: 'all';
         $tanggalSampai = $request->tanggal_sampai ?: 'all';
-        $filename = "report_penyortiran_" . $tanggalDari . "_to_" . $tanggalSampai . ".csv";
+        $filename = 'report_penyortiran_'.$tanggalDari.'_to_'.$tanggalSampai.'.csv';
 
         $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $callback = function () use ($query) {
@@ -232,44 +232,44 @@ class HcsSortingReportController extends Controller
             fputcsv($file, ['Tanggal', 'Gilir', 'Batch', 'Seri', 'Emisi', 'TA', 'Pecahan', 'Supplier', 'Pack Terpilih', 'Jumlah Pack', 'Total Bilyet', 'Petugas 1', 'Petugas 2']);
 
             $query->orderBy('tanggal_sortir', 'desc')->orderBy('created_at', 'desc')->chunk(100, function ($reports) use ($file) {
-                    foreach ($reports as $row) {
-                        $arr = is_array($row->packs_selected) ? $row->packs_selected : [];
-                        sort($arr, SORT_NUMERIC);
-                        $ranges = [];
-                        $i = 0;
-                        while ($i < count($arr)) {
-                            $start = $arr[$i];
-                            $end = $start;
-                            while (isset($arr[$i + 1]) && $arr[$i + 1] == $end + 1) {
-                                $end = $arr[$i + 1];
-                                $i++;
-                            }
-                            $ranges[] = ($start == $end) ? $start : $start . '-' . $end;
+                foreach ($reports as $row) {
+                    $arr = is_array($row->packs_selected) ? $row->packs_selected : [];
+                    sort($arr, SORT_NUMERIC);
+                    $ranges = [];
+                    $i = 0;
+                    while ($i < count($arr)) {
+                        $start = $arr[$i];
+                        $end = $start;
+                        while (isset($arr[$i + 1]) && $arr[$i + 1] == $end + 1) {
+                            $end = $arr[$i + 1];
                             $i++;
                         }
-                        $displayStr = implode(' | ', $ranges);
-
-                        fputcsv($file, [
-                            $row->tanggal_sortir->format('Y-m-d'),
-                            $row->gilir,
-                            $row->batch,
-                            $row->seri,
-                            $row->emisi,
-                            $row->tahun_anggaran,
-                            $row->pecahan,
-                            $row->supplier,
-                            $displayStr,
-                            $row->jumlah_pack,
-                            $row->jumlah_bilyet,
-                            $row->petugas_1,
-                            $row->petugas_2 ?? '-'
-                        ]);
+                        $ranges[] = ($start == $end) ? $start : $start.'-'.$end;
+                        $i++;
                     }
-                }
-                );
+                    $displayStr = implode(' | ', $ranges);
 
-                fclose($file);
-            };
+                    fputcsv($file, [
+                        $row->tanggal_sortir->format('Y-m-d'),
+                        $row->gilir,
+                        $row->batch,
+                        $row->seri,
+                        $row->emisi,
+                        $row->tahun_anggaran,
+                        $row->pecahan,
+                        $row->supplier,
+                        $displayStr,
+                        $row->jumlah_pack,
+                        $row->jumlah_bilyet,
+                        $row->petugas_1,
+                        $row->petugas_2 ?? '-',
+                    ]);
+                }
+            }
+            );
+
+            fclose($file);
+        };
 
         return response()->stream($callback, 200, $headers);
     }
@@ -285,10 +285,10 @@ class HcsSortingReportController extends Controller
             $query->whereDate('tanggal_sortir', '<=', $request->tanggal_sampai);
         }
         if ($request->filled('batch')) {
-            $query->where('batch', 'like', '%' . $request->batch . '%');
+            $query->where('batch', 'like', '%'.$request->batch.'%');
         }
         if ($request->filled('seri')) {
-            $query->where('seri', 'like', '%' . $request->seri . '%');
+            $query->where('seri', 'like', '%'.$request->seri.'%');
         }
         if ($request->filled('gilir')) {
             $query->where('gilir', $request->gilir);

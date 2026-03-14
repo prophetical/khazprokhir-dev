@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\HcsReceiving;
 use App\Models\Pack;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -37,18 +36,18 @@ class RekomendasiPenyortiranController extends Controller
         // Kelompokkan data berdasarkan Pecahan + Batch + Seri + Supplier
         $grouped = [];
         foreach ($unsortedPacksRaw as $p) {
-            $key = $p->pecahan . '|' . $p->batch . '|' . $p->seri . '|' . $p->supplier;
-            if (!isset($grouped[$key])) {
+            $key = $p->pecahan.'|'.$p->batch.'|'.$p->seri.'|'.$p->supplier;
+            if (! isset($grouped[$key])) {
                 $grouped[$key] = [
                     'pecahan' => $p->pecahan,
                     'batch' => $p->batch,
                     'seri' => $p->seri,
                     'packs' => [],
-                    'supplier' => $p->supplier
+                    'supplier' => $p->supplier,
                 ];
             }
             $grouped[$key]['packs'][] = $p->pack_number;
-        // Catatan: Kalau ada lebih dari satu supplier di batch/seri yang sama, kita ambil yang pertama aja buat warna di UI.
+            // Catatan: Kalau ada lebih dari satu supplier di batch/seri yang sama, kita ambil yang pertama aja buat warna di UI.
         }
 
         $recommendations = [];
@@ -65,12 +64,12 @@ class RekomendasiPenyortiranController extends Controller
                 // Terus dari titik awal itu, coba ambil kelompok-kelompok yang isinya 4 pack.
 
                 $validSubRanges = $this->extractValidSubRanges($range);
-                if (!empty($validSubRanges)) {
+                if (! empty($validSubRanges)) {
                     $validRanges = array_merge($validRanges, $validSubRanges);
                 }
             }
 
-            if (!empty($validRanges)) {
+            if (! empty($validRanges)) {
                 // Ubah array rentang pack jadi format teks biar gampang dibaca di tabel UI
                 $totalPacksAll = 0;
                 $rangeStrings = [];
@@ -83,9 +82,8 @@ class RekomendasiPenyortiranController extends Controller
                     $end = $vr[$c - 1];
                     if ($start === $end) {
                         $rangeStrings[] = $start;
-                    }
-                    else {
-                        $rangeStrings[] = $start . '-' . $end;
+                    } else {
+                        $rangeStrings[] = $start.'-'.$end;
                     }
                     $flatPacks = array_merge($flatPacks, $vr);
                 }
@@ -99,20 +97,20 @@ class RekomendasiPenyortiranController extends Controller
                     'ranges_str' => $rangeStrings, // contohnya: ["1-8", "13-16"]
                     'flat_packs' => $flatPacks, // contoh datanya: [1,2,3,4,5,6,7,8,13,14,15,16]
                     'total_pack' => $totalPacksAll,
-                    'total_bilyet' => $totalPacksAll * 45000
+                    'total_bilyet' => $totalPacksAll * 45000,
                 ];
             }
         }
 
         // Handle filtering if any
         if ($request->filled('pecahan')) {
-            $recommendations = array_filter($recommendations, fn($r) => $r['pecahan'] == $request->pecahan);
+            $recommendations = array_filter($recommendations, fn ($r) => $r['pecahan'] == $request->pecahan);
         }
         if ($request->filled('batch')) {
-            $recommendations = array_filter($recommendations, fn($r) => str_contains($r['batch'], $request->batch));
+            $recommendations = array_filter($recommendations, fn ($r) => str_contains($r['batch'], $request->batch));
         }
         if ($request->filled('seri')) {
-            $recommendations = array_filter($recommendations, fn($r) => str_contains($r['seri'], $request->seri));
+            $recommendations = array_filter($recommendations, fn ($r) => str_contains($r['seri'], $request->seri));
         }
 
         // Hitung ringkasan per pecahan dari hasil rekomendasi
@@ -121,7 +119,7 @@ class RekomendasiPenyortiranController extends Controller
         foreach ($expectedPecahan as $p) {
             $summaries[$p] = [
                 'total_pack' => 0,
-                'total_bilyet' => 0
+                'total_bilyet' => 0,
             ];
         }
 
@@ -159,8 +157,9 @@ class RekomendasiPenyortiranController extends Controller
      */
     private function extractConsecutiveRanges(array $numbers)
     {
-        if (empty($numbers))
+        if (empty($numbers)) {
             return [];
+        }
 
         $ranges = [];
         $currentRange = [$numbers[0]];
@@ -168,13 +167,12 @@ class RekomendasiPenyortiranController extends Controller
         for ($i = 1; $i < count($numbers); $i++) {
             if ($numbers[$i] == $numbers[$i - 1] + 1) {
                 $currentRange[] = $numbers[$i];
-            }
-            else {
+            } else {
                 $ranges[] = $currentRange;
                 $currentRange = [$numbers[$i]];
             }
         }
-        if (!empty($currentRange)) {
+        if (! empty($currentRange)) {
             $ranges[] = $currentRange;
         }
 

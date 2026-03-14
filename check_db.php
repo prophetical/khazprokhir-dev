@@ -1,11 +1,11 @@
 <?php
+
 require __DIR__.'/vendor/autoload.php';
 $app = require_once __DIR__.'/bootstrap/app.php';
 $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 $kernel->bootstrap();
 
 use App\Models\Pengemasan;
-use Illuminate\Support\Facades\DB;
 
 $date = '2026-03-10'; // Assuming H-1 if today is 11
 $pecahan = 'S';

@@ -11,7 +11,7 @@ class UpdateHcsReceivingRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()->role === 'sortir'; // Only sortir role can input receiving
+        return in_array($this->user()->role, ['sortir', 'admin']);
     }
 
     /**

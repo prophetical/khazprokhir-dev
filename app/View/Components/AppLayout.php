@@ -24,14 +24,18 @@ class AppLayout extends Component
     protected function determineBackUrl(): ?string
     {
         $route = request()->route();
-        if (!$route) return null;
+        if (! $route) {
+            return null;
+        }
 
         $name = $route->getName();
-        if (!$name || $name === 'dashboard') return null;
+        if (! $name || $name === 'dashboard') {
+            return null;
+        }
 
         // If it's a sub-page (create, edit, show), go back to index
         if (preg_match('/^(.*)\.(create|edit|show)$/', $name, $matches)) {
-            $indexRoute = $matches[1] . '.index';
+            $indexRoute = $matches[1].'.index';
             if (Route::has($indexRoute)) {
                 return route($indexRoute);
             }

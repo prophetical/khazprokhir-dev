@@ -2,21 +2,18 @@
 
 namespace App\Services;
 
+use App\Models\AuditLog;
 use App\Models\HcsReceiving;
 use App\Models\Pack;
 use App\Models\StockLedger;
-use App\Models\AuditLog;
-use Illuminate\Support\Facades\DB;
 use Exception;
+use Illuminate\Support\Facades\DB;
 
 class HcsReceivingService
 {
     /**
      * Store a new HCS receiving record along with its packs, ledger updates, and audit logs.
      *
-     * @param array $data
-     * @param int $userId
-     * @return HcsReceiving
      * @throws Exception
      */
     public function createReceiving(array $data, int $userId): HcsReceiving
@@ -44,7 +41,7 @@ class HcsReceivingService
             // Create Packs
             $selectedPacksCount = count($data['packs']);
             $isManual = $data['is_manual'] ?? false;
-            
+
             foreach ($data['packs'] as $packNumber) {
                 Pack::create([
                     'hcs_receiving_id' => $hcs->id,
@@ -59,11 +56,11 @@ class HcsReceivingService
 
             // Update Stock Ledger
             $ledger = StockLedger::firstOrCreate(
-            [
-                'pecahan' => $data['pecahan'],
-                'batch' => $data['batch'],
-                'seri' => $data['seri'],
-            ]
+                [
+                    'pecahan' => $data['pecahan'],
+                    'batch' => $data['batch'],
+                    'seri' => $data['seri'],
+                ]
             );
 
             $ledger->increment('total_received', $data['jumlah']);
@@ -80,8 +77,7 @@ class HcsReceivingService
             DB::commit();
 
             return $hcs;
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             throw $e;
         }
@@ -137,9 +133,9 @@ class HcsReceivingService
             // 4. Create New Packs (Avoid re-creating sorted ones)
             $selectedPacksCount = count($data['packs']);
             $isManual = $data['is_manual'] ?? false;
-            
+
             foreach ($data['packs'] as $packNumber) {
-                if (!$sortedPacks->has($packNumber)) {
+                if (! $sortedPacks->has($packNumber)) {
                     Pack::create([
                         'hcs_receiving_id' => $hcs->id,
                         'batch' => $data['batch'],
@@ -173,8 +169,7 @@ class HcsReceivingService
             DB::commit();
 
             return $hcs;
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             throw $e;
         }
@@ -189,7 +184,7 @@ class HcsReceivingService
             DB::beginTransaction();
 
             if ($hcs->packs()->whereNotNull('hcs_sorting_id')->exists()) {
-                throw new Exception("Data tidak dapat dihapus karena pack sudah disortir.");
+                throw new Exception('Data tidak dapat dihapus karena pack sudah disortir.');
             }
 
             // Revert Stock Ledger
@@ -227,8 +222,7 @@ class HcsReceivingService
             DB::commit();
 
             return true;
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             throw $e;
         }

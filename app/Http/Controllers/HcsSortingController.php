@@ -24,10 +24,10 @@ class HcsSortingController extends Controller
             $query->where('hcs_receivings.pecahan', $request->pecahan);
         }
         if ($request->filled('batch')) {
-            $query->where('packs.batch', 'like', '%' . $request->batch . '%');
+            $query->where('packs.batch', 'like', '%'.$request->batch.'%');
         }
         if ($request->filled('seri')) {
-            $query->where('packs.seri', 'like', '%' . $request->seri . '%');
+            $query->where('packs.seri', 'like', '%'.$request->seri.'%');
         }
         if ($request->filled('tahun_anggaran')) {
             $query->where('hcs_receivings.tahun_anggaran', $request->tahun_anggaran);
@@ -75,7 +75,7 @@ class HcsSortingController extends Controller
         $batch = $request->query('batch');
         $seri = $request->query('seri');
 
-        if (!$pecahan || !$batch || !$seri) {
+        if (! $pecahan || ! $batch || ! $seri) {
             return redirect()->route('hcs-sorting.index')->with('error', 'Silahkan pilih grup data terlebih dahulu.');
         }
 
@@ -111,33 +111,31 @@ class HcsSortingController extends Controller
             'petugas_2' => 'nullable',
             'tanggal' => 'required|date',
             'gilir' => 'required',
-            'selected_packs' => 'required|array|min:' . ($isManual ? '1' : '4'),
+            'selected_packs' => 'required|array|min:'.($isManual ? '1' : '4'),
         ]);
 
         $selectedPacks = $request->selected_packs;
         sort($selectedPacks);
 
-        if (!$isManual) {
+        if (! $isManual) {
             // Validasi: Harus dalam kelompok berisi 4 dan berurutan (Boundary & Multiples of 4)
             $contiguousBlocks = [];
             $currentBlock = [];
             foreach ($selectedPacks as $packNum) {
-                $packNum = (int)$packNum;
+                $packNum = (int) $packNum;
                 if (empty($currentBlock)) {
                     $currentBlock[] = $packNum;
-                }
-                else {
+                } else {
                     $lastNum = end($currentBlock);
                     if ($packNum == $lastNum + 1) {
                         $currentBlock[] = $packNum;
-                    }
-                    else {
+                    } else {
                         $contiguousBlocks[] = $currentBlock;
                         $currentBlock = [$packNum];
                     }
                 }
             }
-            if (!empty($currentBlock)) {
+            if (! empty($currentBlock)) {
                 $contiguousBlocks[] = $currentBlock;
             }
 
@@ -205,10 +203,10 @@ class HcsSortingController extends Controller
             DB::commit();
 
             return redirect()->route('hcs-sorting.index')->with('success', 'Data penyortiran berhasil disimpan.');
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())->withInput();
+
+            return back()->with('error', 'Terjadi kesalahan: '.$e->getMessage())->withInput();
         }
     }
 }

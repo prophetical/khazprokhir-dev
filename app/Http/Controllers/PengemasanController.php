@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pengemasan;
 use App\Models\DetailPengemasan;
 use App\Models\Pack;
+use App\Models\Pengemasan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -25,6 +25,7 @@ class PengemasanController extends Controller
         ]);
 
         $missingGaps = $this->detectMissingDusGaps();
+
         return view('pengemasan.index', compact('readyGroups', 'missingGaps'));
     }
 
@@ -55,18 +56,18 @@ class PengemasanController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 return $q->where('pecahan', 'like', "%{$search}%")
-                ->orWhere('batch', 'like', "%{$search}%")
-                ->orWhere('seri', 'like', "%{$search}%")
-                ->orWhereHas('user', function ($userQ) use ($search) {
+                    ->orWhere('batch', 'like', "%{$search}%")
+                    ->orWhere('seri', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($userQ) use ($search) {
                         return $userQ->where('name', 'like', "%{$search}%");
                     }
                     );
-                });
+            });
         }
 
         // Handle Search Dus Spesifik
         if ($request->filled('search_dus') && is_numeric($request->search_dus)) {
-            $searchDus = (int)$request->search_dus;
+            $searchDus = (int) $request->search_dus;
             $query->where('dus_awal', '<=', $searchDus)
                 ->where('dus_akhir', '>=', $searchDus);
         }
@@ -79,8 +80,7 @@ class PengemasanController extends Controller
             $query->join('users', 'pengemasans.created_by', '=', 'users.id')
                 ->orderBy('users.name', $sortDirection)
                 ->select('pengemasans.*');
-        }
-        else {
+        } else {
             $query->orderBy($sortColumn, $sortDirection);
         }
 
@@ -103,17 +103,17 @@ class PengemasanController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 return $q->where('pecahan', 'like', "%{$search}%")
-                ->orWhere('batch', 'like', "%{$search}%")
-                ->orWhere('seri', 'like', "%{$search}%")
-                ->orWhereHas('user', function ($userQ) use ($search) {
+                    ->orWhere('batch', 'like', "%{$search}%")
+                    ->orWhere('seri', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($userQ) use ($search) {
                         return $userQ->where('name', 'like', "%{$search}%");
                     }
                     );
-                });
+            });
         }
 
         if ($request->filled('search_dus') && is_numeric($request->search_dus)) {
-            $searchDus = (int)$request->search_dus;
+            $searchDus = (int) $request->search_dus;
             $query->where('dus_awal', '<=', $searchDus)
                 ->where('dus_akhir', '>=', $searchDus);
         }
@@ -125,19 +125,18 @@ class PengemasanController extends Controller
             $query->join('users', 'pengemasans.created_by', '=', 'users.id')
                 ->orderBy('users.name', $sortDirection)
                 ->select('pengemasans.*');
-        }
-        else {
+        } else {
             $query->orderBy($sortColumn, $sortDirection);
         }
 
-        $filename = "data_pengemasan_" . date('Y-m-d_H-i-s') . ".csv";
+        $filename = 'data_pengemasan_'.date('Y-m-d_H-i-s').'.csv';
 
         $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $callback = function () use ($query) {
@@ -145,31 +144,31 @@ class PengemasanController extends Controller
             fputcsv($file, ['Tanggal', 'Gilir', 'Thn Anggaran', 'Thn Emisi', 'Pecahan', 'Batch', 'Seri', 'Pack Awal', 'Pack Akhir', 'Jml Pack', 'Total Bilyet', 'Dus', 'Dus Awal', 'Dus Akhir', 'Petugas']);
 
             $query->chunk(100, function ($pengemasans) use ($file) {
-                    foreach ($pengemasans as $row) {
-                        fputcsv($file, [
-                            $row->tanggal_pengemasan->format('Y-m-d'),
-                            $row->gilir,
-                            $row->tahun_anggaran,
-                            $row->tahun_emisi,
-                            $row->pecahan,
-                            $row->batch,
-                            $row->seri,
-                            $row->pack_awal,
-                            $row->pack_akhir,
-                            $row->jumlah_pack,
-                            $row->total_bilyet,
-                            $row->jumlah_dus,
-                            $row->dus_awal,
-                            $row->dus_akhir,
-                            $row->user->name ?? '-'
-                        ]);
+                foreach ($pengemasans as $row) {
+                    fputcsv($file, [
+                        $row->tanggal_pengemasan->format('Y-m-d'),
+                        $row->gilir,
+                        $row->tahun_anggaran,
+                        $row->tahun_emisi,
+                        $row->pecahan,
+                        $row->batch,
+                        $row->seri,
+                        $row->pack_awal,
+                        $row->pack_akhir,
+                        $row->jumlah_pack,
+                        $row->total_bilyet,
+                        $row->jumlah_dus,
+                        $row->dus_awal,
+                        $row->dus_akhir,
+                        $row->user->name ?? '-',
+                    ]);
 
-                    }
                 }
-                );
+            }
+            );
 
-                fclose($file);
-            };
+            fclose($file);
+        };
 
         return response()->stream($callback, 200, $headers);
     }
@@ -186,17 +185,17 @@ class PengemasanController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 return $q->where('pecahan', 'like', "%{$search}%")
-                ->orWhere('batch', 'like', "%{$search}%")
-                ->orWhere('seri', 'like', "%{$search}%")
-                ->orWhereHas('user', function ($userQ) use ($search) {
+                    ->orWhere('batch', 'like', "%{$search}%")
+                    ->orWhere('seri', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($userQ) use ($search) {
                         return $userQ->where('name', 'like', "%{$search}%");
                     }
                     );
-                });
+            });
         }
 
         if ($request->filled('search_dus') && is_numeric($request->search_dus)) {
-            $searchDus = (int)$request->search_dus;
+            $searchDus = (int) $request->search_dus;
             $query->where('dus_awal', '<=', $searchDus)
                 ->where('dus_akhir', '>=', $searchDus);
         }
@@ -208,8 +207,7 @@ class PengemasanController extends Controller
             $query->join('users', 'pengemasans.created_by', '=', 'users.id')
                 ->orderBy('users.name', $sortDirection)
                 ->select('pengemasans.*');
-        }
-        else {
+        } else {
             $query->orderBy($sortColumn, $sortDirection);
         }
 
@@ -225,22 +223,22 @@ class PengemasanController extends Controller
             ->whereNull('id_pengemasan')
             ->join('hcs_receivings', 'packs.hcs_receiving_id', '=', 'hcs_receivings.id')
             ->select(
-            'packs.pack_number',
-            'packs.batch',
-            'packs.seri',
-            'hcs_receivings.pecahan',
-            'hcs_receivings.emisi',
-            'hcs_receivings.tahun_anggaran'
-        );
+                'packs.pack_number',
+                'packs.batch',
+                'packs.seri',
+                'hcs_receivings.pecahan',
+                'hcs_receivings.emisi',
+                'hcs_receivings.tahun_anggaran'
+            );
 
         // Terapkan filter
-        if (!empty($filters['pecahan'])) {
+        if (! empty($filters['pecahan'])) {
             $query->where('hcs_receivings.pecahan', $filters['pecahan']);
         }
-        if (!empty($filters['tahun_anggaran'])) {
+        if (! empty($filters['tahun_anggaran'])) {
             $query->where('hcs_receivings.tahun_anggaran', $filters['tahun_anggaran']);
         }
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $s = $filters['search'];
             $query->where(function ($q) use ($s) {
                 $q->where('packs.batch', 'like', "%{$s}%")
@@ -261,14 +259,14 @@ class PengemasanController extends Controller
         $grouped = [];
         foreach ($packs as $pack) {
             $key = "{$pack->tahun_anggaran}|{$pack->emisi}|{$pack->pecahan}|{$pack->batch}|{$pack->seri}";
-            if (!isset($grouped[$key])) {
+            if (! isset($grouped[$key])) {
                 $grouped[$key] = [
                     'tahun_anggaran' => $pack->tahun_anggaran,
                     'emisi' => $pack->emisi,
                     'pecahan' => $pack->pecahan,
                     'batch' => $pack->batch,
                     'seri' => $pack->seri,
-                    'numbers' => []
+                    'numbers' => [],
                 ];
             }
             $grouped[$key]['numbers'][] = $pack->pack_number;
@@ -278,8 +276,9 @@ class PengemasanController extends Controller
 
         foreach ($grouped as $group) {
             $numbers = $group['numbers'];
-            if (count($numbers) < 1)
+            if (count($numbers) < 1) {
                 continue;
+            }
 
             $contiguousBlocks = [];
             $currentBlock = [];
@@ -287,19 +286,17 @@ class PengemasanController extends Controller
             foreach ($numbers as $num) {
                 if (empty($currentBlock)) {
                     $currentBlock[] = $num;
-                }
-                else {
+                } else {
                     $last = end($currentBlock);
                     if ($num == $last + 1) {
                         $currentBlock[] = $num;
-                    }
-                    else {
+                    } else {
                         $contiguousBlocks[] = $currentBlock;
                         $currentBlock = [$num];
                     }
                 }
             }
-            if (!empty($currentBlock)) {
+            if (! empty($currentBlock)) {
                 $contiguousBlocks[] = $currentBlock;
             }
 
@@ -314,8 +311,9 @@ class PengemasanController extends Controller
                 $totalInBlock = count($block);
 
                 // Jika total pack dalam range berurutan ini kurang dari 1, lewati
-                if ($totalInBlock < 1)
+                if ($totalInBlock < 1) {
                     continue;
+                }
 
                 $packIds = Pack::where('batch', $group['batch'])
                     ->where('seri', $group['seri'])
@@ -335,7 +333,7 @@ class PengemasanController extends Controller
                     'pack_awal' => $block[0],
                     'pack_akhir' => end($block),
                     'jumlah_pack' => $totalInBlock,
-                    'has_buntut' => $hasBuntut
+                    'has_buntut' => $hasBuntut,
                 ];
             }
         }
@@ -346,12 +344,15 @@ class PengemasanController extends Controller
     public function create(Request $request)
     {
         $lastDus = DetailPengemasan::whereHas('pengemasan', function ($query) use ($request) {
-            if ($request->has('pecahan'))
+            if ($request->has('pecahan')) {
                 $query->where('pecahan', $request->pecahan);
-            if ($request->has('tahun_anggaran'))
+            }
+            if ($request->has('tahun_anggaran')) {
                 $query->where('tahun_anggaran', $request->tahun_anggaran);
-            if ($request->has('tahun_emisi'))
+            }
+            if ($request->has('tahun_emisi')) {
                 $query->where('tahun_emisi', $request->tahun_emisi);
+            }
         })->orderBy('no_dus', 'desc')
             ->first();
 
@@ -366,7 +367,7 @@ class PengemasanController extends Controller
         return view('pengemasan.create', [
             'auto_fill' => $request->all(),
             'last_number' => $lastNumber,
-            'packsData' => $packsData
+            'packsData' => $packsData,
         ]);
     }
 
@@ -396,16 +397,17 @@ class PengemasanController extends Controller
 
         // sort by starting pack
         usort($selectedChunksInput, function ($a, $b) {
-            $aStart = (int)explode('-', $a)[0];
-            $bStart = (int)explode('-', $b)[0];
+            $aStart = (int) explode('-', $a)[0];
+            $bStart = (int) explode('-', $b)[0];
+
             return $aStart <=> $bStart;
         });
 
         foreach ($selectedChunksInput as $chunkStr) {
             $parts = explode('-', $chunkStr);
             if (count($parts) == 2) {
-                $cAwal = (int)$parts[0];
-                $cAkhir = (int)$parts[1];
+                $cAwal = (int) $parts[0];
+                $cAkhir = (int) $parts[1];
                 $parsedChunks[] = ['awal' => $cAwal, 'akhir' => $cAkhir];
                 for ($i = $cAwal; $i <= $cAkhir; $i++) {
                     $packNumbers[] = $i;
@@ -414,7 +416,7 @@ class PengemasanController extends Controller
         }
 
         foreach ($selectedPacksInput as $pNum) {
-            $pNum = (int)$pNum;
+            $pNum = (int) $pNum;
             $packNumbers[] = $pNum;
             $parsedChunks[] = ['awal' => $pNum, 'akhir' => $pNum];
         }
@@ -423,7 +425,7 @@ class PengemasanController extends Controller
 
         $jumlahPack = count($packNumbers);
 
-        if (!$request->boolean('is_manual_sisa')) {
+        if (! $request->boolean('is_manual_sisa')) {
             if ($jumlahPack <= 0 || $jumlahPack % 4 !== 0) {
                 $field = $request->has('selected_chunks') ? 'selected_chunks' : 'selected_packs';
                 throw ValidationException::withMessages([
@@ -448,7 +450,7 @@ class PengemasanController extends Controller
         if ($packs->count() !== $jumlahPack) {
             $field = $request->has('selected_chunks') ? 'selected_chunks' : 'selected_packs';
             throw ValidationException::withMessages([
-                $field => "Terdapat ketidaksesuaian jumlah pack dengan yang dipilih. Beberapa pack mungkin tidak tersedia atau identitas berbeda.",
+                $field => 'Terdapat ketidaksesuaian jumlah pack dengan yang dipilih. Beberapa pack mungkin tidak tersedia atau identitas berbeda.',
             ]);
         }
 
@@ -459,7 +461,7 @@ class PengemasanController extends Controller
                     $field => "Pack nomor {$pack->pack_number} belum selesai disortir. Harap selesaikan penyortiran.",
                 ]);
             }
-            if (!is_null($pack->id_pengemasan)) {
+            if (! is_null($pack->id_pengemasan)) {
                 throw ValidationException::withMessages([
                     $field => "Pack nomor {$pack->pack_number} sudah tercatat dalam riwayat pengemasan sebelumnya.",
                 ]);
@@ -472,14 +474,13 @@ class PengemasanController extends Controller
                 throw ValidationException::withMessages(['manual_details' => 'Detail dus manual harus diisi jika mode Kemas Sisa Pack aktif.']);
             }
             $jumlahDus = count($manualDetails);
-        }
-        else {
+        } else {
             $jumlahDus = ($jumlahPack / 4) * 9;
         }
 
         if ($request->boolean('is_manual')) {
-            $nomorDusAwal = (int)$request->dus_awal;
-            $nomorDusAkhir = (int)$request->dus_akhir;
+            $nomorDusAwal = (int) $request->dus_awal;
+            $nomorDusAkhir = (int) $request->dus_akhir;
 
             // Validasi 1: jumlah dus sesuai range input manual
             if (($nomorDusAkhir - $nomorDusAwal + 1) !== $jumlahDus) {
@@ -487,8 +488,7 @@ class PengemasanController extends Controller
                     'dus_awal' => "Range nomor dus tidak sesuai dengan jumlah dus hasil pengemasan. Harus tepat $jumlahDus dus untuk $jumlahPack pack ini.",
                 ]);
             }
-        }
-        else {
+        } else {
             // Mode Auto: Ambil nomor dus terakhir dari identitas yang sama
             $lastDus = DetailPengemasan::whereHas('pengemasan', function ($query) use ($request) {
                 $query->where('pecahan', $request->pecahan)
@@ -502,8 +502,7 @@ class PengemasanController extends Controller
                 $sudahAdaNoDus = array_column($manualDetails, 'no_dus');
                 $nomorDusAwal = min($sudahAdaNoDus);
                 $nomorDusAkhir = max($sudahAdaNoDus);
-            }
-            else {
+            } else {
                 $nomorDusAwal = $lastDus ? $lastDus->no_dus + 1 : 1;
                 $nomorDusAkhir = $nomorDusAwal + $jumlahDus - 1;
             }
@@ -517,8 +516,7 @@ class PengemasanController extends Controller
                     ->where('tahun_anggaran', $request->tahun_anggaran)
                     ->where('tahun_emisi', $request->tahun_emisi);
             })->whereIn('no_dus', $sudahAdaNoDus)->exists();
-        }
-        else {
+        } else {
             $usedDusExists = DetailPengemasan::whereHas('pengemasan', function ($query) use ($request) {
                 $query->where('pecahan', $request->pecahan)
                     ->where('tahun_anggaran', $request->tahun_anggaran)
@@ -528,7 +526,7 @@ class PengemasanController extends Controller
 
         if ($usedDusExists) {
             throw ValidationException::withMessages([
-                'dus_awal' => "Satu atau lebih nomor dus sudah digunakan pada pengemasan lain untuk pecahan, tahun emisi, dan tahun anggaran yang sama.",
+                'dus_awal' => 'Satu atau lebih nomor dus sudah digunakan pada pengemasan lain untuk pecahan, tahun emisi, dan tahun anggaran yang sama.',
             ]);
         }
 
@@ -554,7 +552,6 @@ class PengemasanController extends Controller
                 'created_by' => auth()->id(),
             ]);
 
-
             Pack::whereIn('id', $packs->pluck('id'))->update(['id_pengemasan' => $pengemasan->id]);
 
             // [NEW] Kunci data penyortiran terkait
@@ -576,18 +573,17 @@ class PengemasanController extends Controller
                         'jumlah_bilyet' => $detail['jumlah_bilyet'] ?? 0,
                     ]);
                 }
-            }
-            else {
+            } else {
                 $this->generateDetailPengemasan($pengemasan, $request->seri, $nomorDusAwal, $request->batch, $parsedChunks, $packs);
             }
 
-
             DB::commit();
+
             return redirect()->route('pengemasan.index')->with('success', 'Data pengemasan berhasil diproses.');
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage())->withInput();
+
+            return back()->with('error', 'Terjadi kesalahan sistem: '.$e->getMessage())->withInput();
         }
     }
 
@@ -608,16 +604,16 @@ class PengemasanController extends Controller
         }
 
         // Pola 1: seriAwal + A -> seriAwal + U
-        $pola1Awal = $seriAwalPrefix . 'A';
-        $pola1Akhir = $seriAwalPrefix . 'U';
+        $pola1Awal = $seriAwalPrefix.'A';
+        $pola1Akhir = $seriAwalPrefix.'U';
 
         // Pola 2: seriAkhir + A -> seriAkhir + U
-        $pola2Awal = $seriAkhirPrefix . 'A';
-        $pola2Akhir = $seriAkhirPrefix . 'U';
+        $pola2Awal = $seriAkhirPrefix.'A';
+        $pola2Akhir = $seriAkhirPrefix.'U';
 
         // Pola 3: seriAwal + V -> seriAkhir + Z
-        $pola3Awal = $seriAwalPrefix . 'V';
-        $pola3Akhir = $seriAkhirPrefix . 'Z';
+        $pola3Awal = $seriAwalPrefix.'V';
+        $pola3Akhir = $seriAkhirPrefix.'Z';
 
         $currentNoDus = $startNumber;
 
@@ -638,56 +634,65 @@ class PengemasanController extends Controller
 
             // Dus 1: Pack 1-4, Pola 3
             $dusBilyet = $bilyetPerDus + ($sisaBilyet > 0 ? 1 : 0);
-            if ($sisaBilyet > 0)
+            if ($sisaBilyet > 0) {
                 $sisaBilyet--;
+            }
             $this->createDusRow($pengemasan->id, $currentNoDus++, $p1, $p4, $pola3Awal, $pola3Akhir, $batch, $dusBilyet);
 
             // Dus 2: Pack 1, Pola 2
             $dusBilyet = $bilyetPerDus + ($sisaBilyet > 0 ? 1 : 0);
-            if ($sisaBilyet > 0)
+            if ($sisaBilyet > 0) {
                 $sisaBilyet--;
+            }
             $this->createDusRow($pengemasan->id, $currentNoDus++, $p1, $p1, $pola2Awal, $pola2Akhir, $batch, $dusBilyet);
 
             // Dus 3: Pack 1, Pola 1
             $dusBilyet = $bilyetPerDus + ($sisaBilyet > 0 ? 1 : 0);
-            if ($sisaBilyet > 0)
+            if ($sisaBilyet > 0) {
                 $sisaBilyet--;
+            }
             $this->createDusRow($pengemasan->id, $currentNoDus++, $p1, $p1, $pola1Awal, $pola1Akhir, $batch, $dusBilyet);
 
             // Dus 4: Pack 2, Pola 2
             $dusBilyet = $bilyetPerDus + ($sisaBilyet > 0 ? 1 : 0);
-            if ($sisaBilyet > 0)
+            if ($sisaBilyet > 0) {
                 $sisaBilyet--;
+            }
             $this->createDusRow($pengemasan->id, $currentNoDus++, $p2, $p2, $pola2Awal, $pola2Akhir, $batch, $dusBilyet);
 
             // Dus 5: Pack 2, Pola 1
             $dusBilyet = $bilyetPerDus + ($sisaBilyet > 0 ? 1 : 0);
-            if ($sisaBilyet > 0)
+            if ($sisaBilyet > 0) {
                 $sisaBilyet--;
+            }
             $this->createDusRow($pengemasan->id, $currentNoDus++, $p2, $p2, $pola1Awal, $pola1Akhir, $batch, $dusBilyet);
 
             // Dus 6: Pack 3, Pola 2
             $dusBilyet = $bilyetPerDus + ($sisaBilyet > 0 ? 1 : 0);
-            if ($sisaBilyet > 0)
+            if ($sisaBilyet > 0) {
                 $sisaBilyet--;
+            }
             $this->createDusRow($pengemasan->id, $currentNoDus++, $p3, $p3, $pola2Awal, $pola2Akhir, $batch, $dusBilyet);
 
             // Dus 7: Pack 3, Pola 1
             $dusBilyet = $bilyetPerDus + ($sisaBilyet > 0 ? 1 : 0);
-            if ($sisaBilyet > 0)
+            if ($sisaBilyet > 0) {
                 $sisaBilyet--;
+            }
             $this->createDusRow($pengemasan->id, $currentNoDus++, $p3, $p3, $pola1Awal, $pola1Akhir, $batch, $dusBilyet);
 
             // Dus 8: Pack 4, Pola 2
             $dusBilyet = $bilyetPerDus + ($sisaBilyet > 0 ? 1 : 0);
-            if ($sisaBilyet > 0)
+            if ($sisaBilyet > 0) {
                 $sisaBilyet--;
+            }
             $this->createDusRow($pengemasan->id, $currentNoDus++, $p4, $p4, $pola2Awal, $pola2Akhir, $batch, $dusBilyet);
 
             // Dus 9: Pack 4, Pola 1
             $dusBilyet = $bilyetPerDus + ($sisaBilyet > 0 ? 1 : 0);
-            if ($sisaBilyet > 0)
+            if ($sisaBilyet > 0) {
                 $sisaBilyet--;
+            }
             $this->createDusRow($pengemasan->id, $currentNoDus++, $p4, $p4, $pola1Awal, $pola1Akhir, $batch, $dusBilyet);
 
         }
@@ -707,10 +712,10 @@ class PengemasanController extends Controller
         ]);
     }
 
-
     public function show($id)
     {
         $pengemasan = Pengemasan::with(['detailPengemasans', 'user'])->findOrFail($id);
+
         return view('pengemasan.show', compact('pengemasan'));
     }
 
@@ -735,7 +740,7 @@ class PengemasanController extends Controller
                     ->whereNotNull('id_pengemasan')
                     ->exists();
 
-                if (!$packMasihDikemas) {
+                if (! $packMasihDikemas) {
                     \App\Models\HcsSorting::where('id', $sId)->update(['status_kunci_pengemasan' => 0]);
                 }
             }
@@ -747,11 +752,12 @@ class PengemasanController extends Controller
             $pengemasan->delete();
 
             DB::commit();
+
             return redirect()->route('pengemasan.data')->with('success', 'Data pengemasan berhasil dihapus. Data penyortiran yang terkait telah dibuka kembali/bisa diedit.');
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan sistem saat menghapus: ' . $e->getMessage());
+
+            return back()->with('error', 'Terjadi kesalahan sistem saat menghapus: '.$e->getMessage());
         }
     }
 
@@ -771,15 +777,16 @@ class PengemasanController extends Controller
 
         $groupedDus = [];
         foreach ($detailList as $d) {
-            $key = $d->pecahan . '|' . $d->tahun_anggaran . '|' . $d->tahun_emisi;
-            if (!isset($groupedDus[$key]))
+            $key = $d->pecahan.'|'.$d->tahun_anggaran.'|'.$d->tahun_emisi;
+            if (! isset($groupedDus[$key])) {
                 $groupedDus[$key] = [];
+            }
             $groupedDus[$key][] = $d->no_dus;
         }
 
         $missingGaps = [];
         foreach ($groupedDus as $key => $numbers) {
-            list($pecahan, $ta, $te) = explode('|', $key);
+            [$pecahan, $ta, $te] = explode('|', $key);
             $expected = 1;
             $missingRanges = [];
 
@@ -787,19 +794,19 @@ class PengemasanController extends Controller
                 if ($num > $expected) {
                     $startGap = $expected;
                     $endGap = $num - 1;
-                    $missingRanges[] = ($startGap == $endGap) ? $startGap : $startGap . '-' . $endGap;
+                    $missingRanges[] = ($startGap == $endGap) ? $startGap : $startGap.'-'.$endGap;
                 }
                 if ($num >= $expected) {
                     $expected = $num + 1;
                 }
             }
 
-            if (!empty($missingRanges)) {
+            if (! empty($missingRanges)) {
                 $missingGaps[] = [
                     'pecahan' => $pecahan,
                     'tahun_anggaran' => $ta,
                     'tahun_emisi' => $te,
-                    'ranges' => implode(', ', $missingRanges)
+                    'ranges' => implode(', ', $missingRanges),
                 ];
             }
         }

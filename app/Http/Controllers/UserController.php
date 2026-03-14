@@ -15,6 +15,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::paginate(15);
+
         return view('users.index', compact('users'));
     }
 
@@ -24,6 +25,7 @@ class UserController extends Controller
     public function create()
     {
         $modules = config('permissions.modules', []);
+
         return view('users.create', compact('modules'));
     }
 
@@ -34,7 +36,7 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => ['required', 'string', 'in:admin,sortir,supervisor,pengemasan'],
             'permissions' => ['nullable', 'array'],
@@ -57,6 +59,7 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $modules = config('permissions.modules', []);
+
         return view('users.edit', compact('user', 'modules'));
     }
 
@@ -67,7 +70,7 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,'.$user->id],
             'role' => ['required', 'string', 'in:admin,sortir,supervisor,pengemasan'],
             'permissions' => ['nullable', 'array'],
         ]);
@@ -98,6 +101,7 @@ class UserController extends Controller
         }
 
         $user->delete();
+
         return redirect()->route('users.index')->with('success', 'User berhasil dihapus.');
     }
 }

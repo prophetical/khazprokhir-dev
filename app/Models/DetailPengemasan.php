@@ -13,6 +13,6 @@ class DetailPengemasan extends Model
 
     public function pengemasan()
     {
-        return $this->belongsTo(Pengemasan::class , 'id_pengemasan');
+        return $this->belongsTo(Pengemasan::class, 'id_pengemasan');
     }
 }

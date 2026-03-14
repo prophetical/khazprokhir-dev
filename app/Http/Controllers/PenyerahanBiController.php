@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PenyerahanBi;
 use App\Models\Pengemasan;
+use App\Models\PenyerahanBi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -19,32 +19,39 @@ class PenyerahanBiController extends Controller
 
         $query = PenyerahanBi::with('user');
 
-        if ($request->filled('pecahan'))
+        if ($request->filled('pecahan')) {
             $query->where('pecahan', $request->pecahan);
-        if ($request->filled('tahun_anggaran'))
+        }
+        if ($request->filled('tahun_anggaran')) {
             $query->where('tahun_anggaran', $request->tahun_anggaran);
-        if ($request->filled('tahun_emisi'))
+        }
+        if ($request->filled('tahun_emisi')) {
             $query->where('tahun_emisi', $request->tahun_emisi);
-        if ($request->filled('nomor_ba'))
-            $query->where('nomor_ba', 'like', '%' . $request->nomor_ba . '%');
+        }
+        if ($request->filled('nomor_ba')) {
+            $query->where('nomor_ba', 'like', '%'.$request->nomor_ba.'%');
+        }
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 return $q->where('nomor_ba', 'like', "%{$search}%")
-                ->orWhere('pecahan', 'like', "%{$search}%")
-                ->orWhere('tahun_anggaran', 'like', "%{$search}%");
+                    ->orWhere('pecahan', 'like', "%{$search}%")
+                    ->orWhere('tahun_anggaran', 'like', "%{$search}%");
             });
         }
-        if ($request->filled('tanggal_awal'))
+        if ($request->filled('tanggal_awal')) {
             $query->whereDate('tanggal_penyerahan', '>=', $request->tanggal_awal);
-        if ($request->filled('tanggal_akhir'))
+        }
+        if ($request->filled('tanggal_akhir')) {
             $query->whereDate('tanggal_penyerahan', '<=', $request->tanggal_akhir);
+        }
 
         $sortCol = $request->input('sort', 'tanggal_penyerahan');
         $sortDir = $request->input('direction', 'desc');
         $allowed = ['tanggal_penyerahan', 'nomor_ba', 'pecahan', 'tahun_emisi', 'tahun_anggaran', 'nomor_dus_awal', 'jumlah_dus', 'jumlah_bilyet', 'status_data'];
-        if (!in_array($sortCol, $allowed))
+        if (! in_array($sortCol, $allowed)) {
             $sortCol = 'tanggal_penyerahan';
+        }
 
         $query->orderBy($sortCol, $sortDir);
 
@@ -63,6 +70,7 @@ class PenyerahanBiController extends Controller
         $availableEmissions = DB::table('hcs_receivings')->distinct()->whereNotNull('emisi')->orderBy('emisi', 'desc')->pluck('emisi');
 
         $missingWarnings = $this->getIncompletePenyerahanWarnings();
+
         return view('penyerahan-bi.create', compact('missingWarnings', 'availableYears', 'availableEmissions'));
     }
 
@@ -72,11 +80,12 @@ class PenyerahanBiController extends Controller
     public function edit($id)
     {
         $penyerahan = PenyerahanBi::findOrFail($id);
-        
+
         $availableYears = DB::table('hcs_receivings')->distinct()->whereNotNull('tahun_anggaran')->orderBy('tahun_anggaran', 'desc')->pluck('tahun_anggaran');
         $availableEmissions = DB::table('hcs_receivings')->distinct()->whereNotNull('emisi')->orderBy('emisi', 'desc')->pluck('emisi');
 
         $missingWarnings = $this->getIncompletePenyerahanWarnings();
+
         return view('penyerahan-bi.edit', compact('penyerahan', 'missingWarnings', 'availableYears', 'availableEmissions'));
     }
 
@@ -85,7 +94,7 @@ class PenyerahanBiController extends Controller
      * untuk setiap record penyerahan yang statusnya Belum Lengkap.
      * Re-cek secara dinamis (bukan dari nilai status_data tersimpan).
      *
-     * @return \Illuminate\Support\Collection  koleksi array per penyerahan
+     * @return \Illuminate\Support\Collection koleksi array per penyerahan
      */
     private function getIncompletePenyerahanWarnings(): \Illuminate\Support\Collection
     {
@@ -93,17 +102,17 @@ class PenyerahanBiController extends Controller
         $candidates = PenyerahanBi::all();
         $warningsArray = [];
 
-            foreach ($candidates as $p) {
-                // Kumpulkan semua nomor dus dalam range penyerahan ini
-                $rangeRequested = range($p->nomor_dus_awal, $p->nomor_dus_akhir);
-    
-                // Cari pengemasan yang memenuhi identitas + overlap range
-                $pengemasans = Pengemasan::where('pecahan', $p->pecahan)
-                    ->where('tahun_emisi', $p->tahun_emisi)
-                    ->where('tahun_anggaran', $p->tahun_anggaran)
-                    ->where('dus_awal', '<=', $p->nomor_dus_akhir)
-                    ->where('dus_akhir', '>=', $p->nomor_dus_awal)
-                    ->get(['dus_awal', 'dus_akhir']);
+        foreach ($candidates as $p) {
+            // Kumpulkan semua nomor dus dalam range penyerahan ini
+            $rangeRequested = range($p->nomor_dus_awal, $p->nomor_dus_akhir);
+
+            // Cari pengemasan yang memenuhi identitas + overlap range
+            $pengemasans = Pengemasan::where('pecahan', $p->pecahan)
+                ->where('tahun_emisi', $p->tahun_emisi)
+                ->where('tahun_anggaran', $p->tahun_anggaran)
+                ->where('dus_awal', '<=', $p->nomor_dus_akhir)
+                ->where('dus_akhir', '>=', $p->nomor_dus_awal)
+                ->get(['dus_awal', 'dus_akhir']);
 
             // Kumpulkan nomor yang sudah ada
             $existingNums = collect();
@@ -115,13 +124,14 @@ class PenyerahanBiController extends Controller
             $existingNums = $existingNums->unique()->values();
 
             // Cari yang belum ada
-            $missing = collect($rangeRequested)->filter(fn($n) => !$existingNums->contains($n))->values();
+            $missing = collect($rangeRequested)->filter(fn ($n) => ! $existingNums->contains($n))->values();
 
             if ($missing->isEmpty()) {
                 // Jika sekarang sudah lengkap tapi status masih Belum Lengkap, update
                 if ($p->status_data === 'Belum Lengkap') {
                     $p->update(['status_data' => 'Lengkap']);
                 }
+
                 continue;
             }
 
@@ -139,7 +149,7 @@ class PenyerahanBiController extends Controller
                 'pecahan' => $p->pecahan,
                 'tahun_anggaran' => $p->tahun_anggaran,
                 'tahun_emisi' => $p->tahun_emisi,
-                'nomor_range' => $p->nomor_dus_awal . '–' . $p->nomor_dus_akhir,
+                'nomor_range' => $p->nomor_dus_awal.'–'.$p->nomor_dus_akhir,
                 'missing_count' => $missing->count(),
                 'missing_ranges' => $missingRanges,
             ];
@@ -154,8 +164,9 @@ class PenyerahanBiController extends Controller
      */
     private function formatNomorDusToRanges(array $nums): string
     {
-        if (empty($nums))
+        if (empty($nums)) {
             return '';
+        }
         sort($nums);
         $ranges = [];
         $start = $nums[0];
@@ -164,8 +175,7 @@ class PenyerahanBiController extends Controller
         for ($i = 1; $i < count($nums); $i++) {
             if ($nums[$i] === $prev + 1) {
                 $prev = $nums[$i];
-            }
-            else {
+            } else {
                 $ranges[] = $start === $prev ? $start : "{$start}–{$prev}";
                 $start = $nums[$i];
                 $prev = $nums[$i];
@@ -184,11 +194,11 @@ class PenyerahanBiController extends Controller
         $pecahan = $request->pecahan;
         $tahunEmisi = $request->tahun_emisi;
         $tahunAnggaran = $request->tahun_anggaran;
-        $noAwal = (int)$request->nomor_dus_awal;
-        $noAkhir = (int)$request->nomor_dus_akhir;
+        $noAwal = (int) $request->nomor_dus_awal;
+        $noAkhir = (int) $request->nomor_dus_akhir;
         $excludeId = $request->exclude_id;
 
-        if (!$pecahan || !$tahunEmisi || !$tahunAnggaran || !$noAwal || !$noAkhir || $noAkhir < $noAwal) {
+        if (! $pecahan || ! $tahunEmisi || ! $tahunAnggaran || ! $noAwal || ! $noAkhir || $noAkhir < $noAwal) {
             return response()->json(['duplicate' => false]);
         }
 
@@ -209,7 +219,7 @@ class PenyerahanBiController extends Controller
             return response()->json([
                 'duplicate' => true,
                 'nomor_ba' => $overlap->nomor_ba,
-                'range_tersimpan' => $overlap->nomor_dus_awal . ' – ' . $overlap->nomor_dus_akhir,
+                'range_tersimpan' => $overlap->nomor_dus_awal.' – '.$overlap->nomor_dus_akhir,
                 'tanggal' => \Carbon\Carbon::parse($overlap->tanggal_penyerahan)->format('d/m/Y'),
             ]);
         }
@@ -230,8 +240,8 @@ class PenyerahanBiController extends Controller
             'jumlah_bilyet' => 'required|integer|min:1',
         ]);
 
-        $awal = (int)$request->nomor_dus_awal;
-        $akhir = (int)$request->nomor_dus_akhir;
+        $awal = (int) $request->nomor_dus_awal;
+        $akhir = (int) $request->nomor_dus_akhir;
 
         // --- Validasi Hard: Cegah duplikasi range nomor dus ---
         $overlap = PenyerahanBi::where('pecahan', $request->pecahan)
@@ -266,7 +276,7 @@ class PenyerahanBiController extends Controller
 
         // Hitung nomor dalam range yang ADA dan BELUM ADA
         $rangeRequested = collect(range($awal, $akhir));
-        $jumlahAda = $rangeRequested->filter(fn($n) => $existing->contains($n))->count();
+        $jumlahAda = $rangeRequested->filter(fn ($n) => $existing->contains($n))->count();
         $jumlahBelumAda = $jumlah - $jumlahAda;
         $statusData = $jumlahBelumAda === 0 ? 'Lengkap' : 'Belum Lengkap';
 
@@ -314,8 +324,8 @@ class PenyerahanBiController extends Controller
             'jumlah_bilyet' => 'required|integer|min:1',
         ]);
 
-        $awal = (int)$request->nomor_dus_awal;
-        $akhir = (int)$request->nomor_dus_akhir;
+        $awal = (int) $request->nomor_dus_awal;
+        $akhir = (int) $request->nomor_dus_akhir;
 
         // --- Validasi Hard: Cegah duplikasi range nomor dus (kecuali dirinya sendiri) ---
         $overlap = PenyerahanBi::where('id', '!=', $id)
@@ -349,7 +359,7 @@ class PenyerahanBiController extends Controller
         $existing = $existing->unique();
 
         $rangeRequested = collect(range($awal, $akhir));
-        $jumlahAda = $rangeRequested->filter(fn($n) => $existing->contains($n))->count();
+        $jumlahAda = $rangeRequested->filter(fn ($n) => $existing->contains($n))->count();
         $jumlahBelumAda = $jumlah - $jumlahAda;
         $statusData = $jumlahBelumAda === 0 ? 'Lengkap' : 'Belum Lengkap';
 
@@ -399,7 +409,7 @@ class PenyerahanBiController extends Controller
         $this->applyFilters($query, $request);
         $rows = $query->orderBy('tanggal_penyerahan', 'desc')->get();
 
-        $filename = 'laporan_penyerahan_bi_' . now()->format('Ymd_His') . '.csv';
+        $filename = 'laporan_penyerahan_bi_'.now()->format('Ymd_His').'.csv';
         $headers = [
             'Content-Type' => 'text/csv',
             'Content-Disposition' => "attachment; filename=\"{$filename}\"",
@@ -424,6 +434,7 @@ class PenyerahanBiController extends Controller
             }
             fclose($handle);
         };
+
         return response()->stream($callback, 200, $headers);
     }
 
@@ -444,25 +455,31 @@ class PenyerahanBiController extends Controller
      */
     private function applyFilters($query, Request $request)
     {
-        if ($request->filled('pecahan'))
+        if ($request->filled('pecahan')) {
             $query->where('pecahan', $request->pecahan);
-        if ($request->filled('tahun_anggaran'))
+        }
+        if ($request->filled('tahun_anggaran')) {
             $query->where('tahun_anggaran', $request->tahun_anggaran);
-        if ($request->filled('tahun_emisi'))
+        }
+        if ($request->filled('tahun_emisi')) {
             $query->where('tahun_emisi', $request->tahun_emisi);
-        if ($request->filled('nomor_ba'))
-            $query->where('nomor_ba', 'like', '%' . $request->nomor_ba . '%');
+        }
+        if ($request->filled('nomor_ba')) {
+            $query->where('nomor_ba', 'like', '%'.$request->nomor_ba.'%');
+        }
         if ($request->filled('search')) {
             $s = $request->search;
             $query->where(function ($q) use ($s) {
                 return $q->where('nomor_ba', 'like', "%$s%")
-                ->orWhere('pecahan', 'like', "%$s%")
-                ->orWhere('tahun_anggaran', 'like', "%$s%");
+                    ->orWhere('pecahan', 'like', "%$s%")
+                    ->orWhere('tahun_anggaran', 'like', "%$s%");
             });
         }
-        if ($request->filled('tanggal_awal'))
+        if ($request->filled('tanggal_awal')) {
             $query->whereDate('tanggal_penyerahan', '>=', $request->tanggal_awal);
-        if ($request->filled('tanggal_akhir'))
+        }
+        if ($request->filled('tanggal_akhir')) {
             $query->whereDate('tanggal_penyerahan', '<=', $request->tanggal_akhir);
+        }
     }
 }

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Pack;
 use App\Models\HcsReceiving;
+use App\Models\Pack;
+use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class BatchTrackingController extends Controller
@@ -45,8 +45,8 @@ class BatchTrackingController extends Controller
         // Build paginator (preserves query string for filter + page links)
         $paginator = new LengthAwarePaginator(
             $combos, $total, $perPage, $page,
-        ['path' => $request->url(), 'query' => $request->query()]
-            );
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
 
         // Build detailed data only for this page
         $trackingData = [];
@@ -61,22 +61,27 @@ class BatchTrackingController extends Controller
 
             if ($startDate || $endDate || $pecahanFilter) {
                 $packQuery->whereHas('hcsReceiving', function ($q) use ($startDate, $endDate, $pecahanFilter) {
-                    if ($startDate)
+                    if ($startDate) {
                         $q->whereDate('tanggal_penerimaan', '>=', $startDate);
-                    if ($endDate)
+                    }
+                    if ($endDate) {
                         $q->whereDate('tanggal_penerimaan', '<=', $endDate);
-                    if ($pecahanFilter)
+                    }
+                    if ($pecahanFilter) {
                         $q->where('pecahan', $pecahanFilter);
+                    }
                 });
             }
 
             $packs = $packQuery->with('hcsReceiving')->orderBy('pack_number')->get();
 
             $totalQuery = HcsReceiving::where('batch', $batch)->where('seri', $seri);
-            if ($startDate)
+            if ($startDate) {
                 $totalQuery->whereDate('tanggal_penerimaan', '>=', $startDate);
-            if ($endDate)
+            }
+            if ($endDate) {
                 $totalQuery->whereDate('tanggal_penerimaan', '<=', $endDate);
+            }
             $totalJumlah = $totalQuery->sum('jumlah');
 
             $cutpackCount = $packs->where('supplier', 'Cutpack')->count();

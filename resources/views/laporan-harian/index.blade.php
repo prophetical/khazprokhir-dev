@@ -381,6 +381,75 @@
                     </table>
                 </div>
             </div>
+            <!-- HCTS Inventory Report Section -->
+            <div class="bg-white overflow-hidden shadow-2xl sm:rounded-2xl border border-gray-100 mt-8">
+                <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                    <h3 class="text-lg font-black text-orange-600 tracking-tight flex items-center">
+                        <span class="w-2 h-6 bg-orange-600 rounded-full mr-3"></span>
+                        Laporan Persediaan HCTS {{ \Carbon\Carbon::parse($tanggalLaporan)->locale('id')->isoFormat('dddd, D MMMM Y') }}
+                    </h3>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-100/80">
+                            <tr class="text-[10px] font-black uppercase text-gray-500 tracking-widest divide-x divide-gray-200">
+                                <th class="px-4 py-4 text-center sticky left-0 bg-gray-100 z-10 w-20">Pecahan</th>
+                                <th class="px-4 py-4 text-center">Penerimaan<br>{{ \Carbon\Carbon::parse($tanggalLaporan)->subDay()->locale('id')->isoFormat('dddd, D MMMM Y') }}</th>
+                                <th class="px-4 py-4 text-center text-emerald-600 bg-emerald-50/30">Penyerahan<br>Hari Ini</th>
+                                <th class="px-4 py-4 text-center">Akumulasi<br>Penerimaan</th>
+                                <th class="px-4 py-4 text-center">Akumulasi<br>Penyerahan</th>
+                                <th class="px-4 py-4 text-center text-indigo-600 bg-indigo-50/50">Persediaan<br>HCTS</th>
+                                <th class="px-4 py-4 text-center text-amber-600 bg-amber-50/30">Container<br>Siap Hitung</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-100">
+                            @foreach(['S', 'T', 'U', 'V', 'W', 'X', 'Y'] as $pec)
+                                @php $data = $hctsInventoryData[$pec] ?? ['penerimaan_h1'=>0, 'penyerahan_hari_ini'=>0, 'akumulasi_penerimaan'=>0, 'akumulasi_penyerahan'=>0, 'persediaan'=>0, 'ct_siap_hitung'=>0]; @endphp
+                                <tr class="hover:bg-gray-50 transition duration-150 divide-x divide-gray-100">
+                                    <td class="px-4 py-4 text-center sticky left-0 bg-white group-hover:bg-gray-50 z-10">
+                                        <span class="inline-flex items-center justify-center h-7 w-7 rounded-lg shadow-sm font-black text-xs border {{ (is_array($colorMap) && isset($colorMap[$pec])) ? $colorMap[$pec] : 'bg-gray-900 text-white' }}">
+                                            {{ $pec }}
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-4 text-right text-xs font-bold text-gray-600">{{ $data['penerimaan_h1'] == 0 ? '-' : number_format($data['penerimaan_h1'], 0, ',', '.') }}</td>
+                                    <td class="px-4 py-4 text-right text-xs font-black text-emerald-700 bg-emerald-50/10">{{ $data['penyerahan_hari_ini'] == 0 ? '-' : number_format($data['penyerahan_hari_ini'], 0, ',', '.') }}</td>
+                                    <td class="px-4 py-4 text-right text-xs font-bold text-gray-600">{{ $data['akumulasi_penerimaan'] == 0 ? '-' : number_format($data['akumulasi_penerimaan'], 0, ',', '.') }}</td>
+                                    <td class="px-4 py-4 text-right text-xs font-bold text-gray-600">{{ $data['akumulasi_penyerahan'] == 0 ? '-' : number_format($data['akumulasi_penyerahan'], 0, ',', '.') }}</td>
+                                    <td class="px-4 py-4 text-right text-xs font-black text-indigo-700 bg-indigo-50/20">{{ $data['persediaan'] == 0 ? '-' : number_format($data['persediaan'], 0, ',', '.') }}</td>
+                                    <td class="px-4 py-4 text-center">
+                                        <div class="flex items-center justify-center gap-2">
+                                            <span class="text-xs font-black text-amber-700">{{ $data['ct_siap_hitung'] == 0 ? '-' : $data['ct_siap_hitung'] }}</span>
+                                            @if($data['ct_siap_hitung'] > 0)
+                                                <span class="text-[8px] font-black text-amber-400 uppercase">CT</span>
+                                            @endif
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                        <tfoot class="bg-gray-900 text-white font-black text-xs divide-x divide-gray-700">
+                            @php
+                                $totalPenerimaanH1 = collect($hctsInventoryData)->sum('penerimaan_h1');
+                                $totalPenyerahanHariIni = collect($hctsInventoryData)->sum('penyerahan_hari_ini');
+                                $totalAkumulasiTerima = collect($hctsInventoryData)->sum('akumulasi_penerimaan');
+                                $totalAkumulasiSerah = collect($hctsInventoryData)->sum('akumulasi_penyerahan');
+                                $totalPersediaan = collect($hctsInventoryData)->sum('persediaan');
+                                $totalCT = collect($hctsInventoryData)->sum('ct_siap_hitung');
+                            @endphp
+                            <tr class="divide-x divide-gray-700">
+                                <td class="px-4 py-4 text-center uppercase tracking-widest sticky left-0 bg-gray-900 z-10">TOTAL</td>
+                                <td class="px-4 py-4 text-right">{{ $totalPenerimaanH1 == 0 ? '-' : number_format($totalPenerimaanH1, 0, ',', '.') }}</td>
+                                <td class="px-4 py-4 text-right text-emerald-400">{{ $totalPenyerahanHariIni == 0 ? '-' : number_format($totalPenyerahanHariIni, 0, ',', '.') }}</td>
+                                <td class="px-4 py-4 text-right">{{ $totalAkumulasiTerima == 0 ? '-' : number_format($totalAkumulasiTerima, 0, ',', '.') }}</td>
+                                <td class="px-4 py-4 text-right">{{ $totalAkumulasiSerah == 0 ? '-' : number_format($totalAkumulasiSerah, 0, ',', '.') }}</td>
+                                <td class="px-4 py-4 text-right text-indigo-300">{{ $totalPersediaan == 0 ? '-' : number_format($totalPersediaan, 0, ',', '.') }}</td>
+                                <td class="px-4 py-4 text-center text-amber-400">{{ $totalCT == 0 ? '-' : $totalCT . ' CT' }}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
