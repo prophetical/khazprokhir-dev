@@ -13,6 +13,68 @@ use Illuminate\Support\Facades\DB;
 
 class LaporanHarianController extends Controller
 {
+    public function realtime(Request $request)
+    {
+        $options = $this->getYearOptions();
+        $tahunAnggaranOptions = $options['tahun_anggaran'];
+        $tahunEmisiOptions = $options['tahun_emisi'];
+
+        // Realtime report always uses today's date
+        $filters = [
+            'tanggal_laporan' => Carbon::today()->toDateString(),
+            'tahun_anggaran' => $request->get('tahun_anggaran', reset($tahunAnggaranOptions) ?: date('Y')),
+            'tahun_emisi' => $request->get('tahun_emisi', reset($tahunEmisiOptions) ?: date('Y')),
+        ];
+
+        $data = $this->getReportData($filters);
+        $hctsInventoryData = $this->getHctsInventoryData($filters);
+        $targetAchievementData = $this->getTargetAchievementData($filters);
+        $monthlyTargetAchievementData = $this->getMonthlyTargetAchievementData($filters);
+
+        $tanggalLaporan = $filters['tanggal_laporan'];
+        $tahunAnggaran = $filters['tahun_anggaran'];
+        $tahunEmisi = $filters['tahun_emisi'];
+
+        return view('laporan-harian.realtime', array_merge($filters, $data, [
+            'tanggalLaporan' => $tanggalLaporan,
+            'tahunAnggaran' => $tahunAnggaran,
+            'tahunEmisi' => $tahunEmisi,
+            'hctsInventoryData' => $hctsInventoryData,
+            'targetAchievementData' => $targetAchievementData,
+            'monthlyTargetAchievementData' => $monthlyTargetAchievementData,
+            'tahunAnggaranOptions' => $tahunAnggaranOptions,
+            'tahunEmisiOptions' => $tahunEmisiOptions,
+        ]));
+    }
+
+    public function getRealtimePartial(Request $request)
+    {
+        $options = $this->getYearOptions();
+        $tahunAnggaranOptions = $options['tahun_anggaran'];
+        $tahunEmisiOptions = $options['tahun_emisi'];
+
+        // Realtime report always uses today's date
+        $filters = [
+            'tanggal_laporan' => Carbon::today()->toDateString(),
+            'tahun_anggaran' => $request->get('tahun_anggaran', reset($tahunAnggaranOptions) ?: date('Y')),
+            'tahun_emisi' => $request->get('tahun_emisi', reset($tahunEmisiOptions) ?: date('Y')),
+        ];
+
+        $data = $this->getReportData($filters);
+        $hctsInventoryData = $this->getHctsInventoryData($filters);
+        $targetAchievementData = $this->getTargetAchievementData($filters);
+        $monthlyTargetAchievementData = $this->getMonthlyTargetAchievementData($filters);
+
+        return view('laporan-harian.partials.report-tables', array_merge($filters, $data, [
+            'tanggalLaporan' => $filters['tanggal_laporan'],
+            'tahunAnggaran' => $filters['tahun_anggaran'],
+            'tahunEmisi' => $filters['tahun_emisi'],
+            'hctsInventoryData' => $hctsInventoryData,
+            'targetAchievementData' => $targetAchievementData,
+            'monthlyTargetAchievementData' => $monthlyTargetAchievementData,
+        ]))->render();
+    }
+
     public function index(Request $request)
     {
         $options = $this->getYearOptions();

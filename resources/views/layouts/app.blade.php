@@ -26,7 +26,7 @@
             @include('layouts.navigation')
 
             <!-- Main Content Container -->
-            <div id="main-scroll-container" class="flex-1 flex flex-col overflow-y-auto w-full relative">
+            <div id="main-scroll-container" class="flex-1 flex flex-col overflow-y-auto overflow-x-hidden relative min-w-0">
                 <!-- Top Header -->
                 <nav id="top-header" class="px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between shrink-0 sticky top-0 z-50 w-full transition-all duration-300 ease-in-out border-b border-white/10"
                      style="background: linear-gradient(135deg, #1e40af 0%, #7c3aed 55%, #db2777 100%);">
@@ -112,7 +112,7 @@
                 </nav>
 
                 <!-- Page Content -->
-                <main class="flex-1">
+                <main class="flex-1 min-w-0">
                     {{ $slot }}
                 </main>
             </div>

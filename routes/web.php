@@ -89,6 +89,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Laporan Harian
     Route::get('/laporan-harian', [\App\Http\Controllers\LaporanHarianController::class, 'index'])->name('laporan-harian.index');
+    Route::get('/laporan-harian/realtime', [\App\Http\Controllers\LaporanHarianController::class, 'realtime'])->name('laporan-harian.realtime');
+    Route::get('/laporan-harian/realtime-partial', [\App\Http\Controllers\LaporanHarianController::class, 'getRealtimePartial'])->name('laporan-harian.realtime-partial');
     Route::get('/laporan-harian/print', [\App\Http\Controllers\LaporanHarianController::class, 'print'])->name('laporan-harian.print');
     Route::get('/laporan-harian/export', [\App\Http\Controllers\LaporanHarianController::class, 'export'])->name('laporan-harian.export');
 
