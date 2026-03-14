@@ -76,45 +76,7 @@
                 </div>
             </div>
 
-            <!-- Summary Cards --> <!--
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div class="bg-indigo-600 rounded-2xl p-6 shadow-xl shadow-indigo-100 relative overflow-hidden group hover:scale-[1.02] transition duration-300">
-                    <div class="absolute -right-4 -bottom-4 bg-white/10 w-24 h-24 rounded-full group-hover:scale-150 transition duration-500"></div>
-                    <p class="text-indigo-100 text-xs font-black uppercase tracking-widest mb-1">Total Persediaan</p>
-                    <p class="text-white text-2xl font-black mb-1">{{ $totals['total_persediaan_bilyet'] == 0 ? '-' : number_format($totals['total_persediaan_bilyet'], 0, ',', '.') }}</p>
-                    <p class="text-indigo-100/70 text-[10px] font-bold">Bilyet (Siap Kemas + Kirim)</p>
-                </div>
 
-                <div class="bg-pink-600 rounded-2xl p-6 shadow-xl shadow-pink-100 relative overflow-hidden group hover:scale-[1.02] transition duration-300">
-                    <div class="absolute -right-4 -bottom-4 bg-white/10 w-24 h-24 rounded-full group-hover:scale-150 transition duration-500"></div>
-                    <p class="text-pink-100 text-xs font-black uppercase tracking-widest mb-1">Penyerahan Hari Ini</p>
-                    <p class="text-white text-2xl font-black mb-1">{{ $totals['penyerahan_hari_ini_bilyet'] == 0 ? '-' : number_format($totals['penyerahan_hari_ini_bilyet'], 0, ',', '.') }}</p>
-                    <p class="text-pink-100/70 text-[10px] font-bold">
-                        @php $penyerahanTotalDus = $totals['penyerahan_hari_ini_bilyet'] / 20000; @endphp
-                        {{ $penyerahanTotalDus == 0 ? '-' : number_format($penyerahanTotalDus, 2, ',', '.')}}
-                    </p>
-                </div>
-
-                <div class="bg-emerald-600 rounded-2xl p-6 shadow-xl shadow-emerald-100 relative overflow-hidden group hover:scale-[1.02] transition duration-300">
-                    <div class="absolute -right-4 -bottom-4 bg-white/10 w-24 h-24 rounded-full group-hover:scale-150 transition duration-500"></div>
-                    <p class="text-emerald-100 text-xs font-black uppercase tracking-widest mb-1">Akumulasi Penyerahan</p>
-                    <p class="text-white text-2xl font-black mb-1">{{ $totals['akumulasi_penyerahan_bilyet'] == 0 ? '-' : number_format($totals['akumulasi_penyerahan_bilyet'], 0, ',', '.') }}</p>
-                    <p class="text-emerald-100/70 text-[10px] font-bold">Progress Penyerahan S/D Hari Ini</p>
-                </div>
-
-                <div class="bg-purple-600 rounded-2xl p-6 shadow-xl shadow-purple-100 relative overflow-hidden group hover:scale-[1.02] transition duration-300">
-                    <div class="absolute -right-4 -bottom-4 bg-white/10 w-24 h-24 rounded-full group-hover:scale-150 transition duration-500"></div>
-                    <p class="text-purple-100 text-xs font-black uppercase tracking-widest mb-1">Achievement Rate</p>
-                    <p class="text-white text-2xl font-black mb-1">
-                        @php $totalPct = $totals['target'] > 0 ? ($totals['akumulasi_penyerahan_bilyet'] / $totals['target']) * 100 : 0; @endphp
-                        {{ number_format($totalPct, 1, ',', '.') }}%
-                    </p>
-                    <div class="w-full bg-white/20 h-1.5 rounded-full mt-2">
-                        <div class="bg-white h-full rounded-full" style="width: {{ $totalPct }}%"></div>
-                    </div>
-                </div>
-            </div>
-            -->
             <!-- Table Section -->
             <div class="bg-white overflow-hidden shadow-2xl sm:rounded-2xl border border-gray-100">
                 <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
@@ -137,7 +99,7 @@
                             <tr class="text-[10px] font-black uppercase text-gray-500 tracking-widest divide-x divide-gray-200">
                                 <th rowspan="2" class="px-4 py-4 text-center sticky left-0 bg-gray-100 z-10 w-20">Pecahan</th>
                                 <th colspan="3" class="px-4 py-2 text-center text-indigo-600 bg-indigo-50/50">Persediaan</th>
-                                <th rowspan="2" class="px-4 py-4 text-center text-indigo-900 bg-indigo-50/80">Total Persediaan<br>(Bilyet)</th>
+                                <th rowspan="2" class="px-4 py-4 text-center text-indigo-900 bg-indigo-50/80">Total Persediaan</th>
                                 <th colspan="3" class="px-4 py-2 text-center text-pink-600 bg-pink-50/50">Penyerahan HCS</th>
                                 <th colspan="3" class="px-4 py-2 text-center text-emerald-600 bg-emerald-50/50">Target & Pencapaian</th>
                                 <th rowspan="2" class="px-4 py-4 text-center">Akumulasi<br>Terima HCS</th>
@@ -386,7 +348,7 @@
                 <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                     <h3 class="text-lg font-black text-orange-600 tracking-tight flex items-center">
                         <span class="w-2 h-6 bg-orange-600 rounded-full mr-3"></span>
-                        Laporan Persediaan HCTS {{ \Carbon\Carbon::parse($tanggalLaporan)->locale('id')->isoFormat('dddd, D MMMM Y') }}
+                        Laporan Persediaan HCTS {{ \Carbon\Carbon::parse($tanggalLaporan)->locale('id')->isoFormat('dddd, D MMMM Y') }} TA {{ $tahunAnggaran }}
                     </h3>
                 </div>
                 
@@ -395,12 +357,21 @@
                         <thead class="bg-gray-100/80">
                             <tr class="text-[10px] font-black uppercase text-gray-500 tracking-widest divide-x divide-gray-200">
                                 <th class="px-4 py-4 text-center sticky left-0 bg-gray-100 z-10 w-20">Pecahan</th>
-                                <th class="px-4 py-4 text-center">Penerimaan<br>{{ \Carbon\Carbon::parse($tanggalLaporan)->subDay()->locale('id')->isoFormat('dddd, D MMMM Y') }}</th>
-                                <th class="px-4 py-4 text-center text-emerald-600 bg-emerald-50/30">Penyerahan<br>Hari Ini</th>
+                                <th class="px-4 py-4 text-center">Penerimaan<br><span class="text-[9px] font-bold italic">{{ \Carbon\Carbon::parse($tanggalLaporan)->subDay()->locale('id')->isoFormat('dddd, D MMMM Y') }}</span></th>
+                                <th class="px-4 py-4 text-center text-emerald-600 bg-emerald-50/30">Penyerahan<br><span class="text-[9px] font-bold italic">{{ \Carbon\Carbon::parse($tanggalLaporan)->locale('id')->isoFormat('dddd, D MMMM Y') }}</span></th>
                                 <th class="px-4 py-4 text-center">Akumulasi<br>Penerimaan</th>
                                 <th class="px-4 py-4 text-center">Akumulasi<br>Penyerahan</th>
                                 <th class="px-4 py-4 text-center text-indigo-600 bg-indigo-50/50">Persediaan<br>HCTS</th>
                                 <th class="px-4 py-4 text-center text-amber-600 bg-amber-50/30">Container<br>Siap Hitung</th>
+                            </tr>
+                            <tr class="text-[9px] lowercase text-gray-400 divide-x divide-gray-200 bg-gray-50/50">
+                                <th class="px-3 py-1 text-center bg-gray-100 italic">a</th>
+                                <th class="px-3 py-1 text-center italic">b</th>
+                                <th class="px-3 py-1 text-center italic">c</th>
+                                <th class="px-3 py-1 text-center italic">d</th>
+                                <th class="px-3 py-1 text-center italic">e</th>
+                                <th class="px-3 py-1 text-center italic">f=d-e</th>
+                                <th class="px-3 py-1 text-center italic">g=f/3.000.000</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-100">
@@ -445,6 +416,261 @@
                                 <td class="px-4 py-4 text-right">{{ $totalAkumulasiSerah == 0 ? '-' : number_format($totalAkumulasiSerah, 0, ',', '.') }}</td>
                                 <td class="px-4 py-4 text-right text-indigo-300">{{ $totalPersediaan == 0 ? '-' : number_format($totalPersediaan, 0, ',', '.') }}</td>
                                 <td class="px-4 py-4 text-center text-amber-400">{{ $totalCT == 0 ? '-' : $totalCT . ' CT' }}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Rekap Pencapaian Target Pengemasan Section -->
+            <div class="bg-white overflow-hidden shadow-2xl sm:rounded-2xl border border-gray-100 mt-8">
+                <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                    <h3 class="text-lg font-black text-yellow-600 tracking-tight flex items-center">
+                        <span class="w-2 h-6 bg-yellow-600 rounded-full mr-3"></span>
+                        Laporan Pencapaian Target Pengemasan Tahunan {{ \Carbon\Carbon::parse($tanggalLaporan)->locale('id')->isoFormat('dddd, D MMMM Y') }} TA {{ $tahunAnggaran }}
+                    </h3>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-100/80">
+                            <tr class="text-[10px] font-black uppercase text-gray-500 tracking-widest divide-x divide-gray-200">
+                                <th rowspan="2" class="px-4 py-4 text-center sticky left-0 bg-gray-100 z-10 w-20">PEC</th>
+                                <th colspan="2" class="px-4 py-2 text-center text-indigo-600 bg-indigo-50/30">Target TA {{ $tahunAnggaran }}</th>
+                                <th colspan="2" class="px-4 py-2 text-center text-emerald-600 bg-emerald-50/30">Akumulasi Pengemasan</th>
+                                <th colspan="2" class="px-4 py-2 text-center text-rose-600 bg-rose-50/30">Sisa / Over</th>
+                                <th rowspan="2" class="px-4 py-4 text-center text-amber-600 bg-amber-50/30">% Pencapaian</th>
+                            </tr>
+                            <tr class="text-[9px] font-bold text-gray-400 divide-x divide-gray-200">
+                                <th class="px-3 py-2 text-center bg-indigo-50/10">Bilyet</th>
+                                <th class="px-3 py-2 text-center bg-indigo-50/10">Dus</th>
+                                <th class="px-3 py-2 text-center bg-emerald-50/10">Bilyet</th>
+                                <th class="px-3 py-2 text-center bg-emerald-50/10">Dus</th>
+                                <th class="px-3 py-2 text-center bg-rose-50/10">Bilyet</th>
+                                <th class="px-3 py-2 text-center bg-rose-50/10">Dus</th>
+                            </tr>
+                            <tr class="text-[9px] lowercase text-gray-400 divide-x divide-gray-200 bg-gray-50/50">
+                                <th class="px-3 py-1 text-center bg-gray-100 italic">a</th>
+                                <th class="px-3 py-1 text-center italic">b</th>
+                                <th class="px-3 py-1 text-center italic">c=b/20.000</th>
+                                <th class="px-3 py-1 text-center italic">d</th>
+                                <th class="px-3 py-1 text-center italic">e=d/20.000</th>
+                                <th class="px-3 py-1 text-center italic">f=b-d</th>
+                                <th class="px-3 py-1 text-center italic">g=f/20.000</th>
+                                <th class="px-3 py-1 text-center italic">h=d/b*100%</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-100">
+                            @foreach($targetAchievementData['data'] as $row)
+                                <tr class="hover:bg-gray-50 transition duration-150 divide-x divide-gray-100">
+                                    <td class="px-4 py-4 text-center sticky left-0 bg-white group-hover:bg-gray-50 z-10">
+                                        <span class="inline-flex items-center justify-center h-7 w-7 rounded-lg shadow-sm font-black text-xs border {{ (is_array($colorMap) && isset($colorMap[$row['pecahan']])) ? $colorMap[$row['pecahan']] : 'bg-gray-900 text-white' }}">
+                                            {{ $row['pecahan'] }}
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-4 text-right text-xs font-bold text-gray-600 italic">
+                                        {{ $row['target_bilyet'] == 0 ? '-' : number_format($row['target_bilyet'], 0, ',', '.') }}
+                                    </td>
+                                    <td class="px-4 py-4 text-right text-xs font-bold text-indigo-700 bg-indigo-50/10">
+                                        {{ $row['target_dus'] == 0 ? '-' : number_format($row['target_dus'], 0, ',', '.') }}
+                                    </td>
+                                    <td class="px-4 py-4 text-right text-xs font-bold text-gray-600 italic">
+                                        {{ $row['akumulasi_bilyet'] == 0 ? '-' : number_format($row['akumulasi_bilyet'], 0, ',', '.') }}
+                                    </td>
+                                    <td class="px-4 py-4 text-right text-xs font-bold text-emerald-700 bg-emerald-50/10">
+                                        {{ $row['akumulasi_dus'] == 0 ? '-' : number_format($row['akumulasi_dus'], 0, ',', '.') }}
+                                    </td>
+                                    <td class="px-4 py-4 text-right text-xs font-black {{ $row['sisa_bilyet'] < 0 ? 'text-emerald-600' : ($row['sisa_bilyet'] > 0 ? 'text-rose-600' : 'text-gray-400') }}">
+                                        @if($row['sisa_bilyet'] < 0)
+                                            +{{ number_format(abs($row['sisa_bilyet']), 0, ',', '.') }}
+                                        @elseif($row['sisa_bilyet'] > 0)
+                                            {{ number_format($row['sisa_bilyet'], 0, ',', '.') }}
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-4 text-right text-xs font-black {{ $row['sisa_dus'] < 0 ? 'text-emerald-600' : ($row['sisa_dus'] > 0 ? 'text-rose-600' : 'text-gray-400') }}">
+                                        @if($row['sisa_dus'] < 0)
+                                            +{{ number_format(abs($row['sisa_dus']), 0, ',', '.') }}
+                                        @elseif($row['sisa_dus'] > 0)
+                                            {{ number_format($row['sisa_dus'], 0, ',', '.') }}
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-4 text-center">
+                                        <div class="flex flex-col items-center gap-1">
+                                            <span class="text-xs font-black {{ $row['persen'] >= 100 ? 'text-emerald-600' : ($row['persen'] >= 50 ? 'text-amber-600' : 'text-rose-600') }}">
+                                                {{ number_format($row['persen'], 2, ',', '.') }}%
+                                            </span>
+                                            <div class="w-20 bg-gray-100 h-1 rounded-full overflow-hidden">
+                                                <div class="h-full rounded-full {{ $row['persen'] >= 100 ? 'bg-emerald-500' : ($row['persen'] >= 50 ? 'bg-amber-500' : 'bg-rose-500') }}" 
+                                                     style="width: {{ min(100, $row['persen']) }}%"></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                        <tfoot class="bg-gray-900 text-white font-black text-xs divide-x divide-gray-700">
+                            @php
+                                $totalTargetBilyet = $targetAchievementData['totals']['target_bilyet'];
+                                $totalPct = $totalTargetBilyet > 0 ? ($targetAchievementData['totals']['akumulasi_bilyet'] / $totalTargetBilyet) * 100 : 0;
+                            @endphp
+                            <tr class="divide-x divide-gray-700">
+                                <td class="px-4 py-6 text-center uppercase tracking-widest sticky left-0 bg-gray-900 z-10">TOTAL</td>
+                                <td class="px-4 py-6 text-right">{{ $targetAchievementData['totals']['target_bilyet'] == 0 ? '-' : number_format($targetAchievementData['totals']['target_bilyet'], 0, ',', '.') }}</td>
+                                <td class="px-4 py-6 text-right text-indigo-300">{{ $targetAchievementData['totals']['target_dus'] == 0 ? '-' : number_format($targetAchievementData['totals']['target_dus'], 0, ',', '.') }}</td>
+                                <td class="px-4 py-6 text-right">{{ $targetAchievementData['totals']['akumulasi_bilyet'] == 0 ? '-' : number_format($targetAchievementData['totals']['akumulasi_bilyet'], 0, ',', '.') }}</td>
+                                <td class="px-4 py-6 text-right text-emerald-400">{{ $targetAchievementData['totals']['akumulasi_dus'] == 0 ? '-' : number_format($targetAchievementData['totals']['akumulasi_dus'], 0, ',', '.') }}</td>
+                                <td class="px-4 py-6 text-right {{ $targetAchievementData['totals']['sisa_bilyet'] < 0 ? 'text-emerald-400' : ($targetAchievementData['totals']['sisa_bilyet'] > 0 ? 'text-rose-400' : 'text-gray-500') }}">
+                                    @if($targetAchievementData['totals']['sisa_bilyet'] < 0)
+                                        +{{ number_format(abs($targetAchievementData['totals']['sisa_bilyet']), 0, ',', '.') }}
+                                    @elseif($targetAchievementData['totals']['sisa_bilyet'] > 0)
+                                        {{ number_format($targetAchievementData['totals']['sisa_bilyet'], 0, ',', '.') }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <td class="px-4 py-6 text-right {{ $targetAchievementData['totals']['sisa_dus'] < 0 ? 'text-emerald-400' : ($targetAchievementData['totals']['sisa_dus'] > 0 ? 'text-rose-400' : 'text-gray-500') }}">
+                                    @if($targetAchievementData['totals']['sisa_dus'] < 0)
+                                        +{{ number_format(abs($targetAchievementData['totals']['sisa_dus']), 0, ',', '.') }}
+                                    @elseif($targetAchievementData['totals']['sisa_dus'] > 0)
+                                        {{ number_format($targetAchievementData['totals']['sisa_dus'], 0, ',', '.') }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <td class="px-4 py-6 text-center text-amber-400">
+                                    {{ number_format($totalPct, 2, ',', '.') }}%
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <!-- Laporan Target Pengemasan Bulanan Section -->
+            <div class="bg-white overflow-hidden shadow-2xl sm:rounded-2xl border border-gray-100 mt-8">
+                <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                    <h3 class="text-lg font-black text-rose-600 tracking-tight flex items-center">
+                        <span class="w-2 h-6 bg-rose-600 rounded-full mr-3"></span>
+                        Laporan Pencapaian Target Pengemasan Bulanan {{ \Carbon\Carbon::parse($tanggalLaporan)->locale('id')->isoFormat('MMMM Y') }} TA {{ $tahunAnggaran }}
+                    </h3>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-100/80">
+                            <tr class="text-[10px] font-black uppercase text-gray-500 tracking-widest divide-x divide-gray-200">
+                                <th rowspan="2" class="px-4 py-4 text-center sticky left-0 bg-gray-100 z-10 w-20">PEC</th>
+                                <th colspan="2" class="px-4 py-2 text-center text-indigo-600 bg-indigo-50/30">Target Pengemasan {{ \Carbon\Carbon::parse($tanggalLaporan)->locale('id')->isoFormat('MMMM') }}</th>
+                                <th colspan="2" class="px-4 py-2 text-center text-emerald-600 bg-emerald-50/30">Akumulasi Pengemasan {{ \Carbon\Carbon::parse($tanggalLaporan)->locale('id')->isoFormat('MMMM') }}</th>
+                                <th colspan="2" class="px-4 py-2 text-center text-rose-600 bg-rose-50/30">Sisa / Over</th>
+                                <th rowspan="2" class="px-4 py-4 text-center text-amber-600 bg-amber-50/30">% Pencapaian</th>
+                            </tr>
+                            <tr class="text-[9px] font-bold text-gray-400 divide-x divide-gray-200">
+                                <th class="px-3 py-2 text-center bg-indigo-50/10">Bilyet</th>
+                                <th class="px-3 py-2 text-center bg-indigo-50/10">Dus</th>
+                                <th class="px-3 py-2 text-center bg-emerald-50/10">Bilyet</th>
+                                <th class="px-3 py-2 text-center bg-emerald-50/10">Dus</th>
+                                <th class="px-3 py-2 text-center bg-rose-50/10">Bilyet</th>
+                                <th class="px-3 py-2 text-center bg-rose-50/10">Dus</th>
+                            </tr>
+                            <tr class="text-[9px] lowercase text-gray-400 divide-x divide-gray-200 bg-gray-50/50">
+                                <th class="px-3 py-1 text-center bg-gray-100 italic">a</th>
+                                <th class="px-3 py-1 text-center italic">b</th>
+                                <th class="px-3 py-1 text-center italic">c=ceil(b/20.000)</th>
+                                <th class="px-3 py-1 text-center italic">d</th>
+                                <th class="px-3 py-1 text-center italic">e=ceil(d/20.000)</th>
+                                <th class="px-3 py-1 text-center italic">f=b-d</th>
+                                <th class="px-3 py-1 text-center italic">g=f/20.000</th>
+                                <th class="px-3 py-1 text-center italic">h=d/b*100%</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-100">
+                            @foreach($monthlyTargetAchievementData['data'] as $row)
+                                <tr class="hover:bg-gray-50 transition duration-150 divide-x divide-gray-100">
+                                    <td class="px-4 py-4 text-center sticky left-0 bg-white group-hover:bg-gray-50 z-10">
+                                        <span class="inline-flex items-center justify-center h-7 w-7 rounded-lg shadow-sm font-black text-xs border {{ (is_array($colorMap) && isset($colorMap[$row['pecahan']])) ? $colorMap[$row['pecahan']] : 'bg-gray-900 text-white' }}">
+                                            {{ $row['pecahan'] }}
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-4 text-right text-xs font-bold text-gray-600 italic">
+                                        {{ $row['target_bilyet'] == 0 ? '-' : number_format($row['target_bilyet'], 0, ',', '.') }}
+                                    </td>
+                                    <td class="px-4 py-4 text-right text-xs font-bold text-indigo-700 bg-indigo-50/10">
+                                        {{ $row['target_dus'] == 0 ? '-' : number_format($row['target_dus'], 0, ',', '.') }}
+                                    </td>
+                                    <td class="px-4 py-4 text-right text-xs font-bold text-gray-600 italic">
+                                        {{ $row['akumulasi_bilyet'] == 0 ? '-' : number_format($row['akumulasi_bilyet'], 0, ',', '.') }}
+                                    </td>
+                                    <td class="px-4 py-4 text-right text-xs font-bold text-emerald-700 bg-emerald-50/10">
+                                        {{ $row['akumulasi_dus'] == 0 ? '-' : number_format($row['akumulasi_dus'], 0, ',', '.') }}
+                                    </td>
+                                    <td class="px-4 py-4 text-right text-xs font-black {{ $row['sisa_bilyet'] < 0 ? 'text-emerald-600' : ($row['sisa_bilyet'] > 0 ? 'text-rose-600' : 'text-gray-400') }}">
+                                        @if($row['sisa_bilyet'] < 0)
+                                            +{{ number_format(abs($row['sisa_bilyet']), 0, ',', '.') }}
+                                        @elseif($row['sisa_bilyet'] > 0)
+                                            {{ number_format($row['sisa_bilyet'], 0, ',', '.') }}
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-4 text-right text-xs font-black {{ $row['sisa_dus'] < 0 ? 'text-emerald-600' : ($row['sisa_dus'] > 0 ? 'text-rose-600' : 'text-gray-400') }}">
+                                        @if($row['sisa_dus'] < 0)
+                                            +{{ number_format(abs($row['sisa_dus']), 2, ',', '.') }}
+                                        @elseif($row['sisa_dus'] > 0)
+                                            {{ number_format($row['sisa_dus'], 2, ',', '.') }}
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-4 text-center">
+                                        <div class="flex flex-col items-center gap-1">
+                                            <span class="text-xs font-black {{ $row['persen'] >= 100 ? 'text-emerald-600' : ($row['persen'] >= 50 ? 'text-amber-600' : 'text-rose-600') }}">
+                                                {{ number_format($row['persen'], 2, ',', '.') }}%
+                                            </span>
+                                            <div class="w-20 bg-gray-100 h-1 rounded-full overflow-hidden">
+                                                <div class="h-full rounded-full {{ $row['persen'] >= 100 ? 'bg-emerald-500' : ($row['persen'] >= 50 ? 'bg-amber-500' : 'bg-rose-500') }}" 
+                                                     style="width: {{ min(100, $row['persen']) }}%"></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                        <tfoot class="bg-gray-900 text-white font-black text-xs divide-x divide-gray-700">
+                            @php
+                                $totalTargetBilyet = $monthlyTargetAchievementData['totals']['target_bilyet'];
+                                $totalPct = $totalTargetBilyet > 0 ? ($monthlyTargetAchievementData['totals']['akumulasi_bilyet'] / $totalTargetBilyet) * 100 : 0;
+                            @endphp
+                            <tr class="divide-x divide-gray-700">
+                                <td class="px-4 py-6 text-center uppercase tracking-widest sticky left-0 bg-gray-900 z-10">TOTAL</td>
+                                <td class="px-4 py-6 text-right">{{ $monthlyTargetAchievementData['totals']['target_bilyet'] == 0 ? '-' : number_format($monthlyTargetAchievementData['totals']['target_bilyet'], 0, ',', '.') }}</td>
+                                <td class="px-4 py-6 text-right text-indigo-300">{{ $monthlyTargetAchievementData['totals']['target_dus'] == 0 ? '-' : number_format($monthlyTargetAchievementData['totals']['target_dus'], 0, ',', '.') }}</td>
+                                <td class="px-4 py-6 text-right">{{ $monthlyTargetAchievementData['totals']['akumulasi_bilyet'] == 0 ? '-' : number_format($monthlyTargetAchievementData['totals']['akumulasi_bilyet'], 0, ',', '.') }}</td>
+                                <td class="px-4 py-6 text-right text-emerald-400">{{ $monthlyTargetAchievementData['totals']['akumulasi_dus'] == 0 ? '-' : number_format($monthlyTargetAchievementData['totals']['akumulasi_dus'], 0, ',', '.') }}</td>
+                                <td class="px-4 py-6 text-right {{ $monthlyTargetAchievementData['totals']['sisa_bilyet'] < 0 ? 'text-emerald-400' : ($monthlyTargetAchievementData['totals']['sisa_bilyet'] > 0 ? 'text-rose-400' : 'text-gray-500') }}">
+                                    @if($monthlyTargetAchievementData['totals']['sisa_bilyet'] < 0)
+                                        +{{ number_format(abs($monthlyTargetAchievementData['totals']['sisa_bilyet']), 0, ',', '.') }}
+                                    @elseif($monthlyTargetAchievementData['totals']['sisa_bilyet'] > 0)
+                                        {{ number_format($monthlyTargetAchievementData['totals']['sisa_bilyet'], 0, ',', '.') }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <td class="px-4 py-6 text-right {{ $monthlyTargetAchievementData['totals']['sisa_dus'] < 0 ? 'text-emerald-400' : ($monthlyTargetAchievementData['totals']['sisa_dus'] > 0 ? 'text-rose-400' : 'text-gray-500') }}">
+                                    @if($monthlyTargetAchievementData['totals']['sisa_dus'] < 0)
+                                        +{{ number_format(abs($monthlyTargetAchievementData['totals']['sisa_dus']), 2, ',', '.') }}
+                                    @elseif($monthlyTargetAchievementData['totals']['sisa_dus'] > 0)
+                                        {{ number_format($monthlyTargetAchievementData['totals']['sisa_dus'], 2, ',', '.') }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <td class="px-4 py-6 text-center text-amber-400">
+                                    {{ number_format($totalPct, 2, ',', '.') }}%
+                                </td>
                             </tr>
                         </tfoot>
                     </table>

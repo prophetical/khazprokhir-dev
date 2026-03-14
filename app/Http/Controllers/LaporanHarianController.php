@@ -29,6 +29,8 @@ class LaporanHarianController extends Controller
         $sisaHariKerja = $data['sisaHariKerja'];
 
         $hctsInventoryData = $this->getHctsInventoryData($filters);
+        $targetAchievementData = $this->getTargetAchievementData($filters);
+        $monthlyTargetAchievementData = $this->getMonthlyTargetAchievementData($filters);
 
         $tanggalLaporan = $filters['tanggal_laporan'];
         $tahunAnggaran = $filters['tahun_anggaran'];
@@ -41,6 +43,8 @@ class LaporanHarianController extends Controller
             'secondaryTotals',
             'sisaHariKerja',
             'hctsInventoryData',
+            'targetAchievementData',
+            'monthlyTargetAchievementData',
             'tanggalLaporan',
             'tahunAnggaran',
             'tahunEmisi',
@@ -497,5 +501,139 @@ class LaporanHarianController extends Controller
         }
 
         return $hctsInventoryData;
+    }
+    private function getTargetAchievementData(array $filters)
+    {
+        $tanggalLaporan = $filters['tanggal_laporan'];
+        $tahunAnggaran = $filters['tahun_anggaran'];
+        $tahunEmisi = $filters['tahun_emisi'];
+        $pecahanList = ['S', 'T', 'U', 'V', 'W', 'X', 'Y'];
+
+        $data = [];
+        $totals = [
+            'target_bilyet' => 0,
+            'target_dus' => 0,
+            'akumulasi_bilyet' => 0,
+            'akumulasi_dus' => 0,
+            'sisa_bilyet' => 0,
+            'sisa_dus' => 0,
+        ];
+
+        foreach ($pecahanList as $pecahan) {
+            $target = TargetTahunan::where('pecahan', $pecahan)
+                ->where('tahun_anggaran', $tahunAnggaran)
+                ->where('tahun_emisi', $tahunEmisi)
+                ->sum('target');
+
+            $targetDus = ceil($target / 20000);
+
+            $akumulasiBilyet = Pengemasan::where('pecahan', $pecahan)
+                ->where('tahun_anggaran', $tahunAnggaran)
+                ->where('tahun_emisi', $tahunEmisi)
+                ->whereDate('tanggal_pengemasan', '<=', $tanggalLaporan)
+                ->sum(DB::raw('jumlah_dus * 20000'));
+
+            $akumulasiDus = ceil($akumulasiBilyet / 20000);
+
+            $sisaBilyet = $target - $akumulasiBilyet;
+            $sisaDus = $sisaBilyet / 20000;
+
+            $persen = $target > 0 ? ($akumulasiBilyet / $target) * 100 : 0;
+
+            $data[] = [
+                'pecahan' => $pecahan,
+                'target_bilyet' => $target,
+                'target_dus' => $targetDus,
+                'akumulasi_bilyet' => $akumulasiBilyet,
+                'akumulasi_dus' => $akumulasiDus,
+                'sisa_bilyet' => $sisaBilyet,
+                'sisa_dus' => $sisaDus,
+                'persen' => $persen,
+            ];
+
+            $totals['target_bilyet'] += $target;
+            $totals['target_dus'] += $targetDus;
+            $totals['akumulasi_bilyet'] += $akumulasiBilyet;
+            $totals['akumulasi_dus'] += $akumulasiDus;
+            $totals['sisa_bilyet'] += $sisaBilyet;
+            $totals['sisa_dus'] += $sisaDus;
+        }
+
+        return ['data' => $data, 'totals' => $totals];
+    }
+
+    private function getMonthlyTargetAchievementData(array $filters)
+    {
+        $tanggalLaporan = Carbon::parse($filters['tanggal_laporan']);
+        $tahunAnggaran = $filters['tahun_anggaran'];
+        $tahunEmisi = $filters['tahun_emisi'];
+        $pecahanList = ['S', 'T', 'U', 'V', 'W', 'X', 'Y'];
+
+        $month = $tanggalLaporan->month;
+        $targetColumn = 'bulan_'.$month;
+        $startOfMonth = $tanggalLaporan->copy()->startOfMonth()->toDateString();
+        $currentDate = $tanggalLaporan->toDateString();
+
+        $data = [];
+        $totals = [
+            'target_bilyet' => 0,
+            'target_dus' => 0,
+            'akumulasi_bilyet' => 0,
+            'akumulasi_dus' => 0,
+            'sisa_bilyet' => 0,
+            'sisa_dus' => 0,
+        ];
+
+        foreach ($pecahanList as $pecahan) {
+            // 1. Target Pengemasan Bilyet
+            $targetRow = TargetBulananPengemasan::where('pecahan', $pecahan)
+                ->where('tahun_anggaran', $tahunAnggaran)
+                ->where('tahun_emisi', $tahunEmisi)
+                ->first();
+            $targetBilyet = $targetRow ? ($targetRow->{$targetColumn} ?? 0) : 0;
+
+            // 2. Target Pengemasan Dus
+            $targetDus = ceil($targetBilyet / 20000);
+
+            // 3. Akumulasi Pengemasan Bilyet
+            $akumulasiBilyet = Pengemasan::where('pecahan', $pecahan)
+                ->where('tahun_anggaran', $tahunAnggaran)
+                ->where('tahun_emisi', $tahunEmisi)
+                ->whereDate('tanggal_pengemasan', '>=', $startOfMonth)
+                ->whereDate('tanggal_pengemasan', '<=', $currentDate)
+                ->sum(DB::raw('jumlah_dus * 20000'));
+
+            // 4. Akumulasi Pengemasan Dus
+            $akumulasiDus = ceil($akumulasiBilyet / 20000);
+
+            // 5. Sisa/Over Bilyet
+            $sisaBilyet = $targetBilyet - $akumulasiBilyet;
+
+            // 6. Sisa/Over Dus
+            $sisaDus = $sisaBilyet / 20000;
+
+            // 7. % Pencapaian
+            $persen = $targetBilyet > 0 ? ($akumulasiBilyet / $targetBilyet) * 100 : 0;
+
+            $data[] = [
+                'pecahan' => $pecahan,
+                'target_bilyet' => $targetBilyet,
+                'target_dus' => $targetDus,
+                'akumulasi_bilyet' => $akumulasiBilyet,
+                'akumulasi_dus' => $akumulasiDus,
+                'sisa_bilyet' => $sisaBilyet,
+                'sisa_dus' => $sisaDus,
+                'persen' => $persen,
+            ];
+
+            $totals['target_bilyet'] += $targetBilyet;
+            $totals['target_dus'] += $targetDus;
+            $totals['akumulasi_bilyet'] += $akumulasiBilyet;
+            $totals['akumulasi_dus'] += $akumulasiDus;
+            $totals['sisa_bilyet'] += $sisaBilyet;
+            $totals['sisa_dus'] += $sisaDus;
+        }
+
+        return ['data' => $data, 'totals' => $totals];
     }
 }

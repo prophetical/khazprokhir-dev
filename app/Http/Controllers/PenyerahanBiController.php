@@ -66,6 +66,10 @@ class PenyerahanBiController extends Controller
      */
     public function create()
     {
+        if (! in_array(auth()->user()->role, ['sortir', 'admin'])) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $availableYears = DB::table('hcs_receivings')->distinct()->whereNotNull('tahun_anggaran')->orderBy('tahun_anggaran', 'desc')->pluck('tahun_anggaran');
         $availableEmissions = DB::table('hcs_receivings')->distinct()->whereNotNull('emisi')->orderBy('emisi', 'desc')->pluck('emisi');
 
@@ -79,6 +83,10 @@ class PenyerahanBiController extends Controller
      */
     public function edit($id)
     {
+        if (! in_array(auth()->user()->role, ['sortir', 'admin'])) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $penyerahan = PenyerahanBi::findOrFail($id);
 
         $availableYears = DB::table('hcs_receivings')->distinct()->whereNotNull('tahun_anggaran')->orderBy('tahun_anggaran', 'desc')->pluck('tahun_anggaran');
@@ -229,6 +237,10 @@ class PenyerahanBiController extends Controller
 
     public function store(Request $request)
     {
+        if (! in_array(auth()->user()->role, ['sortir', 'admin'])) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $request->validate([
             'tanggal_penyerahan' => 'required|date',
             'nomor_ba' => 'required|string|max:255',
@@ -311,6 +323,10 @@ class PenyerahanBiController extends Controller
 
     public function update(Request $request, $id)
     {
+        if (! in_array(auth()->user()->role, ['sortir', 'admin'])) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $penyerahan = PenyerahanBi::findOrFail($id);
 
         $request->validate([
@@ -393,6 +409,10 @@ class PenyerahanBiController extends Controller
 
     public function destroy($id)
     {
+        if (! in_array(auth()->user()->role, ['sortir', 'admin'])) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $penyerahan = PenyerahanBi::findOrFail($id);
         $penyerahan->delete();
 

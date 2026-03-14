@@ -76,11 +76,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/pengemasan/{id}', [\App\Http\Controllers\PengemasanController::class, 'show'])->name('pengemasan.show');
     // Penyerahan ke BI Routes
     Route::get('/penyerahan-bi', [\App\Http\Controllers\PenyerahanBiController::class, 'index'])->name('penyerahan-bi.index');
-    Route::get('/penyerahan-bi/create', [\App\Http\Controllers\PenyerahanBiController::class, 'create'])->name('penyerahan-bi.create');
-    Route::post('/penyerahan-bi', [\App\Http\Controllers\PenyerahanBiController::class, 'store'])->name('penyerahan-bi.store');
-    Route::get('/penyerahan-bi/{id}/edit', [\App\Http\Controllers\PenyerahanBiController::class, 'edit'])->name('penyerahan-bi.edit');
-    Route::put('/penyerahan-bi/{id}', [\App\Http\Controllers\PenyerahanBiController::class, 'update'])->name('penyerahan-bi.update');
-    Route::delete('/penyerahan-bi/{id}', [\App\Http\Controllers\PenyerahanBiController::class, 'destroy'])->name('penyerahan-bi.destroy');
+    Route::middleware('role:sortir')->group(function () {
+        Route::get('/penyerahan-bi/create', [\App\Http\Controllers\PenyerahanBiController::class, 'create'])->name('penyerahan-bi.create');
+        Route::post('/penyerahan-bi', [\App\Http\Controllers\PenyerahanBiController::class, 'store'])->name('penyerahan-bi.store');
+        Route::get('/penyerahan-bi/{id}/edit', [\App\Http\Controllers\PenyerahanBiController::class, 'edit'])->name('penyerahan-bi.edit');
+        Route::put('/penyerahan-bi/{id}', [\App\Http\Controllers\PenyerahanBiController::class, 'update'])->name('penyerahan-bi.update');
+        Route::delete('/penyerahan-bi/{id}', [\App\Http\Controllers\PenyerahanBiController::class, 'destroy'])->name('penyerahan-bi.destroy');
+    });
     Route::get('/penyerahan-bi/export', [\App\Http\Controllers\PenyerahanBiController::class, 'export'])->name('penyerahan-bi.export');
     Route::get('/penyerahan-bi/print', [\App\Http\Controllers\PenyerahanBiController::class, 'print'])->name('penyerahan-bi.print');
     Route::get('/api/penyerahan-bi/check-duplicate', [\App\Http\Controllers\PenyerahanBiController::class, 'checkDuplicate'])->name('penyerahan-bi.check-duplicate');
