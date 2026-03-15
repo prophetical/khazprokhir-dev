@@ -87,20 +87,20 @@
                     <div class="flex flex-col sm:flex-row items-center gap-6 w-full lg:w-auto">
                         <!-- Filters -->
                         <div class="flex gap-4">
-                            <div>
-                                <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Tahun Anggaran</h3>
+                            <div class="relative min-w-[140px]">
+                                <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Tahun Anggaran</h3>
                                 <select x-model="tahunAnggaran" @change="fetchData()"
-                                    class="rounded-lg border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 py-2 text-sm font-bold bg-white">
+                                    class="w-full rounded-xl border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 py-3 text-center font-black text-gray-700 bg-white">
                                     @foreach($tahunAnggaranOptions as $year)
                                         <option value="{{ $year }}">{{ $year }}</option>
                                     @endforeach
                                 </select>
                             </div>
 
-                            <div>
-                                <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Tahun Emisi</h3>
+                            <div class="relative min-w-[140px]">
+                                <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Tahun Emisi</h3>
                                 <select x-model="tahunEmisi" @change="fetchData()"
-                                    class="rounded-lg border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 py-2 text-sm font-bold bg-white">
+                                    class="w-full rounded-xl border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 py-3 text-center font-black text-gray-700 bg-white">
                                     @foreach($tahunEmisiOptions as $emisi)
                                         <option value="{{ $emisi }}">{{ $emisi }}</option>
                                     @endforeach
