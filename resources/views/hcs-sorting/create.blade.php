@@ -172,9 +172,6 @@
                                     <div>
                                         <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Total Pack</label>
                                         <div class="relative group">
-                                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                                            </div>
                                             <input type="text" :value="selectedPacks.length" 
                                                    class="block w-full border-gray-200 rounded-xl bg-gray-50 shadow-inner text-sm py-3 px-10 font-bold text-center opacity-80"
                                                    readonly />
@@ -183,9 +180,6 @@
                                     <div>
                                         <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Total Bilyet</label>
                                         <div class="relative group">
-                                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M12 16V7"/></svg>
-                                            </div>
                                             <input type="text" :value="formatNumber(totalBilyet)" 
                                                    class="block w-full border-gray-200 rounded-xl bg-gray-50 shadow-inner text-sm py-3 px-10 font-bold text-center opacity-80"
                                                    readonly />
@@ -193,12 +187,8 @@
                                     </div>
 
                                     <div>
-                                        <label for="supplier" class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Supplier (Hasil Sortir)</label>
+                                        <label for="supplier" class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Supplier</label>
                                         <div class="relative group">
-                                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-colors duration-300"
-                                                 :class="currentTheme ? currentTheme.text.replace('text-', 'text-opacity-40 text-') : 'text-gray-300 group-focus-within:text-indigo-500'">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                                            </div>
                                             <select id="supplier" name="supplier" 
                                                     class="block w-full border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm text-sm py-3 px-10 transition-all duration-300 focus:ring-4 font-bold text-center appearance-none"
                                                     :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'" 
@@ -214,17 +204,11 @@
                                         <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Emisi / Tahun Anggaran</label>
                                         <div class="grid grid-cols-2 gap-3">
                                             <div class="relative">
-                                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
-                                                </div>
                                                 <input type="text" 
                                                        class="block w-full border-gray-200 rounded-xl bg-gray-100/50 shadow-inner text-sm py-3 px-10 font-bold text-center opacity-70"
                                                        value="{{ $emisi }}" readonly />
                                             </div>
                                             <div class="relative">
-                                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                                </div>
                                                 <input type="text" 
                                                        class="block w-full border-gray-200 rounded-xl bg-gray-100/50 shadow-inner text-sm py-3 px-10 font-bold text-center opacity-70"
                                                        value="{{ $tahun_anggaran }}" readonly />
@@ -235,10 +219,6 @@
                                     <div>
                                         <label for="petugas_1" class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Petugas 1</label>
                                         <div class="relative group">
-                                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-colors duration-300"
-                                                 :class="currentTheme ? currentTheme.text.replace('text-', 'text-opacity-40 text-') : 'text-gray-300 group-focus-within:text-indigo-500'">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                                            </div>
                                             <input id="petugas_1" name="petugas_1" type="text" 
                                                    class="block w-full border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm text-sm py-3 px-10 transition-all duration-300 focus:ring-4 font-bold text-center"
                                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
@@ -249,10 +229,6 @@
                                     <div>
                                         <label for="petugas_2" class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Petugas 2 (Opsional)</label>
                                         <div class="relative group">
-                                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-colors duration-300"
-                                                 :class="currentTheme ? currentTheme.text.replace('text-', 'text-opacity-40 text-') : 'text-gray-300 group-focus-within:text-indigo-500'">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                                            </div>
                                             <input id="petugas_2" name="petugas_2" type="text"
                                                    class="block w-full border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm text-sm py-3 px-10 transition-all duration-300 focus:ring-4 font-bold text-center"
                                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
@@ -264,10 +240,6 @@
                                     <div>
                                         <label for="tanggal" class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Tanggal</label>
                                         <div class="relative group">
-                                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-colors duration-300"
-                                                 :class="currentTheme ? currentTheme.text.replace('text-', 'text-opacity-40 text-') : 'text-gray-300 group-focus-within:text-indigo-500'">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                            </div>
                                             <input id="tanggal" name="tanggal" type="date"
                                                    class="block w-full border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm text-sm py-3 px-10 font-bold text-center transition-all duration-300 focus:ring-4"
                                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
@@ -278,10 +250,7 @@
                                     <div>
                                         <label for="gilir" class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Gilir</label>
                                         <div class="relative group">
-                                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-colors duration-300"
-                                                 :class="currentTheme ? currentTheme.text.replace('text-', 'text-opacity-40 text-') : 'text-gray-300 group-focus-within:text-indigo-500'">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                            </div>
+
                                             <select id="gilir" name="gilir" 
                                                     class="block w-full border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm text-sm py-3 px-10 transition-all duration-300 focus:ring-4 font-bold text-center appearance-none"
                                                     :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
