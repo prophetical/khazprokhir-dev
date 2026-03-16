@@ -593,8 +593,13 @@
                             btn.classList.add('bg-indigo-500', 'border-indigo-600', 'shadow-indigo-300/50');
                         }
                     } else {
-                        // AVAILABLE (White background, Gray text)
-                        btn.classList.add('bg-white', 'text-gray-400', 'border-gray-100', 'shadow-sm', 'hover:bg-gray-50', 'hover:text-gray-600', 'hover:border-gray-200');
+                        // AVAILABLE (White background in light mode, Dark in dark mode)
+                        const isDarkMode = document.body.classList.contains('dark-mode');
+                        if (isDarkMode) {
+                            btn.classList.add('bg-[#1a2434]', 'text-gray-500', 'border-[#3B4B65]', 'hover:bg-[#243047]', 'hover:text-gray-400');
+                        } else {
+                            btn.classList.add('bg-white', 'text-gray-400', 'border-gray-100', 'shadow-sm', 'hover:bg-gray-50', 'hover:text-gray-600', 'hover:border-gray-200');
+                        }
                     }
                 });
             }
@@ -695,6 +700,52 @@
             0% { transform: translateX(-100%) skewX(-15deg); }
             100% { transform: translateX(200%) skewX(-15deg); }
         }
+
+        /* Dark Mode Overrides for Create Page - Extremely Aggressive */
+        body.dark-mode [class*="bg-gray-50"] { background-color: var(--theme-bg-main) !important; }
+        body.dark-mode [class*="bg-white"] { background-color: var(--theme-bg-card) !important; border-color: var(--theme-border-main) !important; }
+        
+        /* Specific section overrides to ensure depth and contrast */
+        body.dark-mode .lg\:w-\[45\%\] { background-color: rgba(15, 23, 42, 0.4) !important; border-right-color: var(--theme-border-main) !important; }
+        body.dark-mode .lg\:w-\[55\%\] { background-color: rgba(15, 23, 42, 0.2) !important; }
+        
+        /* Inner cards and nested white elements */
+        body.dark-mode .bg-white.p-4, 
+        body.dark-mode .bg-white\/80, 
+        body.dark-mode .bg-white\/40, 
+        body.dark-mode .bg-white\/50 { 
+            background-color: #1a2434 !important; 
+            border-color: var(--theme-border-main) !important; 
+        }
+
+        body.dark-mode .text-gray-900, body.dark-mode .text-gray-800 { color: var(--theme-text-main) !important; }
+        body.dark-mode .text-gray-600, body.dark-mode .text-gray-700 { color: var(--theme-text-muted) !important; }
+        
+        /* Borders & Utilities */
+        body.dark-mode .border-white, 
+        body.dark-mode .border-gray-100, 
+        body.dark-mode .border-gray-200 { 
+            border-color: var(--theme-border-main) !important; 
+        }
+
+        /* Input specific backgrounds if missed by global */
+        body.dark-mode select.bg-white\/50, 
+        body.dark-mode input.bg-white\/50 { 
+            background-color: #2f3646ff !important; 
+            border-color: #4B5563 !important; 
+        }
+
+        /* Light Mode Refinements for Create Page */
+        body.light-mode .bg-white\/70.backdrop-blur-xl { background-color: #ffffff !important; border-color: #e5e7eb !important; }
+        body.light-mode .lg\:w-\[45\%\]\.bg-white\/40 { background-color: #f8fafc !important; border-right-color: #e5e7eb !important; }
+        body.light-mode .lg\:w-\[55\%\]\.bg-gray-50\/20 { background-color: #ffffff !important; }
+        body.light-mode input, body.light-mode select, body.light-mode textarea {
+            background-color: #ffffff !important;
+            border-color: #d1d5db !important;
+        }
+        body.light-mode .bg-white\/50 { background-color: #ffffff !important; border-color: #d1d5db !important; }
+        body.light-mode .bg-white\/80 { background-color: #ffffff !important; border-color: #e5e7eb !important; }
+        body.light-mode .bg-white\/40 { background-color: #f1f5f9 !important; border-color: #e5e7eb !important; }
     </style>
     @endpush
 </x-app-layout>

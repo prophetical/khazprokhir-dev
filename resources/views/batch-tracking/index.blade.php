@@ -11,13 +11,13 @@
             {{-- ===== SEARCH & FILTER FORM ===== --}}
             @php
                 $themeClasses = [
-                    'S' => ['bg' => 'bg-lime-500', 'border' => 'border-lime-500', 'ring' => 'focus:ring-lime-500', 'focus' => 'focus:border-lime-500', 'btn' => 'bg-lime-500', 'text' => 'text-gray-900', 'label' => 'Rp1.000', 'subtle' => 'bg-lime-50 border-lime-200 text-lime-700 hover:bg-lime-100'],
-                    'T' => ['bg' => 'bg-gray-400', 'border' => 'border-gray-400', 'ring' => 'focus:ring-gray-400', 'focus' => 'focus:border-gray-400', 'btn' => 'bg-gray-400', 'text' => 'text-white', 'label' => 'Rp2.000', 'subtle' => 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100'],
-                    'U' => ['bg' => 'bg-amber-400', 'border' => 'border-amber-400', 'ring' => 'focus:ring-amber-400', 'focus' => 'focus:border-amber-400', 'btn' => 'bg-amber-400', 'text' => 'text-gray-900', 'label' => 'Rp5.000', 'subtle' => 'bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100'],
-                    'V' => ['bg' => 'bg-purple-500', 'border' => 'border-purple-500', 'ring' => 'focus:ring-purple-500', 'focus' => 'focus:border-purple-500', 'btn' => 'bg-purple-500', 'text' => 'text-white', 'label' => 'Rp10.000', 'subtle' => 'bg-purple-50 border-purple-200 text-purple-700 hover:bg-purple-100'],
-                    'W' => ['bg' => 'bg-green-500', 'border' => 'border-green-500', 'ring' => 'focus:ring-green-500', 'focus' => 'focus:border-green-500', 'btn' => 'bg-green-500', 'text' => 'text-white', 'label' => 'Rp20.000', 'subtle' => 'bg-green-50 border-green-200 text-green-700 hover:bg-green-100'],
-                    'X' => ['bg' => 'bg-blue-500', 'border' => 'border-blue-500', 'ring' => 'focus:ring-blue-500', 'focus' => 'focus:border-blue-500', 'btn' => 'bg-blue-500', 'text' => 'text-white', 'label' => 'Rp50.000', 'subtle' => 'bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100'],
-                    'Y' => ['bg' => 'bg-red-500', 'border' => 'border-red-500', 'ring' => 'focus:ring-red-500', 'focus' => 'focus:border-red-500', 'btn' => 'bg-red-500', 'text' => 'text-white', 'label' => 'Rp100.000', 'subtle' => 'bg-red-50 border-red-200 text-red-700 hover:bg-red-100'],
+                    'S' => ['bg' => 'bg-lime-500', 'border' => 'border-lime-500', 'ring' => 'focus:ring-lime-500', 'focus' => 'focus:border-lime-500', 'btn' => 'bg-lime-500', 'text' => 'text-gray-900', 'label' => '', 'subtle' => 'bg-lime-50 border-lime-200 text-lime-700 hover:bg-lime-100'],
+                    'T' => ['bg' => 'bg-gray-400', 'border' => 'border-gray-400', 'ring' => 'focus:ring-gray-400', 'focus' => 'focus:border-gray-400', 'btn' => 'bg-gray-400', 'text' => 'text-white', 'label' => '', 'subtle' => 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100'],
+                    'U' => ['bg' => 'bg-amber-400', 'border' => 'border-amber-400', 'ring' => 'focus:ring-amber-400', 'focus' => 'focus:border-amber-400', 'btn' => 'bg-amber-400', 'text' => 'text-gray-900', 'label' => '', 'subtle' => 'bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100'],
+                    'V' => ['bg' => 'bg-purple-500', 'border' => 'border-purple-500', 'ring' => 'focus:ring-purple-500', 'focus' => 'focus:border-purple-500', 'btn' => 'bg-purple-500', 'text' => 'text-white', 'label' => '', 'subtle' => 'bg-purple-50 border-purple-200 text-purple-700 hover:bg-purple-100'],
+                    'W' => ['bg' => 'bg-green-500', 'border' => 'border-green-500', 'ring' => 'focus:ring-green-500', 'focus' => 'focus:border-green-500', 'btn' => 'bg-green-500', 'text' => 'text-white', 'label' => '', 'subtle' => 'bg-green-50 border-green-200 text-green-700 hover:bg-green-100'],
+                    'X' => ['bg' => 'bg-blue-500', 'border' => 'border-blue-500', 'ring' => 'focus:ring-blue-500', 'focus' => 'focus:border-blue-500', 'btn' => 'bg-blue-500', 'text' => 'text-white', 'label' => '', 'subtle' => 'bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100'],
+                    'Y' => ['bg' => 'bg-red-500', 'border' => 'border-red-500', 'ring' => 'focus:ring-red-500', 'focus' => 'focus:border-red-500', 'btn' => 'bg-red-500', 'text' => 'text-white', 'label' => '', 'subtle' => 'bg-red-50 border-red-200 text-red-700 hover:bg-red-100'],
                 ];
                 $selectedPecahan = $pecahanFilter ?? '';
             @endphp
@@ -56,8 +56,8 @@
                             <div class="relative">
                                 <input id="search" name="search" type="text"
                                     value="{{ $search }}"
-                                    placeholder="CARI BATCH ATAU SERI"
-                                    class="block w-full text-sm border-gray-200 rounded-lg shadow-sm px-4 py-3 text-center transition-all duration-300 font-mono uppercase" 
+                                    placeholder="Cari..."
+                                    class="block w-full text-sm border-gray-200 rounded-lg shadow-sm px-4 py-3 text-center transition-all duration-300" 
                                     :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"/>
                             </div>
                         </div>
@@ -94,7 +94,7 @@
 
                     {{-- Pecahan Filter Buttons --}}
                     <input type="hidden" name="pecahan" x-model="selectedPecahan">
-                    <div class="px-6 pb-6 pt-2 border-t border-gray-50 bg-gray-50/30">
+                    <div class="px-6 pb-6 pt-2">
                         <div class="flex flex-wrap items-center gap-2">
                             <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mr-2">Filter Pecahan:</span>
                             @foreach(['S', 'T', 'U', 'V', 'W', 'X', 'Y'] as $pec)
@@ -504,6 +504,74 @@
 
         </div>
     </div>
+
+    @push('css')
+    <style>
+        /* Dark Mode Refinements for Batch Tracking Page */
+        body.dark-mode .bg-white {
+            background-color: #111827 !important;
+            color: #f3f4f6 !important;
+        }
+        body.dark-mode .border-gray-100,
+        body.dark-mode .border-gray-50,
+        body.dark-mode .border-t-4.border-gray-100 {
+            border-color: #313131 !important;
+        }
+
+        /* Header Card Gradients - Fix for Dark Mode */
+        body.dark-mode .bg-gradient-to-r.from-slate-50.to-white {
+            background: #1f2937 !important;
+        }
+
+        /* Action Bar & Modal Sections */
+        body.dark-mode .bg-gray-50\/50,
+        body.dark-mode .bg-gray-50\/30,
+        body.dark-mode .bg-slate-50\/50 {
+            background-color: #1a2232 !important;
+        }
+
+        /* Text Contrast Improvements */
+        body.dark-mode .text-gray-400,
+        body.dark-mode .text-slate-400,
+        body.dark-mode .text-gray-500 {
+            color: #9ca3af !important;
+        }
+        body.dark-mode .text-gray-800,
+        body.dark-mode .text-gray-700,
+        body.dark-mode .text-gray-900 {
+            color: #f9fafb !important;
+        }
+        body.dark-mode .text-indigo-700,
+        body.dark-mode .text-indigo-600 {
+            color: #a5b4fc !important;
+        }
+
+        /* Modal specific */
+        body.dark-mode div[id^="modal-"] .bg-white {
+            background-color: #111827 !important;
+        }
+
+        /* Badges */
+        body.dark-mode .bg-indigo-50 {
+            background-color: rgba(79, 70, 229, 0.2) !important;
+            color: #a5b4fc !important;
+        }
+        body.dark-mode .bg-blue-100 {
+            background-color: rgba(30, 64, 175, 0.2) !important;
+            color: #93c5fd !important;
+        }
+        body.dark-mode .bg-green-100 {
+            background-color: rgba(6, 74, 24, 0.2) !important;
+            color: #6ee7b7 !important;
+        }
+        
+        body.dark-mode .bg-gray-100 {
+            background-color: #374151 !important;
+            color: #d1d5db !important;
+        }
+    </style>
+    @endpush
+
 
     @push('scripts')
     <script>

@@ -10,12 +10,11 @@
     }" 
     x-init="$watch('sidebarCollapsed', value => localStorage.setItem('sidebarCollapsed', value))"
     :class="sidebarCollapsed ? 'w-20' : 'w-64'"
-    class="min-h-screen flex flex-col shrink-0 z-40 transition-all duration-300 ease-in-out relative border-none shadow-xl"
-    style="background: linear-gradient(180deg, #1e40af 0%, #7c3aed 100%);">
+    class="min-h-screen flex flex-col shrink-0 z-40 transition-all duration-300 ease-in-out relative border-none shadow-xl">
     
     <!-- Toggle Button (Desktop) -->
     <button @click="sidebarCollapsed = !sidebarCollapsed" 
-            class="absolute -right-3 top-20 bg-white border border-gray-200 rounded-full p-1 shadow-md hover:bg-gray-50 focus:outline-none z-50 hidden md:block">
+            class="absolute -right-3 top-20 bg-white border border-gray-200 rounded-full p-1 hover:bg-gray-50 focus:outline-none z-50 hidden md:block">
         <svg :class="sidebarCollapsed ? 'rotate-180' : ''" class="w-4 h-4 text-indigo-600 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
         </svg>

@@ -61,17 +61,17 @@
                         </tr>
                         <tr class="text-[9px] lowercase text-gray-400 divide-x divide-gray-200 bg-gray-50/50">
                             <th class="px-3 py-1 text-center bg-gray-100 italic">a</th>
-                            <th class="px-3 py-1 text-center italic">b</th>
-                            <th class="px-3 py-1 text-center italic">c</th>
-                            <th class="px-3 py-1 text-center italic">d=c/20.000</th>
-                            <th class="px-3 py-1 text-center italic">e=b+c</th>
-                            <th class="px-3 py-1 text-center italic">f</th>
-                            <th class="px-3 py-1 text-center italic">g=f/20.000</th>
-                            <th class="px-3 py-1 text-center italic">h</th>
-                            <th class="px-3 py-1 text-center italic">i</th>
-                            <th class="px-3 py-1 text-center italic">j=i-h</th>
-                            <th class="px-3 py-1 text-center italic">k=i/j*100%</th>
-                            <th class="px-3 py-1 text-center italic">l</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">b</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">c</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">d=c/20.000</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">e=b+c</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">f</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">g=f/20.000</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">h</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">i</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">j=i-h</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">k=i/j*100%</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">l</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-100">
@@ -111,7 +111,8 @@
                                     {{ $row['akumulasi_penyerahan'] == 0 ? '-' : number_format($row['akumulasi_penyerahan'], 0, ',', '.') }}
                                 </td>
                                 <td class="px-4 py-4 text-right text-xs font-bold text-gray-600 border-r border-gray-100">
-                                    {{ $row['target'] == 0 ? '-' : number_format($row['target'], 0, ',', '.') }}</td>
+                                    {{ $row['target'] == 0 ? '-' : number_format($row['target'], 0, ',', '.') }}
+                                </td>
                                 <td class="px-4 py-4 text-right text-xs font-bold text-gray-600 border-r border-gray-100">
                                     {{ $row['sisa_target'] == 0 ? '-' : number_format($row['sisa_target'], 0, ',', '.') }}
                                 </td>
@@ -166,7 +167,8 @@
                                 {{ $totals['akumulasi_penyerahan_bilyet'] == 0 ? '-' : number_format($totals['akumulasi_penyerahan_bilyet'], 0, ',', '.') }}
                             </td>
                             <td class="px-4 py-6 text-right">
-                                {{ $totals['target'] == 0 ? '-' : number_format($totals['target'], 0, ',', '.') }}</td>
+                                {{ $totals['target'] == 0 ? '-' : number_format($totals['target'], 0, ',', '.') }}
+                            </td>
                             <td class="px-4 py-6 text-right">
                                 {{ $totals['sisa_target'] == 0 ? '-' : number_format($totals['sisa_target'], 0, ',', '.') }}
                             </td>
@@ -257,18 +259,18 @@
                         </tr>
                         <tr class="text-[9px] lowercase text-gray-400 divide-x divide-gray-200 bg-gray-50/50">
                             <th class="px-3 py-1 text-center bg-gray-100 italic">a</th>
-                            <th class="px-3 py-1 text-center italic">b</th>
-                            <th class="px-3 py-1 text-center italic">c</th>
-                            <th class="px-3 py-1 text-center italic">d=b-c</th>
-                            <th class="px-3 py-1 text-center italic">e=d/20.000</th>
-                            <th class="px-3 py-1 text-center italic">f=d/{{ $sisaHariKerja }}</th>
-                            <th class="px-3 py-1 text-center italic">g</th>
-                            <th class="px-3 py-1 text-center italic">h</th>
-                            <th class="px-3 py-1 text-center italic">i</th>
-                            <th class="px-3 py-1 text-center italic">j=g+h+i</th>
-                            <th class="px-3 py-1 text-center italic">k</th>
-                            <th class="px-3 py-1 text-center italic">l</th>
-                            <th class="px-3 py-1 text-center italic">m=k+l</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">b</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">c</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">d=b-c</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">e=d/20.000</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">f=d/{{ $sisaHariKerja }}</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">g</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">h</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">i</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">j=g+h+i</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">k</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">l</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">m=k+l</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-100">
@@ -312,11 +314,14 @@
                                     {{ $row['target_produksi_harian'] <= 0 ? '-' : number_format($row['target_produksi_harian'], 0, ',', '.') }}
                                 </td>
                                 <td class="px-4 py-4 text-right text-[10px] font-bold text-gray-500">
-                                    {{ $row['kemas_g1'] == 0 ? '-' : number_format($row['kemas_g1'], 0, ',', '.') }}</td>
+                                    {{ $row['kemas_g1'] == 0 ? '-' : number_format($row['kemas_g1'], 0, ',', '.') }}
+                                </td>
                                 <td class="px-4 py-4 text-right text-[10px] font-bold text-gray-500">
-                                    {{ $row['kemas_g2'] == 0 ? '-' : number_format($row['kemas_g2'], 0, ',', '.') }}</td>
+                                    {{ $row['kemas_g2'] == 0 ? '-' : number_format($row['kemas_g2'], 0, ',', '.') }}
+                                </td>
                                 <td class="px-4 py-4 text-right text-[10px] font-bold text-gray-500">
-                                    {{ $row['kemas_g3'] == 0 ? '-' : number_format($row['kemas_g3'], 0, ',', '.') }}</td>
+                                    {{ $row['kemas_g3'] == 0 ? '-' : number_format($row['kemas_g3'], 0, ',', '.') }}
+                                </td>
                                 <td class="px-4 py-4 text-right text-xs font-black text-emerald-700 bg-emerald-50/20">
                                     {{ $row['total_kemas'] == 0 ? '-' : number_format($row['total_kemas'], 0, ',', '.') }}
                                 </td>
@@ -327,7 +332,8 @@
                                     {{ $row['hcs_cutpack'] == 0 ? '-' : number_format($row['hcs_cutpack'], 0, ',', '.') }}
                                 </td>
                                 <td class="px-4 py-4 text-right text-xs font-black text-purple-700 bg-purple-50/20">
-                                    {{ $row['total_hcs'] == 0 ? '-' : number_format($row['total_hcs'], 0, ',', '.') }}</td>
+                                    {{ $row['total_hcs'] == 0 ? '-' : number_format($row['total_hcs'], 0, ',', '.') }}
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -434,12 +440,12 @@
                         </tr>
                         <tr class="text-[9px] lowercase text-gray-400 divide-x divide-gray-200 bg-gray-50/50">
                             <th class="px-3 py-1 text-center bg-gray-100 italic">a</th>
-                            <th class="px-3 py-1 text-center italic">b</th>
-                            <th class="px-3 py-1 text-center italic">c</th>
-                            <th class="px-3 py-1 text-center italic">d</th>
-                            <th class="px-3 py-1 text-center italic">e</th>
-                            <th class="px-3 py-1 text-center italic">f=d-e</th>
-                            <th class="px-3 py-1 text-center italic">g=f/3.000.000</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">b</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">c</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">d</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">e</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">f=d-e</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">g=f/3.000.000</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-100">
@@ -504,9 +510,11 @@
                                 {{ $totalAkumulasiSerah == 0 ? '-' : number_format($totalAkumulasiSerah, 0, ',', '.') }}
                             </td>
                             <td class="px-4 py-4 text-right text-indigo-300">
-                                {{ $totalPersediaan == 0 ? '-' : number_format($totalPersediaan, 0, ',', '.') }}</td>
+                                {{ $totalPersediaan == 0 ? '-' : number_format($totalPersediaan, 0, ',', '.') }}
+                            </td>
                             <td class="px-4 py-4 text-center text-amber-400">
-                                {{ $totalCT == 0 ? '-' : $totalCT . ' CT' }}</td>
+                                {{ $totalCT == 0 ? '-' : $totalCT . ' CT' }}
+                            </td>
                         </tr>
                     </tfoot>
                 </table>
@@ -539,7 +547,8 @@
                             class="text-[10px] font-black uppercase text-gray-500 tracking-widest divide-x divide-gray-200">
                             <th rowspan="2" class="px-4 py-4 text-center sticky left-0 bg-gray-100 z-10 w-20">PEC</th>
                             <th colspan="2" class="px-4 py-2 text-center text-indigo-600 bg-indigo-50/30">Target TA
-                                {{ $tahunAnggaran }}</th>
+                                {{ $tahunAnggaran }}
+                            </th>
                             <th colspan="2" class="px-4 py-2 text-center text-emerald-600 bg-emerald-50/30">Akumulasi
                                 Pengemasan</th>
                             <th colspan="2" class="px-4 py-2 text-center text-rose-600 bg-rose-50/30">Sisa / Over</th>
@@ -556,13 +565,13 @@
                         </tr>
                         <tr class="text-[9px] lowercase text-gray-400 divide-x divide-gray-200 bg-gray-50/50">
                             <th class="px-3 py-1 text-center bg-gray-100 italic">a</th>
-                            <th class="px-3 py-1 text-center italic">b</th>
-                            <th class="px-3 py-1 text-center italic">c=b/20.000</th>
-                            <th class="px-3 py-1 text-center italic">d</th>
-                            <th class="px-3 py-1 text-center italic">e=d/20.000</th>
-                            <th class="px-3 py-1 text-center italic">f=b-d</th>
-                            <th class="px-3 py-1 text-center italic">g=f/20.000</th>
-                            <th class="px-3 py-1 text-center italic">h=d/b*100%</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">b</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">c=b/20.000</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">d</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">e=d/20.000</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">f=b-d</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">g=f/20.000</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">h=d/b*100%</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-100">
@@ -687,13 +696,13 @@
                         </tr>
                         <tr class="text-[9px] lowercase text-gray-400 divide-x divide-gray-200 bg-gray-50/50">
                             <th class="px-3 py-1 text-center bg-gray-100 italic">a</th>
-                            <th class="px-3 py-1 text-center italic">b</th>
-                            <th class="px-3 py-1 text-center italic">c=b/20.000</th>
-                            <th class="px-3 py-1 text-center italic">d</th>
-                            <th class="px-3 py-1 text-center italic">e=d/20.000</th>
-                            <th class="px-3 py-1 text-center italic">f=b-d</th>
-                            <th class="px-3 py-1 text-center italic">g=f/20.000</th>
-                            <th class="px-3 py-1 text-center italic">h=d/b*100%</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">b</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">c=b/20.000</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">d</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">e=d/20.000</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">f=b-d</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">g=f/20.000</th>
+                            <th class="x-3 py-1 text-center bg-gray-100 italic">h=d/b*100%</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-100">

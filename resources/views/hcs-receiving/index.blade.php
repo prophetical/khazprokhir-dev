@@ -54,7 +54,7 @@
                                                      fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                                             </div>
                                             <input id="search" name="search" type="text" 
-                                                class="pl-10 block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 transition-all text-center" 
+                                                class="pl-10 block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 transition-all text-center filter-input" 
                                                 :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
                                                 value="{{ request('search') }}" placeholder="" />
                                         </div>
@@ -65,7 +65,7 @@
                                         <div class="w-full xl:w-32">
                                             <label for="pecahan" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 text-center">Pecahan</label>
                                             <select id="pecahan" name="pecahan" x-model="selectedPecahan"
-                                                    class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 text-center transition-all duration-300"
+                                                    class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 text-center transition-all duration-300 filter-input" 
                                                     :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
                                                 <option value="">Semua</option>
                                                 @foreach(['S'=>'1.000','T'=>'2.000','U'=>'5.000','V'=>'10.000','W'=>'20.000','X'=>'50.000','Y'=>'100.000'] as $key => $val)
@@ -76,7 +76,7 @@
                                         <div class="w-full xl:w-32">
                                             <label for="supplier" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 text-center">Supplier</label>
                                             <select id="supplier" name="supplier" 
-                                                    class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 text-center transition-all duration-300"
+                                                    class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 text-center transition-all duration-300 filter-input" 
                                                     :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
                                                 <option value="">Semua</option>
                                                 <option value="Cutpack" {{ request('supplier') == 'Cutpack' ? 'selected' : '' }}>CP</option>
@@ -90,14 +90,14 @@
                                         <div class="w-full xl:w-36">
                                             <label for="start_date" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 text-center">Dari</label>
                                             <input id="start_date" name="start_date" type="date" 
-                                                   class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-2.5 px-2 text-center transition-all duration-300" 
+                                                   class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-2 text-center transition-all duration-300 filter-input" 
                                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
                                                    value="{{ request('start_date') }}" />
                                         </div>
                                         <div class="w-full xl:w-36">
                                             <label for="end_date" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 text-center">Sampai</label>
                                             <input id="end_date" name="end_date" type="date" 
-                                                   class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-2.5 px-2 text-center transition-all duration-300" 
+                                                   class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-2 text-center transition-all duration-300 filter-input" 
                                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
                                                    value="{{ request('end_date') }}" />
                                         </div>
@@ -105,7 +105,7 @@
 
                                     {{-- Actions --}}
                                     <div class="flex gap-2 w-full xl:w-auto">
-                                        <button type="submit" 
+                                        <button type="submit" id="search-btn"
                                             class="flex-1 xl:flex-none inline-flex items-center justify-center px-8 py-3 rounded-lg text-sm font-bold transition-all shadow-md active:scale-95 uppercase tracking-wider"
                                             :class="currentTheme ? (currentTheme.btn + ' ' + currentTheme.text + ' brightness-95 hover:brightness-105') : 'bg-indigo-600 text-white hover:bg-indigo-700'">
                                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
@@ -360,5 +360,37 @@
             });
         }
     </script>
+    @endpush
+
+    @push('css')
+    <style>
+        /* Alignment & Height Unification */
+        #search, #pecahan, #supplier, #start_date, #end_date, #search-btn {
+            height: 46px !important;
+            box-sizing: border-box;
+        }
+
+        /* Light Mode Refinements for Index Filter - Aggressive Visibility */
+        body.light-mode .filter-input {
+            border: 1px solid #9ca3af; /* Removed !important to allow dynamic theme colors */
+            background-color: #ffffff !important;
+        }
+        
+        body.light-mode .bg-white.border-gray-100.shadow-sm.rounded-xl {
+            border: 1px solid #d1d5db; /* Removed !important */
+            border-top-width: 4px !important; /* Keep width fixed */
+            /* Removed border-top color !important to allow dynamic theme colors */
+        }
+
+        body.light-mode label {
+            color: #374151 !important; /* Darker Gray-700 label text for sharp contrast */
+            font-weight: 700 !important;
+        }
+
+        /* Hover states for better interaction visibility in Light Mode */
+        body.light-mode .filter-input:hover {
+            border-color: #6b7280;
+        }
+    </style>
     @endpush
 </x-app-layout>
