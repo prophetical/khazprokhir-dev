@@ -37,7 +37,7 @@
             --theme-bg-main: #f3f4f6;
             --theme-bg-card: #ffffff;
             --theme-bg-sidebar: linear-gradient(180deg, #1e40af 0%, #7c3aed 100%);
-            --theme-bg-header: linear-gradient(135deg, #1e40af 0%, #7c3aed 55%, #db2777 100%);
+            --theme-bg-header: linear-gradient(135deg, rgba(30, 64, 175, 0.95) 0%, rgba(124, 58, 237, 0.95) 55%, rgba(219, 39, 119, 0.95) 100%);
             --theme-text-main: #111827;
             --theme-text-muted: #6b7280;
             --theme-border-main: #e5e7eb;
@@ -50,10 +50,10 @@
             /* Main page background */
             --theme-bg-card: #243047;
             /* Content background */
-            --theme-bg-sidebar: #1B2638;
-            /* Sidebar background */
-            --theme-bg-header: #243047;
-            /* Header background */
+            --theme-bg-sidebar: rgba(15, 23, 42, 0.75);
+            /* Sidebar background matching header */
+            --theme-bg-header: rgba(15, 23, 42, 0.75);
+            /* Header background translucent */
             --theme-text-main: #F1F5F9;
             /* Primary text */
             --theme-text-muted: #CBD5F5;
@@ -133,6 +133,7 @@
         body.dark-mode nav.flex.flex-col.shrink-0 {
             background: var(--theme-bg-sidebar) !important;
             border-right: 1px solid var(--theme-border-main) !important;
+            backdrop-blur: 24px !important;
         }
 
         body.dark-mode nav.flex.flex-col.shrink-0 .hover\:bg-white\/10:hover {
@@ -397,7 +398,8 @@
         <div id="main-scroll-container" class="flex-1 flex flex-col overflow-y-auto overflow-x-hidden relative min-w-0">
             <!-- Top Header -->
             <nav id="top-header"
-                class="px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between shrink-0 sticky top-0 z-50 w-full transition-all duration-300 ease-in-out border-b border-white/10">
+                style="background: var(--theme-bg-header);"
+                class="px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between shrink-0 sticky top-0 z-50 w-full transition-all duration-500 ease-in-out border-b border-white/10 backdrop-blur-xl">
                 <div class="flex items-center gap-4">
                     <button class="text-white/70 hover:text-white focus:outline-none md:hidden transition-colors">
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -428,7 +430,7 @@
                 </div>
 
                 <!-- Realtime Jam & Tanggal -->
-                <div class="hidden xl:flex items-center ml-auto mr-4 text-white/80 bg-white/10 border border-white/20 shadow-sm rounded-lg px-3 py-1.5"
+                <div class="hidden xl:flex items-center ml-auto mr-4 text-white/80 bg-white/5 dark:bg-slate-800/40 border border-white/10 dark:border-white/5 shadow-inner rounded-2xl px-4 py-1.5 hover:bg-white/10 transition-colors duration-300 group"
                     x-data="{ 
                     time: '', 
                     date: '',
@@ -444,14 +446,19 @@
                         this.time = now.toLocaleTimeString('id-ID', optionsTime).replace(/\./g, ':');
                     }
                 }">
-                    <svg class="w-4 h-4 text-pink-300 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <div class="flex flex-col text-right justify-center mt-0.5">
-                        <span class="text-[9px] font-bold uppercase tracking-wider text-white/50" x-text="date"></span>
-                        <span class="text-sm font-black tracking-tight text-white leading-none"
-                            x-text="time + ' WIB'"></span>
+                    <div class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-500">
+                        <svg class="w-4 h-4 text-pink-300 drop-shadow-[0_0_8px_rgba(244,114,182,0.5)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div class="flex flex-col text-right justify-center">
+                        <span class="text-[8px] font-black uppercase tracking-[0.2em] text-white/40 mb-0.5" x-text="date"></span>
+                        <div class="flex items-baseline gap-1">
+                            <span class="text-sm font-black tracking-tighter text-white leading-none"
+                                x-text="time"></span>
+                            <span class="text-[8px] font-black text-rose-400 uppercase tracking-widest">WIB</span>
+                        </div>
                     </div>
                 </div>
 
@@ -494,20 +501,18 @@
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
                             <button
-                                class="flex items-center px-3 py-2 border border-white/20 text-sm leading-4 font-medium rounded-lg text-white/90 bg-white/10 hover:bg-white/20 focus:outline-none transition ease-in-out duration-150">
-                                <div class="font-semibold mr-2">{{ Auth::user()->name }}</div>
+                                class="flex items-center gap-3 px-3 py-1.5 border border-white/10 dark:border-white/5 text-sm font-bold rounded-2xl text-white bg-white/5 hover:bg-white/10 focus:outline-none transition-all duration-300 group">
+                                <div class="hidden sm:block text-[11px] uppercase tracking-widest opacity-80 group-hover:opacity-100 transition-opacity">{{ Auth::user()->name }}</div>
                                 <div
-                                    class="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center text-white font-bold border border-white/30 drop-shadow">
+                                    class="h-8 w-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black border border-white/20 shadow-lg group-hover:scale-105 transition-transform duration-300">
                                     {{ substr(Auth::user()->name, 0, 1) }}
                                 </div>
-                                <div class="ml-1">
-                                    <svg class="fill-current h-4 w-4 text-white/60" xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </div>
+                                <svg class="w-4 h-4 text-white/40 group-hover:text-white/80 transition-colors" xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                        clip-rule="evenodd" />
+                                </svg>
                             </button>
                         </x-slot>
 
@@ -569,11 +574,11 @@
                     // Menggunakan sistem threshold/hysteresis untuk mencegah jitter:
                     // Selisih h-20 (80px) dan h-14 (56px) adalah 24px. Jarak antara batas atas dan batas bawah harus > 24px.
                     if (scrollContainer.scrollTop > 40 && !isShrunk) {
-                        header.classList.add('shadow-md', 'h-14', 'border-gray-200');
+                        header.classList.add('shadow-xl', 'h-14', 'border-white/5');
                         header.classList.remove('h-20', 'border-white/10');
                         isShrunk = true;
                     } else if (scrollContainer.scrollTop <= 10 && isShrunk) {
-                        header.classList.remove('shadow-md', 'h-14', 'border-gray-200');
+                        header.classList.remove('shadow-xl', 'h-14', 'border-white/5');
                         header.classList.add('h-20', 'border-white/10');
                         isShrunk = false;
                     }

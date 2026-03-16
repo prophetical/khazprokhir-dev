@@ -50,7 +50,7 @@
         <!-- Laporan Harian Group -->
         <div class="space-y-1">
             <button @click="laporanOpen = !laporanOpen; if(sidebarCollapsed) sidebarCollapsed = false;"
-               class="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('laporan-harian.*') ? 'text-white font-semibold bg-white/10' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
+               class="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('laporan-harian.*') ? 'text-white font-semibold bg-white/20 shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
                title="Laporan Harian">
                 <div class="flex items-center">
                     <div class="shrink-0 w-8 flex justify-center">
@@ -81,7 +81,7 @@
         <!-- HCS Receiving Group -->
         <div class="space-y-1">
             <button @click="hcsOpen = !hcsOpen; if(sidebarCollapsed) sidebarCollapsed = false;"
-               class="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('hcs-receiving.*', 'batch-tracking.*', 'reports.*', 'rekomendasi-penerimaan.*') ? 'text-white font-semibold bg-white/10' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
+               class="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('hcs-receiving.*', 'batch-tracking.*', 'reports.*', 'rekomendasi-penerimaan.*') ? 'text-white font-semibold bg-white/20 shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
                title="Penerimaan HCS">
                 <div class="flex items-center">
                     <div class="shrink-0 w-8 flex justify-center">
@@ -124,7 +124,7 @@
         <!-- HCS Sorting Group -->
         <div class="space-y-1 mt-2">
             <button @click="sortingOpen = !sortingOpen; if(sidebarCollapsed) sidebarCollapsed = false;"
-               class="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('hcs-sorting.*', 'hcs-sorting-reports.*', 'rekomendasi-penyortiran.*') ? 'text-white font-semibold bg-white/10' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
+               class="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('hcs-sorting.*', 'hcs-sorting-reports.*', 'rekomendasi-penyortiran.*') ? 'text-white font-semibold bg-white/20 shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
                title="Penyortiran HCS">
                 <div class="flex items-center">
                     <div class="shrink-0 w-8 flex justify-center">
@@ -160,7 +160,7 @@
         <!-- Pengemasan Group -->
         <div class="space-y-1 mt-2 mb-4" x-data="{ pengemasanOpen: {{ request()->routeIs('pengemasan.*') ? 'true' : 'false' }} }">
             <button @click="pengemasanOpen = !pengemasanOpen; if(sidebarCollapsed) sidebarCollapsed = false;"
-               class="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('pengemasan.*') ? 'text-white font-semibold bg-white/10' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
+               class="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('pengemasan.*') ? 'text-white font-semibold bg-white/20 shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
                title="Pengemasan HCS">
                 <div class="flex items-center">
                     <div class="shrink-0 w-8 flex justify-center">
@@ -191,7 +191,7 @@
         <!-- Penyerahan ke BI Group -->
         <div class="space-y-1 mt-2 mb-4">
             <button @click="penyerahanBiOpen = !penyerahanBiOpen; if(sidebarCollapsed) sidebarCollapsed = false;"
-               class="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('penyerahan-bi.*') ? 'text-white font-semibold bg-white/10' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
+               class="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('penyerahan-bi.*') ? 'text-white font-semibold bg-white/20 shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
                title="Penyerahan ke BI">
                 <div class="flex items-center">
                     <div class="shrink-0 w-8 flex justify-center">
@@ -222,7 +222,7 @@
         <!-- HCTS Receiving Group -->
         <div class="space-y-1">
             <button @click="hctsOpen = !hctsOpen; if(sidebarCollapsed) sidebarCollapsed = false;"
-               class="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('hcts-receiving.*') ? 'text-white font-semibold bg-white/10' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
+               class="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('hcts-receiving.*', 'hcts-inventory.*') ? 'text-white font-semibold bg-white/20 shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
                title="Penerimaan HCTS">
                 <div class="flex items-center">
                     <div class="shrink-0 w-8 flex justify-center">
@@ -261,7 +261,7 @@
         <!-- Penyerahan HCTS Group -->
         <div class="space-y-1 mt-2 mb-4">
             <button @click="penyerahanHctsOpen = !penyerahanHctsOpen; if(sidebarCollapsed) sidebarCollapsed = false;"
-               class="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('hcts-submission.*') ? 'text-white font-semibold bg-white/10' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
+               class="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('hcts-submission.*') ? 'text-white font-semibold bg-white/20 shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
                title="Penyerahan HCTS">
                 <div class="flex items-center">
                     <div class="shrink-0 w-8 flex justify-center">
