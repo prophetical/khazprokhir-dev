@@ -226,9 +226,163 @@
         }
 
         /* Global Shadow Removal (requested by user) */
-        * {
+
+        /* HCS Sorting Report Specific Styles */
+        @keyframes bounce-subtle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+        .animate-bounce-subtle {
+            animation: bounce-subtle 2s infinite ease-in-out;
+        }
+
+        body.dark-mode #main-wrapper {
+            background-color: #0f172a !important; /* slate-900 */
+        }
+        
+        body.dark-mode .bg-white,
+        body.dark-mode .bg-slate-50,
+        body.dark-mode .bg-gray-50 {
+            background-color: #1e293b !important; /* slate-800 */
+            border-color: #334155 !important; /* slate-700 */
+        }
+
+        body.dark-mode .bg-slate-100,
+        body.dark-mode .bg-slate-200 {
+            background-color: #0f172a !important; /* slate-900 */
+            border-color: #1e293b !important;
+        }
+
+        body.dark-mode .from-white,
+        body.dark-mode .to-slate-50\/50,
+        body.dark-mode .from-slate-50\/50 {
+            background-image: none !important;
+            background-color: #1e293b !important;
+        }
+
+        body.dark-mode .shadow-xl,
+        body.dark-mode .shadow-2xl,
+        body.dark-mode .shadow-sm {
             box-shadow: none !important;
-            text-shadow: none !important;
+        }
+
+        .pack-sorted-other-rikyet {
+            background-color: #dbeafe;
+            border-color: #bfdbfe;
+            color: #1e40af;
+            background-image: repeating-linear-gradient(45deg, rgba(30, 64, 175, 0.1), rgba(30, 64, 175, 0.1) 2px, transparent 2px, transparent 4px);
+        }
+        body.dark-mode .pack-sorted-other-rikyet {
+            background-color: rgba(30, 64, 175, 0.3) !important;
+            border-color: rgba(100, 116, 139, 0.3) !important;
+            color: #93c5fd !important;
+            background-image: repeating-linear-gradient(45deg, rgba(147, 197, 253, 0.1), rgba(147, 197, 253, 0.1) 2px, transparent 2px, transparent 4px) !important;
+        }
+
+        .pack-sorted-other-cutpack {
+            background-color: #dcfce7;
+            border-color: #bbf7d0;
+            color: #166534;
+            background-image: repeating-linear-gradient(-45deg, rgba(22, 101, 52, 0.1), rgba(22, 101, 52, 0.1) 2px, transparent 2px, transparent 4px);
+        }
+        body.dark-mode .pack-sorted-other-cutpack {
+            background-color: rgba(22, 101, 52, 0.3) !important;
+            border-color: rgba(100, 116, 139, 0.3) !important;
+            color: #6ee7b7 !important;
+            background-image: repeating-linear-gradient(-45deg, rgba(110, 231, 183, 0.1), rgba(110, 231, 183, 0.1) 2px, transparent 2px, transparent 4px) !important;
+        }
+
+        body.dark-mode .bg-rose-50 {
+            background-color: rgba(159, 18, 57, 0.2) !important; /* rose-900/20 */
+            border-color: rgba(225, 29, 72, 0.4) !important; /* rose-600/40 */
+            color: #fecdd3 !important; /* rose-200 */
+        }
+
+        /* Global dark mode header color (applied only if no explicit text color is set) */
+        body.dark-mode h3:not([class*="text-"]), 
+        body.dark-mode h2:not([class*="text-"]),
+        body.dark-mode h4:not([class*="text-"]) {
+            color: #ffffff !important;
+        }
+
+        /* Force black text to stay black even in dark mode (useful for colored warning boxes) */
+        body.dark-mode .text-black,
+        body.dark-mode .!text-black {
+            color: #000000 !important;
+        }
+
+        /* Detail Pengemasan HCS Specific Styles */
+        body.dark-mode .bg-gradient-to-br[class*="from-"][class*="-50"].to-white {
+            background-image: none !important;
+            background-color: rgba(30, 41, 59, 0.5) !important; /* slate-800/50 */
+            border-color: rgba(71, 85, 105, 0.3) !important; /* slate-600/30 */
+        }
+
+        /* Restore top accent borders that were overridden by global bg-white rule */
+        body.dark-mode .border-t-8.border-lime-500, body.dark-mode .border-2.border-lime-500 { border-color: #84cc16 !important; }
+        body.dark-mode .border-t-8.border-gray-500, body.dark-mode .border-2.border-gray-500 { border-color: #6b7280 !important; }
+        body.dark-mode .border-t-8.border-amber-600, body.dark-mode .border-2.border-amber-600 { border-color: #d97706 !important; }
+        body.dark-mode .border-t-8.border-purple-500, body.dark-mode .border-2.border-purple-500 { border-color: #a855f7 !important; }
+        body.dark-mode .border-t-8.border-green-500, body.dark-mode .border-2.border-green-500 { border-color: #22c55e !important; }
+        body.dark-mode .border-t-8.border-blue-500, body.dark-mode .border-2.border-blue-500 { border-color: #3b82f6 !important; }
+        body.dark-mode .border-t-8.border-red-500, body.dark-mode .border-2.border-red-500 { border-color: #ef4444 !important; }
+
+        /* Detail Pack label adjustments */
+        body.dark-mode .bg-white.px-2.py-0.5.rounded.border,
+        body.dark-mode .bg-white.shadow-sm.rounded-2xl.border-t-8 {
+            background-color: #243047 !important; /* theme-bg-card */
+        }
+
+        /* HCTS Summary Card Denomination Tints in Dark Mode */
+        body.dark-mode .bg-lime-50 { background-color: rgba(132, 204, 22, 0.1) !important; border-color: rgba(132, 204, 22, 0.2) !important; }
+        body.dark-mode .bg-gray-50 { background-color: rgba(156, 163, 175, 0.1) !important; border-color: rgba(156, 163, 175, 0.2) !important; }
+        body.dark-mode .bg-amber-50 { background-color: rgba(251, 191, 36, 0.1) !important; border-color: rgba(251, 191, 36, 0.2) !important; }
+        body.dark-mode .bg-purple-50 { background-color: rgba(168, 85, 247, 0.1) !important; border-color: rgba(168, 85, 247, 0.2) !important; }
+        body.dark-mode .bg-green-50 { background-color: rgba(34, 197, 94, 0.1) !important; border-color: rgba(34, 197, 94, 0.2) !important; }
+        body.dark-mode .bg-blue-50 { background-color: rgba(59, 130, 246, 0.1) !important; border-color: rgba(59, 130, 246, 0.2) !important; }
+        body.dark-mode .bg-red-50 { background-color: rgba(239, 68, 68, 0.1) !important; border-color: rgba(239, 68, 68, 0.2) !important; }
+
+        /* HCTS Filter Cards Dark Mode Backgrounds */
+        body.dark-mode .bg-gray-50\/50 {
+            background-color: rgba(30, 41, 59, 0.4) !important;
+            border-color: rgba(255, 255, 255, 0.05) !important;
+        }
+        body.dark-mode .bg-white\/50 {
+            background-color: rgba(15, 23, 42, 0.4) !important;
+            border-color: rgba(255, 255, 255, 0.05) !important;
+        }
+
+        /* HCTS Reset Button in Filter Card */
+        body.dark-mode .bg-white.border-gray-100.rounded-2xl.text-gray-400 {
+            background-color: rgba(30, 41, 59, 0.6) !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        /* HCTS Inventory Dark Mode Overrides */
+        body.dark-mode .bg-white\/70.backdrop-blur-md {
+            background-color: rgba(15, 23, 42, 0.6) !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+        body.dark-mode .bg-gray-50.border-gray-100.rounded-xl {
+            background-color: rgba(30, 41, 59, 0.8) !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+            color: #ffffff !important;
+        }
+        body.dark-mode .bg-emerald-50.text-emerald-600 {
+            background-color: rgba(16, 185, 129, 0.1) !important;
+            border-color: rgba(16, 185, 129, 0.2) !important;
+            color: #34d399 !important;
+        }
+
+        /* HCTS Submission Footer & Buttons in Dark Mode */
+        body.dark-mode .bg-gray-50\/30.backdrop-blur-sm {
+            background-color: rgba(15, 23, 42, 0.8) !important;
+            border-top-color: rgba(255, 255, 255, 0.05) !important;
+        }
+        body.dark-mode .bg-gray-100.text-gray-400.cursor-not-allowed.opacity-50 {
+            background-color: rgba(30, 41, 59, 0.5) !important;
+            color: rgba(148, 163, 184, 0.3) !important;
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
         }
     </style>
     @stack('css')

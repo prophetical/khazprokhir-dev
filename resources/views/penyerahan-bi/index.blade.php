@@ -57,7 +57,7 @@
                     <div class="flex items-center justify-between px-5 py-3 bg-red-100 border-b border-red-200">
                         <div class="flex items-center gap-3">
                             <svg class="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            <h3 class="font-bold text-red-800 text-sm">{{ $missingWarnings->count() }} Penyerahan Belum Lengkap — Nomor Dus Belum Dikemas</h3>
+                            <h3 class="font-bold !text-black text-sm">{{ $missingWarnings->count() }} Penyerahan Belum Lengkap — Nomor Dus Belum Dikemas</h3>
                         </div>
                         <span class="text-[10px] text-red-500">Perlu tindak lanjut</span>
                     </div>
@@ -70,13 +70,13 @@
                             <div class="px-5 py-3 grid grid-cols-1 md:grid-cols-2 gap-2">
                                 <div class="flex flex-wrap items-center gap-2">
                                     <span class="{{ $bgColor }} text-white text-[9px] font-black px-2 py-0.5 rounded">{{ $warn['pecahan'] }}</span>
-                                    <span class="text-[10px] font-bold text-gray-600">TA {{ $warn['tahun_anggaran'] }}</span>
+                                    <span class="text-[10px] font-bold text-indigo-600 font-mono">TA {{ $warn['tahun_anggaran'] }}</span>
                                     <span class="text-gray-300">·</span>
-                                    <span class="text-[10px] font-bold text-gray-600">TE {{ $warn['tahun_emisi'] }}</span>
+                                    <span class="text-[10px] font-bold text-indigo-600 font-mono">TE {{ $warn['tahun_emisi'] }}</span>
                                     <span class="text-gray-300">·</span>
                                     <span class="text-[10px] font-bold text-indigo-600 font-mono">Dus {{ $warn['nomor_range'] }}</span>
                                     <span class="text-gray-300">·</span>
-                                    <span class="text-[10px] font-mono text-red-500 font-bold">BA: {{ $warn['nomor_ba'] }}</span>
+                                    <span class="text-[10px] font-mono text-red-500 font-bold">NO BA Penyerahan: {{ $warn['nomor_ba'] }}</span>
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <span class="text-[10px] text-red-500 font-bold shrink-0">Belum Dikemas ({{ $warn['missing_count'] }} dus):</span>

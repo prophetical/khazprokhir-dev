@@ -46,7 +46,8 @@
                                         class="w-full rounded-xl border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 py-3 text-center font-black text-gray-700 bg-white">
                                         @foreach($tahunAnggaranOptions as $year)
                                             <option value="{{ $year }}" {{ $tahunAnggaran == $year ? 'selected' : '' }}>
-                                                {{ $year }}</option>
+                                                {{ $year }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -62,11 +63,12 @@
                                             class="flex-grow rounded-xl border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 py-3 text-center font-black text-gray-700 bg-white">
                                             @foreach($tahunEmisiOptions as $emisi)
                                                 <option value="{{ $emisi }}" {{ $tahunEmisi == $emisi ? 'selected' : '' }}>
-                                                    {{ $emisi }}</option>
+                                                    {{ $emisi }}
+                                                </option>
                                             @endforeach
                                         </select>
                                         <button type="submit"
-                                            class="bg-indigo-600 hover:bg-indigo-700 text-white font-black px-6 rounded-xl shadow-lg shadow-indigo-100 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center shrink-0">
+                                            class="bg-indigo-600 hover:bg-indigo-700 text-white font-black px-6 rounded-xl transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center shrink-0">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -124,7 +126,7 @@
                                     showAnnual: showAnnual,
                                     showMonthly: showMonthly
                                 }).toString()"
-                                    class="inline-flex items-center px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-black rounded-xl transition-all duration-200 shadow-lg shadow-indigo-100 hover:shadow-indigo-200 hover:-translate-y-0.5 active:translate-y-0 group">
+                                    class="inline-flex items-center px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-black rounded-xl transition-all duration-200 shadow-lg hover:-translate-y-0.5 active:translate-y-0 group">
                                     <svg class="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform" fill="none"
                                         stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

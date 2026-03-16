@@ -16,6 +16,16 @@
             'Y' => ['bg' => 'bg-red-500', 'border' => 'border-red-500', 'ring' => 'focus:ring-red-500', 'focus' => 'focus:border-red-500', 'btn' => 'bg-red-500', 'text' => 'text-white'],
         ];
     @endphp
+    
+    <style>
+        @keyframes bounce-subtle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+        .animate-bounce-subtle {
+            animation: bounce-subtle 2s infinite ease-in-out;
+        }
+    </style>
 
     <div class="py-6 min-h-screen bg-gray-50 transition-colors duration-500" x-data="sortingGrid('{{ $pecahan }}', {{ json_encode($themeClasses) }})">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
@@ -52,6 +62,7 @@
                             <div class="flex items-center"><div class="w-3 h-3 rounded-sm bg-green-500 mr-2 shadow-sm"></div>Cutpack Siap Sortir</div>
                             <div class="flex items-center"><div class="w-3 h-3 rounded-sm bg-blue-200 border border-blue-400 mr-2" style="background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 3px, transparent 3px, transparent 6px);"></div>Rikyet Tersortir</div>
                             <div class="flex items-center"><div class="w-3 h-3 rounded-sm bg-green-200 border border-green-400 mr-2" style="background-image: repeating-linear-gradient(-45deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 3px, transparent 3px, transparent 6px);"></div>Cutpack Tersortir</div>
+                            <div class="flex items-center"><div class="w-3 h-3 rounded-sm ring-2 ring-amber-400 bg-white mr-2 flex items-center justify-center text-amber-500 font-black text-[8px]"><svg class="w-2 h-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></div>Pack Terpilih</div>
                             <div class="flex items-center"><div class="w-3 h-3 rounded-sm bg-gray-100 border border-gray-200 mr-2"></div>Kosong</div>
                         </div>
 
@@ -91,12 +102,10 @@
                                 @endphp
 
                                 <div 
-                                    class="h-10 w-full flex items-center justify-center rounded-md text-sm font-black border select-none transition-all duration-200
+                                    class="h-10 w-full flex items-center justify-center rounded-md text-sm font-black border select-none transition-all duration-200 relative
                                            {{ $statusClass }}"
                                     :class="{
-                                        'ring-4 scale-110 z-10 shadow-xl brightness-125': isSelected({{ $i }}),
-                                        'ring-yellow-400': isSelected({{ $i }}) && !currentTheme,
-                                        [currentTheme ? currentTheme.ring.replace('focus:', '') : '']: isSelected({{ $i }})
+                                        'ring-4 scale-110 z-10 shadow-xl brightness-125 ring-amber-400': isSelected({{ $i }}),
                                     }"
                                     title="Pack {{ $i }} {{ $pack ? '- ' . $pack->pack_supplier : '(Kosong)' }}"
                                     @if($isReady)
@@ -106,6 +115,13 @@
                                     @endif
                                 >
                                     {{ $i }}
+
+                                    <!-- Selected Overlay -->
+                                    <template x-if="isSelected({{ $i }})">
+                                        <div class="absolute -top-1 -right-1 w-5 h-5 bg-amber-400 rounded-full flex items-center justify-center shadow-lg border-2 border-white animate-bounce-subtle">
+                                            <svg class="w-3 h-3 text-gray-900" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                        </div>
+                                    </template>
                                 </div>
                             @endfor
                         </div>
