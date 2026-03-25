@@ -430,7 +430,7 @@
                 </div>
 
                 <!-- Realtime Jam & Tanggal -->
-                <div class="hidden xl:flex items-center ml-auto mr-4 text-white/80 bg-white/5 dark:bg-slate-800/40 border border-white/10 dark:border-white/5 shadow-inner rounded-2xl px-4 py-1.5 hover:bg-white/10 transition-colors duration-300 group"
+                <div class="hidden lg:flex items-center ml-auto mr-4 text-white/80 bg-white/5 dark:bg-slate-800/40 border border-white/10 dark:border-white/5 shadow-inner rounded-2xl px-4 py-1.5 hover:bg-white/10 transition-colors duration-300 group"
                     x-data="{ 
                     time: '', 
                     date: '',
@@ -443,7 +443,7 @@
                         const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Jakarta' };
                         const optionsTime = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'Asia/Jakarta' };
                         this.date = now.toLocaleDateString('id-ID', optionsDate);
-                        this.time = now.toLocaleTimeString('id-ID', optionsTime).replace(/\./g, ':');
+                        this.time = now.toLocaleTimeString('id-ID', optionsTime).replace(/[\.]/g, ':');
                     }
                 }">
                     <div class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-500">

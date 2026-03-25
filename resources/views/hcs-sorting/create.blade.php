@@ -68,62 +68,116 @@
 
                         <!-- 10x10 Grid -->
                         <div class="grid grid-flow-col gap-2 mb-8" style="grid-template-rows: repeat(10, minmax(0, 1fr));" @mouseleave="isDragging = false">
-                            @for ($i = 1; $i <= 100; $i++)
-                                @php
-                                    $pack = $packsData->get($i);
-                                    $status = 'empty'; // default
-                                    $statusClass = 'bg-gray-50 border-gray-100 text-gray-300 cursor-not-allowed opacity-50';
-                                    $isReady = false;
+                                @for ($i = 1; $i <= 100; $i++)
+                                    @php
+                                        $pack = $packsData->get($i);
+                                        $status = 'empty';
+                                        $statusClass = 'bg-gray-50 dark:bg-slate-900/40 border-gray-100 dark:border-slate-800 text-gray-300 dark:text-slate-600 cursor-not-allowed opacity-50';
+                                        $isReady = false;
+                                        $isSorted = false;
+                                        $statusText = 'Belum Diinput';
+                                        $supplierText = 'KOSONG';
+                                        $supplierClass = 'text-gray-400';
+                                        $hatchStyle = "";
 
-                                    if ($pack) {
-                                        $isSorted = !is_null($pack->hcs_sorting_id);
-                                        $supplier = strtolower($pack->pack_supplier);
+                                        if ($pack) {
+                                            $isSorted = !is_null($pack->hcs_sorting_id);
+                                            $supplier = $pack->pack_supplier;
+                                            $supplierText = $supplier;
+                                            $supplierLower = strtolower($supplier);
 
-                                        if ($isSorted) {
-                                            $status = 'sorted';
-                                            if (str_contains($supplier, 'rikyet')) {
-                                                $statusClass = 'bg-blue-100 text-blue-900 cursor-not-allowed border-blue-200 shadow-inner opacity-60';
-                                                $hatchStyle = "background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.05), rgba(0,0,0,0.05) 4px, transparent 4px, transparent 8px);";
+                                            if ($isSorted) {
+                                                $status = 'sorted';
+                                                $statusText = "Sudah Tersortir";
+                                                if (str_contains($supplierLower, 'rikyet')) {
+                                                    $statusClass = 'bg-blue-100 dark:bg-blue-900/30 text-blue-900 dark:text-blue-300 cursor-not-allowed border-blue-200 dark:border-blue-800 shadow-inner opacity-60';
+                                                    $hatchStyle = "background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.05), rgba(0,0,0,0.05) 4px, transparent 4px, transparent 8px);";
+                                                    $supplierClass = 'text-blue-400';
+                                                } else {
+                                                    $statusClass = 'bg-green-100 dark:bg-green-900/30 text-green-900 dark:text-green-300 cursor-not-allowed border-green-200 dark:border-green-800 shadow-inner opacity-60';
+                                                    $hatchStyle = "background-image: repeating-linear-gradient(-45deg, rgba(0,0,0,0.05), rgba(0,0,0,0.05) 4px, transparent 4px, transparent 8px);";
+                                                    $supplierClass = 'text-green-400';
+                                                }
                                             } else {
-                                                $statusClass = 'bg-green-100 text-green-900 cursor-not-allowed border-green-200 shadow-inner opacity-60';
-                                                $hatchStyle = "background-image: repeating-linear-gradient(-45deg, rgba(0,0,0,0.05), rgba(0,0,0,0.05) 4px, transparent 4px, transparent 8px);";
-                                            }
-                                            $statusClass .= '" style="' . $hatchStyle; 
-                                        } else {
-                                            $status = 'ready';
-                                            $isReady = true;
-                                            if (str_contains($supplier, 'rikyet')) {
-                                                $statusClass = 'bg-blue-500 text-white hover:bg-blue-600 cursor-pointer shadow-sm hover:scale-105 transform transition-all';
-                                            } else {
-                                                $statusClass = 'bg-green-500 text-white hover:bg-green-600 cursor-pointer shadow-sm hover:scale-105 transform transition-all';
+                                                $status = 'ready';
+                                                $statusText = "Tersedia untuk disortir";
+                                                $isReady = true;
+                                                if (str_contains($supplierLower, 'rikyet')) {
+                                                    $statusClass = 'bg-blue-500 text-white hover:bg-blue-600 cursor-pointer shadow-sm hover:scale-105 transform transition-all';
+                                                    $supplierClass = 'text-blue-400';
+                                                } else {
+                                                    $statusClass = 'bg-green-500 text-white hover:bg-green-600 cursor-pointer shadow-sm hover:scale-105 transform transition-all';
+                                                    $supplierClass = 'text-green-400';
+                                                }
                                             }
                                         }
-                                    }
-                                @endphp
 
-                                <div 
-                                    class="h-10 w-full flex items-center justify-center rounded-md text-sm font-black border select-none transition-all duration-200 relative
-                                           {{ $statusClass }}"
-                                    :class="{
-                                        'ring-4 scale-110 z-10 shadow-xl brightness-125 ring-amber-400': isSelected({{ $i }}),
-                                    }"
-                                    title="Pack {{ $i }} {{ $pack ? '- ' . $pack->pack_supplier : '(Kosong)' }}"
-                                    @if($isReady)
-                                        @mousedown="startSelection({{ $i }})"
-                                        @mouseenter="onHover({{ $i }})"
-                                        @mouseup="endSelection()"
-                                    @endif
-                                >
-                                    {{ $i }}
+                                        // Corrected grid calculations for grid-flow-col (column-major)
+                                        $gridRow = ($i - 1) % 10;
+                                        $gridCol = floor(($i - 1) / 10);
+                                        
+                                        $vClass = ($gridRow < 4) ? 'top-full mt-2 flex-col-reverse' : 'bottom-full mb-2 flex-col';
+                                        $arrowV = ($gridRow < 4) ? '-mb-1' : '-mt-1';
+                                        if ($gridCol < 2) {
+                                            $hClass = 'left-0 translate-x-0';
+                                            $arrowH = 'left-3 translate-x-0';
+                                        } elseif ($gridCol > 7) {
+                                            $hClass = 'right-0 left-auto translate-x-0';
+                                            $arrowH = 'right-3 translate-x-0';
+                                        } else {
+                                            $hClass = 'left-1/2 -translate-x-1/2';
+                                            $arrowH = 'left-1/2 -translate-x-1/2';
+                                        }
+                                    @endphp
 
-                                    <!-- Selected Overlay -->
-                                    <template x-if="isSelected({{ $i }})">
-                                        <div class="absolute -top-1 -right-1 w-5 h-5 bg-amber-400 rounded-full flex items-center justify-center shadow-lg border-2 border-white animate-bounce-subtle">
-                                            <svg class="w-3 h-3 text-gray-900" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                    <div class="relative group/pack">
+                                        <div 
+                                            class="h-10 w-full flex items-center justify-center rounded-md text-sm font-black border select-none transition-all duration-200 relative overflow-hidden
+                                                   {{ $statusClass }}"
+                                            style="{{ $hatchStyle }}"
+                                            :class="{
+                                                'ring-4 scale-110 z-10 shadow-xl brightness-125 ring-amber-400 !border-amber-500 !bg-white !text-gray-900': isSelected({{ $i }}),
+                                            }"
+                                            @if($isReady)
+                                                @mousedown="startSelection({{ $i }})"
+                                                @mouseenter="onHover({{ $i }})"
+                                                @mouseup="endSelection()"
+                                            @endif
+                                        >
+                                            <span class="relative z-10">{{ $i }}</span>
+
+                                            <!-- Selected Overlay -->
+                                            <template x-if="isSelected({{ $i }})">
+                                                <div class="absolute -top-1 -right-1 w-5 h-5 bg-amber-400 rounded-full flex items-center justify-center shadow-lg border-2 border-white animate-bounce-subtle z-20">
+                                                    <svg class="w-3 h-3 text-gray-900" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                                </div>
+                                            </template>
                                         </div>
-                                    </template>
-                                </div>
-                            @endfor
+
+                                        <!-- Enhanced Tooltip -->
+                                        <div class="pointer-events-none absolute {{ $vClass }} {{ $hClass }} z-[100] hidden group-hover/pack:flex items-center transition-all duration-300">
+                                            <div class="bg-gray-900/95 dark:bg-slate-900/95 backdrop-blur-md text-white text-[10px] rounded-2xl px-4 py-3 whitespace-nowrap shadow-2xl text-center leading-tight border border-white/10 dark:border-slate-700/50 min-w-[150px]">
+                                                <div class="font-black border-b border-white/10 dark:border-slate-700 pb-2 mb-2 flex items-center justify-center gap-2">
+                                                    PACK {{ $i }}
+                                                    <span class="px-2 py-0.5 rounded-full text-[8px] text-white" 
+                                                          :class="isSelected({{ $i }}) ? 'bg-amber-500' : 'bg-rose-500'" 
+                                                          x-show="isSelected({{ $i }}) || {{ $isSorted ? 'true' : 'false' }}">
+                                                        <span x-show="isSelected({{ $i }})">DIPILIH</span>
+                                                        <span x-show="!isSelected({{ $i }}) && {{ $isSorted ? 'true' : 'false' }}">TERSORTIR</span>
+                                                    </span>
+                                                </div>
+                                                <div class="font-black uppercase tracking-wider text-xs"
+                                                     :class="isSelected({{ $i }}) ? 'text-amber-400' : '{{ $supplierClass }}'">
+                                                    {{ $supplierText }}
+                                                </div>
+                                                <div class="text-gray-400 dark:text-slate-500 text-[9px] mt-1.5 font-bold uppercase tracking-widest"
+                                                     x-text="isSelected({{ $i }}) ? 'Pack Terpilih di Sesi Ini' : '{{ $statusText }}'">
+                                                </div>
+                                            </div>
+                                            <div class="w-2.5 h-2.5 bg-gray-900 dark:bg-slate-900 rotate-45 border-r border-b border-white/10 dark:border-slate-700/50 {{ $arrowV }} {{ $arrowH }}"></div>
+                                        </div>
+                                    </div>
+                                @endfor
                         </div>
                         
                         <!-- Validation Message -->

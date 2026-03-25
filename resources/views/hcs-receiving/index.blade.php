@@ -42,79 +42,80 @@
                     :class="currentTheme ? currentTheme.border : 'border-gray-100'">
                         <form action="{{ route('hcs-receiving.index') }}" method="GET">
                             <div class="p-6">
-                                <div class="flex flex-col xl:flex-row gap-5 items-end">
+                                <div class="grid grid-cols-1 md:grid-cols-4 gap-x-4 gap-y-3 items-end">
                                     
                                     {{-- Primary Search --}}
-                                    <div class="flex-1 w-full">
-                                        <label for="search" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Cari Data</label>
+                                    <div class="md:col-span-2">
+                                        <label for="search" class="block text-[9px] font-black text-gray-400 uppercase tracking-[0.15em] mb-1.5 ml-1">Cari Data</label>
                                         <div class="relative group">
-                                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                                <svg class="w-4 h-4 text-gray-400 transition-colors" 
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <svg class="w-3.5 h-3.5 text-gray-400 transition-colors" 
                                                      :class="currentTheme ? currentTheme.text.replace('text-', 'text-opacity-50 text-') : 'group-focus-within:text-indigo-500'"
                                                      fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                                             </div>
                                             <input id="search" name="search" type="text" 
-                                                class="pl-10 block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 transition-all text-center filter-input" 
+                                                class="pl-9 block w-full border-gray-200 rounded-lg shadow-sm text-xs py-2 transition-all text-center filter-input" 
                                                 :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
-                                                value="{{ request('search') }}" placeholder="" />
+                                                value="{{ request('search') }}" placeholder="No. Bon / Batch" />
                                         </div>
                                     </div>
 
-                                    {{-- Denomination & Supplier Group --}}
-                                    <div class="grid grid-cols-2 gap-4 w-full xl:w-auto">
-                                        <div class="w-full xl:w-32">
-                                            <label for="pecahan" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 text-center">Pecahan</label>
-                                            <select id="pecahan" name="pecahan" x-model="selectedPecahan"
-                                                    class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 text-center transition-all duration-300 filter-input" 
-                                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
-                                                <option value="">Semua</option>
-                                                @foreach(['S'=>'1.000','T'=>'2.000','U'=>'5.000','V'=>'10.000','W'=>'20.000','X'=>'50.000','Y'=>'100.000'] as $key => $val)
-                                                    <option value="{{ $key }}">{{ $key }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="w-full xl:w-32">
-                                            <label for="supplier" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 text-center">Supplier</label>
-                                            <select id="supplier" name="supplier" 
-                                                    class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 text-center transition-all duration-300 filter-input" 
-                                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
-                                                <option value="">Semua</option>
-                                                <option value="Cutpack" {{ request('supplier') == 'Cutpack' ? 'selected' : '' }}>CP</option>
-                                                <option value="Rikyet" {{ request('supplier') == 'Rikyet' ? 'selected' : '' }}>RK</option>
-                                            </select>
-                                        </div>
+                                    {{-- Pecahan --}}
+                                    <div class="md:col-span-1">
+                                        <label for="pecahan" class="block text-[9px] font-black text-gray-400 uppercase tracking-[0.15em] mb-1.5 text-center">Pecahan</label>
+                                        <select id="pecahan" name="pecahan" x-model="selectedPecahan"
+                                                class="block w-full border-gray-200 rounded-lg shadow-sm text-xs py-2 text-center transition-all duration-300 filter-input appearance-none" 
+                                                :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
+                                            <option value="">Semua</option>
+                                            @foreach(['S'=>'1.000','T'=>'2.000','U'=>'5.000','V'=>'10.000','W'=>'20.000','X'=>'50.000','Y'=>'100.000'] as $key => $val)
+                                                <option value="{{ $key }}">{{ $key }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
 
-                                    {{-- Date Range Group --}}
-                                    <div class="grid grid-cols-2 gap-4 w-full xl:w-auto">
-                                        <div class="w-full xl:w-36">
-                                            <label for="start_date" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 text-center">Dari</label>
-                                            <input id="start_date" name="start_date" type="date" 
-                                                   class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-2 text-center transition-all duration-300 filter-input" 
-                                                   :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
-                                                   value="{{ request('start_date') }}" />
-                                        </div>
-                                        <div class="w-full xl:w-36">
-                                            <label for="end_date" class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 text-center">Sampai</label>
-                                            <input id="end_date" name="end_date" type="date" 
-                                                   class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-2 text-center transition-all duration-300 filter-input" 
-                                                   :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
-                                                   value="{{ request('end_date') }}" />
-                                        </div>
+                                    {{-- Supplier --}}
+                                    <div class="md:col-span-1">
+                                        <label for="supplier" class="block text-[9px] font-black text-gray-400 uppercase tracking-[0.15em] mb-1.5 text-center">Supplier</label>
+                                        <select id="supplier" name="supplier" 
+                                                class="block w-full border-gray-200 rounded-lg shadow-sm text-xs py-2 text-center transition-all duration-300 filter-input appearance-none" 
+                                                :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
+                                            <option value="">Semua</option>
+                                            <option value="Cutpack" {{ request('supplier') == 'Cutpack' ? 'selected' : '' }}>CP</option>
+                                            <option value="Rikyet" {{ request('supplier') == 'Rikyet' ? 'selected' : '' }}>RK</option>
+                                        </select>
+                                    </div>
+
+                                    {{-- Dari --}}
+                                    <div class="md:col-span-1">
+                                        <label for="start_date" class="block text-[9px] font-black text-gray-400 uppercase tracking-[0.15em] mb-1.5 text-center">Dari</label>
+                                        <input id="start_date" name="start_date" type="date" 
+                                               class="block w-full border-gray-200 rounded-lg shadow-sm text-[10px] py-2 px-1 text-center transition-all duration-300 filter-input" 
+                                               :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
+                                               value="{{ request('start_date') }}" />
+                                    </div>
+
+                                    {{-- Sampai --}}
+                                    <div class="md:col-span-1">
+                                        <label for="end_date" class="block text-[9px] font-black text-gray-400 uppercase tracking-[0.15em] mb-1.5 text-center">Sampai</label>
+                                        <input id="end_date" name="end_date" type="date" 
+                                               class="block w-full border-gray-200 rounded-lg shadow-sm text-[10px] py-2 px-1 text-center transition-all duration-300 filter-input" 
+                                               :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
+                                               value="{{ request('end_date') }}" />
                                     </div>
 
                                     {{-- Actions --}}
-                                    <div class="flex gap-2 w-full xl:w-auto">
-                                        <button type="submit" id="search-btn"
-                                            class="flex-1 xl:flex-none inline-flex items-center justify-center px-8 py-3 rounded-lg text-sm font-bold transition-all shadow-md active:scale-95 uppercase tracking-wider"
-                                            :class="currentTheme ? (currentTheme.btn + ' ' + currentTheme.text + ' brightness-95 hover:brightness-105') : 'bg-indigo-600 text-white hover:bg-indigo-700'">
-                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                                        </button>
+                                    <div class="md:col-span-2 flex gap-2">
                                         @if(request()->anyFilled(['search', 'start_date', 'end_date', 'pecahan', 'supplier']))
-                                            <a href="{{ route('hcs-receiving.index') }}" class="xl:flex-none inline-flex items-center justify-center px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-400 rounded-lg transition-all border border-gray-200">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                            <a href="{{ route('hcs-receiving.index') }}" class="inline-flex items-center justify-center px-4 py-2 bg-gray-50 hover:bg-gray-100 text-gray-400 rounded-lg transition-all border border-gray-200" title="Reset Filter">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                                             </a>
                                         @endif
+                                        <button type="submit" id="search-btn"
+                                            class="flex-1 inline-flex items-center justify-center px-6 py-2 rounded-lg text-xs font-black transition-all shadow-sm active:scale-95 uppercase tracking-widest"
+                                            :class="currentTheme ? (currentTheme.btn + ' ' + currentTheme.text + ' brightness-95 hover:brightness-105') : 'bg-indigo-600 text-white hover:bg-indigo-700'">
+                                            <svg class="w-3.5 h-3.5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                            <span>Tampilkan Data</span>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -189,10 +190,7 @@
                                         </a>
                                     </th>
                                     <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest text-center">
-                                        Emisi
-                                    </th>
-                                    <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest text-center">
-                                        TA
+                                        TA/TE
                                     </th>
                                     <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">
                                         <a href="{{ route('hcs-receiving.index', array_merge(request()->query(), ['sort_by' => 'batch', 'sort_direction' => request('sort_by') === 'batch' && request('sort_direction') === 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center hover:text-indigo-600 transition-colors">
@@ -218,7 +216,7 @@
                                 @forelse ($receivings->groupBy(function($item) { return $item->batch . ' / ' . $item->seri . ' / ' . $item->pecahan; }) as $groupKey => $groupItems)
                                     <!-- Group Header Row -->
                                     <tr class="bg-indigo-50 border-t border-b border-indigo-100">
-                                        <td colspan="10" class="px-6 py-3 text-sm font-bold text-indigo-900">
+                                        <td colspan="9" class="px-6 py-3 text-sm font-bold text-indigo-400">
                                             <div class="flex justify-between items-center w-full">
                                                 <span>{{ $groupKey }}</span>
                                                 <span class="font-mono text-indigo-700">Total: {{ number_format($groupItems->sum('jumlah'), 0, ',', '.') }} Bilyet</span>
@@ -238,23 +236,25 @@
                                             <td class="px-4 py-4 whitespace-nowrap text-sm">
                                                 @php
                                                     $pecahanColors = [
-                                                        'S' => 'bg-lime-100 text-lime-700 border-lime-200',
-                                                        'T' => 'bg-slate-100 text-slate-700 border-slate-200',
-                                                        'U' => 'bg-orange-100 text-orange-700 border-orange-200',
-                                                        'V' => 'bg-purple-100 text-purple-700 border-purple-200',
-                                                        'W' => 'bg-green-100 text-green-700 border-green-200',
-                                                        'X' => 'bg-blue-100 text-blue-700 border-blue-200',
-                                                        'Y' => 'bg-red-100 text-red-700 border-red-200',
+                                                        'S' => 'bg-lime-50 text-lime-700 border-lime-200 dark:bg-lime-900/20 dark:text-lime-400 dark:border-lime-800/40',
+                                                        'T' => 'bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-800/20 dark:text-slate-400 dark:border-slate-700/40',
+                                                        'U' => 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800/40',
+                                                        'V' => 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-400 dark:border-purple-800/40',
+                                                        'W' => 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800/40',
+                                                        'X' => 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/40',
+                                                        'Y' => 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-900/20 dark:text-rose-400 dark:border-rose-800/40',
                                                     ];
-                                                    $badgeClass = $pecahanColors[$receiving->pecahan] ?? 'bg-gray-100 text-gray-700 border-gray-200';
+                                                    $badgeClass = $pecahanColors[$receiving->pecahan] ?? 'bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800/20 dark:text-gray-400 dark:border-gray-700/40';
                                                 @endphp
-                                                <span class="px-3 py-1 rounded-md text-xs font-bold border {{ $badgeClass }}">
+                                                <span class="px-3 py-1 rounded-md text-[10px] font-black border uppercase tracking-wider {{ $badgeClass }}">
                                                     {{ $receiving->pecahan }}
                                                 </span>
                                             </td>
                                             <td class="px-4 py-4 whitespace-nowrap text-sm font-mono text-indigo-700 font-bold">{{ number_format($receiving->jumlah, 0, ',', '.') }}</td>
-                                            <td class="px-4 py-4 whitespace-nowrap text-sm text-center font-bold text-gray-700">{{ $receiving->emisi }}</td>
-                                            <td class="px-4 py-4 whitespace-nowrap text-sm text-center font-bold text-gray-700">{{ $receiving->tahun_anggaran }}</td>
+                                            <td class="px-4 py-4 whitespace-nowrap text-sm text-center font-bold text-gray-600">
+                                                <div class="text-[10px] text-gray-400 leading-none mb-1">{{ $receiving->tahun_anggaran }}</div>
+                                                <div class="text-xs">{{ $receiving->emisi }}</div>
+                                            </td>
                                             <td class="px-4 py-4 whitespace-nowrap text-sm font-mono text-gray-600">
                                                 <div>{{ $receiving->batch }}</div>
                                                 @if(isset($receiving->packs) && $receiving->packs->whereNotNull('hcs_sorting_id')->isNotEmpty())
@@ -366,7 +366,7 @@
     <style>
         /* Alignment & Height Unification */
         #search, #pecahan, #supplier, #start_date, #end_date, #search-btn {
-            height: 46px !important;
+            height: 38px !important;
             box-sizing: border-box;
         }
 

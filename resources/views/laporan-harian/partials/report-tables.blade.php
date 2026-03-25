@@ -405,14 +405,14 @@
 <div class="bg-white overflow-hidden shadow-2xl sm:rounded-2xl border border-gray-100 mt-8 p-1">
     <div class="bg-gray-50/50 rounded-[1.25rem] p-6">
         <div class="flex justify-between items-center mb-6">
-            <h3 class="text-lg font-black text-orange-600 tracking-tight flex items-center">
-                <span class="w-2 h-6 bg-orange-600 rounded-full mr-3"></span>
+            <h3 class="text-lg font-black text-fuchsia-600 tracking-tight flex items-center">
+                <span class="w-2 h-6 bg-fuchsia-600 rounded-full mr-3"></span>
                 Laporan Persediaan HCTS
                 {{ \Carbon\Carbon::parse($tanggalLaporan)->locale('id')->isoFormat('dddd, D MMMM Y') }} TA
                 {{ $tahunAnggaran }}
             </h3>
             <button @click="showHcts = !showHcts"
-                class="p-2 hover:bg-orange-100 rounded-lg transition-colors text-orange-600">
+                class="p-2 hover:bg-fuchsia-100 rounded-lg transition-colors text-fuchsia-600">
                 <svg class="w-6 h-6 transition-transform duration-200" :class="{ 'rotate-180': !showHcts }" fill="none"
                     stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />

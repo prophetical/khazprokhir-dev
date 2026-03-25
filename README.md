@@ -34,7 +34,7 @@ Khazprokhir is a high-performance web application designed to streamline and mon
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/username/khazprokhir.git
+   git clone https://github.com/prophetical/khazprokhir.git
    cd khazprokhir
    ```
 
@@ -51,6 +51,7 @@ Khazprokhir is a high-performance web application designed to streamline and mon
    cp .env.example .env
    php artisan key:generate
    ```
+
    *Configure your database settings in the `.env` file.*
 
 4. **Database Migration**
@@ -70,6 +71,7 @@ Khazprokhir is a high-performance web application designed to streamline and mon
    ```bash
    php artisan serve
    ```
+
    Visit `http://localhost:8000` to access the portal.
 
 ## 🤝 Contributing

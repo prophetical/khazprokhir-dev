@@ -45,14 +45,14 @@
                         <!-- Card Header -->
                         <div class="px-8 py-6 border-b border-slate-50 dark:border-slate-700/30 flex justify-between items-center bg-white dark:bg-slate-800/50">
                             <div>
-                                <h3 class="text-xl font-black text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <h3 class="text-xl font-black text-gray-800 dark:text-gray-100 flex items-center gap-2">
                                     <span class="w-2 h-8 bg-indigo-600 dark:bg-indigo-500 rounded-full"></span>
                                     Visualisasi Data Pack
                                 </h3>
-                                <p class="text-xs text-slate-400 dark:text-slate-500 font-medium mt-1">Ubah atau sesuaikan pilihan pack yang disortir untuk batch ini.</p>
+                                <p class="text-xs text-gray-400 dark:text-gray-500 font-medium mt-1">Ubah atau sesuaikan pilihan pack yang disortir untuk batch ini.</p>
                                 <div class="flex items-center gap-2 mt-3">
-                                    <span class="px-2 py-1 bg-slate-100 dark:bg-slate-900/50 rounded-lg text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700 shadow-sm">Batch: {{ $hcs_sorting_report->batch }}</span>
-                                    <span class="px-2 py-1 bg-slate-100 dark:bg-slate-900/50 rounded-lg text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700 shadow-sm">Seri: {{ $hcs_sorting_report->seri }}</span>
+                                    <span class="px-2 py-1 bg-slate-100 dark:bg-slate-900/50 rounded-lg text-[10px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700 shadow-sm">Batch: {{ $hcs_sorting_report->batch }}</span>
+                                    <span class="px-2 py-1 bg-slate-100 dark:bg-slate-900/50 rounded-lg text-[10px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700 shadow-sm">Seri: {{ $hcs_sorting_report->seri }}</span>
                                     @php
                                         $pecahanColors = [
                                             'S' => 'bg-lime-500', 'T' => 'bg-gray-400', 'U' => 'bg-amber-400', 
@@ -69,29 +69,29 @@
                             <div class="mb-8 p-5 bg-slate-50/80 dark:bg-slate-900/40 rounded-2xl border border-slate-100/50 dark:border-slate-700/30 grid grid-cols-2 md:grid-cols-3 gap-4">
                                 <div class="flex items-center gap-2.5">
                                     <div class="w-5 h-5 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg shadow-blue-200 dark:shadow-none ring-2 ring-white dark:ring-slate-700"></div>
-                                    <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tighter">Rikyet (Tersedia)</span>
+                                    <span class="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-tighter">Rikyet (Tersedia)</span>
                                 </div>
                                 <div class="flex items-center gap-2.5">
                                     <div class="w-5 h-5 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-lg shadow-emerald-200 dark:shadow-none ring-2 ring-white dark:ring-slate-700"></div>
-                                    <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tighter">Cutpack (Tersedia)</span>
+                                    <span class="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-tighter">Cutpack (Tersedia)</span>
                                 </div>
                                 <div class="flex items-center gap-2.5">
                                     <div class="w-5 h-5 rounded-lg pack-sorted-other-rikyet relative overflow-hidden ring-2 ring-white dark:ring-slate-700"></div>
-                                    <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tighter">Rikyet (Sesi Lain)</span>
+                                    <span class="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-tighter">Rikyet (Sesi Lain)</span>
                                 </div>
                                 <div class="flex items-center gap-2.5">
                                     <div class="w-5 h-5 rounded-lg pack-sorted-other-cutpack relative overflow-hidden ring-2 ring-white dark:ring-slate-700"></div>
-                                    <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tighter">Cutpack (Sesi Lain)</span>
+                                    <span class="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-tighter">Cutpack (Sesi Lain)</span>
                                 </div>
                                 <div class="flex items-center gap-2.5">
                                     <div class="w-5 h-5 rounded-lg ring-2 ring-amber-400 bg-white dark:bg-slate-700 flex items-center justify-center text-amber-500 shadow-sm">
                                         <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
                                     </div>
-                                    <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tighter">Pack Terpilih</span>
+                                    <span class="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-tighter">Pack Terpilih</span>
                                 </div>
                                 <div class="flex items-center gap-2.5">
                                     <div class="w-5 h-5 rounded-lg bg-slate-200 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 ring-2 ring-white dark:ring-slate-700 shadow-inner"></div>
-                                    <span class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-tighter">Belum Diinput</span>
+                                    <span class="text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-tighter">Belum Diinput</span>
                                 </div>
                             </div>
 
@@ -103,41 +103,73 @@
                                             $pack = $packsData->get($i);
                                             $statusStyle = '';
                                             $isReady = false;
+                                            $isSortedByOther = false; 
                                             $extraClasses = '';
+                                            $statusText = 'Belum Diinput';
+                                            $supplierText = 'KOSONG';
+                                            $supplierClass = 'text-gray-400';
 
                                             if ($pack) {
-                                                $supplier = strtolower($pack->pack_supplier);
+                                                $supplier = $pack->pack_supplier;
+                                                $supplierText = $supplier;
+                                                $supplierLower = strtolower($supplier);
                                                 $isSortedByOther = !is_null($pack->hcs_sorting_id) && $pack->hcs_sorting_id !== $hcs_sorting_report->id;
 
                                                 if ($isSortedByOther) {
+                                                    $statusText = "Sudah Tersortir (Sesi Lain)";
                                                     $extraClasses .= ' cursor-not-allowed opacity-60 dark:opacity-40';
-                                                    $extraClasses .= str_contains($supplier, 'rikyet') ? ' pack-sorted-other-rikyet' : ' pack-sorted-other-cutpack';
+                                                    $isRikyet = str_contains($supplierLower, 'rikyet');
+                                                    $extraClasses .= $isRikyet ? ' pack-sorted-other-rikyet' : ' pack-sorted-other-cutpack';
+                                                    $supplierClass = $isRikyet ? 'text-blue-400' : 'text-emerald-400';
                                                 } else {
+                                                    $statusText = "Tersedia untuk disortir";
                                                     $isReady = true;
-                                                    if (str_contains($supplier, 'rikyet')) {
+                                                    if (str_contains($supplierLower, 'rikyet')) {
                                                         $extraClasses = 'bg-gradient-to-br from-blue-500 to-blue-700 dark:from-blue-600 dark:to-blue-800 text-white hover:scale-105 hover:shadow-lg shadow-blue-200 dark:shadow-none border-blue-400 dark:border-blue-500 active:scale-95';
+                                                        $supplierClass = 'text-blue-400';
                                                     } else {
                                                         $extraClasses = 'bg-gradient-to-br from-emerald-500 to-emerald-700 dark:from-emerald-600 dark:to-emerald-800 text-white hover:scale-105 hover:shadow-lg shadow-emerald-200 dark:shadow-none border-emerald-400 dark:border-emerald-500 active:scale-95';
+                                                        $supplierClass = 'text-emerald-400';
                                                     }
                                                 }
                                             } else {
                                                 $extraClasses = 'bg-slate-200 dark:bg-slate-700/50 text-slate-400 dark:text-slate-500 border-slate-300 dark:border-slate-600/50 opacity-40 cursor-not-allowed';
                                             }
+
+                                            // Corrected grid calculations for grid-flow-col (column-major)
+                                            $gridRow = ($i - 1) % 10;
+                                            $gridCol = floor(($i - 1) / 10);
+                                            
+                                            // Vertical: Avoid top/bottom clipping
+                                            $vClass = ($gridRow < 4) ? 'top-full mt-2 flex-col-reverse' : 'bottom-full mb-2 flex-col';
+                                            $arrowV = ($gridRow < 4) ? '-mb-1' : '-mt-1';
+
+                                            // Horizontal: Avoid left/right clipping
+                                            if ($gridCol < 2) {
+                                                $hClass = 'left-0 translate-x-0';
+                                                $arrowH = 'left-3 translate-x-0';
+                                            } elseif ($gridCol > 7) {
+                                                $hClass = 'right-0 left-auto translate-x-0';
+                                                $arrowH = 'right-3 translate-x-0';
+                                            } else {
+                                                $hClass = 'left-1/2 -translate-x-1/2';
+                                                $arrowH = 'left-1/2 -translate-x-1/2';
+                                            }
                                         @endphp
 
-                                        <div 
-                                            class="h-10 w-full flex items-center justify-center rounded-lg text-sm font-black border-2 select-none transition-all duration-200 relative overflow-hidden shadow-sm dark:shadow-none
-                                                   {{ $extraClasses }}"
-                                            :class="{
-                                                'ring-4 scale-110 z-10 shadow-xl brightness-125 ring-amber-400 ring-offset-0 !opacity-100 !border-amber-500': isSelected({{ $i }})
-                                            }"
-                                            title="Pack {{ $i }} {{ $pack ? '- ' . $pack->pack_supplier : '(Kosong)' }}"
-                                            @if($isReady)
-                                                @mousedown="startSelection({{ $i }})"
-                                                @mouseenter="onHover({{ $i }})"
-                                                @mouseup="endSelection()"
-                                            @endif
-                                        >
+                                        <div class="relative group/pack">
+                                            <div 
+                                                class="h-10 w-full flex items-center justify-center rounded-lg text-sm font-black border-2 select-none transition-all duration-200 relative overflow-hidden shadow-sm dark:shadow-none
+                                                       {{ $extraClasses }}"
+                                                :class="{
+                                                    'ring-4 scale-110 z-10 shadow-xl brightness-125 ring-amber-400 ring-offset-0 !opacity-100 !border-amber-500': isSelected({{ $i }})
+                                                }"
+                                                @if($isReady)
+                                                    @mousedown="startSelection({{ $i }})"
+                                                    @mouseenter="onHover({{ $i }})"
+                                                    @mouseup="endSelection()"
+                                                @endif
+                                            >
                                             <span class="relative z-10">{{ $i }}</span>
                                             
                                             <!-- Selected Overlay -->
@@ -147,13 +179,37 @@
                                                 </div>
                                             </template>
                                         </div>
+
+                                        <!-- Custom Tooltip -->
+                                        <div class="pointer-events-none absolute {{ $vClass }} {{ $hClass }} z-[100] hidden group-hover/pack:flex items-center transition-all duration-300">
+                                            <div class="bg-gray-900/95 dark:bg-slate-900/95 backdrop-blur-md text-white text-[10px] rounded-2xl px-4 py-3 whitespace-nowrap shadow-2xl text-center leading-tight border border-white/10 dark:border-slate-700/50 min-w-[150px]">
+                                                <div class="font-black border-b border-white/10 dark:border-slate-700 pb-2 mb-2 flex items-center justify-center gap-2">
+                                                    PACK {{ $i }}
+                                                    <span class="px-2 py-0.5 rounded-full text-[8px] text-white" 
+                                                          :class="isSelected({{ $i }}) ? 'bg-amber-500' : 'bg-rose-500'" 
+                                                          x-show="isSelected({{ $i }}) || {{ $isSortedByOther ? 'true' : 'false' }}">
+                                                        <span x-show="isSelected({{ $i }})">DIPILIH</span>
+                                                        <span x-show="!isSelected({{ $i }}) && {{ $isSortedByOther ? 'true' : 'false' }}">TERSORTIR</span>
+                                                    </span>
+                                                </div>
+                                                <div class="font-black uppercase tracking-wider text-xs"
+                                                     :class="isSelected({{ $i }}) ? 'text-amber-400' : '{{ $supplierClass }}'">
+                                                    {{ $supplierText }}
+                                                </div>
+                                                <div class="text-gray-400 dark:text-slate-500 text-[9px] mt-1.5 font-bold uppercase tracking-widest"
+                                                     x-text="isSelected({{ $i }}) ? 'Pack Terpilih di Sesi Ini' : '{{ $statusText }}'">
+                                                </div>
+                                            </div>
+                                            <div class="w-2.5 h-2.5 bg-gray-900 dark:bg-slate-900 rotate-45 border-r border-b border-white/10 dark:border-slate-700/50 {{ $arrowV }} {{ $arrowH }}"></div>
+                                        </div>
+                                    </div>
                                     @endfor
                                 </div>
                             </div>
                             
                             <!-- Instruction & Error Messages -->
                             <div class="mt-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                                <div class="flex items-center gap-3 text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest bg-slate-50 dark:bg-slate-900/40 px-4 py-3 rounded-xl border border-slate-100 dark:border-slate-800">
+                                <div class="flex items-center gap-3 text-gray-400 dark:text-gray-500 text-xs font-bold uppercase tracking-widest bg-slate-50 dark:bg-slate-900/40 px-4 py-3 rounded-xl border border-slate-100 dark:border-slate-800">
                                     <svg class="w-5 h-5 text-indigo-400 dark:text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                     Klik & Geser (Drag) untuk memilih kelipatan 4 pack secara berurutan.
                                 </div>
@@ -178,7 +234,7 @@
                     <div class="bg-white dark:bg-slate-800/50 rounded-3xl shadow-2xl shadow-slate-200/80 dark:shadow-none border border-slate-100 dark:border-slate-700/50 overflow-hidden sticky top-24">
                         <!-- Dashboard style sumarry -->
                         <div class="px-8 pt-8 pb-4">
-                            <h3 class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-4">Ringkasan Seleksi</h3>
+                            <h3 class="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-4">Ringkasan Seleksi</h3>
                             <div class="grid grid-cols-1 gap-4">
                                 <div class="bg-gradient-to-br from-indigo-500 to-indigo-700 p-4 rounded-2xl text-white relative overflow-hidden group">
                                     <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
@@ -218,11 +274,11 @@
                                      :class="isManual ? 'ring-2 ring-red-500/20 border-red-100 dark:border-red-900/30 bg-red-50/30 dark:bg-red-950/20' : ''">
                                     <div class="flex items-center">
                                         <div class="w-8 h-8 rounded-lg flex items-center justify-center mr-3 transition-colors duration-300"
-                                             :class="isManual ? 'bg-red-500 text-white shadow-lg shadow-red-500/30' : 'bg-gray-200 dark:bg-slate-700 text-gray-400 dark:text-slate-500'">
+                                             :class="isManual ? 'bg-red-500 text-white shadow-lg shadow-red-500/30' : 'bg-gray-200 dark:bg-slate-700 text-gray-400 dark:text-gray-500'">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                                         </div>
-                                        <span class="text-[10px] font-black uppercase tracking-widest transition-colors duration-300"
-                                              :class="isManual ? 'text-red-600 dark:text-red-400' : 'text-gray-500 dark:text-slate-400'">
+                                         <span class="text-[10px] font-black uppercase tracking-widest transition-colors duration-300"
+                                              :class="isManual ? 'text-red-600 dark:text-red-400' : 'text-gray-500 dark:text-gray-400'">
                                             Input Sisa Pack (Bukan Kelipatan 4)
                                         </span>
                                     </div>
@@ -233,68 +289,68 @@
                                 </div>
 
                                 <div class="space-y-5">
-                                    <div>
-                                        <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.15em] mb-2 px-1">Supplier Utama</label>
+                                     <div>
+                                        <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-2 px-1">Supplier Utama</label>
                                         <div class="relative group">
-                                            <select id="supplier" name="supplier" class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 focus:border-indigo-500 focus:ring-0 rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-200 transition-all appearance-none outline-none" required>
+                                            <select id="supplier" name="supplier" class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 focus:border-indigo-500 focus:ring-0 rounded-2xl px-4 py-3 text-sm font-bold text-gray-700 dark:text-gray-200 transition-all appearance-none outline-none" required>
                                                 <option value="Cutpack" {{ old('supplier', $hcs_sorting_report->supplier) == 'Cutpack' ? 'selected' : '' }}>Cutpack</option>
                                                 <option value="Rikyet" {{ old('supplier', $hcs_sorting_report->supplier) == 'Rikyet' ? 'selected' : '' }}>Rikyet</option>
                                             </select>
-                                            <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 dark:text-slate-600">
+                                            <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 dark:text-gray-600">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" /></svg>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div>
-                                        <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.15em] mb-2 px-1">Tahun Emisi & Anggaran</label>
+                                     <div>
+                                        <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-2 px-1">Tahun Emisi & Anggaran</label>
                                         <div class="grid grid-cols-2 gap-3">
                                             <div class="relative group">
-                                                <input type="text" name="emisi" value="{{ old('emisi', $hcs_sorting_report->emisi) }}" readonly class="w-full bg-slate-100 dark:bg-slate-900/50 border-2 border-slate-100 dark:border-slate-800 rounded-2xl px-4 py-3 text-sm font-black text-slate-500 dark:text-slate-600 cursor-not-allowed outline-none focus:ring-0">
-                                                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-300 dark:text-slate-700">EMISI</span>
+                                                <input type="text" name="emisi" value="{{ old('emisi', $hcs_sorting_report->emisi) }}" readonly class="w-full bg-slate-100 dark:bg-slate-900/50 border-2 border-slate-100 dark:border-slate-800 rounded-2xl px-4 py-3 text-sm font-black text-gray-500 dark:text-gray-600 cursor-not-allowed outline-none focus:ring-0">
+                                                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-gray-300 dark:text-gray-700">EMISI</span>
                                             </div>
                                             <div class="relative group">
-                                                <input type="text" name="tahun_anggaran" value="{{ old('tahun_anggaran', $hcs_sorting_report->tahun_anggaran) }}" readonly class="w-full bg-slate-100 dark:bg-slate-900/50 border-2 border-slate-100 dark:border-slate-800 rounded-2xl px-4 py-3 text-sm font-black text-slate-500 dark:text-slate-600 cursor-not-allowed outline-none focus:ring-0">
-                                                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-300 dark:text-slate-700">T.A</span>
+                                                <input type="text" name="tahun_anggaran" value="{{ old('tahun_anggaran', $hcs_sorting_report->tahun_anggaran) }}" readonly class="w-full bg-slate-100 dark:bg-slate-900/50 border-2 border-slate-100 dark:border-slate-800 rounded-2xl px-4 py-3 text-sm font-black text-gray-500 dark:text-gray-600 cursor-not-allowed outline-none focus:ring-0">
+                                                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-gray-300 dark:text-gray-700">T.A</span>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div>
-                                        <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.15em] mb-2 px-1">Petugas Penyortir</label>
+                                     <div>
+                                        <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-2 px-1">Petugas Penyortir</label>
                                         <div class="space-y-3">
                                             <div class="relative group">
-                                                <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 dark:text-slate-600 group-focus-within:text-indigo-400 transition-colors">
+                                                <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 dark:text-gray-600 group-focus-within:text-indigo-400 transition-colors">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                                                 </div>
                                                 <input id="petugas_1" type="text" name="petugas_1" value="{{ old('petugas_1', $hcs_sorting_report->petugas_1) }}" required placeholder="Nama Petugas 1"
-                                                       class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 focus:border-indigo-500 focus:ring-0 rounded-2xl pl-11 pr-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-200 transition-all outline-none">
+                                                       class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 focus:border-indigo-500 focus:ring-0 rounded-2xl pl-11 pr-4 py-3 text-sm font-bold text-gray-700 dark:text-gray-200 transition-all outline-none">
                                             </div>
                                             <div class="relative group">
-                                                <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 dark:text-slate-600 group-focus-within:text-indigo-400 transition-colors">
+                                                <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 dark:text-gray-600 group-focus-within:text-indigo-400 transition-colors">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                                                 </div>
                                                 <input id="petugas_2" type="text" name="petugas_2" value="{{ old('petugas_2', $hcs_sorting_report->petugas_2) }}" placeholder="Nama Petugas 2 (Opsional)"
-                                                       class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 focus:border-indigo-500 focus:ring-0 rounded-2xl pl-11 pr-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-200 transition-all outline-none">
+                                                       class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 focus:border-indigo-500 focus:ring-0 rounded-2xl pl-11 pr-4 py-3 text-sm font-bold text-gray-700 dark:text-gray-200 transition-all outline-none">
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="grid grid-cols-2 gap-3">
+                                     <div class="grid grid-cols-2 gap-3">
                                         <div>
-                                            <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.15em] mb-2 px-1">Tgl Sortir</label>
+                                            <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-2 px-1">Tgl Sortir</label>
                                             <input id="tanggal_sortir" type="date" name="tanggal_sortir" value="{{ old('tanggal_sortir', $hcs_sorting_report->tanggal_sortir->format('Y-m-d')) }}" required
-                                                   class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 focus:border-indigo-500 focus:ring-0 rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-200 transition-all outline-none">
+                                                   class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 focus:border-indigo-500 focus:ring-0 rounded-2xl px-4 py-3 text-sm font-bold text-gray-700 dark:text-gray-200 transition-all outline-none">
                                         </div>
                                         <div>
-                                            <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.15em] mb-2 px-1">Gilir</label>
+                                            <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-2 px-1">Gilir</label>
                                             <div class="relative group">
-                                                <select id="gilir" name="gilir" class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 focus:border-indigo-500 focus:ring-0 rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-200 transition-all appearance-none outline-none" required>
+                                                <select id="gilir" name="gilir" class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 focus:border-indigo-500 focus:ring-0 rounded-2xl px-4 py-3 text-sm font-bold text-gray-700 dark:text-gray-200 transition-all appearance-none outline-none" required>
                                                     <option value="Gilir 1" {{ old('gilir', $hcs_sorting_report->gilir) == 'Gilir 1' ? 'selected' : '' }}>Gilir 1</option>
                                                     <option value="Gilir 2" {{ old('gilir', $hcs_sorting_report->gilir) == 'Gilir 2' ? 'selected' : '' }}>Gilir 2</option>
                                                     <option value="Gilir 3" {{ old('gilir', $hcs_sorting_report->gilir) == 'Gilir 3' ? 'selected' : '' }}>Gilir 3</option>
                                                 </select>
-                                                <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 dark:text-slate-600">
+                                                <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 dark:text-gray-600">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" /></svg>
                                                 </div>
                                             </div>
@@ -308,11 +364,11 @@
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>
                                             Simpan Perubahan
                                         </button>
-                                        <a href="{{ route('hcs-sorting-reports.index') }}" 
-                                           class="w-full py-3.5 px-6 rounded-2xl text-xs font-black text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 hover:bg-rose-50 dark:hover:bg-rose-950/20 hover:text-rose-600 dark:hover:text-rose-400 hover:border-rose-100 dark:hover:border-rose-900/40 transition-all duration-300 flex items-center justify-center gap-2">
+                                         <a href="{{ route('hcs-sorting-reports.index') }}" 
+                                           class="w-full py-3.5 px-6 rounded-2xl text-xs font-black text-gray-500 dark:text-gray-400 bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 hover:bg-rose-50 dark:hover:bg-rose-950/20 hover:text-rose-600 dark:hover:text-rose-400 hover:border-rose-100 dark:hover:border-rose-900/40 transition-all duration-300 flex items-center justify-center gap-2">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
                                             Batalkan
-                                        </a>
+                                         </a>
                                     </div>
                                 </div>
                             </form>
