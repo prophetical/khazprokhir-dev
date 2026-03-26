@@ -24,86 +24,15 @@
                     ];
                 @endphp
 
-                <div class="p-4" x-data="{ 
+                <div class="p-4" x-data="hctsCreateData({
                         selectedPecahan: '{{ $selectedPecahan }}',
                         themes: {{ json_encode($themeClasses) }},
-                        get currentTheme() { return this.themes[this.selectedPecahan] || null },
                         rawJumlah: '{{ old('jumlah') }}',
-                        formattedJumlah: '',
                         seriValue: '{{ old('seri') }}',
                         batchValue: '{{ old('batch') }}',
                         emisiValue: '{{ old('emisi', '2022') }}',
-                        tahunAnggaranValue: '{{ old('tahun_anggaran', '2025') }}',
-                        hcsTotal: 0,
-                        isLoadingHcs: false,
-                        
-                        formatJumlah(value) {
-                            let raw = value.replace(/\./g, '');
-                            if (!isNaN(raw) && raw !== '') {
-                                this.rawJumlah = raw;
-                                this.formattedJumlah = new Intl.NumberFormat('id-ID').format(raw);
-                            } else {
-                                this.rawJumlah = '';
-                                this.formattedJumlah = '';
-                            }
-                        },
-                        formatSeri(value) {
-                            // Strip non-alphanumeric, convert to uppercase
-                            let val = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-                            let formatted = '';
-                            
-                            for (let i = 0; i < val.length && formatted.length < 6; i++) {
-                                let char = val[i];
-                                if (formatted.length === 0 || formatted.length === 1 || formatted.length === 3 || formatted.length === 4) {
-                                    if (/[A-Z]/.test(char)) formatted += char;
-                                } else if (formatted.length === 5) {
-                                    if (/[0-9]/.test(char)) formatted += char;
-                                }
-                                
-                                if (formatted.length === 2 && i < val.length - 1) {
-                                    formatted += '-';
-                                }
-                            }
-                            
-                            // Ensure hyphen is there if we have 3 or more chars
-                            if (formatted.length >= 2 && !formatted.includes('-') && val.length > 2) {
-                                formatted = formatted.slice(0, 2) + '-' + formatted.slice(2);
-                            }
-
-                            this.seriValue = formatted;
-                            this.fetchHcsTotal();
-                        },
-                        async fetchHcsTotal() {
-                            if (this.selectedPecahan && this.batchValue && this.seriValue && this.emisiValue && this.tahunAnggaranValue) {
-                                this.isLoadingHcs = true;
-                                try {
-                                    const params = new URLSearchParams({
-                                        pecahan: this.selectedPecahan,
-                                        batch: this.batchValue,
-                                        seri: this.seriValue,
-                                        emisi: this.emisiValue,
-                                        tahun_anggaran: this.tahunAnggaranValue
-                                    });
-                                    const response = await fetch(`{{ route('hcts-receiving.get-hcs-total') }}?${params}`);
-                                    const data = await response.json();
-                                    this.hcsTotal = data.total;
-                                } catch (error) {
-                                    console.error('Error fetching HCS total:', error);
-                                } finally {
-                                    this.isLoadingHcs = false;
-                                }
-                            }
-                        },
-                        init() {
-                            if (this.rawJumlah) {
-                                this.formattedJumlah = new Intl.NumberFormat('id-ID').format(this.rawJumlah);
-                            }
-                            this.$watch('selectedPecahan', () => this.fetchHcsTotal());
-                            this.$watch('batchValue', () => this.fetchHcsTotal());
-                            this.$watch('emisiValue', () => this.fetchHcsTotal());
-                            this.$watch('tahunAnggaranValue', () => this.fetchHcsTotal());
-                        }
-                    }">
+                        tahunAnggaranValue: '{{ old('tahun_anggaran', '2025') }}'
+                    })">
 
                     <div class="flex items-center gap-4 mb-4 pb-2 border-b border-gray-100">
                         <div class="bg-rose-600 p-3 rounded-2xl"
@@ -401,4 +330,85 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        function hctsCreateData(initialData) {
+            return {
+                selectedPecahan: initialData.selectedPecahan,
+                themes: initialData.themes,
+                get currentTheme() { return this.themes[this.selectedPecahan] || null },
+                rawJumlah: initialData.rawJumlah,
+                formattedJumlah: '',
+                seriValue: initialData.seriValue,
+                batchValue: initialData.batchValue,
+                emisiValue: initialData.emisiValue,
+                tahunAnggaranValue: initialData.tahunAnggaranValue,
+                hcsTotal: 0,
+                isLoadingHcs: false,
+                
+                formatJumlah(value) {
+                    let raw = value.replace(/\./g, '');
+                    if (!isNaN(raw) && raw !== '') {
+                        this.rawJumlah = raw;
+                        this.formattedJumlah = new Intl.NumberFormat('id-ID').format(raw);
+                    } else {
+                        this.rawJumlah = '';
+                        this.formattedJumlah = '';
+                    }
+                },
+                formatSeri(value) {
+                    let val = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                    let formatted = '';
+                    for (let i = 0; i < val.length && formatted.length < 6; i++) {
+                        let char = val[i];
+                        if (formatted.length === 0 || formatted.length === 1 || formatted.length === 3 || formatted.length === 4) {
+                            if (/[A-Z]/.test(char)) formatted += char;
+                        } else if (formatted.length === 5) {
+                            if (/[0-9]/.test(char)) formatted += char;
+                        }
+                        if (formatted.length === 2 && i < val.length - 1) {
+                            formatted += '-';
+                        }
+                    }
+                    if (formatted.length >= 2 && !formatted.includes('-') && val.length > 2) {
+                        formatted = formatted.slice(0, 2) + '-' + formatted.slice(2);
+                    }
+                    this.seriValue = formatted;
+                    this.fetchHcsTotal();
+                },
+                async fetchHcsTotal() {
+                    if (this.selectedPecahan && this.batchValue && this.seriValue && this.emisiValue && this.tahunAnggaranValue) {
+                        this.isLoadingHcs = true;
+                        try {
+                            const params = new URLSearchParams({
+                                pecahan: this.selectedPecahan,
+                                batch: this.batchValue,
+                                seri: this.seriValue,
+                                emisi: this.emisiValue,
+                                tahun_anggaran: this.tahunAnggaranValue
+                            });
+                            const response = await fetch(`{{ route('hcts-receiving.get-hcs-total') }}?${params}`);
+                            const data = await response.json();
+                            this.hcsTotal = data.total;
+                        } catch (error) {
+                            console.error('Error fetching HCS total:', error);
+                        } finally {
+                            this.isLoadingHcs = false;
+                        }
+                    }
+                },
+                init() {
+                    if (this.rawJumlah) {
+                        this.formattedJumlah = new Intl.NumberFormat('id-ID').format(this.rawJumlah);
+                    }
+                    this.$watch('selectedPecahan', () => this.fetchHcsTotal());
+                    this.$watch('batchValue', () => this.fetchHcsTotal());
+                    this.$watch('emisiValue', () => this.fetchHcsTotal());
+                    this.$watch('tahunAnggaranValue', () => this.fetchHcsTotal());
+                }
+            }
+        }
+    </script>
+    @endpush
 </x-app-layout>

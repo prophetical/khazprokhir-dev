@@ -138,6 +138,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/hcts-inventory/print', [\App\Http\Controllers\HctsInventoryController::class, 'print'])->name('hcts-inventory.print');
     Route::get('/hcts-inventory', [\App\Http\Controllers\HctsInventoryController::class, 'index'])->name('hcts-inventory.index');
     Route::get('/hcts-inventory/batch-detail', [\App\Http\Controllers\HctsInventoryController::class, 'getBatchDetail'])->name('hcts-inventory.batch-detail');
+
+    // Messages (Pesan Antar User)
+    Route::resource('messages', \App\Http\Controllers\MessageController::class)->only(['index', 'store', 'edit', 'update', 'destroy']);
 });
 
 require __DIR__.'/auth.php';

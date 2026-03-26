@@ -341,7 +341,7 @@
                         class="px-8 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-500 flex items-center gap-2 border border-transparent"
                         :class="calculateTotal() != jumlah_bilyet || calculateTotal() === 0 
                             ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-50 dark:bg-slate-800/50 dark:text-gray-600' 
-                            : 'bg-gradient-to-r from-rose-600 to-rose-700 text-white hover:shadow-xl hover:shadow-rose-500/20 active:scale-95 shadow-lg shadow-rose-200 dark:shadow-rose-900/40'">
+                            : 'bg-gradient-to-r from-rose-600 to-rose-700 text-white hover:shadow-xl hover:shadow-rose-500/20 active:scale-95 dark:shadow-rose-900/40'">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
                         </svg>
