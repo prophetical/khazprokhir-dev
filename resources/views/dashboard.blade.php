@@ -39,6 +39,10 @@
                             serahGradient.addColorStop(0, 'rgba(219, 39, 119, 0.25)');
                             serahGradient.addColorStop(1, 'rgba(219, 39, 119, 0)');
 
+                            const targetGradient = ctx.createLinearGradient(0, 0, 0, 400);
+                            targetGradient.addColorStop(0, 'rgba(245, 158, 11, 0.15)');
+                            targetGradient.addColorStop(1, 'rgba(245, 158, 11, 0)');
+
                             chartInstance = new Chart(ctx, {
                                 type: 'line',
                                 data: {
@@ -76,9 +80,9 @@
                                             label: 'Target',
                                             data: [...this.chartData[this.selectedPecahan].target],
                                             borderColor: '#f59e0b',
-                                            borderDash: [10, 5],
-                                            fill: false,
-                                            tension: 0,
+                                            backgroundColor: targetGradient,
+                                            fill: true,
+                                            tension: 0.4,
                                             borderWidth: 3,
                                             pointRadius: 4,
                                             pointBackgroundColor: '#f59e0b',
@@ -158,6 +162,89 @@
                     },
                     formatBilyet(num) {
                         return new Intl.NumberFormat('id-ID').format(num);
+                    },
+                    initAnalytics() {
+                        this.$nextTick(() => {
+                            // 1. Pecahan Distribution
+                            const pCtx = document.getElementById('pecahan-donut').getContext('2d');
+                            new Chart(pCtx, {
+                                type: 'doughnut',
+                                data: {
+                                    labels: Object.keys(@json($pecahanDistribution)),
+                                    datasets: [{
+                                        data: Object.values(@json($pecahanDistribution)),
+                                        backgroundColor: ['#6366f1', '#10b981', '#ec4899', '#f59e0b', '#8b5cf6', '#22c55e', '#3b82f6'],
+                                        borderWidth: 0,
+                                        hoverOffset: 20
+                                    }]
+                                },
+                                options: this.donutOptions('Distribusi Pecahan')
+                            });
+
+                            // 2. Production Lifecycle
+                            const lCtx = document.getElementById('lifecycle-donut').getContext('2d');
+                            new Chart(lCtx, {
+                                type: 'doughnut',
+                                data: {
+                                    labels: ['Penerimaan', 'Pengemasan', 'Penyerahan'],
+                                    datasets: [{
+                                        data: [{{ $totalTerimaYear }}, {{ $totalKemasYear }}, {{ $totalSerahYear }}],
+                                        backgroundColor: ['#4f46e5', '#10b981', '#f43f5e'],
+                                        borderWidth: 0,
+                                        hoverOffset: 20
+                                    }]
+                                },
+                                options: this.donutOptions('Alur Produksi')
+                            });
+
+                            // 3. Supplier Distribution
+                            const sCtx = document.getElementById('supplier-donut').getContext('2d');
+                            new Chart(sCtx, {
+                                type: 'doughnut',
+                                data: {
+                                    labels: Object.keys(@json($supplierDistributionYear)),
+                                    datasets: [{
+                                        data: Object.values(@json($supplierDistributionYear)),
+                                        backgroundColor: ['#f97316', '#06b6d4'],
+                                        borderWidth: 0,
+                                        hoverOffset: 20
+                                    }]
+                                },
+                                options: this.donutOptions('Proporsi Supplier')
+                            });
+                        });
+                    },
+                    donutOptions(title) {
+                        return {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            cutout: '75%',
+                            plugins: {
+                                legend: { 
+                                    position: 'bottom',
+                                    labels: { 
+                                        padding: 20,
+                                        usePointStyle: true,
+                                        font: { size: 10, weight: '900' },
+                                        color: '#6b7280'
+                                    }
+                                },
+                                tooltip: {
+                                    backgroundColor: '#111827',
+                                    padding: 12,
+                                    titleFont: { size: 11, weight: '900' },
+                                    bodyFont: { size: 11, weight: 'bold' },
+                                    callbacks: {
+                                        label: (context) => {
+                                            const val = context.raw;
+                                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                            const perc = ((val / total) * 100).toFixed(1) + '%';
+                                            return ` ${context.label}: ${this.formatBilyet(val)} (${perc})`;
+                                        }
+                                    }
+                                }
+                            }
+                        };
                     }
                 };
             }
@@ -263,158 +350,205 @@
                     </form>
                 </div>
             </div>
-            {{-- Unified Production Chart --}}
-            <div :class="colorThemes[selectedPecahan].bg"
-                class="p-8 rounded-[3rem] shadow-2xl shadow-gray-200/40 border border-gray-100 relative overflow-hidden transition-colors duration-700">
-                <div class="flex flex-col xl:flex-row items-start xl:items-center justify-between mb-12 gap-8">
-                    <div class="flex items-center gap-6">
-                        <div class="w-1.5 h-12 bg-gradient-to-b from-indigo-600 via-pink-500 to-amber-500 rounded-full">
+            {{-- Side-by-Side Charts Section --}}
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {{-- Unified Production Chart --}}
+                <div :class="colorThemes[selectedPecahan].bg"
+                    class="p-6 rounded-[2.5rem] shadow-xl shadow-gray-200/40 border border-gray-100 relative overflow-hidden transition-colors duration-700">
+                    <div class="flex flex-col xl:flex-row items-start xl:items-center justify-between mb-12 gap-8">
+                        <div class="flex items-center gap-6">
+                            <div
+                                class="w-1.5 h-12 bg-gradient-to-b from-indigo-600 via-pink-500 to-amber-500 rounded-full">
+                            </div>
+                            <div>
+                                <h3
+                                    class="text-md font-black text-gray-900 tracking-tighter mb-0.5 uppercase leading-none">
+                                    Visualisasi Trends</h3>
+                                <p class="text-[7px] text-gray-400 font-black uppercase tracking-[0.2em] leading-none">
+                                    Target Penyerahan Bulanan</p>
+                            </div>
                         </div>
-                        <div>
-                            <h3 class="text-xl font-black text-gray-900 tracking-tighter mb-0.5 uppercase leading-none">
-                                Visualisasi Trends</h3>
-                            <p class="text-[9px] text-gray-400 font-black uppercase tracking-[0.2em] leading-none">
-                                Monitoring Target Penyerahan Bulanan</p>
+
+                        {{-- Legend --}}
+                        <div
+                            class="flex items-center gap-4 bg-gray-50/50 px-3 py-1.5 rounded-xl border border-gray-100/50">
+                            <div class="flex items-center gap-1.5 group">
+                                <div
+                                    class="w-2 h-2 rounded-full bg-emerald-500 shadow-lg shadow-emerald-200 group-hover:scale-125 transition-transform">
+                                </div>
+                                <span
+                                    class="text-[8px] font-black text-gray-500 uppercase tracking-widest whitespace-nowrap">Pengemasan</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 group">
+                                <div
+                                    class="w-2 h-2 rounded-full bg-pink-500 shadow-lg shadow-pink-200 group-hover:scale-125 transition-transform">
+                                </div>
+                                <span
+                                    class="text-[8px] font-black text-gray-500 uppercase tracking-widest whitespace-nowrap">Penyerahan</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 group">
+                                <div class="flex gap-0.5 group-hover:gap-1 transition-all">
+                                    <div class="w-1 h-1 rounded-full bg-amber-500"></div>
+                                    <div class="w-1 h-1 rounded-full bg-amber-500"></div>
+                                    <div class="w-1 h-1 rounded-full bg-amber-500"></div>
+                                </div>
+                                <span
+                                    class="text-[8px] font-black text-gray-500 uppercase tracking-widest whitespace-nowrap">Target</span>
+                            </div>
                         </div>
                     </div>
 
-                    {{-- Legend --}}
-                    <div class="flex flex-wrap gap-6 px-4 bg-gray-50/50 p-2.5 rounded-xl border border-gray-50">
-                        <div class="flex items-center gap-2.5 group">
-                            <div
-                                class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-lg shadow-emerald-200 group-hover:scale-125 transition-transform">
-                            </div>
-                            <span
-                                class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Pengemasan</span>
-                        </div>
-                        <div class="flex items-center gap-2.5 group">
-                            <div
-                                class="w-2.5 h-2.5 rounded-full bg-pink-500 shadow-lg shadow-pink-200 group-hover:scale-125 transition-transform">
-                            </div>
-                            <span
-                                class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Penyerahan</span>
-                        </div>
-                        <div class="flex items-center gap-2.5 group">
-                            <div class="flex gap-0.5 group-hover:gap-1 transition-all">
-                                <div class="w-1 h-1 rounded-full bg-amber-500"></div>
-                                <div class="w-1 h-1 rounded-full bg-amber-500"></div>
-                                <div class="w-1 h-1 rounded-full bg-amber-500"></div>
-                            </div>
-                            <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Target
-                                Bulanan</span>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Pecahan Selector Buttons --}}
-                <div
-                    class="flex flex-wrap items-center gap-1.5 bg-gray-50/80 p-1.5 rounded-[1.5rem] border border-gray-100 mb-8 w-fit mx-auto lg:mx-0">
-                    <button @click="selectedPecahan = 'TOTAL'; updateChart()"
-                        :class="selectedPecahan === 'TOTAL' ? (colorThemes['TOTAL'].button + ' text-white shadow-xl ' + colorThemes['TOTAL'].shadow) : 'text-gray-500 hover:bg-gray-100'"
-                        class="px-6 py-2 rounded-[1rem] text-[10px] font-black uppercase tracking-[0.15em] transition-all duration-500">
-                        OVERVIEW
-                    </button>
-                    <div class="w-px h-5 bg-gray-200 mx-1.5 hidden sm:block"></div>
-                    @foreach(['S', 'T', 'U', 'V', 'W', 'X', 'Y'] as $pec)
-                        <button @click="selectedPecahan = '{{ $pec }}'; updateChart()"
-                            :class="selectedPecahan === '{{ $pec }}' ? (colorThemes['{{ $pec }}'].button + ' text-white shadow-lg scale-110 ' + colorThemes['{{ $pec }}'].shadow) : 'text-gray-500 hover:bg-gray-100'"
-                            class="w-9 h-9 rounded-xl text-xs font-black transition-all duration-500 flex items-center justify-center">
-                            {{ $pec }}
+                    {{-- Pecahan Selector Buttons --}}
+                    <div
+                        class="flex flex-wrap items-center gap-1 bg-gray-50/80 p-1 rounded-2xl border border-gray-100 mb-8 w-fit mx-auto lg:mx-0">
+                        <button @click="selectedPecahan = 'TOTAL'; updateChart()"
+                            :class="selectedPecahan === 'TOTAL' ? (colorThemes['TOTAL'].button + ' text-white shadow-lg ' + colorThemes['TOTAL'].shadow) : 'text-gray-500 hover:bg-gray-100'"
+                            class="px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-[0.1em] transition-all duration-500">
+                            OVERVIEW
                         </button>
-                    @endforeach
+                        <div class="w-px h-4 bg-gray-200 mx-1 hidden sm:block"></div>
+                        @foreach(['S', 'T', 'U', 'V', 'W', 'X', 'Y'] as $pec)
+                            <button @click="selectedPecahan = '{{ $pec }}'; updateChart()"
+                                :class="selectedPecahan === '{{ $pec }}' ? (colorThemes['{{ $pec }}'].button + ' text-white shadow-md scale-105 ' + colorThemes['{{ $pec }}'].shadow) : 'text-gray-500 hover:bg-gray-100'"
+                                class="w-7 h-7 rounded-lg text-[10px] font-black transition-all duration-500 flex items-center justify-center">
+                                {{ $pec }}
+                            </button>
+                        @endforeach
+                    </div>
+
+                    <div class="h-[300px] w-full relative">
+                        <canvas id="unified-chart"></canvas>
+                    </div>
                 </div>
 
-                <div class="h-[380px] w-full relative">
-                    <canvas id="unified-chart"></canvas>
+                {{-- Compact Heatmap Section --}}
+                <div
+                    class="bg-white p-6 rounded-[2.5rem] shadow-xl shadow-gray-200/20 border border-gray-100 overflow-hidden">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-8 h-8 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 shadow-inner">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-xs font-black text-gray-900 leading-none uppercase tracking-wider">
+                                    Heatmap Pengemasan TA {{ $currentYear }} / TE {{ $currentTE ?: 'SEMUA' }}
+                                </h3>
+                                <p class="text-[8px] text-gray-400 font-black uppercase tracking-widest mt-0.5">
+                                    Visualisasi
+                                    Intensitas Produksi Harian</p>
+                            </div>
+                        </div>
+                        <div
+                            class="flex items-center gap-3 px-3 py-1.5 bg-gray-50 rounded-xl border border-gray-100 scale-90 origin-right">
+                            <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest">Less</span>
+                            <div class="flex gap-0.5">
+                                <div class="w-2.5 h-2.5 rounded-sm bg-gray-100"></div>
+                                <div class="w-2.5 h-2.5 rounded-sm bg-emerald-200"></div>
+                                <div class="w-2.5 h-2.5 rounded-sm bg-emerald-400"></div>
+                                <div class="w-2.5 h-2.5 rounded-sm bg-emerald-600"></div>
+                                <div class="w-2.5 h-2.5 rounded-sm bg-emerald-800"></div>
+                            </div>
+                            <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest">More</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-6">
+                        @foreach($months as $mIdx)
+                            @php
+                                $monthObj = \Carbon\Carbon::create($heatmapYear, $mIdx, 1);
+                                $monthName = $monthObj->translatedFormat('F');
+                                $daysInMonth = $monthObj->daysInMonth;
+                                $firstDayOfMonth = $monthObj->dayOfWeekIso; // 1 (Mon) to 7 (Sun)
+                            @endphp
+                            <div class="space-y-4">
+                                <div class="flex flex-col items-center">
+                                    <span
+                                        class="text-[9px] font-black text-gray-500 uppercase tracking-[0.1em] mb-2">{{ $monthName }}</span>
+                                    {{-- Days Initials Header --}}
+                                    <div class="grid grid-cols-7 gap-1 w-full text-center px-1 mb-1">
+                                        @foreach(['S', 'S', 'R', 'K', 'J', 'S', 'M'] as $day)
+                                            <span class="text-[7px] font-black text-gray-300">{{ $day }}</span>
+                                        @endforeach
+                                    </div>
+                                    <div class="grid grid-cols-7 gap-1 w-full justify-items-center">
+                                        {{-- Empty slots before first day of month --}}
+                                        @for($i = 1; $i < $firstDayOfMonth; $i++)
+                                            <div class="w-3 h-3"></div>
+                                        @endfor
+
+                                        {{-- Days --}}
+                                        @for($d = 1; $d <= $daysInMonth; $d++)
+                                            @php
+                                                $dateStr = sprintf('%s-%02d-%02d', $heatmapYear, $mIdx, $d);
+                                                $count = $heatmapData[$dateStr] ?? 0;
+                                            @endphp
+                                            <div x-data="{ count: {{ $count }} }"
+                                                class="w-3 h-3 rounded-sm transition-all duration-300 hover:scale-150 hover:z-10 cursor-pointer relative group"
+                                                :class="getHeatmapColor(count)">
+                                                {{-- Tooltip --}}
+                                                <div
+                                                    class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-50">
+                                                    <div
+                                                        class="bg-gray-900 text-white text-[8px] font-bold py-1.5 px-2 rounded-lg shadow-xl whitespace-nowrap">
+                                                        <p class="mb-0.5 text-gray-400">
+                                                            {{ \Carbon\Carbon::parse($dateStr)->translatedFormat('d M Y') }}
+                                                        </p>
+                                                        <p class="text-emerald-400 leading-none"
+                                                            x-text="formatBilyet(count) + ' Bilyet'"></p>
+                                                    </div>
+                                                    <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 mx-auto -mt-1"></div>
+                                                </div>
+                                            </div>
+                                        @endfor
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
             </div>
 
-            {{-- Compact Heatmap Section --}}
-            <div
-                class="bg-white p-6 rounded-[2.5rem] shadow-xl shadow-gray-200/20 border border-gray-100 overflow-hidden">
-                <div class="flex items-center justify-between mb-6">
-                    <div class="flex items-center gap-3">
-                        <div
-                            class="w-8 h-8 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 shadow-inner">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h3 class="text-xs font-black text-gray-900 leading-none uppercase tracking-wider">
-                                Heatmap Pengemasan TA {{ $currentYear }} / TE {{ $currentTE ?: 'SEMUA' }}
-                            </h3>
-                            <p class="text-[8px] text-gray-400 font-black uppercase tracking-widest mt-0.5">Visualisasi
-                                Intensitas Produksi Harian</p>
-                        </div>
-                    </div>
-                    <div
-                        class="flex items-center gap-3 px-3 py-1.5 bg-gray-50 rounded-xl border border-gray-100 scale-90 origin-right">
-                        <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest">Less</span>
-                        <div class="flex gap-0.5">
-                            <div class="w-2.5 h-2.5 rounded-sm bg-gray-100"></div>
-                            <div class="w-2.5 h-2.5 rounded-sm bg-emerald-200"></div>
-                            <div class="w-2.5 h-2.5 rounded-sm bg-emerald-400"></div>
-                            <div class="w-2.5 h-2.5 rounded-sm bg-emerald-600"></div>
-                            <div class="w-2.5 h-2.5 rounded-sm bg-emerald-800"></div>
-                        </div>
-                        <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest">More</span>
+            {{-- Analytics Donuts Section --}}
+            <div x-init="initAnalytics()"
+                class="bg-white p-10 rounded-[3rem] shadow-xl shadow-gray-200/20 border border-gray-100 relative overflow-hidden">
+                <div class="flex items-center gap-4 mb-12">
+                    <div class="w-1.5 h-10 bg-indigo-600 rounded-full"></div>
+                    <div>
+                        <h3 class="text-xl font-black text-gray-900 tracking-tighter uppercase leading-none mb-1">
+                            Ringkasan Analitik Produksi</h3>
+                        <p class="text-[9px] text-gray-400 font-black uppercase tracking-[0.2em]">Visualisasi Proporsi &
+                            Statistik Tahunan</p>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-12 gap-x-6 gap-y-8">
-                    @foreach($months as $mIdx)
-                        @php
-                            $monthObj = \Carbon\Carbon::create($heatmapYear, $mIdx, 1);
-                            $monthName = $monthObj->translatedFormat('F');
-                            $daysInMonth = $monthObj->daysInMonth;
-                            $firstDayOfMonth = $monthObj->dayOfWeekIso; // 1 (Mon) to 7 (Sun)
-                        @endphp
-                        <div class="space-y-4">
-                            <div class="flex flex-col items-center">
-                                <span
-                                    class="text-[9px] font-black text-gray-500 uppercase tracking-[0.1em] mb-2">{{ $monthName }}</span>
-                                {{-- Days Initials Header --}}
-                                <div class="grid grid-cols-7 gap-1 w-full text-center px-1 mb-1">
-                                    @foreach(['S', 'S', 'R', 'K', 'J', 'S', 'M'] as $day)
-                                        <span class="text-[7px] font-black text-gray-300">{{ $day }}</span>
-                                    @endforeach
-                                </div>
-                                <div class="grid grid-cols-7 gap-1 w-full justify-items-center">
-                                    {{-- Empty slots before first day of month --}}
-                                    @for($i = 1; $i < $firstDayOfMonth; $i++)
-                                        <div class="w-3 h-3"></div>
-                                    @endfor
-
-                                    {{-- Days --}}
-                                    @for($d = 1; $d <= $daysInMonth; $d++)
-                                        @php
-                                            $dateStr = sprintf('%s-%02d-%02d', $heatmapYear, $mIdx, $d);
-                                            $count = $heatmapData[$dateStr] ?? 0;
-                                        @endphp
-                                        <div x-data="{ count: {{ $count }} }"
-                                            class="w-3 h-3 rounded-sm transition-all duration-300 hover:scale-150 hover:z-10 cursor-pointer relative group"
-                                            :class="getHeatmapColor(count)">
-                                            {{-- Tooltip --}}
-                                            <div
-                                                class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-50">
-                                                <div
-                                                    class="bg-gray-900 text-white text-[8px] font-bold py-1.5 px-2 rounded-lg shadow-xl whitespace-nowrap">
-                                                    <p class="mb-0.5 text-gray-400">
-                                                        {{ \Carbon\Carbon::parse($dateStr)->translatedFormat('d M Y') }}
-                                                    </p>
-                                                    <p class="text-emerald-400 leading-none"
-                                                        x-text="formatBilyet(count) + ' Bilyet'"></p>
-                                                </div>
-                                                <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 mx-auto -mt-1"></div>
-                                            </div>
-                                        </div>
-                                    @endfor
-                                </div>
-                            </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                    {{-- Pecahan Donut --}}
+                    <div class="space-y-6">
+                        <div class="h-[220px] w-full relative">
+                            <canvas id="pecahan-donut"></canvas>
                         </div>
-                    @endforeach
+                        <p class="text-center text-[9px] font-black text-gray-400 uppercase tracking-widest">Komposisi Pecahan</p>
+                    </div>
+
+                    {{-- Lifecycle Donut --}}
+                    <div class="space-y-6">
+                        <div class="h-[220px] w-full relative">
+                            <canvas id="lifecycle-donut"></canvas>
+                        </div>
+                        <p class="text-center text-[9px] font-black text-gray-400 uppercase tracking-widest">Alur Lifecycle</p>
+                    </div>
+
+                    {{-- Supplier Donut --}}
+                    <div class="space-y-6">
+                        <div class="h-[220px] w-full relative">
+                            <canvas id="supplier-donut"></canvas>
+                        </div>
+                        <p class="text-center text-[9px] font-black text-gray-400 uppercase tracking-widest">Rasio Supplier</p>
+                    </div>
                 </div>
             </div>
 

@@ -54,6 +54,15 @@ class DashboardController extends Controller
         $cutpackCount = $supplierDistribution['Cutpack'] ?? 0;
         $rikyetCount = $supplierDistribution['Rikyet'] ?? 0;
 
+        // 4b. Yearly Supplier distribution
+        $supplierDistributionYear = Pack::join('pengemasans', 'packs.id_pengemasan', '=', 'pengemasans.id')
+            ->where('pengemasans.tahun_anggaran', $currentYear)
+            ->when($currentTE, fn ($q) => $q->where('pengemasans.tahun_emisi', $currentTE))
+            ->selectRaw('packs.supplier, count(*) as count')
+            ->groupBy('packs.supplier')
+            ->pluck('count', 'packs.supplier')
+            ->toArray();
+
         // Data for Charts
         $chartData = [];
         $months = range(1, 12);
@@ -146,6 +155,14 @@ class DashboardController extends Controller
             'target' => $totalMonthlyTargetArr,
         ];
 
+        // 4c. Annual Distribution per Pecahan
+        $pecahanDistribution = \App\Models\Pengemasan::where('tahun_anggaran', $currentYear)
+            ->when($currentTE, fn ($q) => $q->where('tahun_emisi', $currentTE))
+            ->selectRaw('pecahan, SUM(jumlah_dus * 20000) as total')
+            ->groupBy('pecahan')
+            ->pluck('total', 'pecahan')
+            ->toArray();
+
         // 5. Heatmap Data (Daily production based on Pengemasan)
         $heatmapData = \App\Models\Pengemasan::where('tahun_anggaran', $currentYear)
             ->when($currentTE, fn ($q) => $q->where('tahun_emisi', $currentTE))
@@ -175,7 +192,9 @@ class DashboardController extends Controller
             'totalKemasYear',
             'totalSerahYear',
             'totalTargetYear',
-            'totalTerimaYear'
+            'totalTerimaYear',
+            'pecahanDistribution',
+            'supplierDistributionYear'
         ));
     }
 }
