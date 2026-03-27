@@ -39,15 +39,6 @@
                             class="bg-white/70 backdrop-blur-md overflow-hidden shadow-xl shadow-gray-200/50 sm:rounded-[1.5rem] border border-white relative group transition-all duration-500">
                             <div class="p-5 relative">
                                 <div class="flex items-center gap-3 mb-4">
-                                    <div
-                                        class="w-10 h-10 bg-rose-500 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
-                                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
-                                            </path>
-                                        </svg>
-                                    </div>
                                     <div>
                                         <h3 class="text-md font-black text-gray-900  tracking-tighter">
                                             {{ __('Administrasi') }}
@@ -99,15 +90,6 @@
                             class="bg-white/70 backdrop-blur-md overflow-hidden shadow-xl shadow-gray-200/50 sm:rounded-[1.5rem] border border-white relative group transition-all duration-500">
                             <div class="p-5">
                                 <div class="flex items-center gap-3 mb-4">
-                                    <div
-                                        class="w-10 h-10 bg-rose-500 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
-                                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z">
-                                            </path>
-                                        </svg>
-                                    </div>
                                     <div>
                                         <h3 class="text-md font-black text-gray-900  tracking-tighter">
                                             {{ __('Spesifikasi') }}
@@ -177,15 +159,15 @@
                         </div>
 
                         <!-- Summary Widget -->
-                        <div class="bg-gray-900 overflow-hidden shadow-xl sm:rounded-[1.5rem] relative p-0.5">
+                        <div class="bg-blue-500 overflow-hidden shadow-xl sm:rounded-[1.5rem] relative p-0.5">
                             <div
-                                class="bg-gray-950/40 backdrop-blur-sm rounded-[1.4rem] p-5 relative z-10 border border-white/5">
+                                class="bg-blue-500 backdrop-blur-sm rounded-[1.4rem] p-5 relative z-10 border border-white/5">
                                 <div class="flex items-center justify-between mb-4">
-                                    <h3 class="text-[12px] font-black text-rose-500  tracking-[0.3em]">
+                                    <h3 class="text-[12px] font-black text-white tracking-[0.3em]">
                                         {{ __('Summary Status') }}
                                     </h3>
-                                    <div class="px-2 py-0.5 bg-white/5 rounded-full border border-white/10">
-                                        <span class="text-[8px] font-black text-white/50  tracking-widest"
+                                    <div class="px-2 py-1">
+                                        <span class="text-[8px] text-center font-black text-white tracking-widest"
                                             x-text="calculateTotal() === (jumlah_bilyet || 0) ? 'Balance' : 'Review'">Balance</span>
                                     </div>
                                 </div>
@@ -194,11 +176,11 @@
                                     <div>
                                         <div class="flex justify-between items-end mb-1">
                                             <span
-                                                class="text-[8px] font-bold text-gray-500  tracking-widest">Progress</span>
+                                                class="text-[8px] font-bold text-white  tracking-widest">Progress</span>
                                             <div class="flex items-baseline gap-1">
                                                 <span class="text-xl font-black text-white"
                                                     x-text="numberFormat(calculateTotal())">0</span>
-                                                <span class="text-[10px] font-bold text-gray-500">/ <span
+                                                <span class="text-[10px] font-bold text-black">/ <span
                                                         x-text="numberFormat(jumlah_bilyet || 0)">0</span></span>
                                             </div>
                                         </div>
@@ -211,11 +193,10 @@
                                     </div>
 
                                     <template x-if="calculateTotal() != (jumlah_bilyet || 0) && jumlah_bilyet > 0">
-                                        <div
-                                            class="p-2 bg-rose-500/10 rounded-xl border border-rose-500/20 flex items-center gap-2">
+                                        <div class="p-2 bg-red-100 rounded-xl flex items-center gap-2">
                                             <div
-                                                class="w-6 h-6 bg-rose-500/20 rounded-lg flex items-center justify-center shrink-0">
-                                                <svg class="w-3 h-3 text-rose-500" fill="none" stroke="currentColor"
+                                                class="w-6 h-6 bg-red-500 rounded-lg flex items-center justify-center shrink-0">
+                                                <svg class="w-3 h-3 text-red-900" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         stroke-width="2"
@@ -224,8 +205,8 @@
                                                 </svg>
                                             </div>
                                             <p
-                                                class="text-[8px] font-black text-rose-400  tracking-widest leading-none">
-                                                Mismatch!</p>
+                                                class="text-[12px] font-black text-rose-900 tracking-widest leading-none">
+                                                Jumlah Bilyet Tidak Sesuai!</p>
                                         </div>
                                     </template>
                                 </div>
@@ -239,14 +220,6 @@
                             class="bg-white/70 backdrop-blur-md overflow-hidden shadow-xl shadow-gray-200/50 sm:rounded-[2rem] border border-white h-full flex flex-col transition-all duration-500">
                             <div class="p-6 border-b border-gray-50 flex items-center justify-between bg-white/50">
                                 <div class="flex items-center gap-3">
-                                    <div
-                                        class="w-10 h-10 bg-rose-50 rounded-xl flex items-center justify-center text-rose-600">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
-                                            </path>
-                                        </svg>
-                                    </div>
                                     <div>
                                         <h3 class="text-md font-black text-gray-900 tracking-tighter">
                                             {{ __('Komposisi Batch') }}
@@ -255,11 +228,11 @@
                                             x-text="selectedBatches.length + ' Baris Aktif'">0 Baris Aktif</p>
                                     </div>
                                 </div>
-
-                                <button type="button" @click="addBatchRow()" class="group flex items-center gap-2 px-4 py-2 bg-rose-500 text-white text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-gray-500 transition-all duration-500>
-                                    <svg class=" w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                <button type="button" @click="addBatchRow()"
+                                    class="group flex items-center gap-2 px-4 py-2 bg-blue-500 text-white text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-rose-600 transition-all duration-500">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                     </svg>
                                     {{ __('Tambah Baris') }}
                                 </button>
@@ -275,7 +248,7 @@
                                         <div class="flex-1 flex flex-col md:flex-row gap-4">
                                             <div class="flex-1 group/input">
                                                 <x-input-label :value="__('Nomor Batch')"
-                                                    class="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-1 group-focus-within/row:text-rose-500 transition-colors" />
+                                                    class="text-[8px] font-black tracking-widest text-gray-400 mb-1 group-focus-within/row:text-rose-500 transition-colors" />
                                                 <select x-bind:name="'batches['+index+'][batch]'" x-model="row.batch"
                                                     class="block w-full bg-white border-gray-100 focus:ring-2 focus:ring-rose-500/10 focus:border-rose-500/50 rounded-xl transition-all duration-300 text-md font-black h-[38px] text-center text-center-last"
                                                     required>
@@ -289,7 +262,7 @@
                                             </div>
                                             <div class="flex-1 group/input">
                                                 <x-input-label :value="__('Jumlah Bilyet')"
-                                                    class="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-1 group-focus-within/row:text-rose-500 transition-colors" />
+                                                    class="text-[8px] font-black tracking-widest text-gray-400 mb-1 group-focus-within/row:text-rose-500 transition-colors" />
                                                 <div class="relative">
                                                     <x-text-input type="text" x-model="row.display_jumlah"
                                                         @input="formatRowJumlah($event, index)"

@@ -155,6 +155,8 @@ class HctsReceivingController extends Controller
         $search = $request->input('search');
         $pecahanFilter = $request->input('pecahan');
         $gilirFilter = $request->input('gilir');
+        $taFilter = $request->input('tahun_anggaran');
+        $teFilter = $request->input('tahun_emisi');
 
         $query = HctsReceiving::with('user');
         if ($startDate && $endDate) {
@@ -166,11 +168,11 @@ class HctsReceivingController extends Controller
         if ($gilirFilter) {
             $query->where('gilir', $gilirFilter);
         }
-        if ($request->filled('tahun_anggaran')) {
-            $query->where('tahun_anggaran', $request->input('tahun_anggaran'));
+        if ($taFilter) {
+            $query->where('tahun_anggaran', $taFilter);
         }
-        if ($request->filled('tahun_emisi')) {
-            $query->where('emisi', $request->input('tahun_emisi'));
+        if ($teFilter) {
+            $query->where('emisi', $teFilter);
         }
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -182,7 +184,7 @@ class HctsReceivingController extends Controller
 
         $receivings = $query->latest()->get();
 
-        return view('hcts-receiving.print', compact('receivings', 'startDate', 'endDate', 'search', 'pecahanFilter', 'gilirFilter'));
+        return view('hcts-receiving.print', compact('receivings', 'startDate', 'endDate', 'search', 'pecahanFilter', 'gilirFilter', 'taFilter', 'teFilter'));
     }
 
     public function getHcsTotal(Request $request)
@@ -346,7 +348,6 @@ class HctsReceivingController extends Controller
             fclose($file);
         };
 
-        return response()->stream($callback, 200, $headers);
     }
 
     public function summaryPrint(Request $request)
@@ -354,11 +355,13 @@ class HctsReceivingController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
         $search = $request->input('search');
+        $taFilter = $request->input('tahun_anggaran');
+        $teFilter = $request->input('tahun_emisi');
 
         $query = $this->getSummaryQuery($request);
         $groups = $query->get();
 
-        return view('hcts-receiving.summary-print', compact('groups', 'startDate', 'endDate', 'search'));
+        return view('hcts-receiving.summary-print', compact('groups', 'startDate', 'endDate', 'search', 'taFilter', 'teFilter'));
     }
 
     private function getSummaryQuery(Request $request)

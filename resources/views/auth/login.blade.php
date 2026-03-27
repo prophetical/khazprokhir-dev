@@ -14,7 +14,7 @@
 
         {{-- Username / Email --}}
         <div class="space-y-1.5">
-            <label for="email" class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest">
+            <label for="username" class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest">
                 Username
             </label>
             <div class="relative group">
@@ -23,11 +23,11 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                 </div>
-                <input id="email" name="email" type="email" value="{{ old('email') }}" required autofocus
+                <input id="username" name="username" type="text" value="{{ old('username') }}" required autofocus
                     class="block w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400 transition-all"
                     placeholder="Masukkan username Anda" />
             </div>
-            <x-input-error :messages="$errors->get('email')" class="mt-1 text-red-500 text-xs font-medium" />
+            <x-input-error :messages="$errors->get('username')" class="mt-1 text-red-500 text-xs font-medium" />
         </div>
 
         {{-- Password --}}

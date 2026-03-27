@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+@php App::setLocale('id') @endphp
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -40,18 +41,29 @@
                 <h1 class="text-2xl font-extrabold text-gray-900 mb-1 tracking-tight uppercase">Ringkasan Akumulasi HCS & HCTS</h1>
                 <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-4">Khazprokhir Management System</p>
                 
-                <div class="flex items-center space-x-3 text-xs mb-4">
-                    <div class="bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100 flex items-center">
-                        <span class="text-gray-400 mr-2">Periode:</span>
-                        <span class="font-bold text-gray-700">
-                            {{ $startDate ? \Carbon\Carbon::parse($startDate)->translatedFormat('d F Y') : 'Awal' }} – {{ $endDate ? \Carbon\Carbon::parse($endDate)->translatedFormat('d F Y') : 'Sekarang' }}
-                        </span>
+                    @if($search)
+                    <div class="bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100 flex items-center">
+                        <span class="text-indigo-400 mr-2 uppercase font-black text-[9px]">Cari:</span>
+                        <span class="font-bold text-indigo-700">"{{ $search }}"</span>
                     </div>
+                    @endif
+                    @if(isset($taFilter) && $taFilter)
+                    <div class="bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100 flex items-center">
+                        <span class="text-blue-400 mr-2 uppercase font-black text-[9px]">TA:</span>
+                        <span class="font-bold text-blue-700">{{ $taFilter }}</span>
+                    </div>
+                    @endif
+                    @if(isset($teFilter) && $teFilter)
+                    <div class="bg-cyan-50 px-3 py-1.5 rounded-lg border border-cyan-100 flex items-center">
+                        <span class="text-cyan-400 mr-2 uppercase font-black text-[9px]">Emisi:</span>
+                        <span class="font-bold text-cyan-700">{{ $teFilter }}</span>
+                    </div>
+                    @endif
                 </div>
             </div>
             <div class="text-right">
                 <p class="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Dicetak Pada</p>
-                <p class="text-xs font-bold text-gray-700">{{ \Carbon\Carbon::now()->format('d F Y, H:i') }}</p>
+                <p class="text-xs font-bold text-gray-700">{{ \Carbon\Carbon::now()->translatedFormat('d F Y, H:i') }}</p>
             </div>
         </header>
 

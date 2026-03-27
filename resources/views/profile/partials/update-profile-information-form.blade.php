@@ -19,6 +19,21 @@
         @method('patch')
 
         <div class="space-y-2">
+            <x-input-label for="username" class="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">
+                {{ __('Username') }}
+            </x-input-label>
+            <div class="relative group">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-500 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                </div>
+                <x-text-input id="username" name="username" type="text" class="block w-full pl-11 border-gray-200 rounded-xl bg-gray-50/50 font-bold text-gray-400 cursor-not-allowed" :value="$user->username" disabled />
+            </div>
+            <p class="px-1 text-[10px] font-medium text-gray-400">
+                {{ __('Username tidak dapat diubah.') }}
+            </p>
+        </div>
+
+        <div class="space-y-2">
             <x-input-label for="name" class="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">
                 {{ __('Nama Lengkap') }}
             </x-input-label>

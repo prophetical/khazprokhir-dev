@@ -26,14 +26,13 @@
             </div>
 
             <!-- Delete Account Section -->
-            <div class="bg-white overflow-hidden shadow-2xl sm:rounded-2xl border border-gray-100 p-1">
+            <!-- <div class="bg-white overflow-hidden shadow-2xl sm:rounded-2xl border border-gray-100 p-1">
                 <div class="bg-gray-50/50 rounded-[1.25rem] p-6 sm:p-8">
                     <div class="max-w-xl">
                         @include('profile.partials.delete-user-form')
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </x-app-layout>
-

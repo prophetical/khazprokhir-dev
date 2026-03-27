@@ -1,4 +1,5 @@
 <x-app-layout>
+@php App::setLocale('id') @endphp
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Detail Penerimaan HCTS') }}
@@ -172,7 +173,7 @@
 
                             <div
                                 class="mt-6 pt-6 border-t border-gray-100 flex flex-wrap gap-3 justify-end uppercase text-[10px] tracking-widest font-bold">
-                                <a href="{{ route('hcts-receiving.export', ['start_date' => $startDate, 'end_date' => $endDate, 'search' => $search, 'pecahan' => $pecahanFilter, 'gilir' => $gilirFilter]) }}"
+                                <a href="{{ route('hcts-receiving.export', ['start_date' => $startDate, 'end_date' => $endDate, 'search' => $search, 'pecahan' => $pecahanFilter, 'gilir' => $gilirFilter, 'tahun_anggaran' => $taFilter, 'tahun_emisi' => $teFilter]) }}"
                                     class="inline-flex items-center px-4 py-2 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-xl hover:bg-emerald-100 transition-all">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -180,7 +181,7 @@
                                     </svg>
                                     Excel
                                 </a>
-                                <a href="{{ route('hcts-receiving.print', ['start_date' => $startDate, 'end_date' => $endDate, 'search' => $search, 'pecahan' => $pecahanFilter, 'gilir' => $gilirFilter]) }}"
+                                <a href="{{ route('hcts-receiving.print', ['start_date' => $startDate, 'end_date' => $endDate, 'search' => $search, 'pecahan' => $pecahanFilter, 'gilir' => $gilirFilter, 'tahun_anggaran' => $taFilter, 'tahun_emisi' => $teFilter]) }}"
                                     target="_blank"
                                     class="inline-flex items-center px-4 py-2 bg-rose-50 text-rose-700 border border-rose-100 rounded-xl hover:bg-rose-100 transition-all">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -260,7 +261,7 @@
                                 @forelse ($receivings as $receiving)
                                     <tr class="hover:bg-rose-50/30 transition-colors group">
                                         <td class="px-3 py-3 whitespace-nowrap text-[11px] font-medium text-gray-600">
-                                            {{ \Carbon\Carbon::parse($receiving->tanggal_penerimaan)->format('d/m/y') }}
+                                            {{ \Carbon\Carbon::parse($receiving->tanggal_penerimaan)->translatedFormat('d F Y') }}
                                         </td>
                                         <td
                                             class="px-3 py-3 whitespace-nowrap text-[11px] font-black text-gray-900 underline decoration-gray-200">

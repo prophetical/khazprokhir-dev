@@ -99,7 +99,7 @@
                         </div>
                         <div class="text-xl font-black text-white leading-none mb-1">
                             {{ number_format($totalAllPacks, 0, ',', '.') }} <span
-                                class="text-[10px] text-indigo-200 font-medium lowercase">packs</span>
+                                class="text-[10px] text-indigo-200 font-medium lowercase">pack</span>
                         </div>
                         <div class="text-[10px] font-bold text-white bg-white/30 px-2 py-0.5 rounded-full inline-block">
                             {{ number_format($totalAllBilyet, 0, ',', '.') }} <span

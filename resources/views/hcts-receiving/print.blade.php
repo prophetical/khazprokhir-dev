@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+@php App::setLocale('id') @endphp
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -65,11 +66,23 @@
                         <span class="font-bold text-indigo-700">"{{ $search }}"</span>
                     </div>
                     @endif
+                    @if($taFilter)
+                    <div class="bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100 flex items-center">
+                        <span class="text-blue-400 mr-2 uppercase font-black text-[9px]">TA:</span>
+                        <span class="font-bold text-blue-700">{{ $taFilter }}</span>
+                    </div>
+                    @endif
+                    @if($teFilter)
+                    <div class="bg-cyan-50 px-3 py-1.5 rounded-lg border border-cyan-100 flex items-center">
+                        <span class="text-cyan-400 mr-2 uppercase font-black text-[9px]">Emisi:</span>
+                        <span class="font-bold text-cyan-700">{{ $teFilter }}</span>
+                    </div>
+                    @endif
                 </div>
             </div>
             <div class="text-right">
                 <p class="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Dicetak Pada</p>
-                <p class="text-xs font-bold text-gray-700">{{ \Carbon\Carbon::now()->format('d F Y, H:i') }}</p>
+                <p class="text-xs font-bold text-gray-700">{{ \Carbon\Carbon::now()->translatedFormat('d F Y, H:i') }}</p>
             </div>
         </header>
 
@@ -90,7 +103,7 @@
                 <tbody class="divide-y divide-gray-100">
                     @foreach ($receivings as $row)
                         <tr>
-                            <td class="text-[10px] font-bold text-gray-600 px-4 py-3">{{ \Carbon\Carbon::parse($row->tanggal_penerimaan)->format('d/m/Y') }}</td>
+                            <td class="text-[10px] font-bold text-gray-600 px-4 py-3">{{ \Carbon\Carbon::parse($row->tanggal_penerimaan)->translatedFormat('d F Y') }}</td>
                             <td class="text-[10px] font-black text-gray-900 px-4 py-3 italic italic underline decoration-gray-100">{{ $row->nomor_bon }}</td>
                             <td class="text-center px-4 py-3">
                                 @php
