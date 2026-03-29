@@ -371,6 +371,10 @@
                         });
                     },
                     pieOptions(title) {
+                        const isDark = document.body.classList.contains('dark-mode');
+                        const textColor = isDark ? '#94a3b8' : '#64748b';
+                        const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : '#f1f5f9';
+                        
                         return {
                             responsive: true,
                             maintainAspectRatio: false,
@@ -384,11 +388,11 @@
                                         padding: 6,
                                         usePointStyle: true,
                                         font: { size: 7.5, weight: '900' },
-                                        color: '#6b7280'
+                                        color: textColor
                                     }
                                 },
                                 tooltip: {
-                                    backgroundColor: '#111827',
+                                    backgroundColor: isDark ? '#1e293b' : '#111827',
                                     padding: 12,
                                     titleFont: { size: 11, weight: '900' },
                                     bodyFont: { size: 11, weight: 'bold' },
@@ -406,6 +410,32 @@
                     }
                 };
             }
+
+            // Pantau perubahan tema buat update grafik secara global
+            window.addEventListener('theme-changed', (e) => {
+                const isDark = e.detail.theme === 'dark-mode';
+                const textColor = isDark ? '#94a3b8' : '#64748b';
+                const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : '#f1f5f9';
+
+                if (window.Chart) {
+                    Chart.instances.forEach(chart => {
+                        if (chart.options.scales) {
+                            if (chart.options.scales.x) {
+                                chart.options.scales.x.ticks.color = textColor;
+                                if (chart.options.scales.x.grid) chart.options.scales.x.grid.color = gridColor;
+                            }
+                            if (chart.options.scales.y) {
+                                chart.options.scales.y.ticks.color = textColor;
+                                if (chart.options.scales.y.grid) chart.options.scales.y.grid.color = gridColor;
+                            }
+                        }
+                        if (chart.options.plugins && chart.options.plugins.legend) {
+                            chart.options.plugins.legend.labels.color = textColor;
+                        }
+                        chart.update();
+                    });
+                }
+            });
         </script>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
             {{-- Bagian kartu ringkasan angka --}}

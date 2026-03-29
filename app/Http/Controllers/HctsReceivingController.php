@@ -106,7 +106,14 @@ class HctsReceivingController extends Controller
     public function summary(Request $request)
     {
         $groups = $this->service->getSummaryQuery($request->all())->paginate(15)->withQueryString();
-        return view('hcts-receiving.summary', array_merge($request->all(), ['groups' => $groups]));
+        return view('hcts-receiving.summary', [
+            'groups' => $groups,
+            'startDate' => $request->start_date,
+            'endDate' => $request->end_date,
+            'search' => $request->search,
+            'taFilter' => $request->tahun_anggaran,
+            'teFilter' => $request->tahun_emisi,
+        ]);
     }
 
     public function summaryExport(Request $request)
@@ -114,10 +121,18 @@ class HctsReceivingController extends Controller
         $filename = 'hcs_hcts_summary_'.date('Ymd_His').'.csv';
         $headers = ['Content-type' => 'text/csv', 'Content-Disposition' => "attachment; filename=$filename"];
 
-        $callback = function () use ($request) {
+        $params = [
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'search' => $request->search,
+            'tahun_anggaran' => $request->tahun_anggaran,
+            'tahun_emisi' => $request->tahun_emisi,
+        ];
+
+        $callback = function () use ($params) {
             $file = fopen('php://output', 'w');
             fputcsv($file, ['Batch', 'Seri', 'Pecahan', 'Emisi', 'TA', 'Total HCS', 'Total HCTS', 'Grand Total', '% HCTS/HCS']);
-            $this->service->getSummaryQuery($request->all())->chunk(100, function ($rows) use ($file) {
+            $this->service->getSummaryQuery($params)->chunk(100, function ($rows) use ($file) {
                 foreach ($rows as $row) {
                     $grandTotal = $row->total_hcs + $row->total_hcts;
                     $percent = $row->total_hcs > 0 ? round(($row->total_hcts / $row->total_hcs) * 100, 2) : ($row->total_hcts > 0 ? 100 : 0);
@@ -132,7 +147,14 @@ class HctsReceivingController extends Controller
     public function summaryPrint(Request $request)
     {
         $groups = $this->service->getSummaryQuery($request->all())->get();
-        return view('hcts-receiving.summary-print', array_merge($request->all(), ['groups' => $groups]));
+        return view('hcts-receiving.summary-print', [
+            'groups' => $groups,
+            'startDate' => $request->start_date,
+            'endDate' => $request->end_date,
+            'search' => $request->search,
+            'taFilter' => $request->tahun_anggaran,
+            'teFilter' => $request->tahun_emisi,
+        ]);
     }
 
     public function destroy(HctsReceiving $hcts_receiving)

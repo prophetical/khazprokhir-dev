@@ -1,0 +1,126 @@
+/* Khazprokhir */
+
+/* Badge Denominasi - Gaya Dasar */
+.badge-fixed {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.125rem 0.625rem;
+    border-radius: 0.375rem;
+    /* rounded-md */
+    font-size: 0.6rem;
+    /* Ukuran teks sekitar 9px */
+    font-weight: 900;
+    /* font-black */
+    border-width: 1px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    /* tracking-wider */
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+
+/* Penyesuaian responsif untuk ukuran layar yang lebih besar (sm ke atas) */
+@media (min-width: 640px) {
+    .badge-fixed {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+        padding-top: 0.25rem;
+        padding-bottom: 0.25rem;
+        font-size: 0.625rem;
+        /* Ukuran teks 10px */
+    }
+}
+
+/* Pemetaan Tema Denominasi (Gaya Halus & Kontras Tinggi) */
+.badge-pecahan-S {
+    background-color: #f7fee7;
+    color: #4d7c0f;
+    border-color: #d9f99d;
+}
+
+/* Ref: bg-lime-50 text-lime-700 border-lime-200 */
+.badge-pecahan-T {
+    background-color: #f8fafc;
+    color: #334155;
+    border-color: #e2e8f0;
+}
+
+/* Ref: bg-slate-50 text-slate-700 border-slate-200 */
+.badge-pecahan-U {
+    background-color: #fffbeb;
+    color: #b45309;
+    border-color: #fde68a;
+}
+
+/* Ref: bg-amber-50 text-amber-700 border-amber-200 */
+.badge-pecahan-V {
+    background-color: #faf5ff;
+    color: #7e22ce;
+    border-color: #e9d5ff;
+}
+
+/* Ref: bg-purple-50 text-purple-700 border-purple-200 */
+.badge-pecahan-W {
+    background-color: #ecfdf5;
+    color: #047857;
+    border-color: #a7f3d0;
+}
+
+/* Ref: bg-emerald-50 text-emerald-700 border-emerald-200 */
+.badge-pecahan-X {
+    background-color: #eff6ff;
+    color: #1d4ed8;
+    border-color: #bfdbfe;
+}
+
+/* Ref: bg-blue-50 text-blue-700 border-blue-200 */
+.badge-pecahan-Y {
+    background-color: #fff1f2;
+    color: #be123c;
+    border-color: #fecdd3;
+}
+
+/* Ref: bg-rose-50 text-rose-700 border-rose-200 */
+
+/* Penyesuaian Khusus Dark Mode */
+body.dark-mode .badge-pecahan-S {
+    background-color: rgba(54, 83, 20, 0.2);
+    color: #a3e635;
+    border-color: rgba(63, 98, 18, 0.4);
+}
+
+body.dark-mode .badge-pecahan-T {
+    background-color: rgba(30, 41, 59, 0.2);
+    color: #94a3b8;
+    border-color: rgba(51, 65, 85, 0.4);
+}
+
+body.dark-mode .badge-pecahan-U {
+    background-color: rgba(120, 53, 15, 0.2);
+    color: #fbbf24;
+    border-color: rgba(146, 64, 14, 0.4);
+}
+
+body.dark-mode .badge-pecahan-V {
+    background-color: rgba(88, 28, 135, 0.2);
+    color: #c084fc;
+    border-color: rgba(107, 33, 168, 0.4);
+}
+
+body.dark-mode .badge-pecahan-W {
+    background-color: rgba(6, 78, 59, 0.2);
+    color: #34d399;
+    border-color: rgba(6, 95, 70, 0.4);
+}
+
+body.dark-mode .badge-pecahan-X {
+    background-color: rgba(30, 58, 138, 0.2);
+    color: #60a5fa;
+    border-color: rgba(30, 64, 175, 0.4);
+}
+
+body.dark-mode .badge-pecahan-Y {
+    background-color: rgba(159, 18, 57, 0.2);
+    color: #fb7185;
+    border-color: rgba(159, 18, 57, 0.4);
+}

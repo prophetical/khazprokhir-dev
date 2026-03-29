@@ -20,6 +20,11 @@ class ReportController extends Controller
         $reportData = $this->service->getReportData($params);
 
         return view('reports.index', array_merge($params, $reportData, [
+            'startDate' => $params['start_date'] ?? null,
+            'endDate' => $params['end_date'] ?? null,
+            'tahunAnggaran' => $params['tahun_anggaran'] ?? null,
+            'tahunEmisi' => $params['tahun_emisi'] ?? null,
+            'gilir' => $params['gilir'] ?? null,
             'globalTotalsPerPecahan' => $reportData['globalTotals'],
             'globalGrandTotal' => $reportData['globalGrandTotal']
         ]));
@@ -56,6 +61,11 @@ class ReportController extends Controller
         $filteredTotalsPerPecahan = $this->service->getTotals($params, false);
 
         return view('reports.print', array_merge($params, [
+            'startDate' => $params['start_date'] ?? null,
+            'endDate' => $params['end_date'] ?? null,
+            'tahunAnggaran' => $params['tahun_anggaran'] ?? null,
+            'tahunEmisi' => $params['tahun_emisi'] ?? null,
+            'gilir' => $params['gilir'] ?? null,
             'data' => $data,
             'globalTotalsPerPecahan' => $globalTotalsPerPecahan,
             'globalGrandTotal' => $globalTotalsPerPecahan->sum(),

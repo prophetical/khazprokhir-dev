@@ -305,7 +305,7 @@
                                                     $row = ($i - 1) % 10;
                                                     $col = floor(($i - 1) / 10);
                                                     
-                                                    // Positioning logic mirroring edit view to prevent clipping
+                                                    // Logika posisi tooltip agar tidak terpotong layar
                                                     $vClass = ($row < 4) ? 'top-full mt-2 flex-col-reverse' : 'bottom-full mb-2 flex-col';
                                                     $arrowV = ($row < 4) ? '-mb-1' : '-mt-1';
                                                     
@@ -369,6 +369,9 @@
             const gridContainer = document.getElementById('pack_grid');
             const hiddenPacksContainer = document.getElementById('hidden_packs_container');
             const form = document.getElementById('hcs-form');
+            
+            // Cache tombol grid supaya tidak boros query DOM
+            const gridButtons = Array.from(gridContainer.querySelectorAll('.pack-btn'));
 
             const selectPecahan = document.getElementById('pecahan');
             const inputEmisi = document.getElementById('emisi');
@@ -379,6 +382,14 @@
             let selectedPacks = {!! json_encode(array_map('intval', old('packs', []))) !!} || [];
             let usedPacks = []; // array of { pack_number, supplier, hcs_sorting_id, nomor_bon }
 
+            // Fungsi pembantu untuk membatasi eksekusi fungsi (debounce)
+            function debounce(func, wait) {
+                let timeout;
+                return function(...args) {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(this, args), wait);
+                };
+            }
             function init() {
                 if (jumlahOriginal > 0) {
                     inputJumlahDisplay.value = jumlahOriginal.toLocaleString('id-ID');
@@ -413,6 +424,10 @@
                 renderGrid();
             }
 
+            // Debounce untuk pengambilan data batch (biar tidak lag pas ngetik)
+            const debouncedFetchUsedPacks = debounce(fetchUsedPacks, 300);
+            const debouncedRenderGrid = debounce(renderGrid, 50);
+
             function handleJumlahInput(e) {
                 let textValue = String(e.target.value);
                 let rawDigits = textValue.replace(/\D/g, '');
@@ -432,7 +447,7 @@
                 }
 
                 updateCalculations(number);
-                renderGrid();
+                debouncedRenderGrid(); // Tunda render grid sedikit agar lebih mulus
             }
 
             function updateCalculations(numVal) {
@@ -513,23 +528,25 @@
             }
 
             function renderGrid() {
-                // Update hidden inputs
-                hiddenPacksContainer.innerHTML = '';
-                selectedPacks.forEach(pack => {
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = 'packs[]';
-                    input.value = pack;
-                    hiddenPacksContainer.appendChild(input);
-                });
+                // Pakai rAF agar rendering di browser lebih smooth
+                requestAnimationFrame(() => {
+                    // Update input tersembunyi
+                    hiddenPacksContainer.innerHTML = '';
+                    selectedPacks.forEach(pack => {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'packs[]';
+                        input.value = pack;
+                        hiddenPacksContainer.appendChild(input);
+                    });
 
-                spanSelectedPacksLength.textContent = selectedPacks.length;
+                    spanSelectedPacksLength.textContent = selectedPacks.length;
 
-                const currentSupplier = selectSupplier.value;
+                    const currentSupplier = selectSupplier.value;
+                    const isDarkMode = document.body.classList.contains('dark-mode');
 
-                // Update button and tooltip classes (Mirroring Edit View EXACTLY)
-                const buttons = gridContainer.querySelectorAll('.pack-btn');
-                buttons.forEach(btn => {
+                    // Update class tombol dan tooltip menggunakan tombol yang sudah di-cache
+                    gridButtons.forEach(btn => {
                     const num = parseInt(btn.getAttribute('data-pack'), 10);
                     const group = btn.closest('.group');
                     const tooltip = group.querySelector('.pack-tooltip');
@@ -537,13 +554,13 @@
                     const supplierEl = tooltip.querySelector('.tooltip-supplier');
                     const statusEl = tooltip.querySelector('.tooltip-status');
 
-                    // Reset tooltip
+                    // Reset status tooltip
                     badge.classList.add('hidden');
                     supplierEl.className = 'tooltip-supplier font-bold uppercase tracking-tighter text-indigo-300';
                     supplierEl.textContent = 'KOSONG';
                     statusEl.textContent = 'Bisa Dipilih';
                     
-                    // Reset to a clean base list with NO background or text color
+                    // Reset ke style dasar tanpa warna latar atau teks
                     const baseClasses = 'pack-btn w-full aspect-square flex items-center justify-center text-[10px] sm:text-xs font-black rounded-lg transition-all duration-300 focus:outline-none focus:ring-4';
                     btn.className = baseClasses;
                     
@@ -558,7 +575,7 @@
                             badge.textContent = 'TERSORTIR';
                             badge.className = 'tooltip-badge px-2 py-0.5 rounded-full text-[8px] text-white bg-red-500';
                             badge.classList.remove('hidden');
-                            // RED - SORTED (Solid deep red)
+                            // Merah - Sudah Tersortir (Solid)
                             btn.classList.add('bg-red-600', 'border-red-700', 'shadow-lg');
                         } else {
                             statusEl.textContent = 'Terpakai (Record Lain)';
@@ -566,7 +583,7 @@
                             badge.className = 'tooltip-badge px-2 py-0.5 rounded-full text-[8px] text-white ' + (usedPack.supplier === 'Cutpack' ? 'bg-blue-600' : 'bg-green-600');
                             badge.classList.remove('hidden');
 
-                            // DEEP SOLID COLORS for previous inputs (Record Lain)
+                            // Warna solid untuk input terdahulu (Record Lain)
                             if (usedPack.supplier === 'Cutpack') {
                                 btn.classList.add('bg-blue-700', 'border-blue-800', 'shadow-md');
                             } else if (usedPack.supplier === 'Rikyet') {
@@ -576,7 +593,7 @@
                             }
                         }
                     } else if (selectedPacks.includes(num)) {
-                        // CURRENTLY SELECTED (Vibrant colors to distinguish from deep used colors)
+                        // Sedang Dipilih (Warna cerah untuk membedakan dengan data lama)
                         supplierEl.textContent = currentSupplier || 'HCS';
                         supplierEl.className = 'tooltip-supplier font-bold uppercase tracking-tighter ' + (currentSupplier === 'Cutpack' ? 'text-blue-200' : (currentSupplier === 'Rikyet' ? 'text-green-200' : 'text-indigo-200'));
                         statusEl.textContent = 'Dipilih (Penerimaan)';
@@ -593,25 +610,21 @@
                             btn.classList.add('bg-indigo-500', 'border-indigo-600', 'shadow-indigo-300/50');
                         }
                     } else {
-                        // AVAILABLE (White background in light mode, Dark in dark mode)
-                        const isDarkMode = document.body.classList.contains('dark-mode');
-                        if (isDarkMode) {
-                            btn.classList.add('bg-[#1a2434]', 'text-gray-500', 'border-[#3B4B65]', 'hover:bg-[#243047]', 'hover:text-gray-400');
-                        } else {
-                            btn.classList.add('bg-white', 'text-gray-400', 'border-gray-100', 'shadow-sm', 'hover:bg-gray-50', 'hover:text-gray-600', 'hover:border-gray-200');
-                        }
+                        // TERSEDIA - Pakai class CSS supaya otomatis switch tema
+                        btn.classList.add('pack-btn-available');
                     }
                 });
-            }
+            });
+        }
 
-            // Bind Events
+            // Pasang Event Listener
             inputJumlahDisplay.addEventListener('input', handleJumlahInput);
             toggleManual.addEventListener('change', handleToggleManual);
             
             [inputBatch, selectPecahan, inputEmisi, selectTA].forEach(el => {
                 el.addEventListener('input', () => {
                     if (el === inputBatch) inputBatch.value = inputBatch.value.toUpperCase();
-                    fetchUsedPacks();
+                    debouncedFetchUsedPacks();
                 });
             });
             
@@ -689,6 +702,8 @@
                 }
             });
 
+            window.addEventListener('theme-changed', renderGrid);
+
             init();
         });
     </script>
@@ -701,21 +716,29 @@
             100% { transform: translateX(200%) skewX(-15deg); }
         }
 
-        /* Dark Mode Overrides for Create Page - Extremely Aggressive */
-        body.dark-mode [class*="bg-gray-50"] { background-color: var(--theme-bg-main) !important; }
-        body.dark-mode [class*="bg-white"] { background-color: var(--theme-bg-card) !important; border-color: var(--theme-border-main) !important; }
+        /* Restoring High-Fidelity Dark Mode Aesthetics for Create Page */
+        body.dark-mode [class*="bg-gray-50/30"] { background-color: var(--theme-bg-main) !important; }
+        body.dark-mode [class*="bg-white/70"] { background-color: rgba(30, 41, 59, 0.7) !important; border-color: var(--theme-border-main) !important; backdrop-blur: 40px !important; }
         
-        /* Specific section overrides to ensure depth and contrast */
         body.dark-mode .lg\:w-\[45\%\] { background-color: rgba(15, 23, 42, 0.4) !important; border-right-color: var(--theme-border-main) !important; }
         body.dark-mode .lg\:w-\[55\%\] { background-color: rgba(15, 23, 42, 0.2) !important; }
         
-        /* Inner cards and nested white elements */
-        body.dark-mode .bg-white.p-4, 
+        /* Nested Elements & Inner Cards - Depth Restoration */
         body.dark-mode .bg-white\/80, 
         body.dark-mode .bg-white\/40, 
-        body.dark-mode .bg-white\/50 { 
-            background-color: #1a2434 !important; 
+        body.dark-mode .bg-white\/50,
+        body.dark-mode .bg-white\/20:not(nav *) { 
+            background-color: rgba(30, 41, 59, 0.5) !important; 
             border-color: var(--theme-border-main) !important; 
+            backdrop-blur: 10px !important;
+        }
+
+        /* Input & Field Overrides */
+        body.dark-mode input.bg-white\/50,
+        body.dark-mode select.bg-white\/50 {
+            background-color: rgba(15, 23, 42, 0.6) !important;
+            border-color: var(--theme-border-main) !important;
+            color: #f8fafc !important;
         }
 
         body.dark-mode .text-gray-900, body.dark-mode .text-gray-800 { color: var(--theme-text-main) !important; }
@@ -728,11 +751,27 @@
             border-color: var(--theme-border-main) !important; 
         }
 
-        /* Input specific backgrounds if missed by global */
-        body.dark-mode select.bg-white\/50, 
-        body.dark-mode input.bg-white\/50 { 
-            background-color: #2f3646ff !important; 
-            border-color: #4B5563 !important; 
+        /* Pack Grid Tooltip & Grid Elements */
+        body.dark-mode .pack-btn-available {
+            background-color: #1a2434 !important;
+            color: #64748b !important;
+            border: 1px solid #334155 !important;
+        }
+        body.dark-mode .pack-btn-available:hover {
+            background-color: #243047 !important;
+            color: #94a3b8 !important;
+        }
+
+        body.light-mode .pack-btn-available {
+            background-color: #ffffff !important;
+            color: #94a3b8 !important;
+            border: 1px solid #f1f5f9 !important;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+        }
+        body.light-mode .pack-btn-available:hover {
+            background-color: #f8fafc !important;
+            color: #475569 !important;
+            border-color: #e2e8f0 !important;
         }
 
         /* Light Mode Refinements for Create Page */

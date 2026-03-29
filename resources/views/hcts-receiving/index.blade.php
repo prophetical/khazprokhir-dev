@@ -25,7 +25,7 @@
                         @endif
                     </div>
 
-                    <!-- Filters & Actions -->
+                    <!-- Filter & Aksi -->
                     @php
                         $selectedPecahan = request('pecahan', '');
                         $themeClasses = [
@@ -194,7 +194,7 @@
                         </form>
                     </div>
 
-                    <!-- Summary Cards -->
+                    <!-- Kartu Ringkasan -->
                     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 mb-8">
                         @foreach(['S', 'T', 'U', 'V', 'W', 'X', 'Y'] as $p)
                             @php
@@ -211,7 +211,7 @@
                             </div>
                         @endforeach
 
-                        <!-- Grand Total -->
+                        <!-- Total Keseluruhan -->
                         <div class="bg-rose-600 border border-rose-500 rounded-2xl p-4 flex flex-col justify-center">
                             <p class="text-rose-100 text-[9px] font-black uppercase tracking-widest mb-1 leading-none">
                                 Total HCTS</p>

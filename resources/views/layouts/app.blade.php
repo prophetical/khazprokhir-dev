@@ -11,9 +11,6 @@
     <!-- Fonts Local -->
     <link href="{{ asset('css/fonts.css') }}" rel="stylesheet" />
 
-    <!-- Tailwind Local -->
-    {{-- Removed runtime script for compiled CSS --}}
-
     <!-- Scripts -->
     <script src="{{ asset('js/sweetalert2.all.min.js') }}"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -44,26 +41,25 @@
         }
 
         .dark-mode {
-            --theme-bg-main: #1E293B;
-            /* Main page background */
-            --theme-bg-card: #243047;
-            /* Content background */
-            --theme-bg-sidebar: rgba(15, 23, 42, 0.75);
-            /* Sidebar background matching header */
-            --theme-bg-header: rgba(15, 23, 42, 0.75);
-            /* Header background translucent */
-            --theme-text-main: #F1F5F9;
-            /* Primary text */
-            --theme-text-muted: #CBD5F5;
-            /* Secondary text */
-            --theme-border-main: #3B4B65;
-            /* Border color */
-            --theme-input-bg: #2f3646ff;
-            /* Darker input background for better contrast */
-            --theme-hover-bg: #333a44ff;
-            /* Hover color */
-            --theme-neutral-bg: #2A3A55;
-            /* Neutral UI background */
+            --theme-bg-main: #0f172a;
+            /* depth slate-900 */
+            --theme-bg-card: #1e293b;
+            /* surface slate-800 */
+            --theme-bg-sidebar: rgba(15, 23, 42, 0.85);
+            /* translucent slate-900 */
+            --theme-bg-header: rgba(15, 23, 42, 0.85);
+            /* transparan slate-900 */
+            --theme-text-main: #f8fafc;
+            /* slate-50 */
+            --theme-text-muted: #94a3b8;
+            /* slate-400 */
+            --theme-border-main: #334155;
+            /* slate-700 */
+            --theme-input-bg: #1e293b;
+            /* slate-800 */
+            --theme-hover-bg: rgba(255, 255, 255, 0.05);
+            --theme-neutral-bg: #0f172a;
+            /* slate-900 */
         }
 
         body.light-mode {
@@ -105,7 +101,7 @@
             color: #818cf8 !important;
         }
 
-        /* Indigo-400 for better secondary visibility */
+        /* Indigo-400 untuk visibilitas sekunder yang lebih baik */
         body.dark-mode .border-gray-100,
         body.dark-mode .border-gray-200,
         body.dark-mode .border-gray-300 {
@@ -131,16 +127,24 @@
         body.dark-mode nav.flex.flex-col.shrink-0 {
             background: var(--theme-bg-sidebar) !important;
             border-right: 1px solid var(--theme-border-main) !important;
-            backdrop-blur: 24px !important;
+            backdrop-blur: 40px !important;
+            -webkit-backdrop-blur: 40px !important;
         }
 
         body.dark-mode nav.flex.flex-col.shrink-0 .hover\:bg-white\/10:hover {
             background-color: var(--theme-hover-bg) !important;
         }
 
+        /* Essential Active Sidebar Highlights */
+        body.dark-mode nav.flex.flex-col.shrink-0 [class*="bg-white/20"],
         body.dark-mode nav.flex.flex-col.shrink-0 .bg-white\/20 {
             background-color: rgba(99, 102, 241, 0.15) !important;
-            border-left: 4px solid #6366f1;
+            border-left: 4px solid #6366f1 !important;
+            color: #ffffff !important;
+        }
+
+        body.dark-mode nav.flex.flex-col.shrink-0 [class*="text-white/70"] {
+            color: rgba(255, 255, 255, 0.6) !important;
         }
 
         /* Table Refinements */
@@ -171,7 +175,7 @@
             background-color: #1a2434 !important;
         }
 
-        /* Table Body & Footer Unification (Perfectly Consistent) */
+        /* Table Body & Footer Unification */
         body.dark-mode tbody td {
             background-color: #243047 !important;
             border-color: var(--theme-border-main) !important;
@@ -198,14 +202,14 @@
             background-color: var(--theme-hover-bg) !important;
         }
 
-        /* Unifying Table Highlights & Containers in Dark Mode (ONLY) */
+        /* Unifying Table Highlights & Containers in Dark Mode */
         body.dark-mode .bg-gray-50\/50 {
             background-color: transparent !important;
         }
 
-        /* Preserving denomination labels by ensuring unification rules don't hit span elements */
+        /* Mempertahankan label pecahan dan memastikan aturan penyeragaman tdk mengenai elemen span */
 
-        /* Form Fields - Aggressive Overrides for Visibility */
+        /* Kolom Input Form - Penimpaan Agresif untuk Visibilitas */
         body.dark-mode input,
         body.dark-mode select,
         body.dark-mode textarea,
@@ -224,35 +228,44 @@
             outline: 2px solid rgba(99, 102, 241, 0.4) !important;
         }
 
-        /* Global Shadow Removal (requested by user) */
+        /* Penghapusan Shadow Global (Sesuai permintaan user) */
 
-        /* HCS Sorting Report Specific Styles */
+        /* Gaya Terkhusus Laporan Sortir HCS */
         @keyframes bounce-subtle {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-3px); }
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-3px);
+            }
         }
+
         .animate-bounce-subtle {
             animation: bounce-subtle 2s infinite ease-in-out;
         }
 
-        body.dark-mode #main-wrapper {
-            background-color: #0f172a !important; /* slate-900 */
+        body.dark-mode #main-scroll-container {
+            background-color: var(--theme-bg-main) !important;
         }
-        
+
         body.dark-mode .bg-white,
         body.dark-mode .bg-slate-50,
         body.dark-mode .bg-gray-50 {
-            background-color: #1e293b !important; /* slate-800 */
-            border-color: #334155 !important; /* slate-700 */
+            background-color: var(--theme-bg-card) !important;
+            border-color: var(--theme-border-main) !important;
         }
 
         body.dark-mode .bg-slate-100,
-        body.dark-mode .bg-slate-200 {
-            background-color: #0f172a !important; /* slate-900 */
-            border-color: #1e293b !important;
+        body.dark-mode .bg-slate-200,
+        body.dark-mode .bg-gray-100,
+        body.dark-mode .bg-gray-200 {
+            background-color: var(--theme-bg-main) !important;
+            border-color: var(--theme-border-main) !important;
         }
 
-        body.dark-mode .from-white,
         body.dark-mode .to-slate-50\/50,
         body.dark-mode .from-slate-50\/50 {
             background-image: none !important;
@@ -271,6 +284,7 @@
             color: #1e40af;
             background-image: repeating-linear-gradient(45deg, rgba(30, 64, 175, 0.1), rgba(30, 64, 175, 0.1) 2px, transparent 2px, transparent 4px);
         }
+
         body.dark-mode .pack-sorted-other-rikyet {
             background-color: rgba(30, 64, 175, 0.3) !important;
             border-color: rgba(100, 116, 139, 0.3) !important;
@@ -284,6 +298,7 @@
             color: #166534;
             background-image: repeating-linear-gradient(-45deg, rgba(22, 101, 52, 0.1), rgba(22, 101, 52, 0.1) 2px, transparent 2px, transparent 4px);
         }
+
         body.dark-mode .pack-sorted-other-cutpack {
             background-color: rgba(22, 101, 52, 0.3) !important;
             border-color: rgba(100, 116, 139, 0.3) !important;
@@ -292,92 +307,156 @@
         }
 
         body.dark-mode .bg-rose-50 {
-            background-color: rgba(159, 18, 57, 0.2) !important; /* rose-900/20 */
-            border-color: rgba(225, 29, 72, 0.4) !important; /* rose-600/40 */
-            color: #fecdd3 !important; /* rose-200 */
+            background-color: rgba(159, 18, 57, 0.2) !important;
+            /* rose-900/20 */
+            border-color: rgba(225, 29, 72, 0.4) !important;
+            /* rose-600/40 */
+            color: #fecdd3 !important;
+            /* rose-200 */
         }
 
-        /* Global dark mode header color (applied only if no explicit text color is set) */
-        body.dark-mode h3:not([class*="text-"]), 
+        /* Warna teks header dark mode global (hanya jika kelas warna teks tidak disetel eksplisit) */
+        body.dark-mode h3:not([class*="text-"]),
         body.dark-mode h2:not([class*="text-"]),
         body.dark-mode h4:not([class*="text-"]) {
             color: #ffffff !important;
         }
 
-        /* Force black text to stay black even in dark mode (useful for colored warning boxes) */
+        /* Paksa teks hitam agar tetap hitam meski di dark mode (berguna untuk kotak peringatan berwarna) */
         body.dark-mode .text-black,
-        body.dark-mode .!text-black {
+        body.dark-mode . !text-black {
             color: #000000 !important;
         }
 
-        /* Detail Pengemasan HCS Specific Styles */
+        /* Gaya Terkhusus untuk Detail Pengemasan HCS */
         body.dark-mode .bg-gradient-to-br[class*="from-"][class*="-50"].to-white {
             background-image: none !important;
-            background-color: rgba(30, 41, 59, 0.5) !important; /* slate-800/50 */
-            border-color: rgba(71, 85, 105, 0.3) !important; /* slate-600/30 */
+            background-color: rgba(30, 41, 59, 0.5) !important;
+            /* slate-800/50 */
+            border-color: rgba(71, 85, 105, 0.3) !important;
+            /* slate-600/30 */
         }
 
-        /* Restore top accent borders that were overridden by global bg-white rule */
-        body.dark-mode .border-t-8.border-lime-500, body.dark-mode .border-2.border-lime-500 { border-color: #84cc16 !important; }
-        body.dark-mode .border-t-8.border-gray-500, body.dark-mode .border-2.border-gray-500 { border-color: #6b7280 !important; }
-        body.dark-mode .border-t-8.border-amber-600, body.dark-mode .border-2.border-amber-600 { border-color: #d97706 !important; }
-        body.dark-mode .border-t-8.border-purple-500, body.dark-mode .border-2.border-purple-500 { border-color: #a855f7 !important; }
-        body.dark-mode .border-t-8.border-green-500, body.dark-mode .border-2.border-green-500 { border-color: #22c55e !important; }
-        body.dark-mode .border-t-8.border-blue-500, body.dark-mode .border-2.border-blue-500 { border-color: #3b82f6 !important; }
-        body.dark-mode .border-t-8.border-red-500, body.dark-mode .border-2.border-red-500 { border-color: #ef4444 !important; }
+        /* Kembalikan border aksen atas yang tertumpuk oleh aturan global bg-white */
+        body.dark-mode .border-t-8.border-lime-500,
+        body.dark-mode .border-2.border-lime-500 {
+            border-color: #84cc16 !important;
+        }
 
-        /* Detail Pack label adjustments */
+        body.dark-mode .border-t-8.border-gray-500,
+        body.dark-mode .border-2.border-gray-500 {
+            border-color: #6b7280 !important;
+        }
+
+        body.dark-mode .border-t-8.border-amber-600,
+        body.dark-mode .border-2.border-amber-600 {
+            border-color: #d97706 !important;
+        }
+
+        body.dark-mode .border-t-8.border-purple-500,
+        body.dark-mode .border-2.border-purple-500 {
+            border-color: #a855f7 !important;
+        }
+
+        body.dark-mode .border-t-8.border-green-500,
+        body.dark-mode .border-2.border-green-500 {
+            border-color: #22c55e !important;
+        }
+
+        body.dark-mode .border-t-8.border-blue-500,
+        body.dark-mode .border-2.border-blue-500 {
+            border-color: #3b82f6 !important;
+        }
+
+        body.dark-mode .border-t-8.border-red-500,
+        body.dark-mode .border-2.border-red-500 {
+            border-color: #ef4444 !important;
+        }
+
+        /* Penyesuaian label Detail Pack */
         body.dark-mode .bg-white.px-2.py-0.5.rounded.border,
         body.dark-mode .bg-white.shadow-sm.rounded-2xl.border-t-8 {
-            background-color: #243047 !important; /* theme-bg-card */
+            background-color: #243047 !important;
+            /* theme-bg-card */
         }
 
-        /* HCTS Summary Card Denomination Tints in Dark Mode */
-        body.dark-mode .bg-lime-50 { background-color: rgba(132, 204, 22, 0.1) !important; border-color: rgba(132, 204, 22, 0.2) !important; }
-        body.dark-mode .bg-gray-50 { background-color: rgba(156, 163, 175, 0.1) !important; border-color: rgba(156, 163, 175, 0.2) !important; }
-        body.dark-mode .bg-amber-50 { background-color: rgba(251, 191, 36, 0.1) !important; border-color: rgba(251, 191, 36, 0.2) !important; }
-        body.dark-mode .bg-purple-50 { background-color: rgba(168, 85, 247, 0.1) !important; border-color: rgba(168, 85, 247, 0.2) !important; }
-        body.dark-mode .bg-green-50 { background-color: rgba(34, 197, 94, 0.1) !important; border-color: rgba(34, 197, 94, 0.2) !important; }
-        body.dark-mode .bg-blue-50 { background-color: rgba(59, 130, 246, 0.1) !important; border-color: rgba(59, 130, 246, 0.2) !important; }
-        body.dark-mode .bg-red-50 { background-color: rgba(239, 68, 68, 0.1) !important; border-color: rgba(239, 68, 68, 0.2) !important; }
+        /* Nuansa Warna Pecahan Kartu Ringkasan HCTS di Dark Mode */
+        body.dark-mode .bg-lime-50 {
+            background-color: rgba(132, 204, 22, 0.1) !important;
+            border-color: rgba(132, 204, 22, 0.2) !important;
+        }
 
-        /* HCTS Filter Cards Dark Mode Backgrounds */
+        body.dark-mode .bg-gray-50 {
+            background-color: rgba(156, 163, 175, 0.1) !important;
+            border-color: rgba(156, 163, 175, 0.2) !important;
+        }
+
+        body.dark-mode .bg-amber-50 {
+            background-color: rgba(251, 191, 36, 0.1) !important;
+            border-color: rgba(251, 191, 36, 0.2) !important;
+        }
+
+        body.dark-mode .bg-purple-50 {
+            background-color: rgba(168, 85, 247, 0.1) !important;
+            border-color: rgba(168, 85, 247, 0.2) !important;
+        }
+
+        body.dark-mode .bg-green-50 {
+            background-color: rgba(34, 197, 94, 0.1) !important;
+            border-color: rgba(34, 197, 94, 0.2) !important;
+        }
+
+        body.dark-mode .bg-blue-50 {
+            background-color: rgba(59, 130, 246, 0.1) !important;
+            border-color: rgba(59, 130, 246, 0.2) !important;
+        }
+
+        body.dark-mode .bg-red-50 {
+            background-color: rgba(239, 68, 68, 0.1) !important;
+            border-color: rgba(239, 68, 68, 0.2) !important;
+        }
+
+        /* Latar Belakang Kartu Filter HCTS di Dark Mode */
         body.dark-mode .bg-gray-50\/50 {
             background-color: rgba(30, 41, 59, 0.4) !important;
             border-color: rgba(255, 255, 255, 0.05) !important;
         }
+
         body.dark-mode .bg-white\/50 {
             background-color: rgba(15, 23, 42, 0.4) !important;
             border-color: rgba(255, 255, 255, 0.05) !important;
         }
 
-        /* HCTS Reset Button in Filter Card */
+        /* Tombol Reset HCTS di Kartu Filter */
         body.dark-mode .bg-white.border-gray-100.rounded-2xl.text-gray-400 {
             background-color: rgba(30, 41, 59, 0.6) !important;
             border-color: rgba(255, 255, 255, 0.1) !important;
         }
 
-        /* HCTS Inventory Dark Mode Overrides */
+        /* Penyesuaian Inventori HCTS di Dark Mode */
         body.dark-mode .bg-white\/70.backdrop-blur-md {
             background-color: rgba(15, 23, 42, 0.6) !important;
             border-color: rgba(255, 255, 255, 0.1) !important;
         }
+
         body.dark-mode .bg-gray-50.border-gray-100.rounded-xl {
             background-color: rgba(30, 41, 59, 0.8) !important;
             border-color: rgba(255, 255, 255, 0.1) !important;
             color: #ffffff !important;
         }
+
         body.dark-mode .bg-emerald-50.text-emerald-600 {
             background-color: rgba(16, 185, 129, 0.1) !important;
             border-color: rgba(16, 185, 129, 0.2) !important;
             color: #34d399 !important;
         }
 
-        /* HCTS Submission Footer & Buttons in Dark Mode */
+        /* Footer & Tombol Penyerahan HCTS di Dark Mode */
         body.dark-mode .bg-gray-50\/30.backdrop-blur-sm {
             background-color: rgba(15, 23, 42, 0.8) !important;
             border-top-color: rgba(255, 255, 255, 0.05) !important;
         }
+
         body.dark-mode .bg-gray-100.text-gray-400.cursor-not-allowed.opacity-50 {
             background-color: rgba(30, 41, 59, 0.5) !important;
             color: rgba(148, 163, 184, 0.3) !important;
@@ -391,20 +470,15 @@
     <div x-data="{ 
             sidebarCollapsed: localStorage.getItem('sidebarCollapsed') === 'true',
             mobileOpen: false 
-         }" 
-         x-init="$watch('sidebarCollapsed', value => localStorage.setItem('sidebarCollapsed', value))"
-         class="flex h-screen bg-gray-100 dark:bg-slate-900 overflow-hidden">
-        
+         }" x-init="$watch('sidebarCollapsed', value => localStorage.setItem('sidebarCollapsed', value))"
+        class="flex h-screen bg-gray-100 dark:bg-slate-900 overflow-hidden">
+
         <!-- Mobile Backdrop -->
-        <div x-show="mobileOpen" 
-             x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="transition ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             @click="mobileOpen = false"
-             class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-30 lg:hidden">
+        <div x-show="mobileOpen" x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0" @click="mobileOpen = false"
+            class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-30 lg:hidden">
         </div>
 
         <!-- Sidebar -->
@@ -413,11 +487,11 @@
         <!-- Main Content Container -->
         <div id="main-scroll-container" class="flex-1 flex flex-col overflow-y-auto overflow-x-hidden relative min-w-0">
             <!-- Top Header -->
-            <nav id="top-header"
-                style="background: var(--theme-bg-header);"
+            <nav id="top-header" style="background: var(--theme-bg-header);"
                 class="px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between shrink-0 sticky top-0 z-50 w-full transition-all duration-500 ease-in-out border-b border-white/10 backdrop-blur-xl">
                 <div class="flex items-center gap-4">
-                    <button @click="mobileOpen = !mobileOpen" class="text-white/70 hover:text-white focus:outline-none lg:hidden transition-colors">
+                    <button @click="mobileOpen = !mobileOpen"
+                        class="text-white/70 hover:text-white focus:outline-none lg:hidden transition-colors">
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 6h16M4 12h16M4 18h16" />
@@ -462,14 +536,17 @@
                         this.time = now.toLocaleTimeString('id-ID', optionsTime).replace(/[\.]/g, ':');
                     }
                 }">
-                    <div class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-500">
-                        <svg class="w-4 h-4 text-pink-300 drop-shadow-[0_0_8px_rgba(244,114,182,0.5)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div
+                        class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-500">
+                        <svg class="w-4 h-4 text-pink-300 drop-shadow-[0_0_8px_rgba(244,114,182,0.5)]" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </div>
                     <div class="flex flex-col text-right justify-center">
-                        <span class="text-[8px] font-black uppercase tracking-[0.2em] text-white/40 mb-0.5" x-text="date"></span>
+                        <span class="text-[8px] font-black uppercase tracking-[0.2em] text-white/40 mb-0.5"
+                            x-text="date"></span>
                         <div class="flex items-baseline gap-1">
                             <span class="text-sm font-black tracking-tighter text-white leading-none"
                                 x-text="time"></span>
@@ -492,6 +569,7 @@
                         document.body.classList.add(theme);
                         
                         localStorage.setItem('theme', theme);
+                        window.dispatchEvent(new CustomEvent('theme-changed', { detail: { theme } }));
                     }
                 }" x-init="darkMode = document.documentElement.classList.contains('dark-mode')">
                     <button @click="toggleTheme()"
@@ -518,13 +596,16 @@
                         <x-slot name="trigger">
                             <button
                                 class="flex items-center gap-3 px-3 py-1.5 border border-white/10 dark:border-white/5 text-sm font-bold rounded-2xl text-white bg-white/5 hover:bg-white/10 focus:outline-none transition-all duration-300 group">
-                                <div class="hidden sm:block text-[11px] uppercase tracking-widest opacity-80 group-hover:opacity-100 transition-opacity">{{ Auth::user()->name }}</div>
+                                <div
+                                    class="hidden sm:block text-[11px] uppercase tracking-widest opacity-80 group-hover:opacity-100 transition-opacity">
+                                    {{ Auth::user()->name }}
+                                </div>
                                 <div
                                     class="h-8 w-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black border border-white/20 shadow-lg group-hover:scale-105 transition-transform duration-300">
                                     {{ substr(Auth::user()->name, 0, 1) }}
                                 </div>
-                                <svg class="w-4 h-4 text-white/40 group-hover:text-white/80 transition-colors" xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 20 20" fill="currentColor">
+                                <svg class="w-4 h-4 text-white/40 group-hover:text-white/80 transition-colors"
+                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd"
                                         d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
                                         clip-rule="evenodd" />
@@ -562,7 +643,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Global Session Flash Messages Handler
+            // Handler Pesan Flash Sesi Global
             @if(session('success'))
                 Swal.fire({
                     title: 'Berhasil!',
@@ -601,7 +682,7 @@
                 });
             }
 
-            // Global Delete Confirmation Handler
+            // Handler Konfirmasi Hapus Global
             document.addEventListener('submit', (e) => {
                 const form = e.target;
 

@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-black text-xl leading-tight transition-colors" :class="darkMode ? 'text-white' : 'text-slate-800'">
             {{ __('Edit Data Penerimaan HCS ') . $hcsReceiving->batch }}
         </h2>
     </x-slot>
@@ -58,7 +58,7 @@
                                             class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Nomor
                                             Bon</label>
                                         <input id="nomor_bon" name="nomor_bon" type="text"
-                                            class="block w-full py-2.5 px-4 border-gray-200 rounded-xl bg-gray-100/50 backdrop-blur-sm shadow-sm transition-all duration-300 font-bold text-sm opacity-70"
+                                            class="block w-full py-2.5 px-4 border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 font-bold text-sm opacity-70 cursor-not-allowed"
                                             value="{{ old('nomor_bon', $hcsReceiving->nomor_bon) }}" readonly
                                             required />
                                     </div>
@@ -85,7 +85,7 @@
                                             </svg>
                                         </label>
                                         <select id="pecahan_select" name="pecahan" x-model="selectedPecahan"
-                                            class="block w-full py-2.5 px-4 border-gray-200 rounded-xl bg-gray-100/80 pointer-events-none opacity-60 shadow-sm transition-all duration-300 font-black text-sm"
+                                            class="block w-full py-2.5 px-4 border-gray-200 rounded-xl bg-white/50 pointer-events-none opacity-60 shadow-sm transition-all duration-300 font-black text-sm"
                                             :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20 text-indigo-600'"
                                             tabindex="-1" required>
                                             <option value="">Pilih Pecahan</option>
@@ -164,7 +164,7 @@
                                             </svg>
                                         </label>
                                         <input id="batch" name="batch" type="text" maxlength="7"
-                                            class="block w-full py-2.5 px-4 font-mono uppercase bg-gray-100/50 border-gray-200 rounded-xl backdrop-blur-sm shadow-sm transition-all duration-300 tracking-tighter placeholder-gray-300 font-bold text-sm opacity-60 cursor-not-allowed"
+                                            class="block w-full py-2.5 px-4 font-mono uppercase bg-white/50 border-gray-200 rounded-xl backdrop-blur-sm shadow-sm transition-all duration-300 tracking-tighter placeholder-gray-300 font-bold text-sm opacity-60 cursor-not-allowed"
                                             value="{{ old('batch', $hcsReceiving->batch) }}" readonly required />
                                     </div>
 
@@ -179,7 +179,7 @@
                                             </svg>
                                         </label>
                                         <input id="seri" name="seri" type="text"
-                                            class="block w-full py-2.5 px-4 font-mono uppercase bg-gray-100/50 border-gray-200 rounded-xl backdrop-blur-sm shadow-sm transition-all duration-300 tracking-[0.2em] placeholder-gray-300 font-bold text-sm opacity-60 cursor-not-allowed"
+                                            class="block w-full py-2.5 px-4 font-mono uppercase bg-white/50 border-gray-200 rounded-xl backdrop-blur-sm shadow-sm transition-all duration-300 tracking-[0.2em] placeholder-gray-300 font-bold text-sm opacity-60 cursor-not-allowed"
                                             placeholder="Seri" value="{{ old('seri', $hcsReceiving->seri) }}" readonly
                                             required />
                                     </div>
@@ -195,7 +195,7 @@
                                             </svg>
                                         </label>
                                         <input id="emisi" name="emisi" type="number" min="2000" max="2100"
-                                            class="block w-full py-2.5 px-4 border-gray-200 rounded-xl bg-gray-100/80 pointer-events-none opacity-60 shadow-sm transition-all duration-300 font-bold text-sm cursor-not-allowed"
+                                            class="block w-full py-2.5 px-4 border-gray-200 rounded-xl bg-white/50 pointer-events-none opacity-60 shadow-sm transition-all duration-300 font-bold text-sm cursor-not-allowed"
                                             :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
                                             value="{{ old('emisi', $hcsReceiving->emisi) }}" readonly required />
                                     </div>
@@ -211,7 +211,7 @@
                                             </svg>
                                         </label>
                                         <select id="tahun_anggaran" name="tahun_anggaran"
-                                            class="block w-full py-2.5 px-4 border-gray-200 rounded-xl bg-gray-100/80 pointer-events-none opacity-60 shadow-sm transition-all duration-300 font-bold text-sm"
+                                            class="block w-full py-2.5 px-4 border-gray-200 rounded-xl bg-white/50 pointer-events-none opacity-60 shadow-sm transition-all duration-300 font-bold text-sm"
                                             :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
                                             tabindex="-1" required>
                                             @foreach(['2024', '2025', '2026', '2027'] as $year)
@@ -404,7 +404,7 @@
                                             @endphp
                                             <div class="relative group">
                                                 <button type="button" data-pack="{{ $i }}"
-                                                    class="pack-btn w-full aspect-square flex items-center justify-center text-[10px] sm:text-xs font-black rounded-lg transition-all duration-300 bg-white text-gray-400 border border-gray-100 shadow-sm hover:scale-105 hover:z-10 focus:outline-none focus:ring-4"
+                                                    class="pack-btn w-full aspect-square flex items-center justify-center text-[10px] sm:text-xs font-black rounded-lg transition-all duration-300 pack-btn-available shadow-sm hover:scale-105 hover:z-10 focus:outline-none focus:ring-4"
                                                     :class="currentTheme ? (currentTheme.ring.replace('focus:', '')) : 'focus:ring-indigo-500/20'">
                                                     <span>{{ $i }}</span>
                                                 </button>
@@ -774,5 +774,81 @@
                 init();
             });
         </script>
+    @endpush
+
+    @push('css')
+        <style>
+            [x-cloak] { display: none !important; }
+
+            /* Restoring High-Fidelity Dark Mode Aesthetics for Edit Page */
+            body.dark-mode [class*="bg-gray-50/30"] { background-color: var(--theme-bg-main) !important; }
+            body.dark-mode [class*="bg-white/70"] { background-color: rgba(30, 41, 59, 0.7) !important; border-color: var(--theme-border-main) !important; backdrop-blur: 40px !important; }
+            
+            body.dark-mode .lg\:w-\[45\%\] { background-color: rgba(15, 23, 42, 0.4) !important; border-right-color: var(--theme-border-main) !important; }
+            body.dark-mode .lg\:w-\[55\%\] { background-color: rgba(15, 23, 42, 0.2) !important; }
+            
+            /* Nested Elements & Inner Cards - Depth Restoration */
+            body.dark-mode .bg-white\/80, 
+            body.dark-mode .bg-white\/40, 
+            body.dark-mode .bg-white\/50,
+            body.dark-mode .bg-white\/20:not(nav *) { 
+                background-color: rgba(30, 41, 59, 0.5) !important; 
+                border-color: var(--theme-border-main) !important; 
+                backdrop-blur: 10px !important;
+            }
+
+            /* Input & Field Overrides */
+            body.dark-mode input.bg-white\/50,
+            body.dark-mode select.bg-white\/50 {
+                background-color: rgba(15, 23, 42, 0.6) !important;
+                border-color: var(--theme-border-main) !important;
+                color: #f8fafc !important;
+            }
+
+            body.dark-mode .text-gray-900, body.dark-mode .text-gray-800 { color: var(--theme-text-main) !important; }
+            body.dark-mode .text-gray-600, body.dark-mode .text-gray-700 { color: var(--theme-text-muted) !important; }
+            
+            /* Borders & Utilities */
+            body.dark-mode .border-white, 
+            body.dark-mode .border-gray-100, 
+            body.dark-mode .border-gray-200 { 
+                border-color: var(--theme-border-main) !important; 
+            }
+
+            /* Pack Grid Tooltip & Grid Elements */
+            body.dark-mode .pack-btn-available {
+                background-color: #1a2434 !important;
+                color: #64748b !important;
+                border: 1px solid #334155 !important;
+            }
+            body.dark-mode .pack-btn-available:hover {
+                background-color: #243047 !important;
+                color: #94a3b8 !important;
+            }
+
+            body.light-mode .pack-btn-available {
+                background-color: #ffffff !important;
+                color: #94a3b8 !important;
+                border: 1px solid #f1f5f9 !important;
+                box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+            }
+            body.light-mode .pack-btn-available:hover {
+                background-color: #f8fafc !important;
+                color: #475569 !important;
+                border-color: #e2e8f0 !important;
+            }
+
+            /* Light Mode Refinements for Edit Page */
+            body.light-mode .bg-white\/70.backdrop-blur-xl { background-color: #ffffff !important; border-color: #e5e7eb !important; }
+            body.light-mode .lg\:w-\[45\%\]\.bg-white\/40 { background-color: #f8fafc !important; border-right-color: #e5e7eb !important; }
+            body.light-mode .lg\:w-\[55\%\]\.bg-gray-50\/20 { background-color: #ffffff !important; }
+            body.light-mode input, body.light-mode select, body.light-mode textarea {
+                background-color: #ffffff !important;
+                border-color: #d1d5db !important;
+            }
+            body.light-mode .bg-white\/50 { background-color: #ffffff !important; border-color: #d1d5db !important; }
+            body.light-mode .bg-white\/80 { background-color: #ffffff !important; border-color: #e5e7eb !important; }
+            body.light-mode .bg-white\/40 { background-color: #f1f5f9 !important; border-color: #e5e7eb !important; }
+        </style>
     @endpush
 </x-app-layout>

@@ -91,7 +91,7 @@
                                         </td>
                                         <td
                                             class="px-6 py-4 whitespace-nowrap text-center text-lg font-black text-indigo-600 tracking-tighter">
-                                            #{{ $rec['pack_number'] }}
+                                            #{{ $rec['number'] }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <p class="text-xs text-gray-400 font-medium">

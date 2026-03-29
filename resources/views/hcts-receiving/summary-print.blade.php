@@ -40,7 +40,7 @@
             <div>
                 <h1 class="text-2xl font-extrabold text-gray-900 mb-1 tracking-tight uppercase">Ringkasan Akumulasi HCS & HCTS</h1>
                 <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-4">Khazprokhir Management System</p>
-                
+                <div class="flex flex-wrap items-center gap-3 text-xs mb-4">
                     @if($search)
                     <div class="bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100 flex items-center">
                         <span class="text-indigo-400 mr-2 uppercase font-black text-[9px]">Cari:</span>
@@ -60,7 +60,6 @@
                     </div>
                     @endif
                 </div>
-            </div>
             <div class="text-right">
                 <p class="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Dicetak Pada</p>
                 <p class="text-xs font-bold text-gray-700">{{ \Carbon\Carbon::now()->translatedFormat('d F Y, H:i') }}</p>

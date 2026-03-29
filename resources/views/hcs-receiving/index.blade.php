@@ -11,6 +11,7 @@
                 <div class="p-8 text-gray-900">
                     
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                        <!-- Page Title -->
                         <h3 class="text-lg font-medium text-gray-900">Data Penerimaan HCS</h3>
                         @if(in_array(auth()->user()->role, ['sortir', 'admin']))
                             <a href="{{ route('hcs-receiving.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 shrink-0">
@@ -234,19 +235,7 @@
                                                 {{ $receiving->nomor_bon }}
                                             </td>
                                             <td class="px-2 py-4 sm:px-4 whitespace-nowrap text-[10px] sm:text-sm">
-                                                @php
-                                                    $pecahanColors = [
-                                                        'S' => 'bg-lime-50 text-lime-700 border-lime-200 dark:bg-lime-900/20 dark:text-lime-400 dark:border-lime-800/40',
-                                                        'T' => 'bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-800/20 dark:text-slate-400 dark:border-slate-700/40',
-                                                        'U' => 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800/40',
-                                                        'V' => 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-400 dark:border-purple-800/40',
-                                                        'W' => 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800/40',
-                                                        'X' => 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/40',
-                                                        'Y' => 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-900/20 dark:text-rose-400 dark:border-rose-800/40',
-                                                    ];
-                                                    $badgeClass = $pecahanColors[$receiving->pecahan] ?? 'bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800/20 dark:text-gray-400 dark:border-gray-700/40';
-                                                @endphp
-                                                <span class="px-2 py-0.5 sm:px-3 sm:py-1 rounded-md text-[9px] sm:text-[10px] font-black border uppercase tracking-wider {{ $badgeClass }}">
+                                                <span class="badge-fixed badge-pecahan-{{ $receiving->pecahan }}">
                                                     {{ $receiving->pecahan }}
                                                 </span>
                                             </td>
@@ -364,7 +353,7 @@
 
     @push('css')
     <style>
-        /* Penyeragaman Tinggi & Penyelarasan */
+        /* Penyeragaman Tinggi & Penyelarasan Input */
         #search, #pecahan, #supplier, #start_date, #end_date, #search-btn {
             height: 38px !important;
             box-sizing: border-box;

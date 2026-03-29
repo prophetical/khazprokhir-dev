@@ -23,7 +23,7 @@ class RekomendasiPenerimaanController extends Controller
     public function show(Request $request)
     {
         $params = $request->only(['pecahan', 'batch', 'seri', 'tahun_anggaran', 'emisi']);
-        $recommendations = $this->service->getPenerimaanRecommendations($params)->first()->recommended_packs ?? [];
+        $recommendations = $this->service->getPenerimaanRecommendations($params)->first()?->recommended_packs ?? [];
         return view('hcs-receiving.rekomendasi.show', compact('params', 'recommendations'));
     }
 

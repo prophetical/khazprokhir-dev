@@ -233,8 +233,6 @@
                         <table class="min-w-full divide-y divide-gray-200 border">
                             <thead class="bg-gray-50">
                                 <tr>
-                            <thead class="bg-gray-50">
-                                <tr>
                                     <th scope="col" class="px-3 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">No Bon</th>
                                     <th scope="col" class="px-3 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Pch</th>
                                     <th scope="col" class="px-3 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Emisi</th>
