@@ -73,129 +73,51 @@ class HcsReceivingController extends Controller
 
     public function store(StoreHcsReceivingRequest $request)
     {
-        $validated = $request->validated();
-        $isManual = $request->has('is_manual');
-
-        $jumlah = $validated['jumlah'];
-
-        if ($isManual) {
-            if ($jumlah > 45000) {
-                return back()->withInput()->withErrors(['jumlah' => 'Jumlah bilyet tidak boleh melebihi 45.000 untuk pack tidak full.']);
-            }
-            $packsNeeded = 1;
-        } else {
-            if ($jumlah % 45000 !== 0) {
-                return back()->withInput()->withErrors(['jumlah' => 'Jumlah bilyet harus kelipatan 45.000.']);
-            }
-            $packsNeeded = $jumlah / 45000;
-        }
-
-        $selectedPacksCount = count($validated['packs']);
-
-        if ($selectedPacksCount !== (int) $packsNeeded) {
-            return back()->withInput()->withErrors(['packs' => "Jumlah packs yang dipilih ($selectedPacksCount) tidak sesuai kebutuhan ($packsNeeded)."]);
-        }
-
         try {
-            $validated['is_manual'] = $isManual;
+            $validated = $request->validated();
+            $validated['is_manual'] = $request->has('is_manual');
             $this->service->createReceiving($validated, auth()->id());
 
             return redirect()->route('hcs-receiving.index')->with('success', 'Data Penerimaan HCS berhasil disimpan.');
         } catch (\Exception $e) {
-            return back()->withInput()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data: '.$e->getMessage()]);
+            return back()->withInput()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
         }
     }
 
     public function edit(HcsReceiving $hcsReceiving)
     {
-        // Butuh validasi akses Sortir (biasanya lewat middleware/policy), di sini kita cuma nampilin halamannya aja
-        if (! in_array(auth()->user()->role, ['sortir', 'admin'])) {
-            abort(403, 'Unauthorized action.');
-        }
-
+        if (!in_array(auth()->user()->role, ['sortir', 'admin'])) abort(403);
         $hcsReceiving->load('packs');
-
         $sortedPacks = $hcsReceiving->packs->whereNotNull('hcs_sorting_id')->pluck('pack_number')->toArray();
-        $hasSortedPacks = ! empty($sortedPacks);
-        $sortedPacksCount = count($sortedPacks);
-
-        return view('hcs-receiving.edit', compact('hcsReceiving', 'sortedPacks', 'hasSortedPacks', 'sortedPacksCount'));
+        return view('hcs-receiving.edit', [
+            'hcsReceiving' => $hcsReceiving,
+            'sortedPacks' => $sortedPacks,
+            'hasSortedPacks' => !empty($sortedPacks),
+            'sortedPacksCount' => count($sortedPacks)
+        ]);
     }
 
     public function update(UpdateHcsReceivingRequest $request, HcsReceiving $hcsReceiving)
     {
-        $validated = $request->validated();
-        $isManual = $request->has('is_manual');
-        $jumlah = $validated['jumlah'];
-
-        if ($isManual) {
-            if ($jumlah > 45000) {
-                return back()->withInput()->withErrors(['jumlah' => 'Jumlah bilyet tidak boleh melebihi 45.000 untuk pack tidak full.']);
-            }
-            $packsNeeded = 1;
-        } else {
-            if ($jumlah % 45000 !== 0) {
-                return back()->withInput()->withErrors(['jumlah' => 'Jumlah bilyet harus kelipatan 45.000.']);
-            }
-            $packsNeeded = $jumlah / 45000;
-        }
-
-        $selectedPacksCount = count($validated['packs']);
-
-        if ($selectedPacksCount !== (int) $packsNeeded) {
-            return back()->withInput()->withErrors(['packs' => "Jumlah packs yang dipilih ($selectedPacksCount) tidak sesuai kebutuhan ($packsNeeded)."]);
-        }
-
-        // Cek field yang gak boleh diedit (read-only) permanen
-        if ($validated['pecahan'] !== $hcsReceiving->pecahan ||
-            $validated['batch'] !== $hcsReceiving->batch ||
-            $validated['seri'] !== $hcsReceiving->seri ||
-            $validated['emisi'] != $hcsReceiving->emisi ||
-            $validated['tahun_anggaran'] != $hcsReceiving->tahun_anggaran) {
-            return back()->withInput()->withErrors(['error' => 'Tahun Anggaran, Emisi, Pecahan, Batch, dan Seri tidak boleh diubah untuk menjaga integritas satu batch.']);
-        }
-
-        $sortedPacks = $hcsReceiving->packs()->whereNotNull('hcs_sorting_id')->pluck('pack_number')->toArray();
-
-        if (! empty($sortedPacks)) {
-            // Validasi minimum pack
-            if ($selectedPacksCount < count($sortedPacks)) {
-                return back()->withInput()->withErrors(['packs' => 'Jumlah pack tidak boleh kurang dari pack yang sudah disortir ('.count($sortedPacks).' pack).']);
-            }
-
-            // Validasi pack yang sudah disortir tidak boleh di-unselect
-            $missingSortedPacks = array_diff($sortedPacks, $validated['packs']);
-            if (! empty($missingSortedPacks)) {
-                return back()->withInput()->withErrors(['packs' => 'Pack yang sudah disortir tidak boleh dibuang.']);
-            }
-        }
-
         try {
-            $validated['is_manual'] = $isManual;
+            $validated = $request->validated();
+            $validated['is_manual'] = $request->has('is_manual');
             $this->service->updateReceiving($hcsReceiving, $validated, auth()->id());
 
             return redirect()->route('hcs-receiving.index')->with('success', 'Data Penerimaan HCS berhasil diperbarui.');
         } catch (\Exception $e) {
-            return back()->withInput()->withErrors(['error' => 'Terjadi kesalahan saat memperbarui data: '.$e->getMessage()]);
+            return back()->withInput()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
         }
     }
 
     public function destroy(HcsReceiving $hcsReceiving)
     {
-        if (! in_array(auth()->user()->role, ['sortir', 'admin'])) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        if ($hcsReceiving->packs()->whereNotNull('hcs_sorting_id')->exists()) {
-            return back()->withErrors(['error' => 'Data tidak dapat dihapus karena beberapa pack sudah disortir.']);
-        }
-
+        if (!in_array(auth()->user()->role, ['sortir', 'admin'])) abort(403);
         try {
             $this->service->deleteReceiving($hcsReceiving, auth()->id());
-
-            return redirect()->route('hcs-receiving.index')->with('success', 'Data Penerimaan HCS berhasil dihapus secara permanen.');
+            return redirect()->route('hcs-receiving.index')->with('success', 'Data Penerimaan HCS berhasil dihapus.');
         } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Terjadi kesalahan saat menghapus data: '.$e->getMessage()]);
+            return back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
         }
     }
 }

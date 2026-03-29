@@ -18,6 +18,7 @@ class HcsReceivingService
      */
     public function createReceiving(array $data, int $userId): HcsReceiving
     {
+        $this->validateReceiving($data);
         try {
             DB::beginTransaction();
 
@@ -88,6 +89,7 @@ class HcsReceivingService
      */
     public function updateReceiving(HcsReceiving $hcs, array $data, int $userId): HcsReceiving
     {
+        $this->validateUpdate($hcs, $data);
         try {
             DB::beginTransaction();
 
@@ -225,6 +227,38 @@ class HcsReceivingService
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
+        }
+    }
+
+    public function validateReceiving(array $data)
+    {
+        $isManual = $data['is_manual'] ?? false;
+        $jumlah = $data['jumlah'];
+        if ($isManual) {
+            if ($jumlah > 45000) throw new Exception('Jumlah bilyet tidak boleh melebihi 45.000 untuk pack tidak full.');
+            $packsNeeded = 1;
+        } else {
+            if ($jumlah % 45000 !== 0) throw new Exception('Jumlah bilyet harus kelipatan 45.000.');
+            $packsNeeded = $jumlah / 45000;
+        }
+
+        if (count($data['packs']) !== (int)$packsNeeded) {
+            throw new Exception("Jumlah packs yang dipilih (".count($data['packs']).") tidak sesuai kebutuhan ($packsNeeded).");
+        }
+    }
+
+    public function validateUpdate(HcsReceiving $hcs, array $data)
+    {
+        $this->validateReceiving($data);
+
+        if ($data['pecahan'] !== $hcs->pecahan || $data['batch'] !== $hcs->batch || $data['seri'] !== $hcs->seri || $data['emisi'] != $hcs->emisi || $data['tahun_anggaran'] != $hcs->tahun_anggaran) {
+            throw new Exception('Tahun Anggaran, Emisi, Pecahan, Batch, dan Seri tidak boleh diubah.');
+        }
+
+        $sortedPacks = $hcs->packs()->whereNotNull('hcs_sorting_id')->pluck('pack_number')->toArray();
+        if (!empty($sortedPacks)) {
+            if (count($data['packs']) < count($sortedPacks)) throw new Exception('Jumlah pack tidak boleh kurang dari pack yang sudah disortir ('.count($sortedPacks).' pack).');
+            if (!empty(array_diff($sortedPacks, $data['packs']))) throw new Exception('Pack yang sudah disortir tidak boleh dibuang.');
         }
     }
 }
