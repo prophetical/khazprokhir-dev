@@ -1,33 +1,44 @@
-# Khazprokhir - Operational Management & Reporting System
+# Khazprokhir - Premium Operational & Reporting Ecosystem
 
-Khazprokhir is a high-performance web application designed to streamline and monitor industrial operational workflows, specifically tailored for receiving, sorting, and packaging processes (HCS & HCTS). Built on top of the Laravel framework, it provides a robust platform for real-time reporting, target management, and inventory tracking with a focus on data integrity and user experience.
+Khazprokhir is a high-performance, enterprise-grade web application designed to streamline industrial operational workflows. It specializes in the management of receiving, sorting, and packaging processes (**HCS & HCTS**), providing real-time analytics, automated bilyet calculations, and robust inventory tracking.
+
+Built with a focus on visual excellence and data integrity, Khazprokhir transforms complex operational data into actionable insights through a modern, premium interface.
+
+---
 
 ## ✨ Key Features
 
-- **📊 Comprehensive Dashboards**: Real-time overview of operational counts, inventory status, and target achievements.
-- **📦 Workflow Management**: Standardized modules for Receiving, Sorting, and Packaging (HCS/HCTS) with integrated stock ledger updates.
-- **📈 Real-time Reporting**: Dynamic Daily Operational Reports with live-polling updates and advanced filtering (Budget Year, Emission Year, Denomination).
-- **🎯 Target Tracking**: Management of Annual and Monthly packaging targets with visual progress indicators.
-- **🎨 Premium UI/UX**: State-of-the-art interface featuring a "Double Card" aesthetic, responsive layouts, and interactive components powered by Alpine.js and Tailwind CSS.
-- **📄 Export & Printing**: High-fidelity export options for Excel and PDF, with optimized print layouts for all operational reports.
-- **🔐 Secure Access**: Role-based access control and detailed audit logging of critical actions.
+- **📊 Advanced Analytics Dashboard**: Real-time overview of production metrics, denomination-based trends, and automated bilyet summaries.
+- **📱 Fully Mobile-Ready**: A completely responsive interface optimized for all devices (mobile, tablet, desktop) without compromising density or aesthetics.
+- **📦 Workflow Modules**: Standardized end-to-end management for:
+  - **HCS** (Receiving, Sorting, Packaging)
+  - **HCTS** (Receiving, Inventory, Submission)
+- **📈 Inschiet Analytical Module**: Specialized tracking for production discrepancies with dynamic chart visualizations and detailed modal breakdowns.
+- **📋 Real-time Operational Reports**: Live-polling reports with advanced multi-criteria filtering (TA/TE, Denomination, and specific date ranges).
+- **🎨 Premium UI/UX**: Modern glassmorphism aesthetic with specialized dark mode support, fluid typography, and micro-animations.
+- **📄 Pro Export & Printing**: High-fidelity PDF and Excel exports with dedicated print-optimized layouts for all operational modules.
+
+---
 
 ## 🛠 Tech Stack
 
 - **Backend**: [Laravel 11](https://laravel.com/) (PHP 8.2+)
-- **Frontend**: [Tailwind CSS](https://tailwindcss.com/), [Alpine.js](https://alpinejs.dev/), [Blade Templates](https://laravel.com/docs/blade)
+- **Frontend**: [Tailwind CSS 3.4](https://tailwindcss.com/) + [Alpine.js 3](https://alpinejs.dev/)
 - **Build Tool**: [Vite](https://vitejs.dev/)
-- **Database**: SQLite (Configurable to MySQL/PostgreSQL)
+- **Charts**: [Chart.js](https://www.chartjs.org/)
+- **Popups**: [SweetAlert2](https://sweetalert2.github.io/)
 - **Icons**: [Heroicons](https://heroicons.com/)
+
+---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-- PHP >= 8.2
-- Composer
-- Node.js & NPM
-- SQLite (or your preferred DB driver)
+- **PHP** >= 8.2 (with JSON & PDO extensions)
+- **Composer** (PHP Package Manager)
+- **Node.js** >= 18 & **NPM**
+- **Database**: SQLite (Default) or MySQL/PostgreSQL
 
 ### Installation
 
@@ -52,32 +63,42 @@ Khazprokhir is a high-performance web application designed to streamline and mon
    php artisan key:generate
    ```
 
-   *Configure your database settings in the `.env` file.*
+   *Configure your database and app settings in the `.env` file.*
 
-4. **Database Migration**
+4. **Database Initialization**
 
    ```bash
    php artisan migrate --seed
    ```
 
-5. **Build Assets**
+5. **Build Production Assets**
 
    ```bash
    npm run build
    ```
 
-6. **Start Application**
+6. **Final Launch**
 
    ```bash
    php artisan serve
    ```
 
-   Visit `http://localhost:8000` to access the portal.
+Visit `http://localhost:8000` to access the application.
 
-## 🤝 Contributing
+---
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+## 🏗 Deployment Note
 
-## 📄 License
+For production deployment to a VM, follow the detailed instructions in [deployment_guide.md](deployment_guide.md) to properly compile assets and configure environment variables.
 
-This project is open-sourced software licensed under the [MIT license](LICENSE).
+---
+
+## 🔐 Internal Repository
+
+This is a **private repository** managed by **[prophetical](https://github.com/prophetical)**. Access is restricted to authorized personnel only.
+
+For technical support or feature requests, please contact the repository owner directly.
+
+---
+
+© 2026 Khazprokhir Ecosystem. All rights reserved.
