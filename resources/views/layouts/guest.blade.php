@@ -10,11 +10,8 @@
         <!-- Fonts Local -->
         <link href="{{ asset('css/fonts.css') }}" rel="stylesheet" />
 
-        <!-- Tailwind Local -->
-        <script src="{{ asset('vendor/tailwindcss/tailwindcss.min.js') }}"></script>
-
-        <!-- Local AlpineJS -->
-        <script defer src="{{ asset('vendor/alpinejs/alpine.min.js') }}"></script>
+        <!-- Scripts -->
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen flex" style="background: #f0f4ff;">

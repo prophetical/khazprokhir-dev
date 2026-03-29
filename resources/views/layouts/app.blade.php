@@ -12,14 +12,12 @@
     <link href="{{ asset('css/fonts.css') }}" rel="stylesheet" />
 
     <!-- Tailwind Local -->
-    <script src="{{ asset('vendor/tailwindcss/tailwindcss.min.js') }}"></script>
+    {{-- Removed runtime script for compiled CSS --}}
 
     <!-- Scripts -->
     <script src="{{ asset('js/sweetalert2.all.min.js') }}"></script>
-    {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <!-- Local AlpineJS -->
-    <script defer src="{{ asset('vendor/alpinejs/alpine.min.js') }}"></script>
 
     <!-- Theme Management -->
     <script>
@@ -390,7 +388,25 @@
 </head>
 
 <body class="font-sans antialiased">
-    <div class="flex h-screen bg-gray-100 overflow-hidden">
+    <div x-data="{ 
+            sidebarCollapsed: localStorage.getItem('sidebarCollapsed') === 'true',
+            mobileOpen: false 
+         }" 
+         x-init="$watch('sidebarCollapsed', value => localStorage.setItem('sidebarCollapsed', value))"
+         class="flex h-screen bg-gray-100 dark:bg-slate-900 overflow-hidden">
+        
+        <!-- Mobile Backdrop -->
+        <div x-show="mobileOpen" 
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             @click="mobileOpen = false"
+             class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-30 lg:hidden">
+        </div>
+
         <!-- Sidebar -->
         @include('layouts.navigation')
 
@@ -401,7 +417,7 @@
                 style="background: var(--theme-bg-header);"
                 class="px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between shrink-0 sticky top-0 z-50 w-full transition-all duration-500 ease-in-out border-b border-white/10 backdrop-blur-xl">
                 <div class="flex items-center gap-4">
-                    <button class="text-white/70 hover:text-white focus:outline-none md:hidden transition-colors">
+                    <button @click="mobileOpen = !mobileOpen" class="text-white/70 hover:text-white focus:outline-none lg:hidden transition-colors">
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 6h16M4 12h16M4 18h16" />

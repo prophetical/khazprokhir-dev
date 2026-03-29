@@ -182,7 +182,7 @@
                             };
 
                             new Chart(pCtx, {
-                                type: 'doughnut',
+                                type: 'pie',
                                 data: {
                                     labels: pLabels,
                                     datasets: [{
@@ -192,13 +192,13 @@
                                         hoverOffset: 12
                                     }]
                                 },
-                                options: this.donutOptions('Distribusi Pecahan')
+                                options: this.pieOptions('Distribusi Pecahan')
                             });
 
                             // 2. Grafik alur produksi
                             const lCtx = document.getElementById('lifecycle-donut').getContext('2d');
                             new Chart(lCtx, {
-                                type: 'doughnut',
+                                type: 'pie',
                                 data: {
                                     labels: ['Kemas', 'Terima', 'Kirim'],
                                     datasets: [{
@@ -208,13 +208,13 @@
                                         hoverOffset: 12
                                     }]
                                 },
-                                options: this.donutOptions('Alur Produksi')
+                                options: this.pieOptions('Alur Produksi')
                             });
 
                             // 3. Grafik proporsi supplier
                             const sCtx = document.getElementById('supplier-donut').getContext('2d');
                             new Chart(sCtx, {
-                                type: 'doughnut',
+                                type: 'pie',
                                 data: {
                                     labels: Object.keys(@json($supplierDistributionYear)),
                                     datasets: [{
@@ -224,7 +224,7 @@
                                         hoverOffset: 12
                                     }]
                                 },
-                                options: this.donutOptions('Proporsi Supplier')
+                                options: this.pieOptions('Proporsi Supplier')
                             });
 
                             // 4. Grafik Inschiet (Terima/Serah) - Initially none, handled by popup
@@ -258,7 +258,7 @@
                         const title = isProduksi ? 'Detail Inschiet Produksi' : 'Detail Inschiet Final';
                         const subtitle = isProduksi ? 'Perbandingan Penerimaan HCTS & HCS' : 'Perbandingan Penyerahan HCTS & HCS';
                         const percentage = isProduksi ? '{{ number_format($inschietProduksi, 2, ",", ".") }}%' : '{{ number_format($inschietFinal, 2, ",", ".") }}%';
-                        
+
                         const hctsLabel = isProduksi ? 'Penerimaan HCTS' : 'Penyerahan HCTS';
                         const hcsLabel = isProduksi ? 'Penerimaan HCS' : 'Penyerahan HCS';
                         const hctsValue = isProduksi ? {{ $totalHctsYear }} : {{ $totalHctsSerahYear }};
@@ -303,16 +303,16 @@
 
                                         <div class="h-[80px] w-full relative mb-6 bg-slate-50 dark:bg-slate-800/80 rounded-[2rem] border border-slate-100 dark:border-slate-700/50 p-4 shadow-inner flex flex-col justify-center">
                                             <div class="relative h-4 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                                                <div class="absolute inset-y-0 left-0 bg-[#f43f5e] transition-all duration-1000" style="width: ${ (hctsValue / (hctsValue + hcsValue) * 100).toFixed(2) }%"></div>
-                                                <div class="absolute inset-y-0 right-0 bg-[#10b981] transition-all duration-1000" style="width: ${ (hcsValue / (hctsValue + hcsValue) * 100).toFixed(2) }%"></div>
+                                                <div class="absolute inset-y-0 left-0 bg-[#f43f5e] transition-all duration-1000" style="width: ${(hctsValue / (hctsValue + hcsValue) * 100).toFixed(2)}%"></div>
+                                                <div class="absolute inset-y-0 right-0 bg-[#10b981] transition-all duration-1000" style="width: ${(hcsValue / (hctsValue + hcsValue) * 100).toFixed(2)}%"></div>
                                             </div>
                                             <div class="flex justify-between mt-3 px-1">
                                                 <div class="text-center">
-                                                    <p class="text-[9px] font-black text-[#f43f5e]" style="line-height: 1; font-family: 'Inter', sans-serif;">${ (hctsValue / (hctsValue + hcsValue) * 100).toFixed(1) }%</p>
+                                                    <p class="text-[9px] font-black text-[#f43f5e]" style="line-height: 1; font-family: 'Inter', sans-serif;">${(hctsValue / (hctsValue + hcsValue) * 100).toFixed(1)}%</p>
                                                     <p class="text-[6px] font-black text-slate-400 uppercase tracking-widest">Ratio HCTS</p>
                                                 </div>
                                                 <div class="text-center">
-                                                    <p class="text-[9px] font-black text-[#10b981]" style="line-height: 1; font-family: 'Inter', sans-serif;">${ (hcsValue / (hctsValue + hcsValue) * 100).toFixed(1) }%</p>
+                                                    <p class="text-[9px] font-black text-[#10b981]" style="line-height: 1; font-family: 'Inter', sans-serif;">${(hcsValue / (hctsValue + hcsValue) * 100).toFixed(1)}%</p>
                                                     <p class="text-[6px] font-black text-slate-400 uppercase tracking-widest">Ratio HCS</p>
                                                 </div>
                                             </div>
@@ -351,7 +351,7 @@
                                         </div>
                                     </div>
                                 </div>`
-,
+                            ,
                             showConfirmButton: false,
                             showCloseButton: true,
                             width: '400px',
@@ -370,11 +370,10 @@
                             }
                         });
                     },
-                    donutOptions(title) {
+                    pieOptions(title) {
                         return {
                             responsive: true,
                             maintainAspectRatio: false,
-                            cutout: '75%',
                             layout: {
                                 padding: 25
                             },
@@ -412,7 +411,7 @@
             {{-- Bagian kartu ringkasan angka --}}
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div
-                    class="group bg-indigo-700 rounded-2xl p-4 relative hover:-translate-y-1 overflow-hidden flex flex-col justify-center">
+                    class="group bg-indigo-700 rounded-2xl p-4 relative hover:-translate-y-1 overflow-hidden flex flex-col justify-center card-slide-light">
                     <p
                         class="text-indigo-100 text-[9px] font-black uppercase tracking-widest mb-1 opacity-80 leading-none">
                         Total Terima {{ $currentYear }}</p>
@@ -422,7 +421,7 @@
                 </div>
 
                 <div
-                    class="group bg-emerald-600 rounded-2xl p-4 relative hover:-translate-y-1 overflow-hidden flex flex-col justify-center">
+                    class="group bg-emerald-600 rounded-2xl p-4 relative hover:-translate-y-1 overflow-hidden flex flex-col justify-center card-slide-light">
                     <p
                         class="text-emerald-100 text-[9px] font-black uppercase tracking-widest mb-1 opacity-80 leading-none">
                         Total Kemas {{ $currentYear }}</p>
@@ -432,7 +431,7 @@
                 </div>
 
                 <div
-                    class="group bg-pink-600 rounded-2xl p-4 relative hover:-translate-y-1 overflow-hidden flex flex-col justify-center">
+                    class="group bg-pink-600 rounded-2xl p-4 relative hover:-translate-y-1 overflow-hidden flex flex-col justify-center card-slide-light">
                     <p
                         class="text-pink-100 text-[9px] font-black uppercase tracking-widest mb-1 opacity-80 leading-none">
                         Total Kirim {{ $currentYear }}</p>
@@ -442,9 +441,10 @@
                 </div>
 
                 <div
-                    class="group bg-amber-500 rounded-2xl p-4 hover:-translate-y-1 relative overflow-hidden flex flex-col justify-center">
+                    class="group bg-amber-500 rounded-2xl p-4 hover:-translate-y-1 relative overflow-hidden flex flex-col justify-center card-slide-light">
                     <div class="flex items-center justify-between mb-1 text-[9px]">
-                        <p class="text-amber-50 font-black uppercase tracking-widest opacity-80 leading-none" title="Target Kirim">Total
+                        <p class="text-amber-50 font-black uppercase tracking-widest opacity-80 leading-none"
+                            title="Target Kirim">Total
                             Target {{ $currentYear }}</p>
                         <span
                             class="font-black text-white bg-white/20 px-1.5 py-0.5 rounded-full backdrop-blur-sm">{{ $totalTargetYear > 0 ? round(($totalSerahYear / $totalTargetYear) * 100) : 0 }}%</span>
@@ -682,36 +682,49 @@
                         <div>
                             <h3 class="text-lg font-black text-gray-900 tracking-tighter uppercase leading-none mb-1">
                                 Analisis Inschiet</h3>
-                            <p class="text-[9px] text-gray-400 font-black uppercase tracking-[0.2em]">TA {{ $currentYear }}</p>
+                            <p class="text-[9px] text-gray-400 font-black uppercase tracking-[0.2em]">TA
+                                {{ $currentYear }}
+                            </p>
                         </div>
                     </div>
-                    
+
                     <div class="space-y-4 mb-8">
                         {{-- Toggle Buttons --}}
                         <button @click="showInschietPopup('produksi')"
                             class="w-full flex flex-col p-5 rounded-3xl border transition-all duration-500 group/btn text-left bg-gray-50/50 border-gray-100 hover:bg-violet-50 hover:border-violet-200 hover:shadow-xl hover:shadow-violet-100/30">
                             <div class="flex justify-between items-center mb-1">
-                                <span class="text-[10px] font-black uppercase tracking-widest text-slate-500 group-hover/btn:text-violet-600 transition-colors">Produksi</span>
-                                <span class="text-sm font-black text-violet-600">{{ number_format($inschietProduksi, 2, ',', '.') }}%</span>
+                                <span
+                                    class="text-[8px] font-black uppercase tracking-widest text-slate-500 group-hover/btn:text-violet-600 transition-colors">Inschiet
+                                    Produksi</span>
+                                <span
+                                    class="text-sm font-black text-violet-600">{{ number_format($inschietProduksi, 2, ',', '.') }}%</span>
                             </div>
-                            <p class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Bilyet Basis Analysis</p>
+                            <p class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Bilyet Basis
+                                Analysis</p>
                         </button>
 
                         <button @click="showInschietPopup('final')"
                             class="w-full flex flex-col p-5 rounded-3xl border transition-all duration-500 group/btn text-left bg-gray-50/50 border-gray-100 hover:bg-pink-50 hover:border-pink-200 hover:shadow-xl hover:shadow-pink-100/30">
                             <div class="flex justify-between items-center mb-1">
-                                <span class="text-[10px] font-black uppercase tracking-widest text-slate-500 group-hover/btn:text-pink-600 transition-colors">Final</span>
-                                <span class="text-sm font-black text-pink-600">{{ number_format($inschietFinal, 2, ',', '.') }}%</span>
+                                <span
+                                    class="text-[8px] font-black uppercase tracking-widest text-slate-500 group-hover/btn:text-pink-600 transition-colors">Inschiet
+                                    Final</span>
+                                <span
+                                    class="text-sm font-black text-pink-600">{{ number_format($inschietFinal, 2, ',', '.') }}%</span>
                             </div>
-                            <p class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Bilyet Basis Analysis</p>
+                            <p class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Bilyet Basis
+                                Analysis</p>
                         </button>
                     </div>
 
                     <div class="mt-auto pt-6 border-t border-gray-50 text-center">
-                        <p class="text-[8px] text-slate-400 font-bold uppercase tracking-[0.3em] mb-2">Bilyet Basis Analysis</p>
-                        <div class="inline-flex items-center gap-2 px-3 py-1 bg-indigo-50 rounded-full border border-indigo-100">
+                        <p class="text-[8px] text-slate-400 font-bold uppercase tracking-[0.3em] mb-2">Bilyet Basis
+                            Analysis</p>
+                        <div
+                            class="inline-flex items-center gap-2 px-3 py-1 bg-indigo-50 rounded-full border border-indigo-100">
                             <div class="w-1 h-1 rounded-full bg-indigo-500 animate-pulse"></div>
-                            <span class="text-[7px] text-indigo-600 font-black uppercase tracking-[0.1em]">Klik untuk Detail</span>
+                            <span class="text-[7px] text-indigo-600 font-black uppercase tracking-[0.1em]">Klik untuk
+                                Detail</span>
                         </div>
                     </div>
                 </div>
@@ -723,8 +736,9 @@
                         <div class="w-1.5 h-10 bg-indigo-600 rounded-full"></div>
                         <div>
                             <h3 class="text-xl font-black text-gray-900 tracking-tighter uppercase leading-none mb-1">
-                                Ringkasan Analitik Produksi</h3>
-                            <p class="text-[9px] text-gray-400 font-black uppercase tracking-[0.2em]">Visualisasi Proporsi &
+                                Ringkasan Analitik Produksi TA {{ $currentYear }}</h3>
+                            <p class="text-[9px] text-gray-400 font-black uppercase tracking-[0.2em]">Visualisasi
+                                Proporsi &
                                 Statistik Tahunan</p>
                         </div>
                     </div>
@@ -735,7 +749,8 @@
                             <div class="h-[220px] w-full relative">
                                 <canvas id="pecahan-donut"></canvas>
                             </div>
-                            <p class="text-center text-[9px] font-black text-gray-400 uppercase tracking-widest">Komposisi
+                            <p class="text-center text-[9px] font-black text-gray-400 uppercase tracking-widest">
+                                Komposisi
                                 Pecahan</p>
                         </div>
 

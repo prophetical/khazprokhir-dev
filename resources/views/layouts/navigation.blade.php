@@ -1,15 +1,17 @@
 <nav x-data="{ 
-        sidebarCollapsed: localStorage.getItem('sidebarCollapsed') === 'true',
-        mobileOpen: false,
         hcsOpen: {{ request()->routeIs('hcs-receiving.*', 'batch-tracking.*', 'reports.*', 'rekomendasi-penerimaan.*') ? 'true' : 'false' }},
         sortingOpen: {{ request()->routeIs('hcs-sorting.*', 'hcs-sorting-reports.*', 'rekomendasi-penyortiran.*') ? 'true' : 'false' }},
         penyerahanBiOpen: {{ request()->routeIs('penyerahan-bi.*') ? 'true' : 'false' }},
         laporanOpen: {{ request()->routeIs('laporan-harian.*') ? 'true' : 'false' }},
         hctsOpen: {{ request()->routeIs('hcts-receiving.*', 'hcts-inventory.*') ? 'true' : 'false' }},
         penyerahanHctsOpen: {{ request()->routeIs('hcts-submission.*') ? 'true' : 'false' }}
-    }" x-init="$watch('sidebarCollapsed', value => localStorage.setItem('sidebarCollapsed', value))"
-    :class="sidebarCollapsed ? 'w-20' : 'w-64'"
-    class="min-h-screen flex flex-col shrink-0 z-40 transition-all duration-300 ease-in-out relative border-none shadow-xl">
+    }"
+    :class="[
+        sidebarCollapsed ? 'w-20' : 'w-64',
+        mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+    ]"
+    class="fixed lg:relative h-full flex flex-col shrink-0 z-40 transition-all duration-300 ease-in-out border-none shadow-xl transform lg:translate-x-0"
+    x-cloak>
 
     <!-- Toggle Button (Desktop) -->
     <button @click="sidebarCollapsed = !sidebarCollapsed"
