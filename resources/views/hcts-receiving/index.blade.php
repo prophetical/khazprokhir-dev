@@ -226,45 +226,45 @@
                             <thead class="bg-gray-50/50">
                                 <tr>
                                     <th
-                                        class="px-3 py-3 text-left text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                                        class="px-2 py-3 sm:px-3 text-left text-[9px] sm:text-[10px] font-black text-gray-500 uppercase tracking-widest">
                                         Tanggal</th>
                                     <th
-                                        class="px-3 py-3 text-left text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                                        class="px-2 py-3 sm:px-3 text-left text-[9px] sm:text-[10px] font-black text-gray-500 uppercase tracking-widest">
                                         No. Bon</th>
                                     <th
-                                        class="px-2 py-3 text-center text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                                        class="px-2 py-3 text-center text-[9px] sm:text-[10px] font-black text-gray-500 uppercase tracking-widest">
                                         Pec</th>
                                     <th
-                                        class="px-3 py-3 text-center text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                                        class="px-2 py-3 sm:px-3 text-center text-[9px] sm:text-[10px] font-black text-gray-500 uppercase tracking-widest">
                                         Gilir</th>
                                     <th
-                                        class="px-3 py-3 text-right text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                                        class="px-2 py-3 sm:px-3 text-right text-[9px] sm:text-[10px] font-black text-gray-500 uppercase tracking-widest">
                                         Jumlah</th>
                                     <th
-                                        class="px-3 py-3 text-center text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                                        class="px-2 py-3 sm:px-3 text-center text-[9px] sm:text-[10px] font-black text-gray-500 uppercase tracking-widest">
                                         Batch/Seri</th>
                                     <th
-                                        class="px-3 py-3 text-center text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                                        class="px-2 py-3 sm:px-3 text-center text-[9px] sm:text-[10px] font-black text-gray-500 uppercase tracking-widest">
                                         Emisi/TA</th>
                                     <th
-                                        class="px-3 py-3 text-left text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                                        class="px-2 py-3 sm:px-3 text-left text-[9px] sm:text-[10px] font-black text-gray-500 uppercase tracking-widest">
                                         No. Segel</th>
                                     <th
-                                        class="px-3 py-3 text-left text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                                        class="px-2 py-3 sm:px-3 text-left text-[9px] sm:text-[10px] font-black text-gray-500 uppercase tracking-widest">
                                         Petugas</th>
                                     <th
-                                        class="px-3 py-3 text-center text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                                        class="px-2 py-3 sm:px-3 text-center text-[9px] sm:text-[10px] font-black text-gray-500 uppercase tracking-widest">
                                         Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-100">
                                 @forelse ($receivings as $receiving)
                                     <tr class="hover:bg-rose-50/30 transition-colors group">
-                                        <td class="px-3 py-3 whitespace-nowrap text-[11px] font-medium text-gray-600">
+                                        <td class="px-2 py-3 sm:px-3 whitespace-nowrap text-[10px] sm:text-[11px] font-medium text-gray-600">
                                             {{ \Carbon\Carbon::parse($receiving->tanggal_penerimaan)->translatedFormat('d F Y') }}
                                         </td>
                                         <td
-                                            class="px-3 py-3 whitespace-nowrap text-[11px] font-black text-gray-900 underline decoration-gray-200">
+                                            class="px-2 py-3 sm:px-3 whitespace-nowrap text-[10px] sm:text-[11px] font-black text-gray-900 underline decoration-gray-200">
                                             {{ $receiving->nomor_bon }}
                                         </td>
                                         <td class="px-2 py-3 whitespace-nowrap text-center">
@@ -281,32 +281,32 @@
                                                 $currentClass = $pchClasses[$receiving->pecahan] ?? 'bg-gray-900 text-white';
                                             @endphp
                                             <span
-                                                class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black {{ $currentClass }} shadow-sm">{{ $receiving->pecahan }}</span>
+                                                class="inline-flex items-center px-1.5 py-0.5 sm:px-2 rounded text-[9px] sm:text-[10px] font-black {{ $currentClass }} shadow-sm">{{ $receiving->pecahan }}</span>
                                         </td>
                                         <td
-                                            class="px-3 py-3 whitespace-nowrap text-center text-[10px] font-bold text-gray-500 uppercase italic">
+                                            class="px-2 py-3 sm:px-3 whitespace-nowrap text-center text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase italic">
                                             {{ $receiving->gilir }}
                                         </td>
                                         <td
-                                            class="px-3 py-3 whitespace-nowrap text-right text-[11px] font-black text-rose-600">
+                                            class="px-2 py-3 sm:px-3 whitespace-nowrap text-right text-[10px] sm:text-[11px] font-black text-rose-600">
                                             {{ number_format($receiving->jumlah, 0, ',', '.') }}
                                         </td>
                                         <td
-                                            class="px-3 py-3 whitespace-nowrap text-center text-[11px] font-bold text-gray-700 uppercase">
+                                            class="px-2 py-3 sm:px-3 whitespace-nowrap text-center text-[10px] sm:text-[11px] font-bold text-gray-700 uppercase">
                                             {{ $receiving->batch }} / {{ $receiving->seri }}
                                         </td>
                                         <td
-                                            class="px-3 py-3 whitespace-nowrap text-center text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
+                                            class="px-2 py-3 sm:px-3 whitespace-nowrap text-center text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
                                             {{ $receiving->emisi }} / {{ $receiving->tahun_anggaran }}
                                         </td>
-                                        <td class="px-3 py-3 whitespace-nowrap text-[10px] font-mono text-indigo-600">
+                                        <td class="px-2 py-3 sm:px-3 whitespace-nowrap text-[9px] sm:text-[10px] font-mono text-indigo-600">
                                             {{ $receiving->nomor_segel }}
                                         </td>
                                         <td
-                                            class="px-3 py-3 whitespace-nowrap text-[10px] font-bold text-gray-500 uppercase tracking-tight">
+                                            class="px-2 py-3 sm:px-3 whitespace-nowrap text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-tight">
                                             {{ $receiving->user->name ?? '-' }}
                                         </td>
-                                        <td class="px-3 py-3 whitespace-nowrap text-center">
+                                        <td class="px-2 py-3 sm:px-3 whitespace-nowrap text-center">
                                             @if(in_array(auth()->user()->role, ['sortir', 'admin']))
                                                 <div class="flex justify-center items-center space-x-3 transition-opacity">
                                                     <a href="{{ route('hcts-receiving.edit', $receiving->id) }}"

@@ -15,11 +15,11 @@
 
     <!-- Toggle Button (Desktop) -->
     <button @click="sidebarCollapsed = !sidebarCollapsed"
-        class="absolute -right-3 top-20 bg-white border border-gray-200 rounded-full p-1 hover:bg-gray-50 focus:outline-none z-50 hidden md:block">
+        class="group absolute -right-5 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 bg-white/10 hover:bg-white text-white hover:text-indigo-600 rounded-xl transition-all duration-300 border border-white/20 hover:border-white backdrop-blur-md z-50 hidden md:flex shadow-xl">
         <svg :class="sidebarCollapsed ? 'rotate-180' : ''"
-            class="w-4 h-4 text-indigo-600 transition-transform duration-300" fill="none" stroke="currentColor"
+            class="w-5 h-5 transition-transform duration-300 transform group-hover:-translate-x-0.5" fill="none" stroke="currentColor"
             viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
         </svg>
     </button>
 

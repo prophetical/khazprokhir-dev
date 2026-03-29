@@ -157,7 +157,7 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50 border-b border-gray-200">
                                 <tr>
-                                    <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">
+                                    <th scope="col" class="px-2 py-4 sm:px-4 text-left text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-widest">
                                         <a href="{{ route('hcs-receiving.index', array_merge(request()->query(), ['sort_by' => 'tanggal_penerimaan', 'sort_direction' => request('sort_by') === 'tanggal_penerimaan' && request('sort_direction') === 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center hover:text-indigo-600 transition-colors">
                                             Tanggal
                                             @if(request('sort_by') === 'tanggal_penerimaan')
@@ -165,7 +165,7 @@
                                             @endif
                                         </a>
                                     </th>
-                                    <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">
+                                    <th scope="col" class="px-2 py-4 sm:px-4 text-left text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-widest">
                                         <a href="{{ route('hcs-receiving.index', array_merge(request()->query(), ['sort_by' => 'nomor_bon', 'sort_direction' => request('sort_by') === 'nomor_bon' && request('sort_direction') === 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center hover:text-indigo-600 transition-colors">
                                             No. Bon
                                             @if(request('sort_by') === 'nomor_bon')
@@ -173,7 +173,7 @@
                                             @endif
                                         </a>
                                     </th>
-                                    <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">
+                                    <th scope="col" class="px-2 py-4 sm:px-4 text-left text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-widest">
                                         <a href="{{ route('hcs-receiving.index', array_merge(request()->query(), ['sort_by' => 'pecahan', 'sort_direction' => request('sort_by') === 'pecahan' && request('sort_direction') === 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center hover:text-indigo-600 transition-colors">
                                             Pecahan
                                             @if(request('sort_by') === 'pecahan')
@@ -181,7 +181,7 @@
                                             @endif
                                         </a>
                                     </th>
-                                    <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">
+                                    <th scope="col" class="px-2 py-4 sm:px-4 text-left text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-widest">
                                         <a href="{{ route('hcs-receiving.index', array_merge(request()->query(), ['sort_by' => 'jumlah', 'sort_direction' => request('sort_by') === 'jumlah' && request('sort_direction') === 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center hover:text-indigo-600 transition-colors">
                                             Bilyet
                                             @if(request('sort_by') === 'jumlah')
@@ -189,10 +189,10 @@
                                             @endif
                                         </a>
                                     </th>
-                                    <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest text-center">
+                                    <th scope="col" class="px-2 py-4 sm:px-4 text-left text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-widest text-center">
                                         TA/TE
                                     </th>
-                                    <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">
+                                    <th scope="col" class="px-2 py-4 sm:px-4 text-left text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-widest">
                                         <a href="{{ route('hcs-receiving.index', array_merge(request()->query(), ['sort_by' => 'batch', 'sort_direction' => request('sort_by') === 'batch' && request('sort_direction') === 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center hover:text-indigo-600 transition-colors">
                                             Batch
                                             @if(request('sort_by') === 'batch')
@@ -200,7 +200,7 @@
                                             @endif
                                         </a>
                                     </th>
-                                    <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">
+                                    <th scope="col" class="px-2 py-4 sm:px-4 text-left text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-widest">
                                         <a href="{{ route('hcs-receiving.index', array_merge(request()->query(), ['sort_by' => 'supplier', 'sort_direction' => request('sort_by') === 'supplier' && request('sort_direction') === 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center hover:text-indigo-600 transition-colors">
                                             Supplier
                                             @if(request('sort_by') === 'supplier')
@@ -208,16 +208,16 @@
                                             @endif
                                         </a>
                                     </th>
-                                    <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">Operator</th>
-                                    <th scope="col" class="px-4 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-widest">Aksi</th>
+                                    <th scope="col" class="px-2 py-4 sm:px-4 text-left text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-widest">Operator</th>
+                                    <th scope="col" class="px-2 py-4 sm:px-4 text-center text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-widest">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @forelse ($receivings->groupBy(function($item) { return $item->batch . ' / ' . $item->seri . ' / ' . $item->pecahan; }) as $groupKey => $groupItems)
                                     <!-- Group Header Row -->
-                                    <tr class="bg-indigo-50 border-t border-b border-indigo-100">
-                                        <td colspan="9" class="px-6 py-3 text-sm font-bold text-indigo-400">
-                                            <div class="flex justify-between items-center w-full">
+                                    <tr class="bg-indigo-50/50 border-t border-b border-indigo-100/50">
+                                        <td colspan="9" class="px-4 py-3 sm:px-6 text-[10px] sm:text-sm font-bold text-indigo-400">
+                                            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center w-full gap-1 sm:gap-4">
                                                 <span>{{ $groupKey }}</span>
                                                 <span class="font-mono text-indigo-700">Total: {{ number_format($groupItems->sum('jumlah'), 0, ',', '.') }} Bilyet</span>
                                             </div>
@@ -227,13 +227,13 @@
                                     <!-- Group Data Rows -->
                                     @foreach($groupItems as $receiving)
                                         <tr class="hover:bg-indigo-50/30 transition-colors">
-                                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td class="px-2 py-4 sm:px-4 whitespace-nowrap text-[10px] sm:text-sm text-gray-500">
                                                 {{ \Carbon\Carbon::parse($receiving->tanggal_penerimaan)->locale('id')->isoFormat('D MMMM YYYY') }}
                                             </td>
-                                            <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+                                            <td class="px-2 py-4 sm:px-4 whitespace-nowrap text-[10px] sm:text-sm font-semibold text-gray-900">
                                                 {{ $receiving->nomor_bon }}
                                             </td>
-                                            <td class="px-4 py-4 whitespace-nowrap text-sm">
+                                            <td class="px-2 py-4 sm:px-4 whitespace-nowrap text-[10px] sm:text-sm">
                                                 @php
                                                     $pecahanColors = [
                                                         'S' => 'bg-lime-50 text-lime-700 border-lime-200 dark:bg-lime-900/20 dark:text-lime-400 dark:border-lime-800/40',
@@ -246,16 +246,16 @@
                                                     ];
                                                     $badgeClass = $pecahanColors[$receiving->pecahan] ?? 'bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800/20 dark:text-gray-400 dark:border-gray-700/40';
                                                 @endphp
-                                                <span class="px-3 py-1 rounded-md text-[10px] font-black border uppercase tracking-wider {{ $badgeClass }}">
+                                                <span class="px-2 py-0.5 sm:px-3 sm:py-1 rounded-md text-[9px] sm:text-[10px] font-black border uppercase tracking-wider {{ $badgeClass }}">
                                                     {{ $receiving->pecahan }}
                                                 </span>
                                             </td>
-                                            <td class="px-4 py-4 whitespace-nowrap text-sm font-mono text-indigo-700 font-bold">{{ number_format($receiving->jumlah, 0, ',', '.') }}</td>
-                                            <td class="px-4 py-4 whitespace-nowrap text-sm text-center font-bold text-gray-600">
-                                                <div class="text-[10px] text-gray-400 leading-none mb-1">{{ $receiving->tahun_anggaran }}</div>
-                                                <div class="text-xs">{{ $receiving->emisi }}</div>
+                                            <td class="px-2 py-4 sm:px-4 whitespace-nowrap text-[10px] sm:text-sm font-mono text-indigo-700 font-bold">{{ number_format($receiving->jumlah, 0, ',', '.') }}</td>
+                                            <td class="px-2 py-4 sm:px-4 whitespace-nowrap text-[10px] sm:text-sm text-center font-bold text-gray-600">
+                                                <div class="text-[8px] sm:text-[10px] text-gray-400 leading-none mb-1">{{ $receiving->tahun_anggaran }}</div>
+                                                <div class="text-[10px] sm:text-xs">{{ $receiving->emisi }}</div>
                                             </td>
-                                            <td class="px-4 py-4 whitespace-nowrap text-sm font-mono text-gray-600">
+                                            <td class="px-2 py-4 sm:px-4 whitespace-nowrap text-[10px] sm:text-sm font-mono text-gray-600">
                                                 <div>{{ $receiving->batch }}</div>
                                                 @if(isset($receiving->packs) && $receiving->packs->whereNotNull('hcs_sorting_id')->isNotEmpty())
                                                     <div class="mt-1">
@@ -265,13 +265,13 @@
                                                     </div>
                                                 @endif
                                             </td>
-                                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                <span class="px-2.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full {{ $receiving->supplier === 'Cutpack' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800' }}">
+                                            <td class="px-2 py-4 sm:px-4 whitespace-nowrap text-[10px] sm:text-sm text-gray-500">
+                                                <span class="px-2 py-0.5 inline-flex text-[10px] sm:text-xs leading-5 font-semibold rounded-full {{ $receiving->supplier === 'Cutpack' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800' }}">
                                                     {{ $receiving->supplier }}
                                                 </span>
                                             </td>
-                                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600 font-medium">{{ $receiving->user->name ?? '-' }}</td>
-                                            <td class="px-4 py-4 whitespace-nowrap text-center text-sm font-medium">
+                                            <td class="px-2 py-4 sm:px-4 whitespace-nowrap text-[10px] sm:text-sm text-gray-600 font-medium">{{ $receiving->user->name ?? '-' }}</td>
+                                            <td class="px-2 py-4 sm:px-4 whitespace-nowrap text-center text-[10px] sm:text-sm font-medium">
                                                 @if(in_array(auth()->user()->role, ['sortir', 'admin']))
                                                     @php $hasSortedPacks = $receiving->packs->whereNotNull('hcs_sorting_id')->isNotEmpty(); @endphp
                                                     <div class="flex justify-center items-center space-x-4">

@@ -184,46 +184,46 @@
 
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
+                            <thead class="bg-gray-50 border-b border-gray-100">
                                 <tr>
-                                    <th scope="col" class="px-6 py-3 text-center text-xs font-bold text-gray-400 uppercase tracking-widest">
+                                    <th scope="col" class="px-2 py-3 sm:px-6 text-center text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-widest">
                                         Pecahan
                                     </th>
-                                    <th scope="col" class="px-6 py-3 text-center text-xs font-bold text-gray-400 uppercase tracking-widest">
+                                    <th scope="col" class="px-2 py-3 sm:px-6 text-center text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-widest">
                                         Batch
                                     </th>
-                                    <th scope="col" class="px-6 py-3 text-center text-xs font-bold text-gray-400 uppercase tracking-widest">
+                                    <th scope="col" class="px-2 py-3 sm:px-6 text-center text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-widest">
                                         Seri
                                     </th>
-                                    <th scope="col" class="px-6 py-3 text-center text-xs font-bold text-gray-400 uppercase tracking-widest">
+                                    <th scope="col" class="px-2 py-3 sm:px-6 text-center text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-widest">
                                         Total Pack Siap Sortir
                                     </th>
-                                    <th scope="col" class="px-6 py-3 text-center text-xs font-bold text-gray-400 uppercase tracking-widest">
+                                    <th scope="col" class="px-2 py-3 sm:px-6 text-center text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-widest">
                                         Aksi
                                     </th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @forelse($AvailableGroups as $group)
-                                    <tr class="hover:bg-gray-50">
-                                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                                            <span class="inline-flex items-center px-3 py-1 rounded text-xs font-black {{ $themeClasses[$group->pecahan]['bg'] }} {{ $themeClasses[$group->pecahan]['text'] }} shadow-sm">
+                                    <tr class="hover:bg-gray-50/50 transition-colors">
+                                        <td class="px-2 py-4 sm:px-6 whitespace-nowrap text-center">
+                                            <span class="inline-flex items-center px-1.5 py-0.5 sm:px-3 sm:py-1 rounded text-[9px] sm:text-xs font-black {{ $themeClasses[$group->pecahan]['bg'] }} {{ $themeClasses[$group->pecahan]['text'] }} shadow-sm">
                                                 {{ $group->pecahan }}
                                             </span>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center font-medium">
+                                        <td class="px-2 py-4 sm:px-6 whitespace-nowrap text-[10px] sm:text-sm text-gray-900 text-center font-medium">
                                             {{ $group->batch }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center font-medium">
+                                        <td class="px-2 py-4 sm:px-6 whitespace-nowrap text-[10px] sm:text-sm text-gray-900 text-center font-medium">
                                             {{ $group->seri }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-center font-black">
+                                        <td class="px-2 py-4 sm:px-6 whitespace-nowrap text-[10px] sm:text-sm text-center font-black">
                                             {{ number_format($group->total_pack, 0, ',', '.') }}
-                                            <span class="text-[10px] text-gray-400 font-medium lowercase">pack</span>
+                                            <span class="text-[8px] sm:text-[10px] text-gray-400 font-medium lowercase">pack</span>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
+                                        <td class="px-2 py-4 sm:px-6 whitespace-nowrap text-[10px] sm:text-sm font-medium text-center">
                                             <a href="{{ route('hcs-sorting.create', ['pecahan' => $group->pecahan, 'batch' => $group->batch, 'seri' => $group->seri]) }}" 
-                                               class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-lg font-bold text-[10px] text-white uppercase tracking-widest hover:bg-indigo-700 active:scale-95 transition-all shadow-sm">
+                                               class="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-indigo-600 border border-transparent rounded-lg font-bold text-[9px] sm:text-[10px] text-white uppercase tracking-widest hover:bg-indigo-700 active:scale-95 transition-all shadow-sm">
                                                 Pilih & Sortir
                                             </a>
                                         </td>

@@ -225,15 +225,15 @@
                                         ];
                                     @endphp
                                     @foreach($cols as $col => $label)
-                                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider bg-gray-50 border-b border-gray-200">
+                                        <th class="px-2 py-3 sm:px-4 text-left text-[9px] sm:text-xs font-bold text-gray-600 uppercase tracking-wider bg-gray-50 border-b border-gray-200">
                                             <a href="{{ route('penyerahan-bi.index', array_merge(request()->query(), ['sort' => $col, 'direction' => $direction])) }}"
-                                               class="hover:text-indigo-600 flex items-center gap-1">
+                                               class="hover:text-indigo-600 flex items-center gap-0.5 sm:gap-1">
                                                {{ $label }} {{ sortIcon2($col) }}
                                             </a>
                                         </th>
                                     @endforeach
-                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider bg-gray-50 border-b border-gray-200">Petugas</th>
-                                    <th class="px-4 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider bg-gray-50 border-b border-gray-200">Aksi</th>
+                                    <th class="px-2 py-3 sm:px-4 text-left text-[9px] sm:text-xs font-bold text-gray-600 uppercase tracking-wider bg-gray-50 border-b border-gray-200">Petugas</th>
+                                    <th class="px-2 py-3 sm:px-4 text-center text-[9px] sm:text-xs font-bold text-gray-600 uppercase tracking-wider bg-gray-50 border-b border-gray-200">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-100">
@@ -251,60 +251,60 @@
                                         $c = $colorMap[$row->pecahan] ?? ['bg' => 'bg-gray-400', 'text' => 'text-gray-600', 'light' => 'bg-gray-50'];
                                     @endphp
                                     <tr class="hover:bg-indigo-50/30 transition-colors duration-150">
-                                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600 font-medium">
-                                            {{ \Carbon\Carbon::parse($row->tanggal_penyerahan)->locale('id')->isoFormat('D MMMM YYYY') }}
+                                        <td class="px-2 py-3 sm:px-4 whitespace-nowrap text-[10px] sm:text-sm text-gray-600 font-medium">
+                                            {{ \Carbon\Carbon::parse($row->tanggal_penyerahan)->locale('id')->isoFormat('D MMM YY') }}
                                         </td>
-                                        <td class="px-4 py-3 text-xs font-mono font-bold text-gray-800">
+                                        <td class="px-2 py-3 sm:px-4 text-[9px] sm:text-xs font-mono font-bold text-gray-800 break-all max-w-[80px] sm:max-w-none">
                                             {{ $row->nomor_ba }}
                                         </td>
-                                        <td class="px-4 py-3 whitespace-nowrap">
+                                        <td class="px-2 py-3 sm:px-4 whitespace-nowrap">
                                             <div class="flex flex-col gap-0.5">
-                                                <div class="flex items-center gap-1.5">
-                                                    <span class="{{ $c['bg'] }} text-white text-[9px] font-bold px-1.5 py-0.5 rounded">{{ $row->pecahan }}</span>
-                                                    <span class="text-[10px] font-bold text-gray-700">{{ $row->tahun_anggaran }}</span>
-                                                    <span class="text-gray-300 text-[10px]">/</span>
-                                                    <span class="text-[10px] font-bold text-gray-500">{{ $row->tahun_emisi }}</span>
+                                                <div class="flex items-center gap-1 sm:gap-1.5">
+                                                    <span class="{{ $c['bg'] }} text-white text-[8px] sm:text-[9px] font-bold px-1 sm:px-1.5 py-0.5 rounded">{{ $row->pecahan }}</span>
+                                                    <span class="text-[9px] sm:text-[10px] font-bold text-gray-700">{{ $row->tahun_anggaran }}</span>
+                                                    <span class="text-gray-300 text-[9px] sm:text-[10px]">/</span>
+                                                    <span class="text-[9px] sm:text-[10px] font-bold text-gray-500">{{ $row->tahun_emisi }}</span>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="px-4 py-3 whitespace-nowrap text-center">
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-100">
-                                                {{ $row->nomor_dus_awal }} – {{ $row->nomor_dus_akhir }}
+                                        <td class="px-2 py-3 sm:px-4 whitespace-nowrap text-center">
+                                            <span class="inline-flex items-center px-1.5 py-0.5 sm:px-2 rounded text-[9px] sm:text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-100">
+                                                {{ $row->nomor_dus_awal }}–{{ $row->nomor_dus_akhir }}
                                             </span>
                                         </td>
-                                        <td class="px-4 py-3 whitespace-nowrap text-center">
+                                        <td class="px-2 py-3 sm:px-4 whitespace-nowrap text-center text-[10px] sm:text-sm">
                                             <span> {{ number_format($row->jumlah_dus, 0, ',', '.') }}</span>
                                         </td>
-                                        <td class="px-4 py-3 whitespace-nowrap text-xs font-black text-emerald-600 text-right">
+                                        <td class="px-2 py-3 sm:px-4 whitespace-nowrap text-[10px] sm:text-xs font-black text-emerald-600 text-right">
                                             {{ number_format($row->jumlah_bilyet, 0, ',', '.') }}
                                         </td>
-                                        <td class="px-4 py-3 whitespace-nowrap">
+                                        <td class="px-2 py-3 sm:px-4 whitespace-nowrap">
                                             @if($row->status_data === 'Lengkap')
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-700 border border-green-200">
+                                                <span class="inline-flex items-center px-1.5 py-0.5 sm:px-2 rounded-full text-[8px] sm:text-[10px] font-bold bg-green-100 text-green-700 border border-green-200">
                                                     ✓ Lengkap
                                                 </span>
                                             @else
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700 border border-amber-200">
-                                                    ⚠ Belum Lengkap
+                                                <span class="inline-flex items-center px-1.5 py-0.5 sm:px-2 rounded-full text-[8px] sm:text-[10px] font-bold bg-amber-100 text-amber-700 border border-amber-200">
+                                                    ⚠ Belum
                                                 </span>
                                             @endif
                                         </td>
-                                        <td class="px-4 py-3 whitespace-nowrap text-[10px] text-gray-500">
+                                        <td class="px-2 py-3 sm:px-4 whitespace-nowrap text-[8px] sm:text-[10px] text-gray-500">
                                             <div class="flex items-center gap-1">
-                                                <div class="h-4 w-4 rounded-full bg-gray-100 flex items-center justify-center text-[8px] font-bold text-gray-500 border border-gray-200">{{ substr($row->user->name ?? '?', 0, 1) }}</div>
-                                                <span class="truncate max-w-[70px]">{{ $row->user->name ?? '-' }}</span>
+                                                <div class="h-4 w-4 rounded-full bg-gray-100 flex items-center justify-center text-[7px] sm:text-[8px] font-bold text-gray-500 border border-gray-200">{{ substr($row->user->name ?? '?', 0, 1) }}</div>
+                                                <span class="truncate max-w-[40px] sm:max-w-[70px]">{{ $row->user->name ?? '-' }}</span>
                                             </div>
                                         </td>
-                                        <td class="px-4 py-3 whitespace-nowrap text-center">
-                                            <div class="flex items-center justify-center gap-2">
-                                                <a href="{{ route('penyerahan-bi.edit', $row->id) }}" class="p-1.5 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title="Edit Data">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                        <td class="px-2 py-3 sm:px-4 whitespace-nowrap text-center">
+                                            <div class="flex items-center justify-center gap-1 sm:gap-2">
+                                                <a href="{{ route('penyerahan-bi.edit', $row->id) }}" class="p-1 sm:p-1.5 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title="Edit Data">
+                                                    <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                                 </a>
                                                 <form id="delete-form-{{ $row->id }}" action="{{ route('penyerahan-bi.destroy', $row->id) }}" method="POST" class="inline-block">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="button" onclick="confirmDelete({{ $row->id }})" class="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg transition-colors" title="Hapus Data">
-                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v2m3 4h.01"/></svg>
+                                                    <button type="button" onclick="confirmDelete({{ $row->id }})" class="p-1 sm:p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg transition-colors" title="Hapus Data">
+                                                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v2m3 4h.01"/></svg>
                                                     </button>
                                                 </form>
                                             </div>

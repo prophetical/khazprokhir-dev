@@ -354,10 +354,10 @@
                             ,
                             showConfirmButton: false,
                             showCloseButton: true,
-                            width: '400px',
+                            width: 'auto',
                             padding: '1rem',
                             customClass: {
-                                popup: 'rounded-[2rem] border-0 shadow-2xl overflow-hidden bg-white dark:bg-slate-900',
+                                popup: 'rounded-[2rem] border-0 shadow-2xl overflow-hidden bg-white dark:bg-slate-900 w-[calc(100vw-2rem)] max-w-[400px]',
                                 closeButton: 'text-white hover:text-white/80 transition-colors focus:outline-none absolute top-4 right-4 z-20'
                             },
                             didOpen: () => {
@@ -676,7 +676,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
                 {{-- Inschiet Card --}}
                 <div
-                    class="lg:col-span-1 bg-white p-10 rounded-[3rem] shadow-xl shadow-gray-200/20 border border-gray-100 relative overflow-hidden flex flex-col justify-between group hover:-translate-y-1 transition-all duration-300">
+                    class="lg:col-span-1 bg-white p-6 sm:p-10 rounded-[3rem] shadow-xl shadow-gray-200/20 border border-gray-100 relative overflow-hidden flex flex-col justify-between group hover:-translate-y-1 transition-all duration-300">
                     <div class="flex items-center gap-4 mb-10">
                         <div class="w-1.5 h-10 bg-violet-600 rounded-full"></div>
                         <div>
@@ -731,7 +731,7 @@
 
                 {{-- Ringkasan Analitik Produksi --}}
                 <div x-init="initAnalytics()"
-                    class="lg:col-span-3 bg-white px-3 py-10 rounded-[3rem] shadow-xl shadow-gray-200/20 border border-gray-100 relative overflow-hidden">
+                    class="lg:col-span-3 bg-white px-6 sm:px-3 py-10 rounded-[3rem] shadow-xl shadow-gray-200/20 border border-gray-100 relative overflow-hidden">
                     <div class="flex items-center gap-4 mb-12">
                         <div class="w-1.5 h-10 bg-indigo-600 rounded-full"></div>
                         <div>
@@ -856,7 +856,7 @@
                     @endphp
                     @foreach($modules as $mod)
                         <a href="{{ route($mod['route']) }}"
-                            class="{{ $mod['bg'] }} flex flex-col items-center justify-center p-8 rounded-[2.5rem] border border-gray-100 hover:border-{{ $mod['color'] }}-400 hover:shadow-2xl hover:shadow-{{ $mod['color'] }}-100/50 hover:-translate-y-2 transition-all duration-500 group">
+                            class="{{ $mod['bg'] }} flex flex-col items-center justify-center p-4 sm:p-8 rounded-[2.5rem] border border-gray-100 hover:border-{{ $mod['color'] }}-400 hover:shadow-2xl hover:shadow-{{ $mod['color'] }}-100/50 hover:-translate-y-2 transition-all duration-500 group">
                             <div
                                 class="mb-5 flex items-center justify-center w-16 h-16 rounded-[1.5rem] bg-{{ $mod['color'] }}-50 text-{{ $mod['color'] }}-600 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-inner">
                                 <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">

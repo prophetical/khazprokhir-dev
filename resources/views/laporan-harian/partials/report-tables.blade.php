@@ -36,7 +36,7 @@
                     <thead class="bg-gray-100/80">
                         <tr
                             class="text-[10px] font-black uppercase text-gray-500 tracking-widest divide-x divide-gray-200">
-                            <th rowspan="2" class="px-4 py-4 text-center sticky left-0 bg-gray-100 z-10 w-20">Pecahan
+                            <th rowspan="2" class="px-2 py-4 sm:px-4 text-center sticky left-0 bg-gray-100 z-10 w-16 sm:w-20">Pecahan
                             </th>
                             <th colspan="3" class="px-4 py-2 text-center text-indigo-600 bg-indigo-50/50">Persediaan
                             </th>
@@ -49,15 +49,15 @@
                             <th rowspan="2" class="px-4 py-4 text-center">Akumulasi<br>Terima HCS</th>
                         </tr>
                         <tr class="text-[9px] font-bold text-gray-400 divide-x divide-gray-200">
-                            <th class="px-3 py-2 text-center">Siap Kemas<br>(Bilyet)</th>
-                            <th class="px-3 py-2 text-center">Siap Kirim<br>(Bilyet)</th>
-                            <th class="px-3 py-2 text-center">Siap Kirim<br>(Dus)</th>
-                            <th class="px-3 py-2 text-center">Hari Ini<br>(Bilyet)</th>
-                            <th class="px-3 py-2 text-center">Hari Ini<br>(Dus)</th>
-                            <th class="px-3 py-2 text-center">Akumulasi<br>(Bilyet)</th>
-                            <th class="px-3 py-2 text-center w-32">Target</th>
-                            <th class="px-3 py-2 text-center w-32">Sisa</th>
-                            <th class="px-3 py-2 text-center w-24">%</th>
+                            <th class="px-2 py-2 sm:px-3 text-center">Siap Kemas<br>(Bilyet)</th>
+                            <th class="px-2 py-2 sm:px-3 text-center">Siap Kirim<br>(Bilyet)</th>
+                            <th class="px-2 py-2 sm:px-3 text-center">Siap Kirim<br>(Dus)</th>
+                            <th class="px-2 py-2 sm:px-3 text-center">Hari Ini<br>(Bilyet)</th>
+                            <th class="px-2 py-2 sm:px-3 text-center">Hari Ini<br>(Dus)</th>
+                            <th class="px-2 py-2 sm:px-3 text-center">Akumulasi<br>(Bilyet)</th>
+                            <th class="px-2 py-2 sm:px-3 text-center w-24 sm:w-32">Target</th>
+                            <th class="px-2 py-2 sm:px-3 text-center w-24 sm:w-32">Sisa</th>
+                            <th class="px-2 py-2 sm:px-3 text-center w-16 sm:w-24">%</th>
                         </tr>
                         <tr class="text-[9px] lowercase text-gray-400 divide-x divide-gray-200 bg-gray-50/50">
                             <th class="px-3 py-1 text-center bg-gray-100 italic">a</th>
@@ -79,41 +79,41 @@
                             <tr x-show="search === '' || '{{ $row['pecahan'] }}'.toLowerCase().includes(search.toLowerCase())"
                                 class="hover:bg-indigo-50/40 transition duration-150 group">
                                 <td
-                                    class="px-4 py-4 text-center sticky left-0 bg-white group-hover:bg-indigo-50/40 z-10 border-r border-gray-100">
+                                    class="px-2 py-4 sm:px-4 text-center sticky left-0 bg-white group-hover:bg-indigo-50/40 z-10 border-r border-gray-100">
                                     <span
-                                        class="inline-flex items-center justify-center h-7 w-7 rounded-lg shadow-sm font-black text-xs border {{ $colorMap[$row['pecahan']] ?? 'bg-gray-900 text-white' }}">
+                                        class="inline-flex items-center justify-center h-6 w-6 sm:h-7 sm:w-7 rounded-lg shadow-sm font-black text-[10px] sm:text-xs border {{ $colorMap[$row['pecahan']] ?? 'bg-gray-900 text-white' }}">
                                         {{ $row['pecahan'] }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-4 text-right text-xs font-bold text-gray-600 border-r border-gray-100">
+                                <td class="px-2 py-4 sm:px-4 text-right text-[10px] sm:text-xs font-bold text-gray-600 border-r border-gray-100">
                                     {{ $row['siap_kemas_bilyet'] == 0 ? '-' : number_format($row['siap_kemas_bilyet'], 0, ',', '.') }}
                                 </td>
-                                <td class="px-4 py-4 text-right text-xs font-bold text-gray-600 border-r border-gray-100">
+                                <td class="px-2 py-4 sm:px-4 text-right text-[10px] sm:text-xs font-bold text-gray-600 border-r border-gray-100">
                                     {{ $row['siap_kirim_bilyet'] == 0 ? '-' : number_format($row['siap_kirim_bilyet'], 0, ',', '.') }}
                                 </td>
                                 <td
-                                    class="px-4 py-4 text-right text-[10px] font-black text-gray-400 border-r border-gray-100 italic">
+                                    class="px-2 py-4 sm:px-4 text-right text-[9px] sm:text-[10px] font-black text-gray-400 border-r border-gray-100 italic">
                                     {{ $row['siap_kirim_dus'] == 0 ? '-' : number_format($row['siap_kirim_dus'], 0, ',', '.')}}
                                 </td>
                                 <td
-                                    class="px-4 py-4 text-right text-xs font-black text-indigo-700 bg-indigo-50/10 border-r border-gray-100">
+                                    class="px-2 py-4 sm:px-4 text-right text-[10px] sm:text-xs font-black text-indigo-700 bg-indigo-50/10 border-r border-gray-100">
                                     {{ $row['total_persediaan_bilyet'] == 0 ? '-' : number_format($row['total_persediaan_bilyet'], 0, ',', '.') }}
                                 </td>
-                                <td class="px-4 py-4 text-right text-xs font-bold text-gray-600 border-r border-gray-100">
+                                <td class="px-2 py-4 sm:px-4 text-right text-[10px] sm:text-xs font-bold text-gray-600 border-r border-gray-100">
                                     {{ $row['penyerahan_hari_ini_bilyet'] == 0 ? '-' : number_format($row['penyerahan_hari_ini_bilyet'], 0, ',', '.') }}
                                 </td>
                                 <td
-                                    class="px-4 py-4 text-right text-[10px] font-black text-pink-600 border-r border-gray-100 italic">
+                                    class="px-2 py-4 sm:px-4 text-right text-[9px] sm:text-[10px] font-black text-pink-600 border-r border-gray-100 italic">
                                     {{ $row['penyerahan_hari_ini_dus'] == 0 ? '-' : number_format($row['penyerahan_hari_ini_dus'], 0, ',', '.')}}
                                 </td>
                                 <td
-                                    class="px-4 py-4 text-right text-xs font-black text-pink-700 bg-pink-50/10 border-r border-gray-100">
+                                    class="px-2 py-4 sm:px-4 text-right text-[10px] sm:text-xs font-black text-pink-700 bg-pink-50/10 border-r border-gray-100">
                                     {{ $row['akumulasi_penyerahan'] == 0 ? '-' : number_format($row['akumulasi_penyerahan'], 0, ',', '.') }}
                                 </td>
-                                <td class="px-4 py-4 text-right text-xs font-bold text-gray-600 border-r border-gray-100">
+                                <td class="px-2 py-4 sm:px-4 text-right text-[10px] sm:text-xs font-bold text-gray-600 border-r border-gray-100">
                                     {{ $row['target'] == 0 ? '-' : number_format($row['target'], 0, ',', '.') }}
                                 </td>
-                                <td class="px-4 py-4 text-right text-xs font-bold text-gray-600 border-r border-gray-100">
+                                <td class="px-2 py-4 sm:px-4 text-right text-[10px] sm:text-xs font-bold text-gray-600 border-r border-gray-100">
                                     {{ $row['sisa_target'] == 0 ? '-' : number_format($row['sisa_target'], 0, ',', '.') }}
                                 </td>
                                 <td class="px-4 py-4 text-center border-r border-gray-100">
