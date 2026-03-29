@@ -12,17 +12,18 @@
                 let chartInstance = null;
                 return {
                     selectedPecahan: 'TOTAL',
+                    activeInschietTab: 'produksi',
                     chartData: @json($chartData),
                     months: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
                     colorThemes: {
                         'TOTAL': { bg: 'bg-white', button: 'bg-indigo-600', shadow: 'shadow-indigo-100' },
-                        'S': { bg: 'bg-emerald-100/50', button: 'bg-emerald-500', shadow: 'shadow-emerald-100' },
-                        'T': { bg: 'bg-slate-100/50', button: 'bg-slate-500', shadow: 'shadow-slate-100' },
-                        'U': { bg: 'bg-amber-100/50', button: 'bg-amber-500', shadow: 'shadow-amber-100' },
-                        'V': { bg: 'bg-purple-100/50', button: 'bg-purple-500', shadow: 'shadow-purple-100' },
-                        'W': { bg: 'bg-green-100/50', button: 'bg-green-500', shadow: 'shadow-green-100' },
-                        'X': { bg: 'bg-blue-100/50', button: 'bg-blue-500', shadow: 'shadow-blue-100' },
-                        'Y': { bg: 'bg-red-100/50', button: 'bg-red-500', shadow: 'shadow-red-100' }
+                        'S': { bg: 'bg-lime-500/15', button: 'bg-lime-500', shadow: 'shadow-lime-100' },
+                        'T': { bg: 'bg-gray-500/15', button: 'bg-gray-500', shadow: 'shadow-gray-100' },
+                        'U': { bg: 'bg-amber-500/15', button: 'bg-amber-500', shadow: 'shadow-amber-100' },
+                        'V': { bg: 'bg-purple-500/15', button: 'bg-purple-500', shadow: 'shadow-purple-100' },
+                        'W': { bg: 'bg-emerald-500/15', button: 'bg-emerald-500', shadow: 'shadow-emerald-100' },
+                        'X': { bg: 'bg-blue-500/15', button: 'bg-blue-500', shadow: 'shadow-blue-100' },
+                        'Y': { bg: 'bg-red-500/15', button: 'bg-red-500', shadow: 'shadow-red-100' }
                     },
                     init() {
                         this.$nextTick(() => {
@@ -30,7 +31,7 @@
                             if (!canvas) return;
                             const ctx = canvas.getContext('2d');
 
-                            // Gradients
+                            // Tentukan warna gradasi untuk grafik
                             const kemasGradient = ctx.createLinearGradient(0, 0, 0, 400);
                             kemasGradient.addColorStop(0, 'rgba(16, 185, 129, 0.25)');
                             kemasGradient.addColorStop(1, 'rgba(16, 185, 129, 0)');
@@ -165,39 +166,52 @@
                     },
                     initAnalytics() {
                         this.$nextTick(() => {
-                            // 1. Pecahan Distribution
+                            // 1. Grafik sebaran per pecahan (Donut)
                             const pCtx = document.getElementById('pecahan-donut').getContext('2d');
+                            const pLabels = Object.keys(@json($pecahanDistribution));
+
+                            // Kode warna pecahan
+                            const idrColors = {
+                                'S': '#84cc16', // Lime S
+                                'T': '#6b7280', // Gray T
+                                'U': '#f59e0b', // Amber U
+                                'V': '#a855f7', // Purple V
+                                'W': '#10b981', // Emerald/Green W
+                                'X': '#3b82f6', // Blue X
+                                'Y': '#ef4444'  // Red Y
+                            };
+
                             new Chart(pCtx, {
                                 type: 'doughnut',
                                 data: {
-                                    labels: Object.keys(@json($pecahanDistribution)),
+                                    labels: pLabels,
                                     datasets: [{
                                         data: Object.values(@json($pecahanDistribution)),
-                                        backgroundColor: ['#6366f1', '#10b981', '#ec4899', '#f59e0b', '#8b5cf6', '#22c55e', '#3b82f6'],
+                                        backgroundColor: pLabels.map(l => idrColors[l] || '#6366f1'),
                                         borderWidth: 0,
-                                        hoverOffset: 20
+                                        hoverOffset: 12
                                     }]
                                 },
                                 options: this.donutOptions('Distribusi Pecahan')
                             });
 
-                            // 2. Production Lifecycle
+                            // 2. Grafik alur produksi
                             const lCtx = document.getElementById('lifecycle-donut').getContext('2d');
                             new Chart(lCtx, {
                                 type: 'doughnut',
                                 data: {
-                                    labels: ['Penerimaan', 'Pengemasan', 'Penyerahan'],
+                                    labels: ['Kemas', 'Terima', 'Kirim'],
                                     datasets: [{
-                                        data: [{{ $totalTerimaYear }}, {{ $totalKemasYear }}, {{ $totalSerahYear }}],
-                                        backgroundColor: ['#4f46e5', '#10b981', '#f43f5e'],
+                                        data: [{{ $totalKemasYear }}, {{ $totalTerimaYear }}, {{ $totalSerahYear }}],
+                                        backgroundColor: ['#10b981', '#4f46e5', '#f43f5e'],
                                         borderWidth: 0,
-                                        hoverOffset: 20
+                                        hoverOffset: 12
                                     }]
                                 },
                                 options: this.donutOptions('Alur Produksi')
                             });
 
-                            // 3. Supplier Distribution
+                            // 3. Grafik proporsi supplier
                             const sCtx = document.getElementById('supplier-donut').getContext('2d');
                             new Chart(sCtx, {
                                 type: 'doughnut',
@@ -207,11 +221,153 @@
                                         data: Object.values(@json($supplierDistributionYear)),
                                         backgroundColor: ['#f97316', '#06b6d4'],
                                         borderWidth: 0,
-                                        hoverOffset: 20
+                                        hoverOffset: 12
                                     }]
                                 },
                                 options: this.donutOptions('Proporsi Supplier')
                             });
+
+                            // 4. Grafik Inschiet (Terima/Serah) - Initially none, handled by popup
+                        });
+                    },
+                    getInschietChartData(tab) {
+                        const isProduksi = tab === 'produksi';
+                        return {
+                            labels: ['Total'],
+                            datasets: [
+                                {
+                                    label: isProduksi ? 'Penerimaan HCTS' : 'Penyerahan HCTS',
+                                    data: [isProduksi ? {{ $totalHctsYear }} : {{ $totalHctsSerahYear }}],
+                                    backgroundColor: '#f43f5e', // Rose 500
+                                    borderRadius: 50,
+                                    barThickness: 20
+                                },
+                                {
+                                    label: isProduksi ? 'Penerimaan HCS' : 'Penyerahan HCS',
+                                    data: [isProduksi ? {{ $totalTerimaYear }} : {{ $totalSerahYear }}],
+                                    backgroundColor: '#10b981', // Emerald 500
+                                    borderRadius: 50,
+                                    barThickness: 20
+                                }
+                            ]
+                        };
+                    },
+                    showInschietPopup(tab) {
+                        this.activeInschietTab = tab;
+                        const isProduksi = tab === 'produksi';
+                        const title = isProduksi ? 'Detail Inschiet Produksi' : 'Detail Inschiet Final';
+                        const subtitle = isProduksi ? 'Perbandingan Penerimaan HCTS & HCS' : 'Perbandingan Penyerahan HCTS & HCS';
+                        const percentage = isProduksi ? '{{ number_format($inschietProduksi, 2, ",", ".") }}%' : '{{ number_format($inschietFinal, 2, ",", ".") }}%';
+                        
+                        const hctsLabel = isProduksi ? 'Penerimaan HCTS' : 'Penyerahan HCTS';
+                        const hcsLabel = isProduksi ? 'Penerimaan HCS' : 'Penyerahan HCS';
+                        const hctsValue = isProduksi ? {{ $totalHctsYear }} : {{ $totalHctsSerahYear }};
+                        const hcsValue = isProduksi ? {{ $totalTerimaYear }} : {{ $totalSerahYear }};
+
+                        Swal.fire({
+                            title: null,
+                            html: `
+                                <div class="text-left swal-premium-content">
+                                    {{-- Custom Header --}}
+                                    <div class="bg-gradient-to-r ${isProduksi ? 'from-violet-600 to-indigo-600' : 'from-pink-600 to-rose-600'} -mx-6 -mt-6 p-6 mb-4 relative overflow-hidden">
+                                        <div class="absolute inset-0 opacity-20">
+                                            <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                                <path d="M0 100 C 20 0 50 0 100 100 Z" fill="white" />
+                                            </svg>
+                                        </div>
+                                        <div class="relative z-10">
+                                            <p class="text-[9px] text-white/60 font-black uppercase tracking-[0.2em] mb-1.5">${title}</p>
+                                            <div class="flex items-baseline gap-2">
+                                                <h2 class="text-3xl font-black text-white tracking-tighter">${percentage}</h2>
+                                                <span class="text-[10px] font-bold text-white/80 uppercase tracking-widest">Inschiet</span>
+                                            </div>
+                                            <p class="text-[8px] text-white/50 font-bold uppercase tracking-widest mt-1">Tahun Anggaran {{ $currentYear }}</p>
+                                        </div>
+                                    </div>
+
+                                    {{-- Analysis Content --}}
+                                    <div class="px-2">
+                                        <div class="flex items-center justify-between mb-3 mt-1">
+                                            <h4 class="text-[8px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-[0.2em] opacity-90 transition-colors shrink-0">${subtitle}</h4>
+                                            <div class="flex gap-3 shrink-0">
+                                                <div class="flex items-center gap-1.5">
+                                                    <div class="w-2 h-2 rounded-full bg-[#f43f5e] shadow-sm shadow-rose-200"></div>
+                                                    <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter">HCTS</span>
+                                                </div>
+                                                <div class="flex items-center gap-1.5">
+                                                    <div class="w-2 h-2 rounded-full bg-[#10b981] shadow-sm shadow-emerald-200"></div>
+                                                    <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter">HCS</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="h-[80px] w-full relative mb-6 bg-slate-50 dark:bg-slate-800/80 rounded-[2rem] border border-slate-100 dark:border-slate-700/50 p-4 shadow-inner flex flex-col justify-center">
+                                            <div class="relative h-4 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                                                <div class="absolute inset-y-0 left-0 bg-[#f43f5e] transition-all duration-1000" style="width: ${ (hctsValue / (hctsValue + hcsValue) * 100).toFixed(2) }%"></div>
+                                                <div class="absolute inset-y-0 right-0 bg-[#10b981] transition-all duration-1000" style="width: ${ (hcsValue / (hctsValue + hcsValue) * 100).toFixed(2) }%"></div>
+                                            </div>
+                                            <div class="flex justify-between mt-3 px-1">
+                                                <div class="text-center">
+                                                    <p class="text-[9px] font-black text-[#f43f5e]" style="line-height: 1; font-family: 'Inter', sans-serif;">${ (hctsValue / (hctsValue + hcsValue) * 100).toFixed(1) }%</p>
+                                                    <p class="text-[6px] font-black text-slate-400 uppercase tracking-widest">Ratio HCTS</p>
+                                                </div>
+                                                <div class="text-center">
+                                                    <p class="text-[9px] font-black text-[#10b981]" style="line-height: 1; font-family: 'Inter', sans-serif;">${ (hcsValue / (hctsValue + hcsValue) * 100).toFixed(1) }%</p>
+                                                    <p class="text-[6px] font-black text-slate-400 uppercase tracking-widest">Ratio HCS</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="grid grid-cols-1 gap-3">
+                                            <div class="flex items-center gap-4 p-4 bg-white dark:bg-slate-800/50 rounded-[1.5rem] border border-slate-100 dark:border-slate-700/50 shadow-sm hover:shadow-xl hover:shadow-rose-500/5 transition-all duration-300 group">
+                                                <div class="w-11 h-11 rounded-xl bg-rose-50 dark:bg-rose-900/20 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                                                    <svg class="w-6 h-6 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                                    </svg>
+                                                </div>
+                                                <div class="flex-grow">
+                                                    <p class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-0.5">${hctsLabel}</p>
+                                                    <div class="flex items-baseline gap-1.5">
+                                                        <h5 class="text-xl font-black text-indigo-600 dark:text-indigo-400 leading-none transition-colors">${this.formatBilyet(hctsValue)}</h5>
+                                                        <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase">Bilyet</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="flex items-center gap-4 p-4 bg-white dark:bg-slate-800/50 rounded-[1.5rem] border border-slate-100 dark:border-slate-700/50 shadow-sm hover:shadow-xl hover:shadow-emerald-500/5 transition-all duration-300 group">
+                                                <div class="w-11 h-11 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                                                    <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                    </svg>
+                                                </div>
+                                                <div class="flex-grow">
+                                                    <p class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-0.5">${hcsLabel}</p>
+                                                    <div class="flex items-baseline gap-1.5">
+                                                        <h5 class="text-xl font-black text-indigo-600 dark:text-indigo-400 leading-none transition-colors">${this.formatBilyet(hcsValue)}</h5>
+                                                        <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase">Bilyet</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>`
+,
+                            showConfirmButton: false,
+                            showCloseButton: true,
+                            width: '400px',
+                            padding: '1rem',
+                            customClass: {
+                                popup: 'rounded-[2rem] border-0 shadow-2xl overflow-hidden bg-white dark:bg-slate-900',
+                                closeButton: 'text-white hover:text-white/80 transition-colors focus:outline-none absolute top-4 right-4 z-20'
+                            },
+                            didOpen: () => {
+                                // Chart removed, using custom HTML progress bar for better mobile/dark mode consistency
+                                // and simplified premium look. 
+                                // (Actually keeping Chart.js is better for complex data, but user asked for "redesign bar chart" 
+                                // and "menarik", so I'll try a hybrid approach or just a very polished custom bar if they 
+                                // prefer a "tooltip" look). 
+                                // I'll stick to custom HTML bar for now as it's more flexible with Tailwind dark mode.
+                            }
                         });
                     },
                     donutOptions(title) {
@@ -219,13 +375,16 @@
                             responsive: true,
                             maintainAspectRatio: false,
                             cutout: '75%',
+                            layout: {
+                                padding: 25
+                            },
                             plugins: {
-                                legend: { 
+                                legend: {
                                     position: 'bottom',
-                                    labels: { 
-                                        padding: 20,
+                                    labels: {
+                                        padding: 6,
                                         usePointStyle: true,
-                                        font: { size: 10, weight: '900' },
+                                        font: { size: 7.5, weight: '900' },
                                         color: '#6b7280'
                                     }
                                 },
@@ -250,13 +409,13 @@
             }
         </script>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
-            {{-- Summary Stats Grid --}}
+            {{-- Bagian kartu ringkasan angka --}}
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div
                     class="group bg-indigo-700 rounded-2xl p-4 relative hover:-translate-y-1 overflow-hidden flex flex-col justify-center">
                     <p
                         class="text-indigo-100 text-[9px] font-black uppercase tracking-widest mb-1 opacity-80 leading-none">
-                        Total Penerimaan {{ $currentYear }}</p>
+                        Total Terima {{ $currentYear }}</p>
                     <p class="text-white text-xl font-black tracking-tight leading-none">
                         {{ number_format($totalTerimaYear, 0, ',', '.') }}
                     </p>
@@ -266,7 +425,7 @@
                     class="group bg-emerald-600 rounded-2xl p-4 relative hover:-translate-y-1 overflow-hidden flex flex-col justify-center">
                     <p
                         class="text-emerald-100 text-[9px] font-black uppercase tracking-widest mb-1 opacity-80 leading-none">
-                        Total Pengemasan {{ $currentYear }}</p>
+                        Total Kemas {{ $currentYear }}</p>
                     <p class="text-white text-xl font-black tracking-tight leading-none">
                         {{ number_format($totalKemasYear, 0, ',', '.') }}
                     </p>
@@ -276,7 +435,7 @@
                     class="group bg-pink-600 rounded-2xl p-4 relative hover:-translate-y-1 overflow-hidden flex flex-col justify-center">
                     <p
                         class="text-pink-100 text-[9px] font-black uppercase tracking-widest mb-1 opacity-80 leading-none">
-                        Total Penyerahan {{ $currentYear }}</p>
+                        Total Kirim {{ $currentYear }}</p>
                     <p class="text-white text-xl font-black tracking-tight leading-none">
                         {{ number_format($totalSerahYear, 0, ',', '.') }}
                     </p>
@@ -285,7 +444,7 @@
                 <div
                     class="group bg-amber-500 rounded-2xl p-4 hover:-translate-y-1 relative overflow-hidden flex flex-col justify-center">
                     <div class="flex items-center justify-between mb-1 text-[9px]">
-                        <p class="text-amber-50 font-black uppercase tracking-widest opacity-80 leading-none">Total
+                        <p class="text-amber-50 font-black uppercase tracking-widest opacity-80 leading-none" title="Target Kirim">Total
                             Target {{ $currentYear }}</p>
                         <span
                             class="font-black text-white bg-white/20 px-1.5 py-0.5 rounded-full backdrop-blur-sm">{{ $totalTargetYear > 0 ? round(($totalSerahYear / $totalTargetYear) * 100) : 0 }}%</span>
@@ -299,9 +458,10 @@
                         </div>
                     </div>
                 </div>
+
             </div>
 
-            {{-- New Header with Year Filters --}}
+            {{-- Header dengan filter tahun --}}
             <div
                 class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
                 <div class="flex items-center gap-4">
@@ -350,9 +510,9 @@
                     </form>
                 </div>
             </div>
-            {{-- Side-by-Side Charts Section --}}
+            {{-- Bagian grafik berdampingan (Tren & Heatmap) --}}
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {{-- Unified Production Chart --}}
+                {{-- Grafik tren produksi gabungan --}}
                 <div :class="colorThemes[selectedPecahan].bg"
                     class="p-6 rounded-[2.5rem] shadow-xl shadow-gray-200/40 border border-gray-100 relative overflow-hidden transition-colors duration-700">
                     <div class="flex flex-col xl:flex-row items-start xl:items-center justify-between mb-12 gap-8">
@@ -512,49 +672,97 @@
                 </div>
             </div>
 
-            {{-- Analytics Donuts Section --}}
-            <div x-init="initAnalytics()"
-                class="bg-white p-10 rounded-[3rem] shadow-xl shadow-gray-200/20 border border-gray-100 relative overflow-hidden">
-                <div class="flex items-center gap-4 mb-12">
-                    <div class="w-1.5 h-10 bg-indigo-600 rounded-full"></div>
-                    <div>
-                        <h3 class="text-xl font-black text-gray-900 tracking-tighter uppercase leading-none mb-1">
-                            Ringkasan Analitik Produksi</h3>
-                        <p class="text-[9px] text-gray-400 font-black uppercase tracking-[0.2em]">Visualisasi Proporsi &
-                            Statistik Tahunan</p>
+            {{-- Bagian grafik donat analitik --}}
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                {{-- Inschiet Card --}}
+                <div
+                    class="lg:col-span-1 bg-white p-10 rounded-[3rem] shadow-xl shadow-gray-200/20 border border-gray-100 relative overflow-hidden flex flex-col justify-between group hover:-translate-y-1 transition-all duration-300">
+                    <div class="flex items-center gap-4 mb-10">
+                        <div class="w-1.5 h-10 bg-violet-600 rounded-full"></div>
+                        <div>
+                            <h3 class="text-lg font-black text-gray-900 tracking-tighter uppercase leading-none mb-1">
+                                Analisis Inschiet</h3>
+                            <p class="text-[9px] text-gray-400 font-black uppercase tracking-[0.2em]">TA {{ $currentYear }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4 mb-8">
+                        {{-- Toggle Buttons --}}
+                        <button @click="showInschietPopup('produksi')"
+                            class="w-full flex flex-col p-5 rounded-3xl border transition-all duration-500 group/btn text-left bg-gray-50/50 border-gray-100 hover:bg-violet-50 hover:border-violet-200 hover:shadow-xl hover:shadow-violet-100/30">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-[10px] font-black uppercase tracking-widest text-slate-500 group-hover/btn:text-violet-600 transition-colors">Produksi</span>
+                                <span class="text-sm font-black text-violet-600">{{ number_format($inschietProduksi, 2, ',', '.') }}%</span>
+                            </div>
+                            <p class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Bilyet Basis Analysis</p>
+                        </button>
+
+                        <button @click="showInschietPopup('final')"
+                            class="w-full flex flex-col p-5 rounded-3xl border transition-all duration-500 group/btn text-left bg-gray-50/50 border-gray-100 hover:bg-pink-50 hover:border-pink-200 hover:shadow-xl hover:shadow-pink-100/30">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-[10px] font-black uppercase tracking-widest text-slate-500 group-hover/btn:text-pink-600 transition-colors">Final</span>
+                                <span class="text-sm font-black text-pink-600">{{ number_format($inschietFinal, 2, ',', '.') }}%</span>
+                            </div>
+                            <p class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Bilyet Basis Analysis</p>
+                        </button>
+                    </div>
+
+                    <div class="mt-auto pt-6 border-t border-gray-50 text-center">
+                        <p class="text-[8px] text-slate-400 font-bold uppercase tracking-[0.3em] mb-2">Bilyet Basis Analysis</p>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 bg-indigo-50 rounded-full border border-indigo-100">
+                            <div class="w-1 h-1 rounded-full bg-indigo-500 animate-pulse"></div>
+                            <span class="text-[7px] text-indigo-600 font-black uppercase tracking-[0.1em]">Klik untuk Detail</span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-                    {{-- Pecahan Donut --}}
-                    <div class="space-y-6">
-                        <div class="h-[220px] w-full relative">
-                            <canvas id="pecahan-donut"></canvas>
+                {{-- Ringkasan Analitik Produksi --}}
+                <div x-init="initAnalytics()"
+                    class="lg:col-span-3 bg-white px-3 py-10 rounded-[3rem] shadow-xl shadow-gray-200/20 border border-gray-100 relative overflow-hidden">
+                    <div class="flex items-center gap-4 mb-12">
+                        <div class="w-1.5 h-10 bg-indigo-600 rounded-full"></div>
+                        <div>
+                            <h3 class="text-xl font-black text-gray-900 tracking-tighter uppercase leading-none mb-1">
+                                Ringkasan Analitik Produksi</h3>
+                            <p class="text-[9px] text-gray-400 font-black uppercase tracking-[0.2em]">Visualisasi Proporsi &
+                                Statistik Tahunan</p>
                         </div>
-                        <p class="text-center text-[9px] font-black text-gray-400 uppercase tracking-widest">Komposisi Pecahan</p>
                     </div>
 
-                    {{-- Lifecycle Donut --}}
-                    <div class="space-y-6">
-                        <div class="h-[220px] w-full relative">
-                            <canvas id="lifecycle-donut"></canvas>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        {{-- Donat sebaran pecahan --}}
+                        <div class="space-y-6">
+                            <div class="h-[220px] w-full relative">
+                                <canvas id="pecahan-donut"></canvas>
+                            </div>
+                            <p class="text-center text-[9px] font-black text-gray-400 uppercase tracking-widest">Komposisi
+                                Pecahan</p>
                         </div>
-                        <p class="text-center text-[9px] font-black text-gray-400 uppercase tracking-widest">Alur Lifecycle</p>
-                    </div>
 
-                    {{-- Supplier Donut --}}
-                    <div class="space-y-6">
-                        <div class="h-[220px] w-full relative">
-                            <canvas id="supplier-donut"></canvas>
+                        {{-- Lifecycle Donut --}}
+                        <div class="space-y-6">
+                            <div class="h-[220px] w-full relative">
+                                <canvas id="lifecycle-donut"></canvas>
+                            </div>
+                            <p class="text-center text-[9px] font-black text-gray-400 uppercase tracking-widest">Alur
+                                Lifecycle</p>
                         </div>
-                        <p class="text-center text-[9px] font-black text-gray-400 uppercase tracking-widest">Rasio Supplier</p>
+
+                        {{-- Supplier Donut --}}
+                        <div class="space-y-6">
+                            <div class="h-[220px] w-full relative">
+                                <canvas id="supplier-donut"></canvas>
+                            </div>
+                            <p class="text-center text-[9px] font-black text-gray-400 uppercase tracking-widest">Rasio
+                                Supplier</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {{-- Module Grid & System Status --}}
+            {{-- Grid modul navigasi dan status sistem --}}
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                {{-- System Status Card --}}
+                {{-- Kartu status sistem --}}
                 <div
                     class="lg:col-span-1 bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/20 border border-gray-100 flex flex-col justify-between overflow-hidden">
                     <div class="px-8 py-6 border-b border-gray-50 bg-gray-50/50">
@@ -618,7 +826,7 @@
                     </div>
                 </div>
 
-                {{-- Navigation Grid --}}
+                {{-- Menu navigasi cepat --}}
                 <div class="lg:col-span-3 grid grid-cols-2 sm:grid-cols-3 gap-6">
                     @php
                         $modules = [

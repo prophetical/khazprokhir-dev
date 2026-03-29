@@ -19,7 +19,7 @@ class LaporanHarianController extends Controller
         $tahunAnggaranOptions = $options['tahun_anggaran'];
         $tahunEmisiOptions = $options['tahun_emisi'];
 
-        // Realtime report always uses today's date
+        // Laporan realtime selalu pakai tanggal hari ini
         $filters = [
             'tanggal_laporan' => Carbon::today()->toDateString(),
             'tahun_anggaran' => $request->get('tahun_anggaran', reset($tahunAnggaranOptions) ?: date('Y')),
@@ -53,7 +53,7 @@ class LaporanHarianController extends Controller
         $tahunAnggaranOptions = $options['tahun_anggaran'];
         $tahunEmisiOptions = $options['tahun_emisi'];
 
-        // Realtime report always uses today's date
+        // Laporan realtime selalu pakai tanggal hari ini
         $filters = [
             'tanggal_laporan' => Carbon::today()->toDateString(),
             'tahun_anggaran' => $request->get('tahun_anggaran', reset($tahunAnggaranOptions) ?: date('Y')),
@@ -168,7 +168,7 @@ class LaporanHarianController extends Controller
                 ]);
             }
 
-            // Total Row
+            // Baris Total
             $totalPct = $totals['target'] > 0 ? ($totals['akumulasi_penyerahan_bilyet'] / $totals['target']) * 100 : 0;
             fputcsv($file, [
                 'TOTAL',
@@ -352,7 +352,7 @@ class LaporanHarianController extends Controller
         ];
 
         foreach ($pecahanList as $pecahan) {
-            // 1. Target Pengemasan Bulan
+            // 1. Target pengemasan untuk bulan ini
             $target = TargetBulananPengemasan::where('pecahan', $pecahan)
                 ->where('tahun_anggaran', $tahunAnggaran)
                 ->where('tahun_emisi', $tahunEmisi)
@@ -366,14 +366,14 @@ class LaporanHarianController extends Controller
                 ->whereDate('tanggal_pengemasan', '<=', $tanggalLaporan->toDateString())
                 ->sum(DB::raw('jumlah_dus * 20000'));
 
-            // 3. Sisa Target
+            // 3. Sisa target yang harus dicapai
             $sisaTargetBilyet = $targetBulan - $pengemasanBulanBilyet;
             $sisaTargetDoos = ceil($sisaTargetBilyet / 20000);
 
-            // 6. Target Produksi Harian
+            // 6. Target produksi per hari
             $targetProduksiHarian = $sisaHariKerja > 0 ? floor($sisaTargetBilyet / $sisaHariKerja) : 0;
 
-            // 7. Data Kemas (Accumulation in current month up to tanggalLaporan)
+            // 7. Data kemas (akumulasi bulan ini sampai tanggal laporan)
             $kemasG1Query = Pengemasan::where('pecahan', $pecahan)
                 ->where('tahun_anggaran', $tahunAnggaran)
                 ->whereDate('tanggal_pengemasan', '>=', $startOfMonth->toDateString())
@@ -406,7 +406,7 @@ class LaporanHarianController extends Controller
 
             $totalKemas = $kemasG1 + $kemasG2 + $kemasG3;
 
-            // 9. Penerimaan HCS (Accumulation in current month up to tanggalLaporan)
+            // 9. Penerimaan HCS (akumulasi bulan ini sampai tanggal laporan)
             $hcsRikyetQuery = HcsReceiving::where('pecahan', $pecahan)
                 ->where('tahun_anggaran', $tahunAnggaran)
                 ->whereDate('tanggal_penerimaan', '>=', $startOfMonth->toDateString())
@@ -447,7 +447,7 @@ class LaporanHarianController extends Controller
 
             $data[] = $row;
 
-            // Aggregate totals
+            // Jumlahkan semua total
             $totals['target_penyerahan_bulan'] += $targetBulan;
             $totals['penyerahan_bulan'] += $pengemasanBulanBilyet;
             $totals['sisa_target_bilyet'] += $sisaTargetBilyet;
@@ -487,7 +487,7 @@ class LaporanHarianController extends Controller
 
     private function getYearOptions()
     {
-        // Fetch unique budget years from all major tables
+        // Ambil daftar tahun anggaran unik dari semua tabel utama
         $ta = DB::table('hcs_receivings')->distinct()->pluck('tahun_anggaran')
             ->merge(DB::table('pengemasans')->distinct()->pluck('tahun_anggaran'))
             ->merge(DB::table('penyerahan_bi')->distinct()->pluck('tahun_anggaran'))
@@ -497,7 +497,7 @@ class LaporanHarianController extends Controller
             ->values()
             ->toArray();
 
-        // Fetch unique emission years from all major tables
+        // Ambil daftar tahun emisi unik dari semua tabel utama
         $te = DB::table('hcs_receivings')->distinct()->pluck('emisi')
             ->merge(DB::table('pengemasans')->distinct()->pluck('tahun_emisi'))
             ->merge(DB::table('penyerahan_bi')->distinct()->pluck('tahun_emisi'))
@@ -507,7 +507,7 @@ class LaporanHarianController extends Controller
             ->values()
             ->toArray();
 
-        // Fallback to current year if empty
+        // Pakai tahun sekarang kalau datanya masih kosong
         if (empty($ta)) {
             $ta = [date('Y')];
         }
@@ -603,9 +603,13 @@ class LaporanHarianController extends Controller
                 ->where('tahun_anggaran', $tahunAnggaran)
                 ->where('tahun_emisi', $tahunEmisi)
                 ->whereDate('tanggal_pengemasan', '<=', $tanggalLaporan)
-                ->sum(DB::raw('jumlah_dus * 20000'));
+                ->sum('total_bilyet');
 
-            $akumulasiDus = ceil($akumulasiBilyet / 20000);
+            $akumulasiDus = (int) Pengemasan::where('pecahan', $pecahan)
+                ->where('tahun_anggaran', $tahunAnggaran)
+                ->where('tahun_emisi', $tahunEmisi)
+                ->whereDate('tanggal_pengemasan', '<=', $tanggalLaporan)
+                ->sum('jumlah_dus');
 
             $sisaBilyet = $target - $akumulasiBilyet;
             $sisaDus = $sisaBilyet / 20000;
@@ -657,34 +661,39 @@ class LaporanHarianController extends Controller
         ];
 
         foreach ($pecahanList as $pecahan) {
-            // 1. Target Pengemasan Bilyet
+            // 1. Target pengemasan (dalam bilyet)
             $targetRow = TargetBulananPengemasan::where('pecahan', $pecahan)
                 ->where('tahun_anggaran', $tahunAnggaran)
                 ->where('tahun_emisi', $tahunEmisi)
                 ->first();
             $targetBilyet = $targetRow ? ($targetRow->{$targetColumn} ?? 0) : 0;
 
-            // 2. Target Pengemasan Dus
+            // 2. Target pengemasan (dalam dus)
             $targetDus = ceil($targetBilyet / 20000);
 
-            // 3. Akumulasi Pengemasan Bilyet
+            // 3. Akumulasi pengemasan (dalam bilyet)
             $akumulasiBilyet = Pengemasan::where('pecahan', $pecahan)
                 ->where('tahun_anggaran', $tahunAnggaran)
                 ->where('tahun_emisi', $tahunEmisi)
                 ->whereDate('tanggal_pengemasan', '>=', $startOfMonth)
                 ->whereDate('tanggal_pengemasan', '<=', $currentDate)
-                ->sum(DB::raw('jumlah_dus * 20000'));
+                ->sum('total_bilyet');
 
-            // 4. Akumulasi Pengemasan Dus
-            $akumulasiDus = ceil($akumulasiBilyet / 20000);
+            // 4. Akumulasi pengemasan (dalam dus)
+            $akumulasiDus = (int) Pengemasan::where('pecahan', $pecahan)
+                ->where('tahun_anggaran', $tahunAnggaran)
+                ->where('tahun_emisi', $tahunEmisi)
+                ->whereDate('tanggal_pengemasan', '>=', $startOfMonth)
+                ->whereDate('tanggal_pengemasan', '<=', $currentDate)
+                ->sum('jumlah_dus');
 
-            // 5. Sisa/Over Bilyet
+            // 5. Sisa bilyet atau kelebihan produksi
             $sisaBilyet = $targetBilyet - $akumulasiBilyet;
 
-            // 6. Sisa/Over Dus
+            // 6. Sisa dus atau kelebihan produksi
             $sisaDus = $sisaBilyet / 20000;
 
-            // 7. % Pencapaian
+            // 7. Persentase pencapaian (%)
             $persen = $targetBilyet > 0 ? ($akumulasiBilyet / $targetBilyet) * 100 : 0;
 
             $data[] = [

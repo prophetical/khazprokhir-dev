@@ -21,7 +21,7 @@ class HcsReceivingService
         try {
             DB::beginTransaction();
 
-            // Create HCS Receiving
+            // Buat data penerimaan HCS
             $hcs = HcsReceiving::create([
                 'nomor_bon' => $data['nomor_bon'],
                 'tanggal_penerimaan' => $data['tanggal_penerimaan'],
@@ -38,7 +38,7 @@ class HcsReceivingService
                 'created_by' => $userId,
             ]);
 
-            // Create Packs
+            // Buat data pack-nya
             $selectedPacksCount = count($data['packs']);
             $isManual = $data['is_manual'] ?? false;
 
@@ -54,7 +54,7 @@ class HcsReceivingService
                 ]);
             }
 
-            // Update Stock Ledger
+            // Update buku stok (ledger)
             $ledger = StockLedger::firstOrCreate(
                 [
                     'pecahan' => $data['pecahan'],
@@ -66,7 +66,7 @@ class HcsReceivingService
             $ledger->increment('total_received', $data['jumlah']);
             $ledger->increment('total_packed', $selectedPacksCount);
 
-            // Create Audit Log
+            // Catat di log audit
             AuditLog::create([
                 'user_id' => $userId,
                 'action' => 'receiving_created',
@@ -93,7 +93,7 @@ class HcsReceivingService
 
             $sortedPacks = $hcs->packs()->whereNotNull('hcs_sorting_id')->get()->keyBy('pack_number');
 
-            // 1. Revert Old Stock Ledger
+            // 1. Balikin dulu data buku stok yang lama
             $oldPacksCount = $hcs->packs()->count();
             $oldLedger = StockLedger::where([
                 'pecahan' => $hcs->pecahan,
@@ -110,10 +110,10 @@ class HcsReceivingService
                 $oldLedger->decrement('total_packed', $decPacked);
             }
 
-            // 2. Delete Old Packs (Only those without hcs_sorting_id)
+            // 2. Hapus pack lama (cuma yang belum disortir biar gak error)
             $hcs->packs()->whereNull('hcs_sorting_id')->delete();
 
-            // 3. Update HCS Record
+            // 3. Update data penerimaan HCS-nya
             $hcs->update([
                 'nomor_bon' => $data['nomor_bon'],
                 'tanggal_penerimaan' => $data['tanggal_penerimaan'],
@@ -130,7 +130,7 @@ class HcsReceivingService
                 'updated_by' => $userId,
             ]);
 
-            // 4. Create New Packs (Avoid re-creating sorted ones)
+            // 4. Buat pack baru (jangan buat ulang yang udah disortir)
             $selectedPacksCount = count($data['packs']);
             $isManual = $data['is_manual'] ?? false;
 
@@ -148,7 +148,7 @@ class HcsReceivingService
                 }
             }
 
-            // 5. Update New Stock Ledger
+            // 5. Update data buku stok yang baru
             $newLedger = StockLedger::firstOrCreate([
                 'pecahan' => $data['pecahan'],
                 'batch' => $data['batch'],
@@ -158,7 +158,7 @@ class HcsReceivingService
             $newLedger->increment('total_received', $data['jumlah']);
             $newLedger->increment('total_packed', $selectedPacksCount);
 
-            // 6. Audit Log
+            // 6. Catat di log audit
             AuditLog::create([
                 'user_id' => $userId,
                 'action' => 'receiving_updated',
@@ -187,7 +187,7 @@ class HcsReceivingService
                 throw new Exception('Data tidak dapat dihapus karena pack sudah disortir.');
             }
 
-            // Revert Stock Ledger
+            // Balikin data buku stok
             $oldPacksCount = $hcs->packs()->count();
             $ledger = StockLedger::where([
                 'pecahan' => $hcs->pecahan,
@@ -203,15 +203,15 @@ class HcsReceivingService
                 $ledger->decrement('total_packed', $decPacked);
             }
 
-            // Delete Packs
+            // Hapus data pack
             $hcs->packs()->delete();
 
             $id = $hcs->id;
 
-            // Delete HCS
+            // Hapus data penerimaan HCS
             $hcs->delete();
 
-            // Audit
+            // Catat di log audit
             AuditLog::create([
                 'user_id' => $userId,
                 'action' => 'receiving_deleted',

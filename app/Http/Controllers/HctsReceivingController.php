@@ -19,7 +19,7 @@ class HctsReceivingController extends Controller
         $taFilter = $request->input('tahun_anggaran');
         $teFilter = $request->input('tahun_emisi');
 
-        // Get available options for filters
+        // Ambil pilihan yang tersedia untuk filter
         $availableYears = HctsReceiving::distinct()->pluck('tahun_anggaran')->sortDesc();
         $availableEmissions = HctsReceiving::distinct()->pluck('emisi')->sortDesc();
 
@@ -53,7 +53,7 @@ class HctsReceivingController extends Controller
             });
         }
 
-        // Summary Calculations (Based on filters, excluding pagination)
+        // Hitung ringkasan (berdasarkan filter, tapi tidak kena batasan halaman)
         $summaryQuery = clone $query;
         $summaryData = $summaryQuery->selectRaw('pecahan, SUM(jumlah) as total')
             ->groupBy('pecahan')
@@ -224,7 +224,7 @@ class HctsReceivingController extends Controller
             'nomor_segel' => 'required|string',
         ]);
 
-        // Validation: HCS + HCTS <= 4,500,000
+        // Validasi: Gabungan HCS + HCTS tidak boleh lewat dari 4.500.000 bilyet
         $hcsTotal = HcsReceiving::where('pecahan', $validated['pecahan'])
             ->where('batch', $validated['batch'])
             ->where('seri', $validated['seri'])

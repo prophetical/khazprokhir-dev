@@ -12,11 +12,11 @@ class HcsSortingController extends Controller
 {
     public function index(Request $request)
     {
-        // 0. Ambil daftar tahun dan emisi untuk dropdown
+        // 0. Ambil daftar tahun anggaran dan emisi untuk pengisian dropdown filter
         $availableYears = DB::table('hcs_receivings')->distinct()->whereNotNull('tahun_anggaran')->orderBy('tahun_anggaran', 'desc')->pluck('tahun_anggaran');
         $availableEmissions = DB::table('hcs_receivings')->distinct()->whereNotNull('emisi')->orderBy('emisi', 'desc')->pluck('emisi');
 
-        // 1. Siapin Query untuk Grup yang Tersedia beserta Filternya
+        // 1. Siapkan Query untuk mencari grup pack yang tersedia (yang belum disortir)
         $query = Pack::whereNull('hcs_sorting_id')
             ->join('hcs_receivings', 'packs.hcs_receiving_id', '=', 'hcs_receivings.id');
 
@@ -24,10 +24,10 @@ class HcsSortingController extends Controller
             $query->where('hcs_receivings.pecahan', $request->pecahan);
         }
         if ($request->filled('batch')) {
-            $query->where('packs.batch', 'like', '%'.$request->batch.'%');
+            $query->where('packs.batch', 'like', '%' . $request->batch . '%');
         }
         if ($request->filled('seri')) {
-            $query->where('packs.seri', 'like', '%'.$request->seri.'%');
+            $query->where('packs.seri', 'like', '%' . $request->seri . '%');
         }
         if ($request->filled('tahun_anggaran')) {
             $query->where('hcs_receivings.tahun_anggaran', $request->tahun_anggaran);
@@ -41,7 +41,7 @@ class HcsSortingController extends Controller
             ->orderBy('total_pack', 'desc')
             ->paginate(20)->withQueryString();
 
-        // 2. Bikin Ringkasan per Pecahan
+        // 2. Buat Ringkasan (Summary) jumlah pack per pecahan
         $summaryQuery = Pack::whereNull('hcs_sorting_id')
             ->join('hcs_receivings', 'packs.hcs_receiving_id', '=', 'hcs_receivings.id');
 
@@ -75,12 +75,12 @@ class HcsSortingController extends Controller
         $batch = $request->query('batch');
         $seri = $request->query('seri');
 
-        if (! $pecahan || ! $batch || ! $seri) {
+        if (!$pecahan || !$batch || !$seri) {
             return redirect()->route('hcs-sorting.index')->with('error', 'Silahkan pilih grup data terlebih dahulu.');
         }
 
-        // Ambil semua pack untuk grup spesifik ini (baik yang udah disortir maupun belum, maks 100)
-        // Kita perlu tau status masing-masing pack 1-100.
+        // Ambil semua pack untuk grup spesifik ini (baik yang sudah disortir maupun belum, maks 100)
+        // Perlu tahu status masing-masing pack 1-100.
         $packsData = Pack::join('hcs_receivings', 'packs.hcs_receiving_id', '=', 'hcs_receivings.id')
             ->where('hcs_receivings.pecahan', $pecahan)
             ->where('packs.batch', $batch)
@@ -111,14 +111,14 @@ class HcsSortingController extends Controller
             'petugas_2' => 'nullable',
             'tanggal' => 'required|date',
             'gilir' => 'required',
-            'selected_packs' => 'required|array|min:'.($isManual ? '1' : '4'),
+            'selected_packs' => 'required|array|min:' . ($isManual ? '1' : '4'),
         ]);
 
         $selectedPacks = $request->selected_packs;
         sort($selectedPacks);
 
-        if (! $isManual) {
-            // Validasi: Harus dalam kelompok berisi 4 dan berurutan (Boundary & Multiples of 4)
+        if (!$isManual) {
+            // Validasi: Pack harus dalam kelompok berisi 4 dan nomor pack harus berurutan
             $contiguousBlocks = [];
             $currentBlock = [];
             foreach ($selectedPacks as $packNum) {
@@ -135,7 +135,7 @@ class HcsSortingController extends Controller
                     }
                 }
             }
-            if (! empty($currentBlock)) {
+            if (!empty($currentBlock)) {
                 $contiguousBlocks[] = $currentBlock;
             }
 
@@ -155,7 +155,7 @@ class HcsSortingController extends Controller
             }
         }
 
-        // Pastiin gak ada pack terpilih yang ternyata udah disortir duluan
+        // Pastikan tidak ada pack yang terpilih ternyata sudah disortir oleh orang lain
         $alreadySorted = Pack::where('batch', $request->batch)
             ->where('seri', $request->seri)
             ->whereIn('pack_number', $selectedPacks)
@@ -194,7 +194,7 @@ class HcsSortingController extends Controller
                 'created_by' => auth()->id(),
             ]);
 
-            // Update data pack-nya
+            // Update status di tabel pack agar benar benar terbaca "sudah disortir"
             Pack::where('batch', $request->batch)
                 ->where('seri', $request->seri)
                 ->whereIn('pack_number', $selectedPacks)
@@ -206,7 +206,7 @@ class HcsSortingController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return back()->with('error', 'Terjadi kesalahan: '.$e->getMessage())->withInput();
+            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())->withInput();
         }
     }
 }

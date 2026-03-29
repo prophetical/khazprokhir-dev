@@ -32,7 +32,7 @@
                         ];
                     @endphp
 
-                    <!-- Search & Filter Form -->
+                    <!-- Form Pencarian & Filter -->
                     <div x-data="{ 
                         selectedPecahan: '{{ $selectedPecahan }}',
                         themes: {{ json_encode($themeClasses) }},
@@ -44,7 +44,7 @@
                             <div class="p-6">
                                 <div class="grid grid-cols-1 md:grid-cols-4 gap-x-4 gap-y-3 items-end">
                                     
-                                    {{-- Primary Search --}}
+                                    {{-- Input Pencarian Utama --}}
                                     <div class="md:col-span-2">
                                         <label for="search" class="block text-[9px] font-black text-gray-400 uppercase tracking-[0.15em] mb-1.5 ml-1">Cari Data</label>
                                         <div class="relative group">
@@ -60,7 +60,7 @@
                                         </div>
                                     </div>
 
-                                    {{-- Pecahan --}}
+                                    {{-- Filter Pecahan --}}
                                     <div class="md:col-span-1">
                                         <label for="pecahan" class="block text-[9px] font-black text-gray-400 uppercase tracking-[0.15em] mb-1.5 text-center">Pecahan</label>
                                         <select id="pecahan" name="pecahan" x-model="selectedPecahan"
@@ -73,7 +73,7 @@
                                         </select>
                                     </div>
 
-                                    {{-- Supplier --}}
+                                    {{-- Filter Supplier --}}
                                     <div class="md:col-span-1">
                                         <label for="supplier" class="block text-[9px] font-black text-gray-400 uppercase tracking-[0.15em] mb-1.5 text-center">Supplier</label>
                                         <select id="supplier" name="supplier" 
@@ -85,7 +85,7 @@
                                         </select>
                                     </div>
 
-                                    {{-- Dari --}}
+                                    {{-- Filter Tanggal Mulai --}}
                                     <div class="md:col-span-1">
                                         <label for="start_date" class="block text-[9px] font-black text-gray-400 uppercase tracking-[0.15em] mb-1.5 text-center">Dari</label>
                                         <input id="start_date" name="start_date" type="date" 
@@ -94,7 +94,7 @@
                                                value="{{ request('start_date') }}" />
                                     </div>
 
-                                    {{-- Sampai --}}
+                                    {{-- Filter Tanggal Selesai --}}
                                     <div class="md:col-span-1">
                                         <label for="end_date" class="block text-[9px] font-black text-gray-400 uppercase tracking-[0.15em] mb-1.5 text-center">Sampai</label>
                                         <input id="end_date" name="end_date" type="date" 
@@ -103,7 +103,7 @@
                                                value="{{ request('end_date') }}" />
                                     </div>
 
-                                    {{-- Actions --}}
+                                    {{-- Tombol Aksi Filter --}}
                                     <div class="md:col-span-2 flex gap-2">
                                         @if(request()->anyFilled(['search', 'start_date', 'end_date', 'pecahan', 'supplier']))
                                             <a href="{{ route('hcs-receiving.index') }}" class="inline-flex items-center justify-center px-4 py-2 bg-gray-50 hover:bg-gray-100 text-gray-400 rounded-lg transition-all border border-gray-200" title="Reset Filter">
@@ -120,7 +120,7 @@
                                 </div>
                             </div>
 
-                            {{-- Active Filter Tags --}}
+                            {{-- Tag Filter yang Sedang Aktif --}}
                             @if(request()->anyFilled(['search', 'start_date', 'end_date', 'pecahan', 'supplier']))
                                 <div class="px-6 pb-6 pt-0 flex flex-wrap gap-2">
                                     @if(request('search'))
@@ -364,13 +364,13 @@
 
     @push('css')
     <style>
-        /* Alignment & Height Unification */
+        /* Penyeragaman Tinggi & Penyelarasan */
         #search, #pecahan, #supplier, #start_date, #end_date, #search-btn {
             height: 38px !important;
             box-sizing: border-box;
         }
 
-        /* Light Mode Refinements for Index Filter - Aggressive Visibility */
+        /* Perbaikan Tampilan Mode Terang - Visibilitas Lebih Tajam */
         body.light-mode .filter-input {
             border: 1px solid #9ca3af; /* Removed !important to allow dynamic theme colors */
             background-color: #ffffff !important;
@@ -387,7 +387,7 @@
             font-weight: 700 !important;
         }
 
-        /* Hover states for better interaction visibility in Light Mode */
+        /* Efek Hover untuk Interaksi di Mode Terang */
         body.light-mode .filter-input:hover {
             border-color: #6b7280;
         }

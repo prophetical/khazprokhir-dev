@@ -15,7 +15,7 @@ class PengemasanController extends Controller
     {
         $readyGroupsAll = $this->findReadyToPackageGroups($request->all());
 
-        // Manual Pagination for array
+        // Buat pagination manual buat data array
         $currentPage = $request->input('page', 1);
         $perPage = 20;
         $currentItems = $readyGroupsAll->slice(($currentPage - 1) * $perPage, $perPage)->all();
@@ -33,12 +33,12 @@ class PengemasanController extends Controller
     {
         $query = Pengemasan::with(['user', 'packs']);
 
-        // Handle Filter Pecahan
+        // Filter berdasarkan pecahan
         if ($request->filled('pecahan')) {
             $query->where('pecahan', $request->pecahan);
         }
 
-        // Handle Filter Range Tanggal
+        // Filter berdasarkan rentang tanggal
         if ($request->filled('tanggal_awal')) {
             $query->where('tanggal_pengemasan', '>=', $request->tanggal_awal);
         }
@@ -46,12 +46,12 @@ class PengemasanController extends Controller
             $query->where('tanggal_pengemasan', '<=', $request->tanggal_akhir);
         }
 
-        // Handle Filter Gilir
+        // Filter berdasarkan gilir kerja
         if ($request->filled('gilir')) {
             $query->where('gilir', $request->gilir);
         }
 
-        // Handle Search General
+        // Pencarian umum (pecahan, batch, seri, petugas)
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -65,14 +65,14 @@ class PengemasanController extends Controller
             });
         }
 
-        // Handle Search Dus Spesifik
+        // Cari nomor dus tertentu
         if ($request->filled('search_dus') && is_numeric($request->search_dus)) {
             $searchDus = (int) $request->search_dus;
             $query->where('dus_awal', '<=', $searchDus)
                 ->where('dus_akhir', '>=', $searchDus);
         }
 
-        // Handle Order
+        // Atur pengurutan data
         $sortColumn = $request->input('sort', 'created_at');
         $sortDirection = $request->input('direction', 'desc');
 
@@ -395,7 +395,7 @@ class PengemasanController extends Controller
         $selectedChunksInput = $request->input('selected_chunks', []);
         $selectedPacksInput = $request->input('selected_packs', []);
 
-        // sort by starting pack
+        // Urutkan berdasarkan pack awal
         usort($selectedChunksInput, function ($a, $b) {
             $aStart = (int) explode('-', $a)[0];
             $bStart = (int) explode('-', $b)[0];
@@ -554,7 +554,7 @@ class PengemasanController extends Controller
 
             Pack::whereIn('id', $packs->pluck('id'))->update(['id_pengemasan' => $pengemasan->id]);
 
-            // [NEW] Kunci data penyortiran terkait
+            // [BARU] Kunci data penyortiran biar nggak bisa diubah sembarangan
             $sortingIds = $packs->pluck('hcs_sorting_id')->filter()->unique();
             if ($sortingIds->isNotEmpty()) {
                 \App\Models\HcsSorting::whereIn('id', $sortingIds)->update(['status_kunci_pengemasan' => 1]);
@@ -589,7 +589,7 @@ class PengemasanController extends Controller
 
     private function generateDetailPengemasan($pengemasan, $seriRaw, $startNumber, $batch, $parsedChunks, $packs)
     {
-        // Pola pembacaan seri: format ideal [AAA]-[BBB][No]
+        // Cara baca seri: format idealnya itu [AAA]-[BBB][No]
         // Contoh: RJ-MJ9 -> AAA = RJ, BBB = MJ
         $parts = explode('-', $seriRaw);
         $seriAwalPrefix = $parts[0] ?? '';
@@ -627,68 +627,68 @@ class PengemasanController extends Controller
             $chunkPackNumbers = [$p1, $p2, $p3, $p4];
             $chunkBilyet = $packs->whereIn('pack_number', $chunkPackNumbers)->sum('jumlah');
 
-            // Standard bilyet per dus adalah total chunk / 9
+            // Standar jumlah bilyet per dus itu total bilyet 4 pack dibagi 9
             // Jika 180.000, maka 20.000. Jika buntut, sesuaikan.
             $bilyetPerDus = floor($chunkBilyet / 9);
             $sisaBilyet = $chunkBilyet % 9;
 
-            // Dus 1: Pack 1-4, Pola 3
+            // Dus 1: Isinya Pack 1 sampai 4 dengan Pola 3
             $dusBilyet = $bilyetPerDus + ($sisaBilyet > 0 ? 1 : 0);
             if ($sisaBilyet > 0) {
                 $sisaBilyet--;
             }
             $this->createDusRow($pengemasan->id, $currentNoDus++, $p1, $p4, $pola3Awal, $pola3Akhir, $batch, $dusBilyet);
 
-            // Dus 2: Pack 1, Pola 2
+            // Dus 2: Isinya Pack 1 dengan Pola 2
             $dusBilyet = $bilyetPerDus + ($sisaBilyet > 0 ? 1 : 0);
             if ($sisaBilyet > 0) {
                 $sisaBilyet--;
             }
             $this->createDusRow($pengemasan->id, $currentNoDus++, $p1, $p1, $pola2Awal, $pola2Akhir, $batch, $dusBilyet);
 
-            // Dus 3: Pack 1, Pola 1
+            // Dus 3: Isinya Pack 1 dengan Pola 1
             $dusBilyet = $bilyetPerDus + ($sisaBilyet > 0 ? 1 : 0);
             if ($sisaBilyet > 0) {
                 $sisaBilyet--;
             }
             $this->createDusRow($pengemasan->id, $currentNoDus++, $p1, $p1, $pola1Awal, $pola1Akhir, $batch, $dusBilyet);
 
-            // Dus 4: Pack 2, Pola 2
+            // Dus 4: Isinya Pack 2 dengan Pola 2
             $dusBilyet = $bilyetPerDus + ($sisaBilyet > 0 ? 1 : 0);
             if ($sisaBilyet > 0) {
                 $sisaBilyet--;
             }
             $this->createDusRow($pengemasan->id, $currentNoDus++, $p2, $p2, $pola2Awal, $pola2Akhir, $batch, $dusBilyet);
 
-            // Dus 5: Pack 2, Pola 1
+            // Dus 5: Isinya Pack 2 dengan Pola 1
             $dusBilyet = $bilyetPerDus + ($sisaBilyet > 0 ? 1 : 0);
             if ($sisaBilyet > 0) {
                 $sisaBilyet--;
             }
             $this->createDusRow($pengemasan->id, $currentNoDus++, $p2, $p2, $pola1Awal, $pola1Akhir, $batch, $dusBilyet);
 
-            // Dus 6: Pack 3, Pola 2
+            // Dus 6: Isinya Pack 3 dengan Pola 2
             $dusBilyet = $bilyetPerDus + ($sisaBilyet > 0 ? 1 : 0);
             if ($sisaBilyet > 0) {
                 $sisaBilyet--;
             }
             $this->createDusRow($pengemasan->id, $currentNoDus++, $p3, $p3, $pola2Awal, $pola2Akhir, $batch, $dusBilyet);
 
-            // Dus 7: Pack 3, Pola 1
+            // Dus 7: Isinya Pack 3 dengan Pola 1
             $dusBilyet = $bilyetPerDus + ($sisaBilyet > 0 ? 1 : 0);
             if ($sisaBilyet > 0) {
                 $sisaBilyet--;
             }
             $this->createDusRow($pengemasan->id, $currentNoDus++, $p3, $p3, $pola1Awal, $pola1Akhir, $batch, $dusBilyet);
 
-            // Dus 8: Pack 4, Pola 2
+            // Dus 8: Isinya Pack 4 dengan Pola 2
             $dusBilyet = $bilyetPerDus + ($sisaBilyet > 0 ? 1 : 0);
             if ($sisaBilyet > 0) {
                 $sisaBilyet--;
             }
             $this->createDusRow($pengemasan->id, $currentNoDus++, $p4, $p4, $pola2Awal, $pola2Akhir, $batch, $dusBilyet);
 
-            // Dus 9: Pack 4, Pola 1
+            // Dus 9: Isinya Pack 4 dengan Pola 1
             $dusBilyet = $bilyetPerDus + ($sisaBilyet > 0 ? 1 : 0);
             if ($sisaBilyet > 0) {
                 $sisaBilyet--;
