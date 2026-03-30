@@ -56,6 +56,7 @@
                 class="ml-3 text-sm font-medium whitespace-nowrap overflow-hidden">{{ __('Dashboard') }}</span>
         </a>
 
+        @if(auth()->user()->role)
         <!-- Pesan -->
         <a href="{{ route('messages.index') }}"
             class="flex items-center py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('messages.*') ? 'bg-white/20 text-white font-semibold shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
@@ -69,6 +70,7 @@
             <span x-show="!sidebarCollapsed" x-transition
                 class="ml-3 text-sm font-medium whitespace-nowrap overflow-hidden">Pesan</span>
         </a>
+        @endif
 
         <!-- Laporan Harian Group -->
         <div class="space-y-1">
@@ -107,6 +109,7 @@
             </div>
         </div>
 
+        @if(auth()->user()->role)
         <!-- HCS Receiving Group -->
         <div class="space-y-1">
             <button @click="hcsOpen = !hcsOpen; if(sidebarCollapsed) sidebarCollapsed = false;"
@@ -354,6 +357,7 @@
                 </a>
             </div>
         </div>
+        @endif
 
 
         @if(auth()->user()->role === 'admin')
@@ -372,6 +376,19 @@
                     </div>
                     <span x-show="!sidebarCollapsed" x-transition
                         class="ml-3 text-sm font-medium whitespace-nowrap overflow-hidden">Manajemen Target</span>
+                </a>
+
+                <a href="{{ route('users.index') }}"
+                    class="flex items-center py-2.5 px-3 rounded-lg transition-all duration-200 mt-1 {{ request()->routeIs('users.*') ? 'bg-white/20 text-white font-semibold shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
+                    title="Manajemen Akun">
+                    <div class="shrink-0 w-8 flex justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                    </div>
+                    <span x-show="!sidebarCollapsed" x-transition
+                        class="ml-3 text-sm font-medium whitespace-nowrap overflow-hidden">Manajemen Akun</span>
                 </a>
             </div>
         @endif

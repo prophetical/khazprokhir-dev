@@ -17,9 +17,9 @@ class UserService
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
+            'username' => $data['username'],
             'password' => Hash::make($data['password']),
             'role' => $data['role'],
-            'permissions' => $data['permissions'] ?? [],
         ]);
     }
 
@@ -31,8 +31,8 @@ class UserService
 
         $user->name = $data['name'];
         $user->email = $data['email'];
+        $user->username = $data['username'];
         $user->role = $data['role'];
-        $user->permissions = $data['permissions'] ?? [];
         
         return $user->save();
     }

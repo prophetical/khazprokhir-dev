@@ -80,13 +80,13 @@ class HcsReceivingController extends Controller
 
             return redirect()->route('hcs-receiving.index')->with('success', 'Data Penerimaan HCS berhasil disimpan.');
         } catch (\Exception $e) {
-            return back()->withInput()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
+            \Log::error('HCS Receiving Store Error: ' . $e->getMessage());
+            return back()->withInput()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data. Silakan coba lagi.']);
         }
     }
 
     public function edit(HcsReceiving $hcsReceiving)
     {
-        if (!in_array(auth()->user()->role, ['sortir', 'admin'])) abort(403);
         $hcsReceiving->load('packs');
         $sortedPacks = $hcsReceiving->packs->whereNotNull('hcs_sorting_id')->pluck('pack_number')->toArray();
         return view('hcs-receiving.edit', [
@@ -106,18 +106,19 @@ class HcsReceivingController extends Controller
 
             return redirect()->route('hcs-receiving.index')->with('success', 'Data Penerimaan HCS berhasil diperbarui.');
         } catch (\Exception $e) {
-            return back()->withInput()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
+            \Log::error('HCS Receiving Update Error: ' . $e->getMessage());
+            return back()->withInput()->withErrors(['error' => 'Terjadi kesalahan saat memperbarui data. Silakan coba lagi.']);
         }
     }
 
     public function destroy(HcsReceiving $hcsReceiving)
     {
-        if (!in_array(auth()->user()->role, ['sortir', 'admin'])) abort(403);
         try {
             $this->service->deleteReceiving($hcsReceiving, auth()->id());
             return redirect()->route('hcs-receiving.index')->with('success', 'Data Penerimaan HCS berhasil dihapus.');
         } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
+            \Log::error('HCS Receiving Delete Error: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Terjadi kesalahan saat menghapus data. Silakan coba lagi.']);
         }
     }
 }

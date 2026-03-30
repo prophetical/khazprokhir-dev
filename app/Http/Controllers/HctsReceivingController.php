@@ -49,7 +49,9 @@ class HctsReceivingController extends Controller
             fputcsv($file, ['Tanggal', 'Nomor Bon', 'Pecahan', 'Gilir', 'Jumlah', 'Batch', 'Seri', 'Emisi', 'TA', 'Nomor Segel', 'Petugas']);
             $query->chunk(100, function ($rows) use ($file) {
                 foreach ($rows as $row) {
-                    fputcsv($file, [$row->tanggal_penerimaan, $row->nomor_bon, $row->pecahan, $row->gilir, $row->jumlah, $row->batch, $row->seri, $row->emisi, $row->tahun_anggaran, $row->nomor_segel, $row->user->name ?? '-']);
+                    fputcsv($file, array_map([$this, 'sanitizeCsvField'], [
+                        $row->tanggal_penerimaan, $row->nomor_bon, $row->pecahan, $row->gilir, $row->jumlah, $row->batch, $row->seri, $row->emisi, $row->tahun_anggaran, $row->nomor_segel, $row->user->name ?? '-'
+                    ]));
                 }
             });
             fclose($file);
@@ -88,7 +90,8 @@ class HctsReceivingController extends Controller
             $this->service->processStore($validated, auth()->id());
             return redirect()->route('hcts-receiving.index')->with('success', 'Data Penerimaan HCTS berhasil disimpan.');
         } catch (\Exception $e) {
-            return back()->withInput()->withErrors(['jumlah' => $e->getMessage()]);
+            \Log::error('HCTS Receiving Store Error: ' . $e->getMessage());
+            return back()->withInput()->withErrors(['jumlah' => 'Terjadi kesalahan saat menyimpan data. Silakan coba lagi.']);
         }
     }
 
@@ -99,7 +102,8 @@ class HctsReceivingController extends Controller
             $this->service->processUpdate($hcts_receiving, $validated);
             return redirect()->route('hcts-receiving.index')->with('success', 'Data Penerimaan HCTS berhasil diperbarui.');
         } catch (\Exception $e) {
-            return back()->withInput()->withErrors(['jumlah' => $e->getMessage()]);
+            \Log::error('HCTS Receiving Update Error: ' . $e->getMessage());
+            return back()->withInput()->withErrors(['jumlah' => 'Terjadi kesalahan saat memperbarui data. Silakan coba lagi.']);
         }
     }
 
@@ -136,7 +140,9 @@ class HctsReceivingController extends Controller
                 foreach ($rows as $row) {
                     $grandTotal = $row->total_hcs + $row->total_hcts;
                     $percent = $row->total_hcs > 0 ? round(($row->total_hcts / $row->total_hcs) * 100, 2) : ($row->total_hcts > 0 ? 100 : 0);
-                    fputcsv($file, [$row->batch, $row->seri, $row->pecahan, $row->emisi, $row->tahun_anggaran, $row->total_hcs, $row->total_hcts, $grandTotal, $percent.'%']);
+                    fputcsv($file, array_map([$this, 'sanitizeCsvField'], [
+                        $row->batch, $row->seri, $row->pecahan, $row->emisi, $row->tahun_anggaran, $row->total_hcs, $row->total_hcts, $grandTotal, $percent.'%'
+                    ]));
                 }
             });
             fclose($file);
@@ -159,7 +165,6 @@ class HctsReceivingController extends Controller
 
     public function destroy(HctsReceiving $hcts_receiving)
     {
-        if (!in_array(auth()->user()->role, ['sortir', 'admin'])) abort(403);
         $hcts_receiving->delete();
         return redirect()->route('hcts-receiving.index')->with('success', 'Data Penerimaan HCTS berhasil dihapus.');
     }
@@ -184,5 +189,15 @@ class HctsReceivingController extends Controller
             'gilir' => 'required|in:Gilir 1,Gilir 2,Gilir 3', 'jumlah' => 'required|integer|min:0', 'batch' => 'required|string|max:10',
             'seri' => 'required|string|regex:/^[A-Z]{2}-[A-Z]{2}[0-9]$/', 'emisi' => 'required|integer', 'tahun_anggaran' => 'required|integer', 'nomor_segel' => 'required|string',
         ]);
+    }
+
+    private function sanitizeCsvField($field)
+    {
+        $field = (string) $field;
+        $triggers = ['=', '+', '-', '@'];
+        if (in_array(substr($field, 0, 1), $triggers)) {
+            return "'" . $field;
+        }
+        return $field;
     }
 }

@@ -23,8 +23,7 @@ class UserController extends Controller
 
     public function create()
     {
-        $modules = config('permissions.modules', []);
-        return view('users.create', compact('modules'));
+        return view('users.create');
     }
 
     public function store(Request $request)
@@ -32,9 +31,9 @@ class UserController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'username' => ['required', 'string', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['required', 'string', 'in:admin,sortir,supervisor,pengemasan'],
-            'permissions' => ['nullable', 'array'],
+            'role' => ['required', 'string', 'in:admin,sortir,supervisor,kemas'],
         ]);
 
         $this->service->createUser($data);
@@ -44,8 +43,7 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        $modules = config('permissions.modules', []);
-        return view('users.edit', compact('user', 'modules'));
+        return view('users.edit', compact('user'));
     }
 
     public function update(Request $request, User $user)
@@ -53,8 +51,8 @@ class UserController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,'.$user->id],
-            'role' => ['required', 'string', 'in:admin,sortir,supervisor,pengemasan'],
-            'permissions' => ['nullable', 'array'],
+            'username' => ['required', 'string', 'max:255', 'unique:users,username,'.$user->id],
+            'role' => ['required', 'string', 'in:admin,sortir,supervisor,kemas'],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
         ]);
 

@@ -46,6 +46,11 @@
                                 <input type="email" name="email" value="{{ old('email', $user->email) }}" required
                                     class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-2.5 px-3 focus:border-indigo-500 focus:ring-indigo-500 transition-all font-bold font-mono">
                             </div>
+                            <div class="md:col-span-1">
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Username</label>
+                                <input type="text" name="username" value="{{ old('username', $user->username) }}" required
+                                    class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-2.5 px-3 focus:border-indigo-500 focus:ring-indigo-500 transition-all font-bold font-mono">
+                            </div>
                             <div class="md:col-span-1 border-l-4 border-amber-200 pl-4 bg-amber-50/30 py-2 rounded-r-lg">
                                 <label class="block text-[10px] font-bold text-amber-600 uppercase tracking-widest mb-2 italic flex items-center gap-2">
                                     <svg class="w-3 h-3 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
@@ -65,7 +70,7 @@
                         <div class="mb-8 p-6 bg-indigo-50/50 rounded-xl border border-indigo-100/50" x-data="{ role: '{{ old('role', $user->role) }}' }">
                             <label class="block text-[10px] font-bold text-indigo-400 uppercase tracking-[0.2em] mb-4">Ubah Jabatan (Role)</label>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                @foreach(['admin' => 'Administrator', 'supervisor' => 'Supervisor', 'sortir' => 'Staff Sortir', 'pengemasan' => 'Staff Pengemasan'] as $val => $label)
+                                @foreach(['admin' => 'Administrator', 'supervisor' => 'Supervisor', 'sortir' => 'Staff Sortir', 'kemas' => 'Staff Pengemasan'] as $val => $label)
                                     <label class="relative flex items-center p-4 cursor-pointer rounded-lg border-2 transition-all"
                                         :class="role === '{{ $val }}' ? 'bg-white border-indigo-500 shadow-md ring-2 ring-indigo-500/10' : 'bg-transparent border-gray-100 hover:border-indigo-200'">
                                         <input type="radio" name="role" value="{{ $val }}" @click="role = '{{ $val }}'" class="sr-only" {{ old('role', $user->role) === $val ? 'checked' : '' }}>
@@ -85,53 +90,6 @@
                             </div>
                         </div>
 
-                        {{-- Section 3: Permission Grid --}}
-                        <div class="mb-10">
-                            <div class="flex items-center gap-3 mb-6">
-                                <div class="h-px bg-gray-100 flex-1"></div>
-                                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.3em]">Konfigurasi Ulang Hak Akses</span>
-                                <div class="h-px bg-gray-100 flex-1"></div>
-                            </div>
-
-                            <div class="bg-gray-50 rounded-xl border border-gray-100 overflow-hidden shadow-inner">
-                                <table class="w-full">
-                                    <thead>
-                                        <tr class="bg-white/50 border-b border-gray-100">
-                                            <th class="px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Modul / Menu</th>
-                                            <th class="px-6 py-4 text-center text-[10px] font-bold text-indigo-500 uppercase tracking-widest">Akses Menu</th>
-                                            <th class="px-6 py-4 text-center text-[10px] font-bold text-blue-500 uppercase tracking-widest">Edit Data</th>
-                                            <th class="px-6 py-4 text-center text-[10px] font-bold text-rose-500 uppercase tracking-widest">Hapus Data</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-gray-100">
-                                        @foreach($modules as $key => $name)
-                                            <tr class="hover:bg-white transition-colors group">
-                                                <td class="px-6 py-4">
-                                                    <div class="flex items-center gap-3">
-                                                        <div class="w-1.5 h-1.5 rounded-full bg-indigo-200 group-hover:scale-150 transition-transform duration-300"></div>
-                                                        <span class="text-sm font-bold text-gray-700">{{ $name }}</span>
-                                                    </div>
-                                                </td>
-                                                <td class="px-6 py-4 text-center">
-                                                    <input type="checkbox" name="permissions[]" value="{{ $key }}:grid"
-                                                        class="w-4 h-4 rounded text-indigo-500 border-gray-200 focus:ring-indigo-500 transition-all cursor-pointer shadow-sm"
-                                                        {{ in_array($key.':grid', old('permissions', $user->permissions ?? [])) ? 'checked' : '' }}>
-                                                </td>
-                                                <td class="px-6 py-4 text-center">
-                                                    <input type="checkbox" name="permissions[]" value="{{ $key }}:edit"
-                                                        class="w-4 h-4 rounded text-blue-500 border-gray-200 focus:ring-blue-500 transition-all cursor-pointer shadow-sm"
-                                                        {{ in_array($key.':edit', old('permissions', $user->permissions ?? [])) ? 'checked' : '' }}>
-                                                </td>
-                                                <td class="px-6 py-4 text-center">
-                                                    <input type="checkbox" name="permissions[]" value="{{ $key }}:delete"
-                                                        class="w-4 h-4 rounded text-rose-500 border-gray-200 focus:ring-rose-500 transition-all cursor-pointer shadow-sm"
-                                                        {{ in_array($key.':delete', old('permissions', $user->permissions ?? [])) ? 'checked' : '' }}>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
                         </div>
 
                         {{-- Footer Action --}}

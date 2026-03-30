@@ -45,7 +45,6 @@
                                     <th class="px-4 py-3 text-left w-12 text-center text-[8px]">#</th>
                                     <th class="px-4 py-3 text-left">Nama & Email</th>
                                     <th class="px-4 py-3 text-center">Role</th>
-                                    <th class="px-4 py-3 text-left">Hak Akses (Granular)</th>
                                     <th class="px-4 py-3 text-center">Aksi</th>
                                 </tr>
                             </thead>
@@ -71,25 +70,6 @@
                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-wider {{ $style }}">
                                                 {{ $user->role }}
                                             </span>
-                                        </td>
-                                        <td class="px-4 py-4">
-                                            @if($user->role === 'admin')
-                                                <span class="text-[10px] font-black text-indigo-600 italic">FULL ACCESS (SUPERUSER)</span>
-                                            @else
-                                                <div class="flex flex-wrap gap-1">
-                                                    @forelse($user->permissions ?? [] as $perm)
-                                                        @php
-                                                            [$mod, $act] = explode(':', $perm);
-                                                            $colorClass = $act === 'delete' ? 'bg-rose-50 text-rose-600 border-rose-100' : 'bg-blue-50 text-blue-600 border-blue-100';
-                                                        @endphp
-                                                        <span class="px-1.5 py-0.5 text-[8px] font-bold border rounded uppercase tracking-tighter {{ $colorClass }}">
-                                                            {{ str_replace('_', ' ', $mod) }}:{{ $act }}
-                                                        </span>
-                                                    @empty
-                                                        <span class="text-[9px] text-gray-300 italic">No special permissions</span>
-                                                    @endforelse
-                                                </div>
-                                            @endif
                                         </td>
                                         <td class="px-4 py-4 whitespace-nowrap text-center text-sm font-medium">
                                             <div class="flex items-center justify-center gap-2">

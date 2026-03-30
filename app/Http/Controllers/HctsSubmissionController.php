@@ -41,7 +41,9 @@ class HctsSubmissionController extends Controller
             $query->latest()->chunk(100, function ($rows) use ($file) {
                 foreach ($rows as $row) {
                     $batchDetail = $row->batches->map(fn($b) => $b->batch.' ('.number_format($b->jumlah).')')->implode('; ');
-                    fputcsv($file, [$row->tanggal_penyerahan, $row->nomor_ba, $row->pecahan, $row->tahun_anggaran, $row->tahun_emisi, $row->jumlah_bilyet, $row->pemasok1, $row->pemasok2, $batchDetail, $row->user->name ?? '-']);
+                    fputcsv($file, array_map([$this, 'sanitizeCsvField'], [
+                        $row->tanggal_penyerahan, $row->nomor_ba, $row->pecahan, $row->tahun_anggaran, $row->tahun_emisi, $row->jumlah_bilyet, $row->pemasok1, $row->pemasok2, $batchDetail, $row->user->name ?? '-'
+                    ]));
                 }
             });
             fclose($file);
@@ -74,7 +76,8 @@ class HctsSubmissionController extends Controller
             $this->service->processStore($validated, auth()->id());
             return redirect()->route('hcts-submission.index')->with('success', 'Penyerahan HCTS berhasil disimpan.');
         } catch (\Exception $e) {
-            return back()->withInput()->withErrors(['jumlah_bilyet' => $e->getMessage()]);
+            \Log::error('HCTS Submission Store Error: ' . $e->getMessage());
+            return back()->withInput()->withErrors(['jumlah_bilyet' => 'Terjadi kesalahan sistem saat menyimpan data. Silakan coba lagi.']);
         }
     }
 
@@ -96,7 +99,8 @@ class HctsSubmissionController extends Controller
             $this->service->processUpdate($hcts_submission, $validated);
             return redirect()->route('hcts-submission.index')->with('success', 'Penyerahan HCTS berhasil diperbarui.');
         } catch (\Exception $e) {
-            return back()->withInput()->withErrors(['jumlah_bilyet' => $e->getMessage()]);
+            \Log::error('HCTS Submission Update Error: ' . $e->getMessage());
+            return back()->withInput()->withErrors(['jumlah_bilyet' => 'Terjadi kesalahan sistem saat memperbarui data. Silakan coba lagi.']);
         }
     }
 
@@ -107,7 +111,8 @@ class HctsSubmissionController extends Controller
             $hcts_submission->delete();
             return redirect()->route('hcts-submission.index')->with('success', 'Penyerahan HCTS ke BI berhasil dihapus.');
         } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Gagal menghapus data: '.$e->getMessage()]);
+            \Log::error('HCTS Submission Delete Error: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Gagal menghapus data. Silakan coba lagi.']);
         }
     }
 
@@ -140,5 +145,14 @@ class HctsSubmissionController extends Controller
             'jumlah_bilyet' => 'required|integer|min:1', 'pemasok1' => 'required|string', 'pemasok2' => 'nullable|string', 'nomor_ba' => 'required|string',
             'batches' => 'required|array|min:1', 'batches.*.batch' => 'required|string', 'batches.*.jumlah' => 'required|integer|min:1',
         ]);
+    }
+    private function sanitizeCsvField($field)
+    {
+        $field = (string) $field;
+        $triggers = ['=', '+', '-', '@'];
+        if (in_array(substr($field, 0, 1), $triggers)) {
+            return "'" . $field;
+        }
+        return $field;
     }
 }

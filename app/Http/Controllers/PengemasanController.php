@@ -105,10 +105,10 @@ class PengemasanController extends Controller
             fputcsv($file, ['Tanggal', 'Gilir', 'Thn Anggaran', 'Thn Emisi', 'Pecahan', 'Batch', 'Seri', 'Pack Awal', 'Pack Akhir', 'Jml Pack', 'Total Bilyet', 'Dus', 'Dus Awal', 'Dus Akhir', 'Petugas']);
             $query->chunk(100, function ($pengemasans) use ($file) {
                 foreach ($pengemasans as $row) {
-                    fputcsv($file, [
+                    fputcsv($file, array_map([$this, 'sanitizeCsvField'], [
                         $row->tanggal_pengemasan->format('Y-m-d'), $row->gilir, $row->tahun_anggaran, $row->tahun_emisi, $row->pecahan, $row->batch,
                         $row->seri, $row->pack_awal, $row->pack_akhir, $row->jumlah_pack, $row->total_bilyet, $row->jumlah_dus, $row->dus_awal, $row->dus_akhir, $row->user->name ?? '-',
-                    ]);
+                    ]));
                 }
             });
             fclose($file);
@@ -184,7 +184,8 @@ class PengemasanController extends Controller
             $this->service->processStore($validated, auth()->id());
             return redirect()->route('pengemasan.index')->with('success', 'Data pengemasan berhasil diproses.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Terjadi kesalahan sistem: '.$e->getMessage())->withInput();
+            \Log::error('Pengemasan Store Error: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan sistem saat memproses data. Silakan coba lagi.')->withInput();
         }
     }
 
@@ -201,7 +202,17 @@ class PengemasanController extends Controller
             $this->service->processDestroy($pengemasan);
             return redirect()->route('pengemasan.data')->with('success', 'Data pengemasan berhasil dihapus.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Terjadi kesalahan sistem: '.$e->getMessage());
+            \Log::error('Pengemasan Destroy Error: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan sistem saat menghapus data. Silakan coba lagi.');
         }
+    }
+    private function sanitizeCsvField($field)
+    {
+        $field = (string) $field;
+        $triggers = ['=', '+', '-', '@'];
+        if (in_array(substr($field, 0, 1), $triggers)) {
+            return "'" . $field;
+        }
+        return $field;
     }
 }

@@ -19,21 +19,10 @@
                 <div class="p-6 text-gray-900">
                     <form action="{{ route('messages.store') }}" method="POST">
                         @csrf
-                        <div class="mb-4" x-data="mentionAutocomplete(@json($users))">
+                        <div class="mb-4">
                             <label for="content" class="block text-sm font-medium text-gray-700 mb-2 font-bold uppercase tracking-wider">Tulis Pesan Baru</label>
                             <div class="relative">
-                                <textarea id="content" name="content" x-ref="input" @input="handleInput" @keydown="handleKeydown" rows="3" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md" placeholder="Apa yang ingin Anda sampaikan?"></textarea>
-                                
-                                {{-- Dropdown Suggestions --}}
-                                <ul x-show="show" x-transition class="absolute z-50 mt-1 w-64 bg-white border border-gray-200 rounded-md shadow-lg overflow-hidden py-1 max-h-40 overflow-y-auto">
-                                    <template x-for="(user, index) in filteredUsers" :key="user.id">
-                                        <li @click="selectUser(user)" 
-                                            :class="{ 'bg-indigo-600 text-white': index === activeIndex, 'text-gray-900': index !== activeIndex }"
-                                            class="px-4 py-2 text-sm cursor-pointer hover:bg-indigo-600 hover:text-white transition-colors duration-150">
-                                            <span x-text="user.name"></span>
-                                        </li>
-                                    </template>
-                                </ul>
+                                <textarea id="content" name="content" rows="3" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md" placeholder="Apa yang ingin Anda sampaikan?"></textarea>
                             </div>
                             @error('content')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -65,7 +54,7 @@
                                             @endif
                                         </div>
                                         <div class="mt-2 text-sm text-gray-700 whitespace-pre-wrap">
-                                            {!! $message->formatted_content !!}
+                                            {{ $message->content }}
                                         </div>
 
                                         {{-- Reply Button --}}
@@ -76,23 +65,12 @@
                                             </button>
 
                                             {{-- Reply Form --}}
-                                            <div x-show="showReply" x-transition class="mt-3 bg-gray-50 p-4 rounded-lg border border-gray-100" x-data="mentionAutocomplete(@json($users))">
+                                            <div x-show="showReply" x-transition class="mt-3 bg-gray-50 p-4 rounded-lg border border-gray-100">
                                                 <form action="{{ route('messages.store') }}" method="POST">
                                                     @csrf
                                                     <input type="hidden" name="parent_id" value="{{ $message->id }}">
                                                     <div class="relative">
-                                                        <textarea name="content" x-ref="input" @input="handleInput" @keydown="handleKeydown" rows="2" class="w-full text-xs border-gray-200 rounded-md focus:ring-indigo-500 focus:border-indigo-500" placeholder="Tulis balasan..."></textarea>
-                                                        
-                                                        {{-- Dropdown Suggestions --}}
-                                                        <ul x-show="show" x-transition class="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded-md shadow-lg overflow-hidden py-1 max-h-32 overflow-y-auto">
-                                                            <template x-for="(user, index) in filteredUsers" :key="user.id">
-                                                                <li @click="selectUser(user)" 
-                                                                    :class="{ 'bg-indigo-600 text-white': index === activeIndex, 'text-gray-900': index !== activeIndex }"
-                                                                    class="px-4 py-1.5 text-xs cursor-pointer hover:bg-indigo-600 hover:text-white transition-colors duration-150">
-                                                                    <span x-text="user.name"></span>
-                                                                </li>
-                                                            </template>
-                                                        </ul>
+                                                        <textarea name="content" rows="2" class="w-full text-xs border-gray-200 rounded-md focus:ring-indigo-500 focus:border-indigo-500" placeholder="Tulis balasan..."></textarea>
                                                     </div>
                                                     <div class="flex justify-end mt-2">
                                                         <button type="submit" class="bg-indigo-600 text-white px-3 py-1 rounded text-[10px] font-bold uppercase hover:bg-indigo-700">Kirim Balasan</button>
@@ -134,7 +112,7 @@
                                                         <span class="text-[10px] text-gray-400 font-mono">{{ $reply->created_at->diffForHumans() }}</span>
                                                     </div>
                                                     <div class="mt-1 text-xs text-gray-700 whitespace-pre-wrap">
-                                                        {!! $reply->formatted_content !!}
+                                                        {{ $reply->content }}
                                                     </div>
                                                 </div>
 
@@ -177,76 +155,7 @@
 
     @push('scripts')
     <script>
-        function mentionAutocomplete(users) {
-            return {
-                users: users,
-                show: false,
-                search: '',
-                activeIndex: 0,
-                filteredUsers: [],
-                
-                handleInput(e) {
-                    const input = this.$refs.input;
-                    const cursorPosition = input.selectionStart;
-                    const textBeforeCursor = input.value.substring(0, cursorPosition);
-                    const lastAtIndex = textBeforeCursor.lastIndexOf('@');
-                    
-                    if (lastAtIndex !== -1) {
-                        const wordAfterAt = textBeforeCursor.substring(lastAtIndex + 1);
-                        // Check if there's no space between @ and cursor
-                        if (!wordAfterAt.includes(' ')) {
-                            this.search = wordAfterAt.toLowerCase();
-                            this.filteredUsers = this.users.filter(user => 
-                                user.name.toLowerCase().includes(this.search)
-                            ).slice(0, 5); // Limit to 5 results
-                            
-                            if (this.filteredUsers.length > 0) {
-                                this.show = true;
-                                this.activeIndex = 0;
-                                return;
-                            }
-                        }
-                    }
-                    this.show = false;
-                },
-                
-                handleKeydown(e) {
-                    if (!this.show) return;
-                    
-                    if (e.key === 'ArrowDown') {
-                        e.preventDefault();
-                        this.activeIndex = (this.activeIndex + 1) % this.filteredUsers.length;
-                    } else if (e.key === 'ArrowUp') {
-                        e.preventDefault();
-                        this.activeIndex = (this.activeIndex - 1 + this.filteredUsers.length) % this.filteredUsers.length;
-                    } else if (e.key === 'Enter' || e.key === 'Tab') {
-                        e.preventDefault();
-                        this.selectUser(this.filteredUsers[this.activeIndex]);
-                    } else if (e.key === 'Escape') {
-                        this.show = false;
-                    }
-                },
-                
-                selectUser(user) {
-                    const input = this.$refs.input;
-                    const cursorPosition = input.selectionStart;
-                    const textBeforeCursor = input.value.substring(0, cursorPosition);
-                    const textAfterCursor = input.value.substring(cursorPosition);
-                    const lastAtIndex = textBeforeCursor.lastIndexOf('@');
-                    
-                    const newTextBeforeCursor = textBeforeCursor.substring(0, lastAtIndex) + '@' + user.name.split(' ')[0] + ' ';
-                    input.value = newTextBeforeCursor + textAfterCursor;
-                    
-                    // Reset suggestions
-                    this.show = false;
-                    
-                    // Set focus back to input and move cursor
-                    input.focus();
-                    const newPosition = newTextBeforeCursor.length;
-                    input.setSelectionRange(newPosition, newPosition);
-                }
-            }
-        }
+        // Mention autocomplete removed
 
         document.addEventListener('DOMContentLoaded', function() {
             const deleteForms = document.querySelectorAll('.message-delete-confirm');

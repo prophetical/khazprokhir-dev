@@ -129,11 +129,11 @@ class LaporanHarianController extends Controller
             fputcsv($file, ['Pecahan', 'Siap Kemas (Bilyet)', 'Siap Kirim (Bilyet)', 'Siap Kirim (Dus)', 'Total Persediaan (Bilyet)', 'Penyerahan Hari Ini (Bilyet)', 'Penyerahan Hari Ini (Dus)', 'Akumulasi Penyerahan (Bilyet)', 'Target', 'Sisa Target', 'Persentase (%)', 'Akumulasi Penerimaan HCS']);
 
             foreach ($reportData as $row) {
-                fputcsv($file, [$row['pecahan'], $row['siap_kemas_bilyet'], $row['siap_kirim_bilyet'], $row['siap_kirim_dus'], $row['total_persediaan_bilyet'], $row['penyerahan_hari_ini_bilyet'], $row['penyerahan_hari_ini_dus'], $row['akumulasi_penyerahan'], $row['target'], $row['sisa_target'], number_format($row['persentase_target'], 1, ',', '.'), $row['akumulasi_penerimaan_hcs']]);
+                fputcsv($file, array_map([$this, 'sanitizeCsvField'], [$row['pecahan'], $row['siap_kemas_bilyet'], $row['siap_kirim_bilyet'], $row['siap_kirim_dus'], $row['total_persediaan_bilyet'], $row['penyerahan_hari_ini_bilyet'], $row['penyerahan_hari_ini_dus'], $row['akumulasi_penyerahan'], $row['target'], $row['sisa_target'], number_format($row['persentase_target'], 1, ',', '.'), $row['akumulasi_penerimaan_hcs']]));
             }
 
             $totalPct = $totals['target'] > 0 ? ($totals['akumulasi_penyerahan_bilyet'] / $totals['target']) * 100 : 0;
-            fputcsv($file, ['TOTAL', $totals['siap_kemas_bilyet'], $totals['siap_kirim_bilyet'], $totals['siap_kirim_bilyet'] / 20000, $totals['total_persediaan_bilyet'], $totals['penyerahan_hari_ini_bilyet'], $totals['penyerahan_hari_ini_bilyet'] / 20000, $totals['akumulasi_penyerahan_bilyet'], $totals['target'], $totals['sisa_target'], number_format($totalPct, 1, ',', '.'), $totals['akumulasi_penerimaan_hcs']]);
+            fputcsv($file, array_map([$this, 'sanitizeCsvField'], ['TOTAL', $totals['siap_kemas_bilyet'], $totals['siap_kirim_bilyet'], $totals['siap_kirim_bilyet'] / 20000, $totals['total_persediaan_bilyet'], $totals['penyerahan_hari_ini_bilyet'], $totals['penyerahan_hari_ini_bilyet'] / 20000, $totals['akumulasi_penyerahan_bilyet'], $totals['target'], $totals['sisa_target'], number_format($totalPct, 1, ',', '.'), $totals['akumulasi_penerimaan_hcs']]));
             fclose($file);
         };
 
@@ -166,5 +166,14 @@ class LaporanHarianController extends Controller
             'tahun_anggaran' => $request->get('tahun_anggaran', date('Y')),
             'tahun_emisi' => $request->get('tahun_emisi', $defaultEmisi),
         ];
+    }
+    private function sanitizeCsvField($field)
+    {
+        $field = (string) $field;
+        $triggers = ['=', '+', '-', '@'];
+        if (in_array(substr($field, 0, 1), $triggers)) {
+            return "'" . $field;
+        }
+        return $field;
     }
 }

@@ -72,7 +72,8 @@ class HcsSortingController extends Controller
             $this->service->processStore($validated, auth()->id());
             return redirect()->route('hcs-sorting.index')->with('success', 'Data penyortiran berhasil disimpan.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())->withInput();
+            \Log::error('HCS Sorting Store Error: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan sistem saat menyimpan data penyortiran. Silakan coba lagi.')->withInput();
         }
     }
 }

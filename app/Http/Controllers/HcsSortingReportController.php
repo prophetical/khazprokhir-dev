@@ -38,18 +38,24 @@ class HcsSortingReportController extends Controller
     public function update(Request $request, HcsSorting $hcs_sorting_report)
     {
         $validated = $request->validate([
-            'supplier' => 'required|in:Rikyet,Cutpack', 'emisi' => 'required', 'petugas_1' => 'required',
-            'petugas_2' => 'nullable', 'tanggal_sortir' => 'required|date', 'gilir' => 'required',
-            'selected_packs' => 'required|array|min:'.($request->has('is_manual') ? '1' : '4'),
+            'supplier' => 'required|in:Rikyet,Cutpack',
+            'emisi' => 'required',
+            'petugas_1' => 'required',
+            'petugas_2' => 'nullable',
+            'tanggal_sortir' => 'required|date',
+            'gilir' => 'required',
+            'selected_packs' => 'required|array|min:' . ($request->has('is_manual') ? '1' : '4'),
         ]);
 
-        if ($request->has('is_manual')) $validated['is_manual'] = true;
+        if ($request->has('is_manual'))
+            $validated['is_manual'] = true;
 
         try {
             $this->service->processUpdate($hcs_sorting_report, $validated);
             return redirect()->route('hcs-sorting-reports.index')->with('success', 'Data laporan penyortiran berhasil diubah.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Terjadi kesalahan: '.$e->getMessage())->withInput();
+            \Log::error('HCS Sorting Report Update Error: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan sistem saat mengubah data. Silakan coba lagi.')->withInput();
         }
     }
 
@@ -59,13 +65,14 @@ class HcsSortingReportController extends Controller
             $this->service->processDelete($hcs_sorting_report);
             return redirect()->route('hcs-sorting-reports.index')->with('success', 'Data laporan penyortiran berhasil dihapus.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Terjadi kesalahan: '.$e->getMessage());
+            \Log::error('HCS Sorting Report Delete Error: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan sistem saat menghapus data. Silakan coba lagi.');
         }
     }
 
     public function export(Request $request)
     {
-        $filename = 'report_penyortiran_'.date('Ymd_His').'.csv';
+        $filename = 'report_penyortiran_' . date('Ymd_His') . '.csv';
         $headers = ['Content-type' => 'text/csv', 'Content-Disposition' => "attachment; filename=$filename"];
 
         $callback = function () use ($request) {
@@ -78,10 +85,21 @@ class HcsSortingReportController extends Controller
             $query->orderBy('tanggal_sortir', 'desc')->orderBy('created_at', 'desc')->chunk(100, function ($reports) use ($file) {
                 foreach ($reports as $row) {
                     $displayStr = $this->service->formatPacksToRanges($row->packs_selected ?: []);
-                    fputcsv($file, [
-                        $row->tanggal_sortir->format('Y-m-d'), $row->gilir, $row->batch, $row->seri, $row->emisi, $row->tahun_anggaran,
-                        $row->pecahan, $row->supplier, $displayStr, $row->jumlah_pack, $row->jumlah_bilyet, $row->petugas_1, $row->petugas_2 ?? '-',
-                    ]);
+                    fputcsv($file, array_map([$this, 'sanitizeCsvField'], [
+                        $row->tanggal_sortir->format('Y-m-d'),
+                        $row->gilir,
+                        $row->batch,
+                        $row->seri,
+                        $row->emisi,
+                        $row->tahun_anggaran,
+                        $row->pecahan,
+                        $row->supplier,
+                        $displayStr,
+                        $row->jumlah_pack,
+                        $row->jumlah_bilyet,
+                        $row->petugas_1,
+                        $row->petugas_2 ?? '-',
+                    ]));
                 }
             });
             fclose($file);
@@ -100,11 +118,17 @@ class HcsSortingReportController extends Controller
 
     protected function applyFilters($query, Request $request)
     {
-        if ($request->filled('tanggal_dari')) $query->whereDate('tanggal_sortir', '>=', $request->tanggal_dari);
-        if ($request->filled('tanggal_sampai')) $query->whereDate('tanggal_sortir', '<=', $request->tanggal_sampai);
-        if ($request->filled('batch')) $query->where('batch', 'like', '%'.$request->batch.'%');
-        if ($request->filled('seri')) $query->where('seri', 'like', '%'.$request->seri.'%');
-        if ($request->filled('gilir')) $query->where('gilir', $request->gilir);
-        if ($request->filled('pecahan')) $query->where('pecahan', $request->pecahan);
+        if ($request->filled('tanggal_dari'))
+            $query->whereDate('tanggal_sortir', '>=', $request->tanggal_dari);
+        if ($request->filled('tanggal_sampai'))
+            $query->whereDate('tanggal_sortir', '<=', $request->tanggal_sampai);
+        if ($request->filled('batch'))
+            $query->where('batch', 'like', '%' . $request->batch . '%');
+        if ($request->filled('seri'))
+            $query->where('seri', 'like', '%' . $request->seri . '%');
+        if ($request->filled('gilir'))
+            $query->where('gilir', $request->gilir);
+        if ($request->filled('pecahan'))
+            $query->where('pecahan', $request->pecahan);
     }
 }

@@ -39,7 +39,6 @@ class PenyerahanBiController extends Controller
 
     public function create()
     {
-        $this->authorizeAdmin();
         $options = $this->service->getAvailableFilterOptions();
         return view('penyerahan-bi.create', [
             'missingWarnings' => $this->service->getIncompletePenyerahanWarnings(),
@@ -50,7 +49,6 @@ class PenyerahanBiController extends Controller
 
     public function edit($id)
     {
-        $this->authorizeAdmin();
         return view('penyerahan-bi.edit', [
             'penyerahan' => PenyerahanBi::findOrFail($id),
             'missingWarnings' => $this->service->getIncompletePenyerahanWarnings(),
@@ -75,7 +73,6 @@ class PenyerahanBiController extends Controller
 
     public function store(Request $request)
     {
-        $this->authorizeAdmin();
         $data = $request->validate([
             'tanggal_penyerahan' => 'required|date',
             'nomor_ba' => 'required|string|max:255',
@@ -97,7 +94,6 @@ class PenyerahanBiController extends Controller
 
     public function update(Request $request, $id)
     {
-        $this->authorizeAdmin();
         $data = $request->validate([
             'tanggal_penyerahan' => 'required|date',
             'nomor_ba' => 'required|string|max:255',
@@ -119,7 +115,6 @@ class PenyerahanBiController extends Controller
 
     public function destroy($id)
     {
-        $this->authorizeAdmin();
         PenyerahanBi::findOrFail($id)->delete();
         return redirect()->route('penyerahan-bi.index')->with('success', 'Data penyerahan berhasil dihapus.');
     }
@@ -137,7 +132,9 @@ class PenyerahanBiController extends Controller
             $handle = fopen('php://output', 'w');
             fputcsv($handle, ['Tanggal', 'Nomor BA', 'Pecahan', 'TA', 'TE', 'No Dus Awal', 'No Dus Akhir', 'Jml Dus', 'Jml Bilyet', 'Status', 'Petugas']);
             foreach ($rows as $r) {
-                fputcsv($handle, [$r->tanggal_penyerahan->format('d/m/Y'), $r->nomor_ba, $r->pecahan, $r->tahun_anggaran, $r->tahun_emisi, $r->nomor_dus_awal, $r->nomor_dus_akhir, $r->jumlah_dus, $r->jumlah_bilyet, $r->status_data, $r->user->name ?? '-']);
+                fputcsv($handle, array_map([$this, 'sanitizeCsvField'], [
+                    $r->tanggal_penyerahan->format('d/m/Y'), $r->nomor_ba, $r->pecahan, $r->tahun_anggaran, $r->tahun_emisi, $r->nomor_dus_awal, $r->nomor_dus_akhir, $r->jumlah_dus, $r->jumlah_bilyet, $r->status_data, $r->user->name ?? '-'
+                ]));
             }
             fclose($handle);
         };
@@ -169,8 +166,14 @@ class PenyerahanBiController extends Controller
         if ($request->filled('tanggal_akhir')) $query->whereDate('tanggal_penyerahan', '<=', $request->tanggal_akhir);
     }
 
-    protected function authorizeAdmin()
+
+    private function sanitizeCsvField($field)
     {
-        if (! in_array(auth()->user()->role, ['sortir', 'admin'])) abort(403, 'Unauthorized action.');
+        $field = (string) $field;
+        $triggers = ['=', '+', '-', '@'];
+        if (in_array(substr($field, 0, 1), $triggers)) {
+            return "'" . $field;
+        }
+        return $field;
     }
 }
