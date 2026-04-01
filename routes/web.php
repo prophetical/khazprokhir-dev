@@ -112,6 +112,9 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\RoleMiddleware::clas
     Route::get('/hcts-submission/print', [\App\Http\Controllers\HctsSubmissionController::class, 'print'])->name('hcts-submission.print');
     Route::get('/hcts-submission', [\App\Http\Controllers\HctsSubmissionController::class, 'index'])->name('hcts-submission.index');
 
+    // Tracking (Traceability)
+    Route::get('/tracking', [\App\Http\Controllers\TrackingController::class, 'index'])->name('tracking.index');
+
     // HCTS Inventory Routes
     Route::get('/hcts-inventory/export', [\App\Http\Controllers\HctsInventoryController::class, 'export'])->name('hcts-inventory.export');
     Route::get('/hcts-inventory/print', [\App\Http\Controllers\HctsInventoryController::class, 'print'])->name('hcts-inventory.print');

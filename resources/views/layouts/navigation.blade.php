@@ -357,6 +357,22 @@
                 </a>
             </div>
         </div>
+
+        @if(in_array(auth()->user()->role, ['admin', 'sortir', 'kemas', 'supervisor']))
+        <!-- End-to-End Tracking Group -->
+        <a href="{{ route('tracking.index') }}"
+            class="flex items-center py-2.5 px-3 rounded-lg transition-all duration-200 mt-2 mb-4 {{ request()->routeIs('tracking.*') ? 'bg-white/20 text-white font-semibold shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
+            title="Pelacakan Pack">
+            <div class="shrink-0 w-8 flex justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </div>
+            <span x-show="!sidebarCollapsed" x-transition
+                class="ml-3 text-sm font-medium whitespace-nowrap overflow-hidden">Pelacakan Pack</span>
+        </a>
+        @endif
         @endif
 
 
