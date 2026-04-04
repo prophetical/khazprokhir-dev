@@ -4,7 +4,8 @@
         penyerahanBiOpen: {{ request()->routeIs('penyerahan-bi.*') ? 'true' : 'false' }},
         laporanOpen: {{ request()->routeIs('laporan-harian.*') ? 'true' : 'false' }},
         hctsOpen: {{ request()->routeIs('hcts-receiving.*', 'hcts-inventory.*') ? 'true' : 'false' }},
-        penyerahanHctsOpen: {{ request()->routeIs('hcts-submission.*') ? 'true' : 'false' }}
+        penyerahanHctsOpen: {{ request()->routeIs('hcts-submission.*') ? 'true' : 'false' }},
+        bahanPenolongOpen: {{ request()->routeIs('bahan-penolong.*') ? 'true' : 'false' }}
     }" :class="[
         sidebarCollapsed ? 'w-20' : 'w-64',
         mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
@@ -200,6 +201,48 @@
                 </a>
             </div>
         </div>
+ 
+        @if(in_array(auth()->user()->role, ['admin', 'kemas', 'sortir', 'supervisor']))
+        <!-- Bahan Penolong Group -->
+        <div class="space-y-1 mt-2">
+            <button @click="bahanPenolongOpen = !bahanPenolongOpen; if(sidebarCollapsed) sidebarCollapsed = false;"
+                class="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('bahan-penolong.*') ? 'text-white font-semibold bg-white/20 shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
+                title="Bahan Penolong">
+                <div class="flex items-center">
+                    <div class="shrink-0 w-8 flex justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        </svg>
+                    </div>
+                    <span x-show="!sidebarCollapsed" x-transition
+                        class="ml-3 text-sm font-medium whitespace-nowrap overflow-hidden">Bahan Penolong</span>
+                </div>
+                <svg x-show="!sidebarCollapsed" :class="bahanPenolongOpen ? 'rotate-180' : ''"
+                    class="w-3 h-3 transition-transform duration-200" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+ 
+            <!-- Sub-menu Items -->
+            <div x-show="bahanPenolongOpen && !sidebarCollapsed" x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+                class="pl-11 space-y-1">
+                <a href="{{ route('bahan-penolong.persediaan') }}"
+                    class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('bahan-penolong.persediaan') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                    Persediaan
+                </a>
+                <a href="{{ route('bahan-penolong.penerimaan') }}"
+                    class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('bahan-penolong.penerimaan') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                    Penerimaan
+                </a>
+                <a href="{{ route('bahan-penolong.pemakaian') }}"
+                    class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('bahan-penolong.pemakaian') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                    Pemakaian
+                </a>
+            </div>
+        </div>
+        @endif
 
         <!-- Pengemasan Group -->
         <div class="space-y-1 mt-2 mb-4"

@@ -127,6 +127,21 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\RoleMiddleware::clas
     // Messages (Pesan Antar User)
     Route::resource('messages', \App\Http\Controllers\MessageController::class)->only(['index', 'store', 'edit', 'update', 'destroy']);
 
+    // Bahan Penolong (Auxiliary Materials)
+    Route::prefix('bahan-penolong')->name('bahan-penolong.')->group(function () {
+        Route::get('/persediaan', [\App\Http\Controllers\BahanPenolongController::class, 'persediaan'])->name('persediaan');
+        Route::get('/inventory/export', [\App\Http\Controllers\BahanPenolongController::class, 'inventoryExport'])->name('inventory.export');
+        Route::get('/inventory/print', [\App\Http\Controllers\BahanPenolongController::class, 'inventoryPrint'])->name('inventory.print');
+        Route::get('/penerimaan', [\App\Http\Controllers\BahanPenolongController::class, 'penerimaan'])->name('penerimaan');
+        Route::get('/pemakaian', [\App\Http\Controllers\BahanPenolongController::class, 'pemakaian'])->name('pemakaian');
+        Route::post('/transaction', [\App\Http\Controllers\BahanPenolongController::class, 'storeTransaction'])->name('transaction.store');
+        Route::put('/transaction/{transaction}', [\App\Http\Controllers\BahanPenolongController::class, 'updateTransaction'])->name('transaction.update');
+        Route::delete('/transaction/{transaction}', [\App\Http\Controllers\BahanPenolongController::class, 'destroyTransaction'])->name('transaction.destroy');
+        Route::get('/export', [\App\Http\Controllers\BahanPenolongController::class, 'export'])->name('export');
+        Route::get('/print', [\App\Http\Controllers\BahanPenolongController::class, 'print'])->name('print');
+    });
+    Route::resource('bahan-penolong', \App\Http\Controllers\BahanPenolongController::class)->only(['store', 'update', 'destroy']);
+
     // User Management (Admin Only, protected in RoleMiddleware)
     Route::resource('users', \App\Http\Controllers\UserController::class);
 });

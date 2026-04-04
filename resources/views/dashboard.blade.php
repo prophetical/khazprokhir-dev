@@ -374,7 +374,7 @@
                         const isDark = document.body.classList.contains('dark-mode');
                         const textColor = isDark ? '#94a3b8' : '#64748b';
                         const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : '#f1f5f9';
-                        
+
                         return {
                             responsive: true,
                             maintainAspectRatio: false,
@@ -781,7 +781,7 @@
                             </div>
                             <p class="text-center text-[9px] font-black text-gray-400 uppercase tracking-widest">
                                 Komposisi
-                                Pecahan</p>
+                                Penerimaan</p>
                         </div>
 
                         {{-- Lifecycle Donut --}}
