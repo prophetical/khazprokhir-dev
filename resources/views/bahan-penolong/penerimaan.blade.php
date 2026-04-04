@@ -298,7 +298,7 @@
                                         (Opsional)</label>
                                     <textarea name="keterangan" rows="2"
                                         class="w-full px-4 py-2.5 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all dark:text-white"
-                                        placeholder="Contoh: Pengiriman dari Vendor A..."></textarea>
+                                        placeholder="Isi keterangan pemakaian bahan..."></textarea>
                                 </div>
                             </div>
                         </div>

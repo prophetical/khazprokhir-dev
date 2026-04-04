@@ -10,6 +10,7 @@
     <div class="py-12" x-data="{ 
         showModal: false,
         showEditModal: false,
+        selectedKategori: 'pemakaian',
         editTransaction: { id: '', bahan_penolong_id: '', jumlah: '', kategori: '', keterangan: '', material_name: '', unit: '' },
         openEdit(t) {
             this.editTransaction = {
@@ -319,25 +320,30 @@
                                         Transaksi Keluar</label>
                                     <div class="grid grid-cols-3 gap-2">
                                         <label
-                                            class="relative flex flex-col items-center p-3 rounded-2xl border border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 cursor-pointer transition-all">
-                                            <input type="radio" name="kategori" value="pemakaian" required
-                                                class="absolute opacity-0">
-                                            <span
-                                                class="text-[10px] font-black uppercase text-gray-500 dark:text-slate-400">Pakai</span>
+                                            class="relative flex flex-col items-center p-3 rounded-2xl border cursor-pointer transition-all"
+                                            :class="selectedKategori === 'pemakaian' ? 'bg-indigo-50 border-indigo-200 dark:bg-indigo-900/30 dark:border-indigo-500' : 'border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700'">
+                                            <input type="radio" name="kategori" value="pemakaian"
+                                                x-model="selectedKategori" required
+                                                class="absolute inset-0 opacity-0 cursor-pointer">
+                                            <span class="text-[10px] font-black uppercase"
+                                                :class="selectedKategori === 'pemakaian' ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-slate-400'">Pakai</span>
                                         </label>
                                         <label
-                                            class="relative flex flex-col items-center p-3 rounded-2xl border border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 cursor-pointer transition-all">
-                                            <input type="radio" name="kategori" value="mutasi" required
-                                                class="absolute opacity-0">
-                                            <span
-                                                class="text-[10px] font-black uppercase text-gray-500 dark:text-slate-400">Mutasi</span>
+                                            class="relative flex flex-col items-center p-3 rounded-2xl border cursor-pointer transition-all"
+                                            :class="selectedKategori === 'mutasi' ? 'bg-indigo-50 border-indigo-200 dark:bg-indigo-900/30 dark:border-indigo-500' : 'border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700'">
+                                            <input type="radio" name="kategori" value="mutasi"
+                                                x-model="selectedKategori" required
+                                                class="absolute inset-0 opacity-0 cursor-pointer">
+                                            <span class="text-[10px] font-black uppercase"
+                                                :class="selectedKategori === 'mutasi' ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-slate-400'">Mutasi</span>
                                         </label>
                                         <label
-                                            class="relative flex flex-col items-center p-3 rounded-2xl border border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 cursor-pointer transition-all">
-                                            <input type="radio" name="kategori" value="rusak" required
-                                                class="absolute opacity-0">
-                                            <span
-                                                class="text-[10px] font-black uppercase text-gray-500 dark:text-slate-400">Rusak</span>
+                                            class="relative flex flex-col items-center p-3 rounded-2xl border cursor-pointer transition-all"
+                                            :class="selectedKategori === 'rusak' ? 'bg-indigo-50 border-indigo-200 dark:bg-indigo-900/30 dark:border-indigo-500' : 'border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700'">
+                                            <input type="radio" name="kategori" value="rusak" x-model="selectedKategori"
+                                                required class="absolute inset-0 opacity-0 cursor-pointer">
+                                            <span class="text-[10px] font-black uppercase"
+                                                :class="selectedKategori === 'rusak' ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-slate-400'">Rusak</span>
                                         </label>
                                     </div>
                                 </div>
@@ -355,7 +361,7 @@
                                         (Opsional)</label>
                                     <textarea name="keterangan" rows="2"
                                         class="w-full px-4 py-2.5 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all dark:text-white"
-                                        placeholder="Contoh: Digunakan untuk Shift 1..."></textarea>
+                                        placeholder="Isi keterangan pemakaian bahan..."></textarea>
                                 </div>
                             </div>
                         </div>
@@ -413,25 +419,31 @@
                                         Transaksi</label>
                                     <div class="grid grid-cols-3 gap-2">
                                         <label
-                                            class="relative flex flex-col items-center p-3 rounded-2xl border border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 cursor-pointer transition-all">
+                                            class="relative flex flex-col items-center p-3 rounded-2xl border cursor-pointer transition-all"
+                                            :class="editTransaction.kategori === 'pemakaian' ? 'bg-indigo-50 border-indigo-200 dark:bg-indigo-900/30 dark:border-indigo-500' : 'border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700'">
                                             <input type="radio" name="kategori" value="pemakaian"
-                                                x-model="editTransaction.kategori" required class="absolute opacity-0">
-                                            <span
-                                                class="text-[10px] font-black uppercase text-gray-500 dark:text-slate-400">Pakai</span>
+                                                x-model="editTransaction.kategori" required
+                                                class="absolute inset-0 opacity-0 cursor-pointer">
+                                            <span class="text-[10px] font-black uppercase"
+                                                :class="editTransaction.kategori === 'pemakaian' ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-slate-400'">Pakai</span>
                                         </label>
                                         <label
-                                            class="relative flex flex-col items-center p-3 rounded-2xl border border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 cursor-pointer transition-all">
+                                            class="relative flex flex-col items-center p-3 rounded-2xl border cursor-pointer transition-all"
+                                            :class="editTransaction.kategori === 'mutasi' ? 'bg-indigo-50 border-indigo-200 dark:bg-indigo-900/30 dark:border-indigo-500' : 'border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700'">
                                             <input type="radio" name="kategori" value="mutasi"
-                                                x-model="editTransaction.kategori" required class="absolute opacity-0">
-                                            <span
-                                                class="text-[10px] font-black uppercase text-gray-500 dark:text-slate-400">Mutasi</span>
+                                                x-model="editTransaction.kategori" required
+                                                class="absolute inset-0 opacity-0 cursor-pointer">
+                                            <span class="text-[10px] font-black uppercase"
+                                                :class="editTransaction.kategori === 'mutasi' ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-slate-400'">Mutasi</span>
                                         </label>
                                         <label
-                                            class="relative flex flex-col items-center p-3 rounded-2xl border border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 cursor-pointer transition-all">
+                                            class="relative flex flex-col items-center p-3 rounded-2xl border cursor-pointer transition-all"
+                                            :class="editTransaction.kategori === 'rusak' ? 'bg-indigo-50 border-indigo-200 dark:bg-indigo-900/30 dark:border-indigo-500' : 'border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700'">
                                             <input type="radio" name="kategori" value="rusak"
-                                                x-model="editTransaction.kategori" required class="absolute opacity-0">
-                                            <span
-                                                class="text-[10px] font-black uppercase text-gray-500 dark:text-slate-400">Rusak</span>
+                                                x-model="editTransaction.kategori" required
+                                                class="absolute inset-0 opacity-0 cursor-pointer">
+                                            <span class="text-[10px] font-black uppercase"
+                                                :class="editTransaction.kategori === 'rusak' ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-slate-400'">Rusak</span>
                                         </label>
                                     </div>
                                 </div>
