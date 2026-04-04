@@ -51,6 +51,9 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\RoleMiddleware::clas
     // API to get used packs (requires auth)
     Route::get('/api/packs/used', [\App\Http\Controllers\PackController::class, 'used'])->name('packs.used');
 
+    // Notifications API
+    Route::get('/notifications/hcs-ready', [\App\Http\Controllers\PengemasanController::class, 'getReadyToPackNotifications'])->name('notifications.hcs-ready');
+
     // Pengemasan Routes
     Route::get('/pengemasan/create', [\App\Http\Controllers\PengemasanController::class, 'create'])->name('pengemasan.create');
     Route::post('/pengemasan', [\App\Http\Controllers\PengemasanController::class, 'store'])->name('pengemasan.store');

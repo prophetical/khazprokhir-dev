@@ -28,6 +28,11 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // Check if intended URL is the notification API to avoid incorrect redirects
+        if ($request->session()->get('url.intended') && str_contains($request->session()->get('url.intended'), '/notifications/hcs-ready')) {
+            $request->session()->forget('url.intended');
+        }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

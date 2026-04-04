@@ -228,7 +228,21 @@
             outline: 2px solid rgba(99, 102, 241, 0.4) !important;
         }
 
-        /* Penghapusan Shadow Global (Sesuai permintaan user) */
+        /* Global SweetAlert2 Dark Mode Fixes */
+        body.dark-mode .swal2-popup {
+            background-color: #1e293b !important;
+            /* theme-bg-card */
+            color: #f8fafc !important;
+            /* theme-text-main */
+        }
+
+        body.dark-mode .swal2-title,
+        body.dark-mode .swal2-html-container,
+        body.dark-mode .swal2-content {
+            color: #f8fafc !important;
+            /* theme-text-main */
+        }
+
 
         /* Gaya Terkhusus Laporan Sortir HCS */
         @keyframes bounce-subtle {
@@ -590,6 +604,83 @@
                     </button>
                 </div>
 
+                <!-- Notifikasi Pengemasan -->
+                @if(in_array(auth()->user()->role, ['admin', 'kemas', 'sortir', 'supervisor']))
+                <div class="flex items-center mr-4 relative" x-data="hcsNotification()" x-init="init()" @click.away="open = false">
+                    <button @click="open = !open"
+                            class="relative p-2 border border-white/20 text-white/90 bg-white/10 hover:bg-white/20 focus:outline-none transition rounded-lg"
+                            title="Notifikasi Pengemasan">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                        </svg>
+                        
+                        <template x-if="count > 0">
+                            <span class="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white shadow-sm ring-2 ring-indigo-900 dark:ring-slate-900 border border-white/10" x-text="count">
+                            </span>
+                        </template>
+                        </template>
+                    </button>
+                    
+                    <audio id="hcs-notify-sound" preload="auto" style="display:none;">
+                        <source src="/audio/cihuy.mp3" type="audio/mpeg">
+                    </audio>
+                    
+                    <div x-show="open" 
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 scale-95"
+                         x-transition:enter-end="opacity-100 scale-100"
+                         x-transition:leave="transition ease-in duration-100"
+                         x-transition:leave-start="opacity-100 scale-100"
+                         x-transition:leave-start="opacity-100 scale-100"
+                         x-transition:leave-end="opacity-0 scale-95"
+                         class="absolute right-0 top-full mt-3 w-[85vw] sm:w-[550px] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700/50 overflow-hidden z-50 backdrop-blur-xl" style="display: none;">
+                         
+                         <div class="bg-indigo-50 dark:bg-gray-800/80 px-4 py-3 border-b border-indigo-100 dark:border-gray-700">
+                             <h3 class="text-sm font-bold text-indigo-900 dark:text-white flex items-center">
+                                 <svg class="w-4 h-4 mr-2 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                 HCS Siap Dikemas
+                             </h3>
+                         </div>
+                         
+                         <div class="max-h-80 overflow-y-auto p-2">
+                             <template x-if="count === 0">
+                                 <div class="p-6 text-center text-sm font-medium text-gray-500 dark:text-gray-400">
+                                     Tidak ada data HCS siap dikemas.
+                                 </div>
+                             </template>
+                             <template x-for="(item, index) in data" :key="index">
+                                <a :href="`/pengemasan/create?tahun_anggaran=${item.tahun_anggaran}&tahun_emisi=${item.emisi}&pecahan=${item.pecahan}&batch=${item.batch}&seri=${item.seri}&pack_awal=${item.pack_awal}&pack_akhir=${item.pack_akhir}&max_pack_akhir=${item.pack_akhir}`" 
+                                   class="block p-4 mb-2 rounded-xl transition-all border border-transparent hover:border-indigo-200 dark:hover:border-indigo-500/50 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/60 group">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <div class="flex flex-col">
+                                            <span class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-[0.2em] mb-0.5" x-text="`Pecahan ${item.pecahan}`"></span>
+                                            <span class="text-xs font-bold text-gray-900 dark:text-white group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors" x-text="`TA/TE: ${item.tahun_anggaran}/${item.emisi}`"></span>
+                                        </div>
+                                        <span class="text-[11px] font-black px-3 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30" x-text="`${item.jumlah_pack} PACK`"></span>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4 mb-3">
+                                        <div class="flex flex-col">
+                                            <span class="text-[9px] text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider">Batch</span>
+                                            <span class="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white" x-text="item.batch"></span>
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <span class="text-[9px] text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider">Seri</span>
+                                            <span class="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white" x-text="item.seri"></span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-900/50 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/80 p-2 rounded-lg border border-gray-100 dark:border-gray-700 transition-colors">
+                                        <div class="text-[11px] font-black text-gray-600 dark:text-gray-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300">
+                                            Range: <span class="bg-white dark:bg-gray-800 px-2 py-0.5 rounded border border-gray-200 dark:border-gray-600 ml-1" x-text="`${item.pack_awal} - ${item.pack_akhir}`"></span>
+                                        </div>
+                                        <svg class="w-4 h-4 text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transform group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                                    </div>
+                                </a>
+                             </template>
+                         </div>
+                    </div>
+                </div>
+                @endif
+
                 <!-- User Profile Dropdown -->
                 <div class="flex items-center ml-auto">
                     <x-dropdown align="right" width="48">
@@ -642,6 +733,68 @@
 
 
     <script>
+        function hcsNotification() {
+            return {
+                open: false,
+                count: parseInt(localStorage.getItem('hcs_last_count')) || 0,
+                data: [],
+                initialized: false,
+                
+                init() {
+                    this.fetchData();
+                    setInterval(() => this.fetchData(), 3000);
+
+                    // Unlock sound on any interaction
+                    const unlock = () => {
+                        const audio = document.getElementById('hcs-notify-sound');
+                        if (audio) {
+                            audio.play().then(() => {
+                                audio.pause();
+                                audio.currentTime = 0;
+                            }).catch(() => {});
+                        }
+                        document.removeEventListener('click', unlock);
+                        document.removeEventListener('keydown', unlock);
+                    };
+                    document.addEventListener('click', unlock);
+                    document.addEventListener('keydown', unlock);
+                },
+                
+                async fetchData() {
+                    try {
+                        const response = await fetch('/notifications/hcs-ready', {
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        });
+                        if (!response.ok) return;
+                        const json = await response.json();
+                        
+                        if (json.status === 'success') {
+                            const newCount = parseInt(json.count);
+                            const audio = document.getElementById('hcs-notify-sound');
+                            
+                            // Play if count literally increased compared to what we last knew (even from prev session)
+                            if (newCount > this.count) {
+                                if (audio) {
+                                    audio.currentTime = 0;
+                                    audio.play().catch(e => console.warn('Audio playback failed:', e));
+                                }
+                            }
+                            
+                            this.count = newCount;
+                            this.data = json.data;
+                            localStorage.setItem('hcs_last_count', newCount);
+                            this.initialized = true;
+                        }
+                    } catch (error) {
+                        console.error('Notification error:', error);
+                    }
+                }
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             // Handler Pesan Flash Sesi Global
             @if(session('success'))

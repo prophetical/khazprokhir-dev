@@ -39,10 +39,14 @@ class PengemasanController extends Controller
     {
         $query = Pengemasan::with(['user', 'packs']);
 
-        if ($request->filled('pecahan')) $query->where('pecahan', $request->pecahan);
-        if ($request->filled('tanggal_awal')) $query->where('tanggal_pengemasan', '>=', $request->tanggal_awal);
-        if ($request->filled('tanggal_akhir')) $query->where('tanggal_pengemasan', '<=', $request->tanggal_akhir);
-        if ($request->filled('gilir')) $query->where('gilir', $request->gilir);
+        if ($request->filled('pecahan'))
+            $query->where('pecahan', $request->pecahan);
+        if ($request->filled('tanggal_awal'))
+            $query->where('tanggal_pengemasan', '>=', $request->tanggal_awal);
+        if ($request->filled('tanggal_akhir'))
+            $query->where('tanggal_pengemasan', '<=', $request->tanggal_akhir);
+        if ($request->filled('gilir'))
+            $query->where('gilir', $request->gilir);
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -77,7 +81,8 @@ class PengemasanController extends Controller
     public function export(Request $request)
     {
         $query = Pengemasan::with(['user', 'packs']);
-        if ($request->filled('pecahan')) $query->where('pecahan', $request->pecahan);
+        if ($request->filled('pecahan'))
+            $query->where('pecahan', $request->pecahan);
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -97,7 +102,7 @@ class PengemasanController extends Controller
             $query->orderBy($sortColumn, $sortDirection);
         }
 
-        $filename = 'data_pengemasan_'.date('Y-m-d_H-i-s').'.csv';
+        $filename = 'data_pengemasan_' . date('Y-m-d_H-i-s') . '.csv';
         $headers = ['Content-type' => 'text/csv', 'Content-Disposition' => "attachment; filename=$filename", 'Pragma' => 'no-cache', 'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0', 'Expires' => '0'];
 
         $callback = function () use ($query) {
@@ -106,8 +111,21 @@ class PengemasanController extends Controller
             $query->chunk(100, function ($pengemasans) use ($file) {
                 foreach ($pengemasans as $row) {
                     fputcsv($file, array_map([$this, 'sanitizeCsvField'], [
-                        $row->tanggal_pengemasan->format('Y-m-d'), $row->gilir, $row->tahun_anggaran, $row->tahun_emisi, $row->pecahan, $row->batch,
-                        $row->seri, $row->pack_awal, $row->pack_akhir, $row->jumlah_pack, $row->total_bilyet, $row->jumlah_dus, $row->dus_awal, $row->dus_akhir, $row->user->name ?? '-',
+                        $row->tanggal_pengemasan->format('Y-m-d'),
+                        $row->gilir,
+                        $row->tahun_anggaran,
+                        $row->tahun_emisi,
+                        $row->pecahan,
+                        $row->batch,
+                        $row->seri,
+                        $row->pack_awal,
+                        $row->pack_akhir,
+                        $row->jumlah_pack,
+                        $row->total_bilyet,
+                        $row->jumlah_dus,
+                        $row->dus_awal,
+                        $row->dus_akhir,
+                        $row->user->name ?? '-',
                     ]));
                 }
             });
@@ -120,7 +138,8 @@ class PengemasanController extends Controller
     public function print(Request $request)
     {
         $query = Pengemasan::with(['user', 'packs']);
-        if ($request->filled('pecahan')) $query->where('pecahan', $request->pecahan);
+        if ($request->filled('pecahan'))
+            $query->where('pecahan', $request->pecahan);
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -146,10 +165,13 @@ class PengemasanController extends Controller
 
     public function create(Request $request)
     {
-        $lastDus = DetailPengemasan::whereHas('pengemasan', function($q) use ($request) {
-            if ($request->filled('pecahan')) $q->where('pecahan', $request->pecahan);
-            if ($request->filled('tahun_anggaran')) $q->where('tahun_anggaran', $request->tahun_anggaran);
-            if ($request->filled('tahun_emisi')) $q->where('tahun_emisi', $request->tahun_emisi);
+        $lastDus = DetailPengemasan::whereHas('pengemasan', function ($q) use ($request) {
+            if ($request->filled('pecahan'))
+                $q->where('pecahan', $request->pecahan);
+            if ($request->filled('tahun_anggaran'))
+                $q->where('tahun_anggaran', $request->tahun_anggaran);
+            if ($request->filled('tahun_emisi'))
+                $q->where('tahun_emisi', $request->tahun_emisi);
         })->orderBy('no_dus', 'desc')->first();
 
         $packsData = Pack::where('batch', $request->batch)->where('seri', $request->seri)->whereNotNull('hcs_sorting_id')->whereNull('id_pengemasan')->get(['pack_number', 'jumlah']);
@@ -214,5 +236,22 @@ class PengemasanController extends Controller
             return "'" . $field;
         }
         return $field;
+    }
+
+    public function getReadyToPackNotifications()
+    {
+        try {
+            $readyGroups = $this->service->getReadyToPackageGroups([]);
+            return response()->json([
+                'status' => 'success',
+                'count' => $readyGroups->count(),
+                'data' => $readyGroups
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 }
