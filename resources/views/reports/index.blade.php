@@ -102,8 +102,8 @@
 
 
             <!-- Tabel Data Laporan -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl border border-gray-100">
-                <div class="p-6 text-gray-900">
+            <div class="bg-white dark:bg-slate-900 overflow-hidden shadow-sm sm:rounded-xl border border-gray-100 dark:border-slate-800">
+                <div class="p-6 text-gray-900 dark:text-gray-100">
 
                     <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
                         <h3 class="text-xl font-bold text-gray-800 flex items-center">
@@ -291,7 +291,7 @@
                         </div>
                     </div>
                     <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200 border">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-800 border dark:border-slate-800">
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th scope="col"
@@ -326,12 +326,12 @@
                                         Operator</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
+                            <tbody class="bg-white dark:bg-slate-900 divide-y divide-gray-200 dark:divide-slate-800">
                                 @forelse($data->groupBy('tanggal_penerimaan') as $date => $group)
                                     <!-- Date Header Row -->
-                                    <tr class="bg-gray-50/80 border-t border-gray-200">
+                                    <tr class="bg-gray-50/80 dark:bg-slate-800/80 border-t border-gray-200 dark:border-slate-700">
                                         <td colspan="10"
-                                            class="px-3 py-2 text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                                            class="px-3 py-2 text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest">
                                             <div class="flex items-center">
                                                 <svg class="w-3.5 h-3.5 mr-2 text-indigo-400" fill="none"
                                                     stroke="currentColor" viewBox="0 0 24 24">
@@ -344,8 +344,8 @@
                                         </td>
                                     </tr>
                                     @foreach($group as $row)
-                                        <tr class="hover:bg-gray-50/50 transition-colors">
-                                            <td class="px-3 py-3 whitespace-nowrap text-xs font-bold text-gray-800">
+                                        <tr class="hover:bg-gray-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                                            <td class="px-3 py-3 whitespace-nowrap text-xs font-bold text-gray-800 dark:text-gray-200">
                                                 {{ $row->nomor_bon }}</td>
                                             <td class="px-3 py-3 whitespace-nowrap text-xs text-center">
                                                 <span
@@ -353,28 +353,28 @@
                                                     {{ $row->pecahan }}
                                                 </span>
                                             </td>
-                                            <td class="px-3 py-3 whitespace-nowrap text-xs text-center font-bold text-gray-700">
+                                            <td class="px-3 py-3 whitespace-nowrap text-xs text-center font-bold text-gray-700 dark:text-gray-300">
                                                 {{ $row->emisi }}</td>
-                                            <td class="px-3 py-3 whitespace-nowrap text-xs text-center font-bold text-gray-700">
+                                            <td class="px-3 py-3 whitespace-nowrap text-xs text-center font-bold text-gray-700 dark:text-gray-300">
                                                 {{ $row->tahun_anggaran }}</td>
-                                            <td class="px-3 py-3 whitespace-nowrap text-xs text-right font-black text-gray-900">
+                                            <td class="px-3 py-3 whitespace-nowrap text-xs text-right font-black text-gray-900 dark:text-gray-100">
                                                 {{ number_format($row->jumlah, 0, ',', '.') }}</td>
                                             <td
-                                                class="px-3 py-3 whitespace-nowrap text-[10px] text-center font-bold text-gray-500 uppercase">
+                                                class="px-3 py-3 whitespace-nowrap text-[10px] text-center font-bold text-gray-500 dark:text-gray-400 uppercase">
                                                 {{ $row->gilir }}</td>
                                             <td
-                                                class="px-3 py-3 whitespace-nowrap text-[10px] text-center font-bold text-gray-500 uppercase">
+                                                class="px-3 py-3 whitespace-nowrap text-[10px] text-center font-bold text-gray-500 dark:text-gray-400 uppercase">
                                                 {{ $row->mesin }}</td>
                                             <td class="px-3 py-3 whitespace-nowrap text-xs text-center">
                                                 <span
-                                                    class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $row->supplier === 'Cutpack' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700' }}">
+                                                    class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $row->supplier === 'Cutpack' ? 'bg-green-100 text-green-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' }}">
                                                     {{ $row->supplier }}
                                                 </span>
                                             </td>
-                                            <td class="px-3 py-3 whitespace-nowrap text-xs text-gray-600 font-medium italic">
+                                            <td class="px-3 py-3 whitespace-nowrap text-xs text-gray-600 dark:text-gray-400 font-medium italic">
                                                 {{ $row->batch }} / {{ $row->seri }}</td>
                                             <td
-                                                class="px-3 py-3 whitespace-nowrap text-[10px] text-gray-500 font-bold uppercase">
+                                                class="px-3 py-3 whitespace-nowrap text-[10px] text-gray-500 dark:text-gray-400 font-bold uppercase">
                                                 {{ $row->user->name ?? '-' }}</td>
                                         </tr>
                                     @endforeach

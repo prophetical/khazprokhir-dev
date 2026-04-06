@@ -10,6 +10,7 @@ use App\Models\TargetBulanan;
 use App\Models\TargetTahunan;
 use App\Models\HctsReceiving;
 use App\Models\HctsSubmission;
+use App\Models\BahanPenolong;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -176,6 +177,8 @@ class DashboardService
         $latestHeatmapDate = !empty($heatmapData) ? max(array_keys($heatmapData)) : null;
         $heatmapYear = $latestHeatmapDate ? Carbon::parse($latestHeatmapDate)->year : $currentYear;
 
+        $bahanPenolong = BahanPenolong::all();
+
         return [
             'totalHcsToday' => $totalHcsToday,
             'totalBilyetToday' => $totalBilyetToday,
@@ -199,7 +202,8 @@ class DashboardService
             'inschietFinal' => $inschietFinal,
             'totalHctsSerahYear' => $totalHctsSerahYear,
             'pecahanDistribution' => $pecahanDistribution,
-            'supplierDistributionYear' => $supplierDistributionYear
+            'supplierDistributionYear' => $supplierDistributionYear,
+            'bahanPenolong' => $bahanPenolong
         ];
     }
 }

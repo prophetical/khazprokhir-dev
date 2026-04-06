@@ -50,7 +50,7 @@
                             </thead>
                             <tbody class="divide-y divide-gray-100">
                                 @foreach($users as $user)
-                                    <tr class="hover:bg-gray-50/50 transition-colors">
+                                    <tr class="hover:bg-gray-50/50 dark:hover:bg-slate-800/50 transition-colors">
                                         <td class="px-4 py-4 text-center text-xs text-gray-400 font-mono">{{ $loop->iteration + ($users->currentPage() - 1) * $users->perPage() }}</td>
                                         <td class="px-4 py-4 whitespace-nowrap">
                                             <div class="flex flex-col">

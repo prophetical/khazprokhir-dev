@@ -27,10 +27,10 @@
                         themes: {{ json_encode($themeClasses) }},
                         get currentTheme() { return this.themes[this.selectedPecahan] || null }
                     }"
-                    class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6 border-t-4 transition-all duration-500"
+                    class="bg-white dark:bg-slate-900 overflow-hidden shadow-sm sm:rounded-lg mb-6 border-t-4 transition-all duration-500"
                     :class="currentTheme ? currentTheme.border : 'border-indigo-500'">
                     <div class="p-6">
-                        <h3 class="text-lg font-bold text-gray-900 border-l-4 pl-4 mb-8 transition-colors duration-500"
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white border-l-4 pl-4 mb-8 transition-colors duration-500"
                             :class="currentTheme ? currentTheme.border : 'border-indigo-600'">
                             Laporan Pengemasan HCS
                         </h3>
@@ -44,9 +44,9 @@
                                 <!-- Filter Pecahan -->
                                 <div>
                                     <label
-                                        class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Pecahan</label>
+                                        class="block text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">Pecahan</label>
                                     <select name="pecahan" x-model="selectedPecahan"
-                                        class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-3 transition-all font-bold focus:ring-opacity-50"
+                                        class="block w-full border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-gray-300 rounded-lg shadow-sm text-sm py-3 px-3 transition-all font-bold focus:ring-opacity-50"
                                         :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
                                         <option value="">Semua</option>
                                         <option value="S">S</option>
@@ -64,7 +64,7 @@
                                     <label
                                         class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Gilir</label>
                                     <select name="gilir"
-                                        class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-3 transition-all font-bold focus:ring-opacity-50"
+                                        class="block w-full border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-gray-300 rounded-lg shadow-sm text-sm py-3 px-3 transition-all font-bold focus:ring-opacity-50"
                                         :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
                                         <option value="">Semua</option>
                                         <option value="1" {{ request('gilir') == '1' ? 'selected' : '' }}>Gilir 1</option>
@@ -98,18 +98,18 @@
                                 <!-- Cari Data Umum -->
                                 <div class="lg:col-span-2">
                                     <label
-                                        class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Cari
+                                        class="block text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">Cari
                                         Data (Batch, Seri, dll)</label>
                                     <input type="text" name="search" value="{{ request('search') }}"
                                         placeholder="Cari Data..."
-                                        class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-3 px-3 transition-all focus:ring-opacity-50"
+                                        class="block w-full border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-gray-300 rounded-lg shadow-sm text-sm py-3 px-3 transition-all focus:ring-opacity-50"
                                         :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
                                 </div>
 
                                 <!-- Cari No Dus -->
                                 <div>
                                     <label
-                                        class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Cari
+                                        class="block text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">Cari
                                         No Dus Spesifik</label>
                                     <div class="relative">
                                         <span class="absolute inset-y-0 left-0 flex items-center pl-3">
@@ -123,7 +123,7 @@
                                         </span>
                                         <input type="number" name="search_dus" value="{{ request('search_dus') }}"
                                             placeholder="No Dus"
-                                            class="block w-full pl-10 border-indigo-200 rounded-lg shadow-sm text-sm py-3 bg-indigo-50 text-indigo-900 focus:ring-opacity-50 transition-all font-bold"
+                                            class="block w-full pl-10 border-indigo-200 dark:border-slate-700 rounded-lg shadow-sm text-sm py-3 bg-indigo-50 dark:bg-slate-800 text-indigo-900 dark:text-indigo-300 focus:ring-opacity-50 transition-all font-bold"
                                             :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'">
                                     </div>
                                 </div>
@@ -140,7 +140,7 @@
                                             </svg>
                                         </button>
                                         <a href="{{ route('pengemasan.data') }}"
-                                            class="flex-1 inline-flex justify-center items-center px-4 py-3 bg-gray-100 border border-gray-200 rounded-lg font-bold text-xs text-gray-400 uppercase tracking-widest shadow-sm hover:bg-gray-200 active:scale-95 transition-all @if(!request('search') && !request('pecahan') && !request('search_dus') && !request('tanggal_awal') && !request('tanggal_akhir') && !request('gilir')) opacity-50 pointer-events-none @endif">
+                                            class="flex-1 inline-flex justify-center items-center px-4 py-3 bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg font-bold text-xs text-gray-400 dark:text-gray-500 uppercase tracking-widest shadow-sm hover:bg-gray-200 dark:hover:bg-slate-700 active:scale-95 transition-all @if(!request('search') && !request('pecahan') && !request('search_dus') && !request('tanggal_awal') && !request('tanggal_akhir') && !request('gilir')) opacity-50 pointer-events-none @endif">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -152,30 +152,30 @@
                             </div>
 
                             <!-- Pemisah antara Form Pencarian dan Tombol Ekspor -->
-                            <div
-                                class="mt-6 pt-4 border-t border-gray-100 flex flex-wrap gap-2 justify-end lg:justify-end">
-                                <a href="{{ route('pengemasan.export', request()->all()) }}"
-                                    class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors shadow-sm"
-                                    title="Export Excel (CSV)">
+                             <div
+                                 class="mt-6 pt-4 border-t border-gray-100 dark:border-slate-800 flex flex-wrap gap-2 justify-end lg:justify-end">
+                                 <a href="{{ route('pengemasan.export', request()->all()) }}"
+                                     class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium bg-emerald-50 dark:bg-emerald-900/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/20 transition-colors shadow-sm"
+                                     title="Export Excel (CSV)">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                     </svg>
                                     Excel
                                 </a>
-                                <a href="{{ route('pengemasan.print', request()->all()) }}" target="_blank"
-                                    class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium bg-rose-50 text-rose-700 border border-rose-200 rounded-lg hover:bg-rose-100 transition-colors shadow-sm"
-                                    title="Export PDF / Print">
+                                 <a href="{{ route('pengemasan.print', request()->all()) }}" target="_blank"
+                                     class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium bg-rose-50 dark:bg-rose-900/10 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/50 rounded-lg hover:bg-rose-100 dark:hover:bg-rose-900/20 transition-colors shadow-sm"
+                                     title="Export PDF / Print">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                     </svg>
                                     PDF
                                 </a>
-                                <a href="{{ route('pengemasan.print', array_merge(request()->all(), ['autoprint' => 1])) }}"
-                                    target="_blank"
-                                    class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium bg-gray-50 text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors shadow-sm"
-                                    title="Cetak Langsung">
+                                 <a href="{{ route('pengemasan.print', array_merge(request()->all(), ['autoprint' => 1])) }}"
+                                     target="_blank"
+                                     class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium bg-gray-50 dark:bg-slate-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-slate-700 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors shadow-sm"
+                                     title="Cetak Langsung">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 00-2 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
@@ -191,7 +191,7 @@
                 @if(!empty($missingGaps))
                     <div class="mb-6 space-y-3">
                         @foreach($missingGaps as $gap)
-                            <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-md shadow-sm">
+                             <div class="bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-400 p-4 rounded-r-md shadow-sm">
                                 <div class="flex items-start">
                                     <div class="flex-shrink-0">
                                         <svg class="h-5 w-5 text-amber-400" viewBox="0 0 20 20" fill="currentColor">
@@ -201,15 +201,15 @@
                                         </svg>
                                     </div>
                                     <div class="ml-3">
-                                        <h3 class="text-sm font-bold text-amber-800">Peringatan: Terdapat nomor dus yang hilang
+                                         <h3 class="text-sm font-bold text-amber-800 dark:text-amber-400">Peringatan: Terdapat nomor dus yang hilang
                                         </h3>
-                                        <div class="mt-1 text-sm text-amber-700">
-                                            Pada Pecahan <span class="font-bold">{{ $gap['pecahan'] }}</span>,
-                                            Tahun Anggaran <span class="font-bold">{{ $gap['tahun_anggaran'] }}</span>,
-                                            Tahun Emisi <span class="font-bold">{{ $gap['tahun_emisi'] }}</span>.
-                                            Range nomor dus yang tidak ditemukan: <span
-                                                class="font-bold font-mono">{{ $gap['ranges'] }}</span>.
-                                        </div>
+                                         <div class="mt-1 text-sm text-amber-700 dark:text-amber-500/80">
+                                             Pada Pecahan <span class="font-bold">{{ $gap['pecahan'] }}</span>,
+                                             Tahun Anggaran <span class="font-bold">{{ $gap['tahun_anggaran'] }}</span>,
+                                             Tahun Emisi <span class="font-bold">{{ $gap['tahun_emisi'] }}</span>.
+                                             Range nomor dus yang tidak ditemukan: <span
+                                                 class="font-bold font-mono">{{ $gap['ranges'] }}</span>.
+                                         </div>
                                     </div>
                                 </div>
                             </div>
@@ -217,8 +217,8 @@
                     </div>
                 @endif
 
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900 border-t-4 border-gray-200">
+                <div class="bg-white dark:bg-slate-900 overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6 text-gray-900 dark:text-gray-100 border-t-4 border-gray-200 dark:border-slate-800">
 
                         @php
                             $direction = request('direction') === 'asc' ? 'desc' : 'asc';
@@ -231,12 +231,12 @@
                             }
                         @endphp
 
-                        <div class="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-100">
+                        <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-slate-800 shadow-sm">
+                            <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-800">
+                                <thead class="bg-gray-100 dark:bg-slate-800">
                                     <tr>
                                         <th
-                                            class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-200">
+                                            class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider bg-gray-50 dark:bg-slate-800/50 border-b border-gray-200 dark:border-slate-700">
                                             <a href="{{ route('pengemasan.data', array_merge(request()->query(), ['sort' => 'tanggal_pengemasan', 'direction' => $direction])) }}"
                                                 class="hover:text-indigo-600 flex items-center">
                                                 Tanggal {{ sortIcon('tanggal_pengemasan') }}
@@ -275,33 +275,33 @@
                                             Bilyet
                                         </th>
                                         <th
-                                            class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-200">
+                                            class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider bg-gray-50 dark:bg-slate-800/50 border-b border-gray-200 dark:border-slate-700">
                                             <a href="{{ route('pengemasan.data', array_merge(request()->query(), ['sort' => 'dus_awal', 'direction' => $direction])) }}"
                                                 class="hover:text-indigo-600 flex items-center">
                                                 No Dus {{ sortIcon('dus_awal') }}
                                             </a>
                                         </th>
                                         <th
-                                            class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-200">
+                                            class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider bg-gray-50 dark:bg-slate-800/50 border-b border-gray-200 dark:border-slate-700">
                                             <a href="{{ route('pengemasan.data', array_merge(request()->query(), ['sort' => 'petugas', 'direction' => $direction])) }}"
                                                 class="hover:text-indigo-600 flex items-center">
                                                 Petugas {{ sortIcon('petugas') }}
                                             </a>
                                         </th>
                                         <th
-                                            class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-200">
+                                            class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider bg-gray-50 dark:bg-slate-800/50 border-b border-gray-200 dark:border-slate-700">
                                             Aksi</th>
                                     </tr>
                                 </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
+                                <tbody class="bg-white dark:bg-slate-900 divide-y divide-gray-200 dark:divide-slate-800">
                                     @forelse($pengemasans as $p)
-                                        <tr class="hover:bg-indigo-50 transition-colors duration-200 group">
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-medium">
+                                        <tr class="hover:bg-indigo-50 dark:hover:bg-slate-800/50 transition-colors duration-200 group">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300 font-medium">
                                                 {{ \Carbon\Carbon::parse($p->tanggal_pengemasan)->locale('id')->isoFormat('D MMMM YYYY') }}
                                             </td>
                                             <td class="px-2 py-4 whitespace-nowrap text-sm text-center">
                                                 <span
-                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-gray-100 text-gray-800 border border-gray-200">G{{ $p->gilir }}</span>
+                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-gray-300 border border-gray-200 dark:border-slate-700">G{{ $p->gilir }}</span>
                                             </td>
                                             <td class="px-4 py-4 whitespace-nowrap">
                                                 <div class="flex flex-col items-center gap-0.5">
@@ -309,18 +309,18 @@
                                                         class="text-[10px] font-black flex items-center gap-1.5 uppercase tracking-tighter">
                                                         <span
                                                             class="px-1.5 py-0.5 rounded-sm {{ $themeClasses[$p->pecahan]['bg'] ?? 'bg-indigo-500' }} text-white text-[9px]">{{ $p->pecahan }}</span>
-                                                        <span class="text-black-600">{{ $p->batch }}</span>
+                                                        <span class="text-black-600 dark:text-gray-200">{{ $p->batch }}</span>
                                                         <span class="text-gray-300">/</span>
-                                                        <span class="text-black-600">{{ $p->seri }}</span>
+                                                        <span class="text-black-600 dark:text-gray-200">{{ $p->seri }}</span>
                                                     </div>
                                                     <div class="text-[9px] text-gray-400 font-bold tracking-tighter">
                                                         {{ $p->tahun_anggaran }} / {{ $p->tahun_emisi }}</div>
                                                 </div>
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-600">
+                                            <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-600 dark:text-gray-300">
                                                 <div class="mb-1">
                                                     <span
-                                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300">
                                                         {{ $p->pack_awal }} - {{ $p->pack_akhir }}
                                                     </span>
                                                 </div>
@@ -329,23 +329,23 @@
                                             </td>
                                             <td class="px-2 py-4 whitespace-nowrap text-sm">
                                                 <span
-                                                    class="inline-flex items-center text-[12px] justify-center h-6 w-6 rounded-full bg-purple-100 text-purple-800 font-black">
+                                                    class="inline-flex items-center text-[12px] justify-center h-6 w-6 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 font-black">
                                                     {{ $p->jumlah_dus }}
                                                 </span>
                                             </td>
                                             <td
-                                                class="px-6 py-4 whitespace-nowrap text-[10px] font-black text-emerald-600 text-center">
+                                                class="px-6 py-4 whitespace-nowrap text-[10px] font-black text-emerald-600 dark:text-emerald-400 text-center">
                                                 {{ number_format($p->total_bilyet, 0, ',', '.') }}
                                             </td>
 
                                             <td
-                                                class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-bold text-center">
+                                                class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300 font-bold text-center">
                                                 {{ $p->dus_awal }} - {{ $p->dus_akhir }}
                                             </td>
-                                            <td class="px-2 py-4 whitespace-nowrap text-[10px] text-gray-500">
+                                            <td class="px-2 py-4 whitespace-nowrap text-[10px] text-gray-500 dark:text-gray-400">
                                                 <div class="flex items-center space-x-1">
                                                     <div
-                                                        class="h-4 w-4 rounded-full bg-gray-100 flex items-center justify-center text-[8px] font-bold text-gray-400 border border-gray-200">
+                                                        class="h-4 w-4 rounded-full bg-gray-100 dark:bg-slate-800 flex items-center justify-center text-[8px] font-bold text-gray-400 dark:text-gray-500 border border-gray-200 dark:border-slate-700">
                                                         {{ substr($p->user->name ?? '?', 0, 1) }}
                                                     </div>
                                                     <span class="truncate max-w-[80px]">{{ $p->user->name ?? '-' }}</span>
@@ -391,14 +391,14 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="8" class="px-6 py-12 text-center">
-                                                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24"
+                                            <td colspan="8" class="px-6 py-12 text-center bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800">
+                                                <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-600" fill="none" viewBox="0 0 24 24"
                                                     stroke="currentColor" aria-hidden="true">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
                                                 </svg>
-                                                <h3 class="mt-2 text-sm font-medium text-gray-900">Tidak ada pengemasan</h3>
-                                                <p class="mt-1 text-sm text-gray-500">Mulai pengemasan dari menu Pengemasan
+                                                <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-gray-200">Tidak ada pengemasan</h3>
+                                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Mulai pengemasan dari menu Pengemasan
                                                     HCS.</p>
                                             </td>
                                         </tr>

@@ -168,7 +168,7 @@
                         </thead>
                         <tbody class="divide-y divide-gray-100">
                             @forelse($submissions as $submission)
-                                <tr class="hover:bg-gray-50/50 transition-colors group text-[11px]">
+                                <tr class="hover:bg-gray-50/50 dark:hover:bg-slate-800/50 transition-colors group text-[11px]">
                                     <td class="px-3 py-3 font-bold text-gray-600 whitespace-nowrap">
                                         {{ \Carbon\Carbon::parse($submission->tanggal_penyerahan)->locale('id')->isoFormat('D MMMM YYYY') }}
                                     </td>

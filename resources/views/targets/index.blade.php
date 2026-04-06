@@ -54,7 +54,7 @@
                                         ];
                                         $badgeColor = $colorMap[$target->pecahan] ?? 'bg-gray-400';
                                     @endphp
-                                    <tr class="hover:bg-gray-50/50 transition-colors">
+                                    <tr class="hover:bg-gray-50/50 dark:hover:bg-slate-800/50 transition-colors">
                                         <td class="px-4 py-4 whitespace-nowrap">
                                             <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black text-white {{ $badgeColor }}">
                                                 PECAHAN {{ $target->pecahan }}

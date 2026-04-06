@@ -219,7 +219,7 @@
                                         Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
+                            <tbody class="bg-white divide-y divide-gray-200 dark:bg-slate-900 dark:divide-slate-800">
                                 @php
                                     $colorMap = [
                                         'S' => 'bg-lime-500 border-lime-600 text-white',
@@ -232,18 +232,18 @@
                                     ];
                                 @endphp
                                 @forelse ($reports as $report)
-                                    <tr class="hover:bg-gray-50">
-                                        <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    <tr class="hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors">
+                                        <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
                                             {{ $report->tanggal_sortir->locale('id')->isoFormat('D MMMM YYYY') }}</td>
-                                        <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">{{ $report->gilir }}
+                                        <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">{{ $report->gilir }}
                                         </td>
-                                        <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
+                                        <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200 font-medium">
                                             {{ $report->batch }}</td>
-                                        <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">{{ $report->seri }}
+                                        <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">{{ $report->seri }}
                                         </td>
-                                        <td class="px-3 py-4 whitespace-nowrap text-sm text-center font-bold text-gray-700">
+                                        <td class="px-3 py-4 whitespace-nowrap text-sm text-center font-bold text-gray-700 dark:text-gray-400">
                                             {{ $report->emisi }}</td>
-                                        <td class="px-3 py-4 whitespace-nowrap text-sm text-center font-bold text-gray-700">
+                                        <td class="px-3 py-4 whitespace-nowrap text-sm text-center font-bold text-gray-700 dark:text-gray-400">
                                             {{ $report->tahun_anggaran }}</td>
                                         <td class="px-3 py-4 whitespace-nowrap text-sm text-center">
                                             <span
@@ -251,9 +251,9 @@
                                                 {{ $report->pecahan }}
                                             </span>
                                         </td>
-                                        <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
                                             {{ $report->supplier }}</td>
-                                        <td class="px-3 py-4 text-sm text-gray-500 max-w-xs truncate"
+                                        <td class="px-3 py-4 text-sm text-gray-500 dark:text-gray-400 max-w-xs truncate"
                                             title="{{ is_array($report->packs_selected) ? implode(', ', $report->packs_selected) : '' }}">
                                             @php
                                                 $arr = is_array($report->packs_selected) ? $report->packs_selected : [];
@@ -275,12 +275,12 @@
                                             {{ $displayStr }}
                                         </td>
                                         <td
-                                            class="px-3 py-4 whitespace-nowrap text-sm text-gray-900 text-right font-medium">
+                                            class="px-3 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200 text-right font-medium">
                                             {{ number_format($report->jumlah_pack, 0, ',', '.') }}</td>
                                         <td
-                                            class="px-3 py-4 whitespace-nowrap text-sm text-green-700 text-right font-medium">
+                                            class="px-3 py-4 whitespace-nowrap text-sm text-green-700 dark:text-emerald-400 text-right font-medium">
                                             {{ number_format($report->jumlah_bilyet, 0, ',', '.') }}</td>
-                                        <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                             {{ $report->petugas_1 }}
                                             @if($report->petugas_2)
                                                 <br><span class="text-xs text-gray-400">&amp; {{ $report->petugas_2 }}</span>

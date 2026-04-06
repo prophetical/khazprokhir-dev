@@ -49,11 +49,11 @@
     }" x-init="tablesHtml = $refs.initialContent.innerHTML; setInterval(() => fetchData(), 10000)">
         <div class="w-full mx-auto sm:px-6 lg:px-8 overflow-hidden">
             <!-- Status & Action Row -->
-            <div class="bg-white overflow-hidden shadow-2xl sm:rounded-2xl mb-8 border border-gray-100 p-1">
+            <div class="bg-white dark:bg-slate-900 overflow-hidden shadow-2xl sm:rounded-2xl mb-8 border border-gray-100 dark:border-slate-800 p-1">
                 <div
-                    class="bg-gray-50/50 rounded-[1.25rem] p-6 flex flex-col lg:flex-row justify-between items-center gap-6">
+                    class="bg-gray-50/50 dark:bg-slate-800/50 rounded-[1.25rem] p-6 flex flex-col lg:flex-row justify-between items-center gap-6">
                     <div class="flex items-center gap-6 w-full lg:w-auto">
-                        <div class="flex items-center gap-4 bg-white p-3 rounded-2xl shadow-sm border border-gray-50">
+                        <div class="flex items-center gap-4 bg-white dark:bg-slate-900 p-3 rounded-2xl shadow-sm border border-gray-50 dark:border-slate-800">
                             <div class="p-3 bg-indigo-600 rounded-xl">
                                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -63,13 +63,13 @@
                             <div>
                                 <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-0.5">
                                     Terakhir Update</h3>
-                                <p class="text-xl font-black text-gray-800 tabular-nums" x-text="lastUpdate">
+                                <p class="text-xl font-black text-gray-800 dark:text-gray-100 tabular-nums" x-text="lastUpdate">
                                     {{ now()->format('H:i:s') }}
                                 </p>
                             </div>
                         </div>
 
-                        <div class="hidden sm:block h-12 w-px bg-gray-200"></div>
+                        <div class="hidden sm:block h-12 w-px bg-gray-200 dark:bg-slate-700"></div>
 
                         <div class="hidden sm:block">
                             <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Status
@@ -78,13 +78,13 @@
                                 <template x-if="!loading">
                                     <span class="flex items-center gap-2">
                                         <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
-                                        <span class="text-sm font-bold text-gray-600">Terhubung</span>
+                                        <span class="text-sm font-bold text-gray-600 dark:text-gray-400">Terhubung</span>
                                     </span>
                                 </template>
                                 <template x-if="loading">
                                     <span class="flex items-center gap-2">
                                         <span class="h-2 w-2 rounded-full bg-amber-500 animate-pulse"></span>
-                                        <span class="text-sm font-bold text-gray-600">Sinkronisasi...</span>
+                                        <span class="text-sm font-bold text-gray-600 dark:text-gray-400">Sinkronisasi...</span>
                                     </span>
                                 </template>
                             </div>
@@ -98,7 +98,7 @@
                                 <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">
                                     Tahun Anggaran</h3>
                                 <select x-model="tahunAnggaran" @change="fetchData()"
-                                    class="w-full rounded-xl border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 py-3 text-center font-black text-gray-700 bg-white">
+                                    class="w-full rounded-xl border-gray-200 dark:border-slate-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 py-3 text-center font-black text-gray-700 dark:text-gray-300 bg-white dark:bg-slate-900">
                                     @foreach($tahunAnggaranOptions as $year)
                                         <option value="{{ $year }}">{{ $year }}</option>
                                     @endforeach
@@ -109,7 +109,7 @@
                                 <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">
                                     Tahun Emisi</h3>
                                 <select x-model="tahunEmisi" @change="fetchData()"
-                                    class="w-full rounded-xl border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 py-3 text-center font-black text-gray-700 bg-white">
+                                    class="w-full rounded-xl border-gray-200 dark:border-slate-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 py-3 text-center font-black text-gray-700 dark:text-gray-300 bg-white dark:bg-slate-900">
                                     @foreach($tahunEmisiOptions as $emisi)
                                         <option value="{{ $emisi }}">{{ $emisi }}</option>
                                     @endforeach
@@ -117,14 +117,14 @@
                             </div>
                         </div>
 
-                        <div class="h-8 w-px bg-gray-200 hidden sm:block"></div>
+                        <div class="h-8 w-px bg-gray-200 dark:bg-slate-700 hidden sm:block"></div>
 
                         <div class="text-right">
                             <h3
                                 class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">
                                 Hari Ini</h3>
                             <p
-                                class="text-sm font-black text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100">
+                                class="text-sm font-black text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1.5 rounded-lg border border-indigo-100 dark:border-indigo-900/50">
                                 {{ \Carbon\Carbon::parse($tanggalLaporan)->locale('id')->isoFormat('dddd, D MMMM Y') }}
                             </p>
                         </div>

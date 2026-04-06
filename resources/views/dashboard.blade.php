@@ -361,12 +361,7 @@
                                 closeButton: 'text-white hover:text-white/80 transition-colors focus:outline-none absolute top-4 right-4 z-20'
                             },
                             didOpen: () => {
-                                // Chart removed, using custom HTML progress bar for better mobile/dark mode consistency
-                                // and simplified premium look. 
-                                // (Actually keeping Chart.js is better for complex data, but user asked for "redesign bar chart" 
-                                // and "menarik", so I'll try a hybrid approach or just a very polished custom bar if they 
-                                // prefer a "tooltip" look). 
-                                // I'll stick to custom HTML bar for now as it's more flexible with Tailwind dark mode.
+                                // Chart dihapus
                             }
                         });
                     },
@@ -809,9 +804,11 @@
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
                 {{-- Kartu status sistem --}}
                 <div
-                    class="lg:col-span-1 bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/20 border border-gray-100 flex flex-col justify-between overflow-hidden">
-                    <div class="px-8 py-6 border-b border-gray-50 bg-gray-50/50">
-                        <h3 class="text-[10px] font-black text-gray-800 uppercase tracking-[0.2em]">Live Status</h3>
+                    class="lg:col-span-1 bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-xl shadow-gray-200/20 dark:shadow-none border border-gray-100 dark:border-slate-800 flex flex-col justify-between overflow-hidden transition-colors duration-500">
+                    <div
+                        class="px-8 py-6 border-b border-gray-50 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50">
+                        <h3 class="text-[10px] font-black text-gray-800 dark:text-gray-200 uppercase tracking-[0.2em]">
+                            Live Status</h3>
                     </div>
                     <div class="p-8 space-y-5">
                         <div class="flex items-center justify-between text-sm">
@@ -863,14 +860,98 @@
                             }
                         }">
                             <p class="text-[10px] font-black text-gray-400 uppercase mb-1">Server time</p>
-                            <p class="text-xs font-black text-gray-700 font-mono" x-text="time"></p>
+                            <p class="text-xs font-black text-gray-700 dark:text-gray-300 font-mono" x-text="time"></p>
                         </div>
                     </div>
-                    <div class="bg-gray-900 p-4 text-center">
-                        <span class="text-[8px] font-black text-white/40 uppercase tracking-[0.4em]">KHAZPROKHIR</span>
+                    <div class="h-[60px] bg-gradient-to-r from-lime-600 to-yellow-700 dark:from-lime-800 dark:to-yellow-900 p-4 flex justify-center items-center group cursor-pointer hover:from-indigo-500 hover:to-indigo-600 dark:hover:from-indigo-900 dark:hover:to-indigo-800 transition-all duration-500 hover:shadow-[0_-5px_15px_rgba(79,70,229,0.2)]">
+                        <span class="text-[8px] font-black text-white/90 dark:text-gray-400 group-hover:text-white group-hover:scale-110 group-hover:tracking-[0.6em] transition-all duration-500 uppercase tracking-[0.4em]">KHAZPROKHIR</span>
                     </div>
                 </div>
 
+                {{-- Kartu Stock Bahan Penolong --}}
+                <div
+                    class="lg:col-span-1 bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-xl shadow-gray-200/20 dark:shadow-none border border-gray-100 dark:border-slate-800 flex flex-col justify-between overflow-hidden transition-colors duration-500">
+                    <div
+                        class="px-8 py-6 border-b border-gray-50 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50 flex justify-between items-center">
+                        <h3 class="text-[10px] font-black text-gray-800 dark:text-gray-200 uppercase tracking-[0.2em]">
+                            Stock Bahan Penolong</h3>
+                        @php
+                            $lowStockCount = $bahanPenolong->where('stok', '<=', 'min_stok')->count();
+                        @endphp
+                        @if($lowStockCount > 0)
+                            <span class="flex h-2 w-2 relative">
+                                <span
+                                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+                            </span>
+                        @endif
+                    </div>
+                    <div class="p-4 flex-grow overflow-y-auto max-h-[300px] scrollbar-hide">
+                        <div class="space-y-3">
+                            @forelse($bahanPenolong as $item)
+                                @php
+                                    $isLow = $item->stok <= $item->min_stok;
+                                    $percentage = $item->min_stok > 0 ? min(100, ($item->stok / $item->min_stok) * 50) : ($item->stok > 0 ? 100 : 0);
+                                @endphp
+                                <div
+                                    class="p-3 rounded-2xl border {{ $isLow ? 'bg-rose-50/30 border-rose-100 dark:bg-rose-900/10 dark:border-rose-900/30' : 'bg-gray-50/30 border-gray-100 dark:bg-slate-800/30 dark:border-slate-700/50' }} transition-all duration-300 group">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <div>
+                                            <p
+                                                class="text-[10px] font-black text-gray-800 dark:text-gray-200 uppercase leading-none mb-1">
+                                                {{ $item->nama_bahan }}</p>
+                                            <p class="text-[8px] font-black text-gray-400 uppercase tracking-tighter">
+                                                {{ $item->kode_material ?? 'NO-CODE' }}</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <span
+                                                class="text-[9px] font-black {{ $isLow ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400' }} uppercase px-2 py-0.5 rounded-full bg-white dark:bg-slate-800 shadow-sm">
+                                                {{ $isLow ? 'Peringatan' : 'Aman' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-end justify-between gap-4">
+                                        <div class="flex-grow">
+                                            <div
+                                                class="flex justify-between text-[8px] font-black uppercase text-gray-400 mb-1">
+                                                <span>Stock: {{ number_format($item->stok) }}</span>
+                                                <span>Min: {{ number_format($item->min_stok) }}</span>
+                                            </div>
+                                            <div
+                                                class="w-full bg-gray-200 dark:bg-slate-700 h-1 rounded-full overflow-hidden">
+                                                <div class="h-full rounded-full transition-all duration-1000 {{ $isLow ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.4)]' : 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]' }}"
+                                                    style="width: {{ $item->min_stok > 0 ? min(100, ($item->stok / ($item->min_stok * 2)) * 100) : 100 }}%">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="shrink-0 flex flex-col items-center">
+                                            <span
+                                                class="text-[11px] font-black text-gray-800 dark:text-gray-200">{{ $item->satuan }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="flex flex-col items-center justify-center py-8 opacity-40">
+                                    <svg class="w-12 h-12 mb-2 text-gray-300" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                                    </svg>
+                                    <p class="text-[9px] font-black uppercase tracking-widest text-gray-500">Data Kosong</p>
+                                </div>
+                            @endforelse
+                        </div>
+                    </div>
+                    <div class="h-[60px] bg-gradient-to-r from-indigo-600 to-purple-700 dark:from-indigo-800 dark:to-purple-900 p-4 flex justify-center items-center group cursor-pointer hover:from-indigo-500 hover:to-indigo-600 dark:hover:from-indigo-900 dark:hover:to-indigo-800 transition-all duration-500 hover:shadow-[0_-5px_15px_rgba(79,70,229,0.2)]"
+                        onclick="window.location='{{ route('bahan-penolong.persediaan') }}'">
+                        <span class="text-[8px] font-black text-white/90 dark:text-gray-400 group-hover:text-white group-hover:scale-110 transition-all duration-500 uppercase tracking-[0.2em]">Detail Persediaan</span>
+                        <svg class="w-4 h-4 ml-2 text-white/70 group-hover:text-white group-hover:translate-x-2 transition-all duration-500"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </div>
+                </div>
+                <!--
                 {{-- Menu navigasi cepat --}}
                 <div class="lg:col-span-3 grid grid-cols-2 sm:grid-cols-3 gap-6">
                     @php
@@ -899,6 +980,7 @@
                         </a>
                     @endforeach
                 </div>
+                -->
             </div>
 
         </div>
