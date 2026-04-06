@@ -100,5 +100,3 @@ This is a **private repository** managed by **[prophetical](https://github.com/p
 For technical support or feature requests, please contact the repository owner directly.
 
 ---
-
-© 2026 Khazprokhir Ecosystem. All rights reserved.

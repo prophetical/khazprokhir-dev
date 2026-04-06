@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,51 +8,96 @@
     <script src="{{ asset('vendor/tailwindcss/tailwindcss.min.js') }}"></script>
     <style>
         @media print {
-            .no-print { display: none !important; }
-            body { padding: 0 !important; margin: 0 !important; background: white; }
-            .print-container { width: 100% !important; max-width: none !important; border: none !important; shadow: none !important; padding: 0.2cm !important; border-radius: 0 !important; }
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            @page { margin: 0.2cm; }
+            .no-print {
+                display: none !important;
+            }
+
+            body {
+                padding: 0 !important;
+                margin: 0 !important;
+                background: white;
+            }
+
+            .print-container {
+                width: 100% !important;
+                max-width: none !important;
+                border: none !important;
+                shadow: none !important;
+                padding: 0.2cm !important;
+                border-radius: 0 !important;
+            }
+
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            @page {
+                margin: 0.2cm;
+            }
         }
-        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background-color: #f9fafb; }
-        .table-tight th, .table-tight td { padding: 6px 10px; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #f9fafb;
+        }
+
+        .table-tight th,
+        .table-tight td {
+            padding: 6px 10px;
+        }
     </style>
 </head>
+
 <body class="p-4 md:p-10">
-    <div class="print-container max-w-6xl mx-auto bg-white p-8 border border-gray-100 shadow-sm rounded-2xl min-h-screen relative overflow-hidden">
+    <div
+        class="print-container max-w-6xl mx-auto bg-white p-8 border border-gray-100 shadow-sm rounded-2xl min-h-screen relative overflow-hidden">
         {{-- Dekorasi pojok kanan atas --}}
-        <div class="absolute top-0 right-0 w-40 h-40 rounded-bl-[80px] opacity-[0.08] pointer-events-none" style="background: linear-gradient(135deg, #1e40af 0%, #7c3aed 55%, #db2877 100%);"></div>
-        <div class="absolute top-0 right-0 w-20 h-20 rounded-bl-[40px] opacity-[0.13] pointer-events-none" style="background: linear-gradient(135deg, #1e40af 0%, #7c3aed 55%, #db2877 100%);"></div>
-        
+        <div class="absolute top-0 right-0 w-40 h-40 rounded-bl-[80px] opacity-[0.08] pointer-events-none"
+            style="background: linear-gradient(135deg, #1e40af 0%, #7c3aed 55%, #db2877 100%);"></div>
+        <div class="absolute top-0 right-0 w-20 h-20 rounded-bl-[40px] opacity-[0.13] pointer-events-none"
+            style="background: linear-gradient(135deg, #1e40af 0%, #7c3aed 55%, #db2877 100%);"></div>
+
         <!-- Action Toolbar -->
         <div class="no-print flex justify-between items-center mb-8 pb-6 border-b border-gray-100">
-            <button onclick="window.history.back()" class="text-sm font-medium text-gray-500 hover:text-rose-600 flex items-center transition-colors">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+            <button onclick="window.history.back()"
+                class="text-sm font-medium text-gray-500 hover:text-rose-600 flex items-center transition-colors">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
                 Kembali
             </button>
-            <button onclick="window.print()" class="bg-rose-600 hover:bg-rose-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-rose-100 transition-all flex items-center">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+            <button onclick="window.print()"
+                class="bg-rose-600 hover:bg-rose-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-rose-100 transition-all flex items-center">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
                 Cetak Laporan / Simpan PDF
             </button>
         </div>
 
         <header class="flex justify-between items-start mb-8">
             <div>
-                <h1 class="text-2xl font-extrabold text-gray-900 mb-1 tracking-tight uppercase">Laporan Penyerahan HCTS</h1>
-                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-4">Khazprokhir Management System</p>
-                
+                <h1 class="text-2xl font-extrabold text-gray-900 mb-1 tracking-tight uppercase">Laporan Penyerahan HCTS
+                </h1>
+                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-4">Khazprokhir Management
+                    System</p>
+
                 <div class="flex flex-wrap items-center gap-3 text-xs mb-4">
                     <div class="bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100 flex items-center">
                         <span class="text-gray-400 mr-2 uppercase font-black text-[9px]">Periode:</span>
                         <span class="font-bold text-gray-700">
-                            {{ $startDate ? \Carbon\Carbon::parse($startDate)->translatedFormat('d F Y') : 'Awal' }} – {{ $endDate ? \Carbon\Carbon::parse($endDate)->translatedFormat('d F Y') : 'Sekarang' }}
+                            {{ $startDate ? \Carbon\Carbon::parse($startDate)->translatedFormat('d F Y') : 'Awal' }} –
+                            {{ $endDate ? \Carbon\Carbon::parse($endDate)->translatedFormat('d F Y') : 'Sekarang' }}
                         </span>
                     </div>
                     @if($search)
-                    <div class="bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100 flex items-center">
-                        <span class="text-indigo-400 mr-2 uppercase font-black text-[9px]">Cari BA:</span>
-                        <span class="font-bold text-indigo-700">"{{ $search }}"</span>
-                    </div>
+                        <div class="bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100 flex items-center">
+                            <span class="text-indigo-400 mr-2 uppercase font-black text-[9px]">Cari BA:</span>
+                            <span class="font-bold text-indigo-700">"{{ $search }}"</span>
+                        </div>
                     @endif
                 </div>
             </div>
@@ -78,8 +124,10 @@
                 <tbody class="divide-y divide-gray-100">
                     @foreach ($submissions as $row)
                         <tr>
-                            <td class="text-[10px] font-bold text-gray-600 px-4 py-3">{{ \Carbon\Carbon::parse($row->tanggal_penyerahan)->format('d/m/Y') }}</td>
-                            <td class="text-[10px] font-black text-gray-900 px-4 py-3 italic underline decoration-gray-100">{{ $row->nomor_ba }}</td>
+                            <td class="text-[10px] font-bold text-gray-600 px-4 py-3">
+                                {{ \Carbon\Carbon::parse($row->tanggal_penyerahan)->format('d/m/Y') }}</td>
+                            <td class="text-[10px] font-black text-gray-900 px-4 py-3 italic underline decoration-gray-100">
+                                {{ $row->nomor_ba }}</td>
                             <td class="text-center px-4 py-3">
                                 @php
                                     $pchClasses = [
@@ -97,12 +145,15 @@
                                     {{ $row->pecahan }}
                                 </span>
                             </td>
-                            <td class="text-center px-4 py-3 text-[10px] font-bold text-gray-500">{{ $row->tahun_anggaran }} / {{ $row->tahun_emisi }}</td>
-                            <td class="text-[10px] font-black text-rose-600 text-right px-4 py-3">{{ number_format($row->jumlah_bilyet, 0, ',', '.') }}</td>
+                            <td class="text-center px-4 py-3 text-[10px] font-bold text-gray-500">{{ $row->tahun_anggaran }}
+                                / {{ $row->tahun_emisi }}</td>
+                            <td class="text-[10px] font-black text-rose-600 text-right px-4 py-3">
+                                {{ number_format($row->jumlah_bilyet, 0, ',', '.') }}</td>
                             <td class="text-[9px] font-bold text-gray-600 px-4 py-3 max-w-[200px]">
                                 <div class="flex flex-wrap gap-1">
                                     @foreach($row->batches as $batch)
-                                        <span>{{ $batch->batch }}({{ number_format($batch->jumlah, 0, ',', '.') }})</span>@if(!$loop->last), @endif
+                                        <span>{{ $batch->batch }}({{ number_format($batch->jumlah, 0, ',', '.') }})</span>@if(!$loop->last),
+                                        @endif
                                     @endforeach
                                 </div>
                             </td>
@@ -112,14 +163,18 @@
                                     <span>2: {{ $row->pemasok2 }}</span>
                                 </div>
                             </td>
-                            <td class="text-[9px] font-bold text-gray-700 text-center px-4 py-3 uppercase">{{ $row->user->name ?? '-' }}</td>
+                            <td class="text-[9px] font-bold text-gray-700 text-center px-4 py-3 uppercase">
+                                {{ $row->user->name ?? '-' }}</td>
                         </tr>
                     @endforeach
                 </tbody>
                 <tfoot class="bg-gray-50 border-t-2 border-gray-900">
                     <tr>
-                        <th colspan="4" class="px-4 py-4 text-[10px] font-black text-gray-900 uppercase tracking-widest text-right">Total Akumulasi Penyerahan</th>
-                        <th class="px-4 py-4 text-sm font-black text-rose-600 text-right border-x border-gray-200">{{ number_format($submissions->sum('jumlah_bilyet'), 0, ',', '.') }}</th>
+                        <th colspan="4"
+                            class="px-4 py-4 text-[10px] font-black text-gray-900 uppercase tracking-widest text-right">
+                            Total Akumulasi Penyerahan</th>
+                        <th class="px-4 py-4 text-sm font-black text-rose-600 text-right border-x border-gray-200">
+                            {{ number_format($submissions->sum('jumlah_bilyet'), 0, ',', '.') }}</th>
                         <th colspan="3" class="bg-gray-50 border-none"></th>
                     </tr>
                 </tfoot>
@@ -141,11 +196,12 @@
     </div>
 
     @if(request('autoprint'))
-    <script>
-        window.onload = function() {
-            window.print();
-        }
-    </script>
+        <script>
+            window.onload = function () {
+                window.print();
+            }
+        </script>
     @endif
 </body>
+
 </html>

@@ -20,9 +20,9 @@
                 ];
             @endphp
 
-            <!-- Summary Section -->
+            <!-- Bagian Ringkasan -->
             <div class="space-y-4 mb-8">
-                <!-- Row 1: S, T, U, V -->
+                <!-- Baris 1: S, T, U, V -->
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     @foreach(['S', 'T', 'U', 'V'] as $p)
                         <div
@@ -53,7 +53,7 @@
                     @endforeach
                 </div>
 
-                <!-- Row 2: W, X, Y & TOTAL -->
+                <!-- Baris 2: W, X, Y & TOTAL -->
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     @foreach(['W', 'X', 'Y'] as $p)
                         <div
@@ -112,7 +112,7 @@
             @php
                 $selectedPecahan = request('pecahan', '');
 
-                // Literals for all possible theme classes to ensure Tailwind JIT includes them
+                // Literalnya untuk semua kelas tema yang mungkin untuk memastikan Tailwind JIT menyertakan.
                 $themeClasses = [
                     'S' => ['bg' => 'bg-lime-500', 'border' => 'border-lime-500', 'ring' => 'focus:ring-lime-500', 'focus' => 'focus:border-lime-500', 'btn' => 'bg-lime-500', 'text' => 'text-white'],
                     'T' => ['bg' => 'bg-gray-400', 'border' => 'border-gray-400', 'ring' => 'focus:ring-gray-400', 'focus' => 'focus:border-gray-400', 'btn' => 'bg-gray-400', 'text' => 'text-white'],
@@ -274,7 +274,7 @@
                                 @php
                                     $thisIdentifier = $item['pecahan'] . $item['batch'] . $item['seri'] . $item['supplier'];
 
-                                    // Aggregate all valid packs for this Batch/Seri/Supplier to create the "Sortir Semua" button on the first row of it
+                                    // Agregasikan semua pack yang valid untuk Batch/Seri/Supplier ini guna membuat tombol "Sortir Semua" pada baris pertamanya
                                     $allItemsForThisIdentifier = [];
                                     foreach ($paginator->items() as $pItem) {
                                         if ($pItem['pecahan'] . $pItem['batch'] . $pItem['seri'] . $pItem['supplier'] == $thisIdentifier) {
@@ -290,7 +290,7 @@
                                         $isFirstOfGroup = false;
                                     }
 
-                                    // Row color alternates by Batch group for visual grouping
+                                    // Warna baris bergantian berdasarkan grup Batch untuk pengelompokan visual
                                     $rowBgClass = ($batchIndex % 2 == 0) ? 'bg-white' : 'bg-gray-50/50';
                                 @endphp
 
@@ -397,7 +397,7 @@
 
                 @if($paginator->hasPages())
                     <div class="px-6 py-4 border-t border-gray-200">
-                        {{ $paginator->links() }} <!-- Using Laravel standard tailwind pagination -->
+                        {{ $paginator->links() }} {{-- Menggunakan paginasi tailwind standar Laravel --}}
                     </div>
                 @endif
             </div>

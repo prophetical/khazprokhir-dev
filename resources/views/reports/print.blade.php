@@ -1,41 +1,86 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laporan Penerimaan HCS - {{ \Carbon\Carbon::now()->locale('id')->isoFormat('D MMMM YYYY') }}</title>
-    <!-- Tailwind Local -->
+    <!-- Tailwind Lokal -->
     <script src="{{ asset('vendor/tailwindcss/tailwindcss.min.js') }}"></script>
     <style>
         @media print {
-            .no-print { display: none !important; }
-            body { padding: 0 !important; margin: 0 !important; background: white; }
-            .print-container { width: 100% !important; max-width: none !important; border: none !important; shadow: none !important; padding: 0.2cm !important; border-radius: 0 !important; }
-            /* Force background colors in print */
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            @page { margin: 0.2cm; }
+            .no-print {
+                display: none !important;
+            }
+
+            body {
+                padding: 0 !important;
+                margin: 0 !important;
+                background: white;
+            }
+
+            .print-container {
+                width: 100% !important;
+                max-width: none !important;
+                border: none !important;
+                shadow: none !important;
+                padding: 0.2cm !important;
+                border-radius: 0 !important;
+            }
+
+            /* Paksa warna latar belakang saat mencetak */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            @page {
+                margin: 0.2cm;
+            }
         }
-        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background-color: #f9fafb; }
-        .table-tight th, .table-tight td { padding: 6px 10px; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #f9fafb;
+        }
+
+        .table-tight th,
+        .table-tight td {
+            padding: 6px 10px;
+        }
     </style>
 </head>
+
 <body class="p-4 md:p-10">
-    <div class="print-container max-w-5xl mx-auto bg-white p-8 border border-gray-100 shadow-sm rounded-2xl min-h-screen relative overflow-hidden">
+    <div
+        class="print-container max-w-5xl mx-auto bg-white p-8 border border-gray-100 shadow-sm rounded-2xl min-h-screen relative overflow-hidden">
         {{-- Dekorasi pojok kanan atas --}}
-        <div class="absolute top-0 right-0 w-40 h-40 rounded-bl-[80px] opacity-[0.08] pointer-events-none" style="background: linear-gradient(135deg, #1e40af 0%, #7c3aed 55%, #db2877 100%);"></div>
-        <div class="absolute top-0 right-0 w-20 h-20 rounded-bl-[40px] opacity-[0.13] pointer-events-none" style="background: linear-gradient(135deg, #1e40af 0%, #7c3aed 55%, #db2877 100%);"></div>
+        <div class="absolute top-0 right-0 w-40 h-40 rounded-bl-[80px] opacity-[0.08] pointer-events-none"
+            style="background: linear-gradient(135deg, #1e40af 0%, #7c3aed 55%, #db2877 100%);"></div>
+        <div class="absolute top-0 right-0 w-20 h-20 rounded-bl-[40px] opacity-[0.13] pointer-events-none"
+            style="background: linear-gradient(135deg, #1e40af 0%, #7c3aed 55%, #db2877 100%);"></div>
         {{-- Dekorasi pojok kanan bawah --}}
-        <div class="absolute bottom-0 right-0 w-40 h-40 rounded-tl-[80px] opacity-[0.05] pointer-events-none" style="background: linear-gradient(315deg, #1e40af 0%, #7c3aed 55%, #db2877 100%);"></div>
-        <div class="absolute bottom-0 right-0 w-20 h-20 rounded-tl-[40px] opacity-[0.10] pointer-events-none" style="background: linear-gradient(315deg, #1e40af 0%, #7c3aed 55%, #db2877 100%);"></div>
-        
-        <!-- Action Toolbar (Hidden on Print) -->
+        <div class="absolute bottom-0 right-0 w-40 h-40 rounded-tl-[80px] opacity-[0.05] pointer-events-none"
+            style="background: linear-gradient(315deg, #1e40af 0%, #7c3aed 55%, #db2877 100%);"></div>
+        <div class="absolute bottom-0 right-0 w-20 h-20 rounded-tl-[40px] opacity-[0.10] pointer-events-none"
+            style="background: linear-gradient(315deg, #1e40af 0%, #7c3aed 55%, #db2877 100%);"></div>
+
+        <!-- Bilah Alat Aksi (Tersembunyi saat Cetak) -->
         <div class="no-print flex justify-between items-center mb-8 pb-6 border-b border-gray-100">
-            <a href="{{ route('reports.index', ['start_date' => $startDate, 'end_date' => $endDate, 'gilir' => $gilir, 'pecahan' => $pecahan ?? '', 'tahun_anggaran' => $tahunAnggaran, 'tahun_emisi' => $tahunEmisi]) }}" class="text-sm font-medium text-gray-500 hover:text-indigo-600 flex items-center transition-colors">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+            <a href="{{ route('reports.index', ['start_date' => $startDate, 'end_date' => $endDate, 'gilir' => $gilir, 'pecahan' => $pecahan ?? '', 'tahun_anggaran' => $tahunAnggaran, 'tahun_emisi' => $tahunEmisi]) }}"
+                class="text-sm font-medium text-gray-500 hover:text-indigo-600 flex items-center transition-colors">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
                 Kembali ke Dashboard
             </a>
-            <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-indigo-100 transition-all flex items-center">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+            <button onclick="window.print()"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-indigo-100 transition-all flex items-center">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
                 Cetak Laporan / Simpan PDF
             </button>
         </div>
@@ -44,60 +89,69 @@
         <header class="flex justify-between items-start mb-8">
             <div>
                 <h1 class="text-2xl font-extrabold text-gray-900 mb-1 tracking-tight">LAPORAN PENERIMAAN HCS</h1>
-                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-4">Khazprokhir Management System</p>
-                
+                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-4">Khazprokhir Management
+                    System</p>
+
                 <!-- Filter Context -->
                 <div class="flex flex-wrap items-center gap-3 text-xs mb-4">
                     <div class="bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100 flex items-center">
                         <span class="text-gray-400 mr-2">Periode:</span>
                         <span class="font-bold text-gray-700">
                             @if($startDate && $endDate)
-                                {{ \Carbon\Carbon::parse($startDate)->locale('id')->isoFormat('D MMMM YYYY') }} – {{ \Carbon\Carbon::parse($endDate)->locale('id')->isoFormat('D MMMM YYYY') }}
+                                {{ \Carbon\Carbon::parse($startDate)->locale('id')->isoFormat('D MMMM YYYY') }} –
+                                {{ \Carbon\Carbon::parse($endDate)->locale('id')->isoFormat('D MMMM YYYY') }}
                             @else
                                 Semua Tanggal
                             @endif
                         </span>
                     </div>
                     @if($tahunAnggaran)
-                    <div class="bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-100 flex items-center">
-                        <span class="text-amber-400 mr-2">TA:</span>
-                        <span class="font-bold text-amber-700 uppercase">{{ $tahunAnggaran }}</span>
-                    </div>
+                        <div class="bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-100 flex items-center">
+                            <span class="text-amber-400 mr-2">TA:</span>
+                            <span class="font-bold text-amber-700 uppercase">{{ $tahunAnggaran }}</span>
+                        </div>
                     @endif
                     @if($tahunEmisi)
-                    <div class="bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100 flex items-center">
-                        <span class="text-blue-400 mr-2">TE:</span>
-                        <span class="font-bold text-blue-700 uppercase">{{ $tahunEmisi }}</span>
-                    </div>
+                        <div class="bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100 flex items-center">
+                            <span class="text-blue-400 mr-2">TE:</span>
+                            <span class="font-bold text-blue-700 uppercase">{{ $tahunEmisi }}</span>
+                        </div>
                     @endif
                     @if($gilir)
-                    <div class="bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100 flex items-center">
-                        <span class="text-indigo-400 mr-2">Shift:</span>
-                        <span class="font-bold text-indigo-700 uppercase">{{ $gilir }}</span>
-                    </div>
+                        <div class="bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100 flex items-center">
+                            <span class="text-indigo-400 mr-2">Shift:</span>
+                            <span class="font-bold text-indigo-700 uppercase">{{ $gilir }}</span>
+                        </div>
                     @endif
                     @if(isset($pecahan))
-                    <div class="bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100 flex items-center">
-                        <span class="text-emerald-400 mr-2">Pecahan:</span>
-                        <span class="font-bold text-emerald-700 uppercase">{{ $pecahan }}</span>
-                    </div>
+                        <div class="bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100 flex items-center">
+                            <span class="text-emerald-400 mr-2">Pecahan:</span>
+                            <span class="font-bold text-emerald-700 uppercase">{{ $pecahan }}</span>
+                        </div>
                     @endif
                 </div>
 
 
-                <!-- Small Global Totals -->
+                <!-- Total Global Kecil -->
                 <div class="flex items-center gap-2">
-                    <span class="text-[8px] font-bold text-gray-400 uppercase tracking-widest mr-1">Global Total (All-Time):</span>
+                    <span class="text-[8px] font-bold text-gray-400 uppercase tracking-widest mr-1">Global Total
+                        (All-Time):</span>
                     @php
                         $pecahanColors = [
-                            'S' => 'text-stone-600', 'T' => 'text-slate-500', 'U' => 'text-orange-500', 
-                            'V' => 'text-purple-600', 'W' => 'text-green-600', 'X' => 'text-blue-600', 'Y' => 'text-red-600'
+                            'S' => 'text-stone-600',
+                            'T' => 'text-slate-500',
+                            'U' => 'text-orange-500',
+                            'V' => 'text-purple-600',
+                            'W' => 'text-green-600',
+                            'X' => 'text-blue-600',
+                            'Y' => 'text-red-600'
                         ];
                     @endphp
                     @foreach($globalTotalsPerPecahan as $key => $total)
                         <div class="flex items-center space-x-1 border-r border-gray-200 pr-2 last:border-0 h-4">
                             <span class="{{ $pecahanColors[$key] }} font-bold text-[9px]">{{ $key }}</span>
-                            <span class="text-[9px] font-medium text-gray-500">{{ number_format($total, 0, ',', '.') }}</span>
+                            <span
+                                class="text-[9px] font-medium text-gray-500">{{ number_format($total, 0, ',', '.') }}</span>
                         </div>
                     @endforeach
                 </div>
@@ -108,43 +162,48 @@
             </div>
         </header>
 
-        <!-- Filtered Summary Grid -->
+        <!-- Grid Ringkasan Terfilter -->
         <div class="mb-8">
-            <h2 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Total Penerimaan (Sesuai Filter)</h2>
+            <h2 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Total Penerimaan (Sesuai
+                Filter)</h2>
             <div class="grid grid-cols-4 lg:grid-cols-8 gap-3">
                 @php
                     $pecahanMeta = [
-                        'S' => ['color' => 'bg-stone-600',   'label' => 'Rp1.000'],
-                        'T' => ['color' => 'bg-slate-500',   'label' => 'Rp2.000'],
-                        'U' => ['color' => 'bg-orange-500',  'label' => 'Rp5.000'],
-                        'V' => ['color' => 'bg-purple-600',  'label' => 'Rp10.000'],
-                        'W' => ['color' => 'bg-green-600',   'label' => 'Rp20.000'],
-                        'X' => ['color' => 'bg-blue-600',    'label' => 'Rp50.000'],
-                        'Y' => ['color' => 'bg-red-600',     'label' => 'Rp100.000'],
+                        'S' => ['color' => 'bg-stone-600', 'label' => 'Rp1.000'],
+                        'T' => ['color' => 'bg-slate-500', 'label' => 'Rp2.000'],
+                        'U' => ['color' => 'bg-orange-500', 'label' => 'Rp5.000'],
+                        'V' => ['color' => 'bg-purple-600', 'label' => 'Rp10.000'],
+                        'W' => ['color' => 'bg-green-600', 'label' => 'Rp20.000'],
+                        'X' => ['color' => 'bg-blue-600', 'label' => 'Rp50.000'],
+                        'Y' => ['color' => 'bg-red-600', 'label' => 'Rp100.000'],
                     ];
                 @endphp
                 @foreach($filteredTotalsPerPecahan as $key => $total)
-                <div class="border border-gray-100 rounded-xl p-2.5 flex items-center space-x-2 bg-gray-50/30">
-                    <div class="{{ $pecahanMeta[$key]['color'] }} w-7 h-7 rounded-lg flex items-center justify-center text-white font-bold text-[10px]">
-                        {{ $key }}
+                    <div class="border border-gray-100 rounded-xl p-2.5 flex items-center space-x-2 bg-gray-50/30">
+                        <div
+                            class="{{ $pecahanMeta[$key]['color'] }} w-7 h-7 rounded-lg flex items-center justify-center text-white font-bold text-[10px]">
+                            {{ $key }}
+                        </div>
+                        <div>
+                            <p class="text-[7px] text-gray-400 uppercase font-bold">{{ $pecahanMeta[$key]['label'] }}</p>
+                            <p class="text-xs font-bold text-gray-800">{{ number_format($total, 0, ',', '.') }}</p>
+                        </div>
                     </div>
-                    <div>
-                        <p class="text-[7px] text-gray-400 uppercase font-bold">{{ $pecahanMeta[$key]['label'] }}</p>
-                        <p class="text-xs font-bold text-gray-800">{{ number_format($total, 0, ',', '.') }}</p>
-                    </div>
-                </div>
                 @endforeach
                 <div class="bg-indigo-600 rounded-xl p-2.5 flex items-center space-x-2">
-                    <div class="bg-white/20 w-7 h-7 rounded-lg flex items-center justify-center text-white font-bold text-[8px]">ALL</div>
+                    <div
+                        class="bg-white/20 w-7 h-7 rounded-lg flex items-center justify-center text-white font-bold text-[8px]">
+                        ALL</div>
                     <div>
                         <p class="text-[7px] text-indigo-100 uppercase font-bold">Filter Total</p>
-                        <p class="text-xs font-bold text-white">{{ number_format($filteredGrandTotal, 0, ',', '.') }}</p>
+                        <p class="text-xs font-bold text-white">{{ number_format($filteredGrandTotal, 0, ',', '.') }}
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Detailed Report Table -->
+        <!-- Tabel Laporan Rinci -->
         <div class="mb-10">
             <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Data Rincian Penerimaan</h2>
             <div class="border border-gray-200 rounded-xl overflow-hidden shadow-sm">
@@ -165,40 +224,55 @@
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         @forelse($data->groupBy('tanggal_penerimaan') as $date => $group)
-                            <!-- Date Line -->
+                            <!-- Baris Tanggal -->
                             <tr class="bg-gray-50">
-                                <td colspan="10" class="text-[9px] font-black text-gray-500 uppercase py-1 px-2 border-y border-gray-100">
-                                    Penerimaan: {{ \Carbon\Carbon::parse($date)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
+                                <td colspan="10"
+                                    class="text-[9px] font-black text-gray-500 uppercase py-1 px-2 border-y border-gray-100">
+                                    Penerimaan:
+                                    {{ \Carbon\Carbon::parse($date)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
                                 </td>
                             </tr>
                             @foreach($group as $row)
-                            <tr>
-                                <td class="text-[10px] font-bold text-gray-900 px-2 py-1.5">{{ $row->nomor_bon }}</td>
-                                <td class="text-center px-1 py-1.5">
-                                    <span class="{{ $pecahanMeta[$row->pecahan]['color'] }} text-white text-[8px] font-bold px-1 py-0.5 rounded">
-                                        {{ $row->pecahan }}
-                                    </span>
-                                </td>
-                                <td class="text-[10px] font-bold text-gray-700 text-center px-2 py-1.5">{{ $row->emisi }}</td>
-                                <td class="text-[10px] font-bold text-gray-700 text-center px-2 py-1.5">{{ $row->tahun_anggaran }}</td>
-                                <td class="text-[10px] font-bold text-gray-900 text-right px-2 py-1.5">{{ number_format($row->jumlah, 0, ',', '.') }}</td>
-                                <td class="text-[9px] font-bold text-gray-500 uppercase px-2 py-1.5 text-center">{{ $row->gilir }}</td>
-                                <td class="text-[9px] font-medium text-gray-600 px-2 py-1.5 text-center">{{ $row->mesin }}</td>
-                                <td class="text-[9px] font-medium text-gray-600 px-2 py-1.5 text-center">{{ $row->supplier }}</td>
-                                <td class="text-[9px] font-medium text-gray-600 italic px-2 py-1.5">{{ $row->batch }} / {{ $row->seri }}</td>
-                                <td class="text-[9px] font-medium text-gray-400 uppercase px-2 py-1.5">{{ $row->user->name ?? '-' }}</td>
-                            </tr>
+                                <tr>
+                                    <td class="text-[10px] font-bold text-gray-900 px-2 py-1.5">{{ $row->nomor_bon }}</td>
+                                    <td class="text-center px-1 py-1.5">
+                                        <span
+                                            class="{{ $pecahanMeta[$row->pecahan]['color'] }} text-white text-[8px] font-bold px-1 py-0.5 rounded">
+                                            {{ $row->pecahan }}
+                                        </span>
+                                    </td>
+                                    <td class="text-[10px] font-bold text-gray-700 text-center px-2 py-1.5">{{ $row->emisi }}
+                                    </td>
+                                    <td class="text-[10px] font-bold text-gray-700 text-center px-2 py-1.5">
+                                        {{ $row->tahun_anggaran }}</td>
+                                    <td class="text-[10px] font-bold text-gray-900 text-right px-2 py-1.5">
+                                        {{ number_format($row->jumlah, 0, ',', '.') }}</td>
+                                    <td class="text-[9px] font-bold text-gray-500 uppercase px-2 py-1.5 text-center">
+                                        {{ $row->gilir }}</td>
+                                    <td class="text-[9px] font-medium text-gray-600 px-2 py-1.5 text-center">{{ $row->mesin }}
+                                    </td>
+                                    <td class="text-[9px] font-medium text-gray-600 px-2 py-1.5 text-center">
+                                        {{ $row->supplier }}</td>
+                                    <td class="text-[9px] font-medium text-gray-600 italic px-2 py-1.5">{{ $row->batch }} /
+                                        {{ $row->seri }}</td>
+                                    <td class="text-[9px] font-medium text-gray-400 uppercase px-2 py-1.5">
+                                        {{ $row->user->name ?? '-' }}</td>
+                                </tr>
                             @endforeach
                         @empty
-                        <tr>
-                            <td colspan="10" class="text-center py-10 text-gray-400 text-sm italic">Tidak ada data ditemukan untuk periode ini.</td>
-                        </tr>
+                            <tr>
+                                <td colspan="10" class="text-center py-10 text-gray-400 text-sm italic">Tidak ada data
+                                    ditemukan untuk periode ini.</td>
+                            </tr>
                         @endforelse
                     </tbody>
                     <tfoot class="bg-gray-50 border-t border-gray-200">
                         <tr>
-                            <th colspan="2" class="text-[9px] font-bold text-gray-700 uppercase p-2 border-r border-gray-100">Subtotal Halaman</th>
-                            <td class="text-[10px] font-black text-gray-900 text-right p-2">{{ number_format($data->sum('jumlah'), 0, ',', '.') }}</td>
+                            <th colspan="2"
+                                class="text-[9px] font-bold text-gray-700 uppercase p-2 border-r border-gray-100">
+                                Subtotal Halaman</th>
+                            <td class="text-[10px] font-black text-gray-900 text-right p-2">
+                                {{ number_format($data->sum('jumlah'), 0, ',', '.') }}</td>
                             <td colspan="6" class="bg-gray-50"></td>
                         </tr>
                     </tfoot>
@@ -222,13 +296,14 @@
 
     </div>
 
-    <!-- Auto-trigger print if requested via query param -->
+    <!-- Pemicu cetak otomatis jika diminta melalui parameter query -->
     @if(request()->has('autoprint'))
-    <script>
-        window.onload = function() {
-            setTimeout(() => { window.print(); }, 500);
-        };
-    </script>
+        <script>
+            window.onload = function () {
+                setTimeout(() => { window.print(); }, 500);
+            };
+        </script>
     @endif
 </body>
+
 </html>

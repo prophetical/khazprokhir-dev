@@ -47,7 +47,7 @@
             @endif
 
             <div class="flex flex-col lg:flex-row gap-6">
-                <!-- Left Column: Grid Selection -->
+                <!-- Kolom Kiri: Pilih Grid -->
                 <div class="flex-1 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-500 sm:rounded-xl border-t-4"
                      :class="currentTheme ? currentTheme.border : 'border-gray-100'">
                     <div class="p-6 text-gray-900">
@@ -56,7 +56,7 @@
                             Pilih Pack untuk Disortir
                         </h3>
                         
-                        <!-- Legend -->
+                        <!-- Keterangan Warna -->
                         <div class="flex flex-wrap gap-4 mb-8 text-[10px] font-bold tracking-widest text-gray-500 bg-gray-50/50 p-4 rounded-lg border border-gray-100">
                             <div class="flex items-center"><div class="w-3 h-3 rounded-sm bg-blue-500 mr-2 shadow-sm"></div>Rikyet Siap Sortir</div>
                             <div class="flex items-center"><div class="w-3 h-3 rounded-sm bg-green-500 mr-2 shadow-sm"></div>Cutpack Siap Sortir</div>
@@ -66,7 +66,7 @@
                             <div class="flex items-center"><div class="w-3 h-3 rounded-sm bg-gray-100 border border-gray-200 mr-2"></div>Kosong</div>
                         </div>
 
-                        <!-- 10x10 Grid -->
+                        <!-- Grid 10x10 untuk memilih pack -->
                         <div class="grid grid-flow-col gap-2 mb-8" style="grid-template-rows: repeat(10, minmax(0, 1fr));" @mouseleave="isDragging = false">
                                 @for ($i = 1; $i <= 100; $i++)
                                     @php
@@ -112,7 +112,7 @@
                                             }
                                         }
 
-                                        // Corrected grid calculations for grid-flow-col (column-major)
+                                        // Hitungan grid agar pas buat kolom (column-major)
                                         $gridRow = ($i - 1) % 10;
                                         $gridCol = floor(($i - 1) / 10);
                                         
@@ -146,7 +146,7 @@
                                         >
                                             <span class="relative z-10">{{ $i }}</span>
 
-                                            <!-- Selected Overlay -->
+                                            <!-- Tampilan saat dipilih -->
                                             <template x-if="isSelected({{ $i }})">
                                                 <div class="absolute -top-1 -right-1 w-5 h-5 bg-amber-400 rounded-full flex items-center justify-center shadow-lg border-2 border-white animate-bounce-subtle z-20">
                                                     <svg class="w-3 h-3 text-gray-900" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
@@ -154,7 +154,7 @@
                                             </template>
                                         </div>
 
-                                        <!-- Enhanced Tooltip -->
+                                        <!-- Tooltip -->
                                         <div class="pointer-events-none absolute {{ $vClass }} {{ $hClass }} z-[100] hidden group-hover/pack:flex items-center transition-all duration-300">
                                             <div class="bg-gray-900/95 dark:bg-slate-900/95 backdrop-blur-md text-white text-[10px] rounded-2xl px-4 py-3 whitespace-nowrap shadow-2xl text-center leading-tight border border-white/10 dark:border-slate-700/50 min-w-[150px]">
                                                 <div class="font-black border-b border-white/10 dark:border-slate-700 pb-2 mb-2 flex items-center justify-center gap-2">
@@ -180,7 +180,7 @@
                                 @endfor
                         </div>
                         
-                        <!-- Validation Message -->
+                        <!-- Pesan Error Validasi -->
                         <div x-show="validationError" x-cloak 
                              class="text-red-700 text-xs font-bold mt-4 p-4 bg-red-50 rounded-lg border border-red-100 flex items-center space-x-2 animate-pulse" 
                              x-text="validationError"></div>
@@ -191,7 +191,7 @@
                     </div>
                 </div>
 
-                <!-- Right Column: Form -->
+                <!-- Kolom Kanan: Isi Formnya -->
                 <div class="w-full lg:w-1/3 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-500 sm:rounded-xl border-t-4 h-fit"
                      :class="currentTheme ? currentTheme.border : 'border-gray-100'">
                     <div class="p-6 text-gray-900">
@@ -208,13 +208,13 @@
                             <input type="hidden" name="emisi" value="{{ $emisi }}">
                             <input type="hidden" name="tahun_anggaran" value="{{ $tahun_anggaran }}">
                             
-                            <!-- Hidden inputs for selected packs -->
+                            <!-- Input tersembunyi untuk menyimpan pack yang dipilih -->
                             <template x-for="pack in selectedPacks" :key="pack">
                                 <input type="hidden" name="selected_packs[]" :value="pack">
                             </template>
 
                             <div class="space-y-6">
-                                <!-- Manual Toggle Slider -->
+                                <!-- Tombol memilih Mode Manual -->
                                 <div class="flex items-center justify-between p-4 bg-white/40 backdrop-blur-md rounded-2xl border border-white/60 shadow-sm transition-all duration-300" 
                                      :class="isManual ? 'ring-2 ring-red-500/20 border-red-100 bg-red-50/50' : ''">
                                     <div class="flex items-center">
@@ -236,9 +236,9 @@
                                     </label>
                                 </div>
 
-                                <!-- Form Fields -->
+                                <!-- Isian Form -->
                                 <div class="grid grid-cols-1 gap-5">
-                                    <!-- Total Summary Fields (Stacked to avoid truncation) -->
+                                    <!-- Ringkasan Total (Dibuat menumpuk agar tidak terpotong) -->
                                     <div>
                                         <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Total Pack</label>
                                         <div class="relative group">
@@ -259,13 +259,13 @@
                                     <div>
                                         <label for="supplier" class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Supplier</label>
                                         <div class="relative group">
-                                            <select id="supplier" name="supplier" 
+                                            <select id="supplier" name="supplier" x-model="supplier"
                                                     class="block w-full border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm text-sm py-3 px-10 transition-all duration-300 focus:ring-4 font-bold text-center appearance-none"
                                                     :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'" 
                                                     required>
                                                 <option value="">Pilih Supplier</option>
-                                                <option value="Cutpack" {{ old('supplier') == 'Cutpack' ? 'selected' : '' }}>Cutpack</option>
-                                                <option value="Rikyet" {{ old('supplier') == 'Rikyet' ? 'selected' : '' }}>Rikyet</option>
+                                                <option value="Cutpack">Cutpack</option>
+                                                <option value="Rikyet">Rikyet</option>
                                             </select>
                                         </div>
                                     </div>
@@ -306,7 +306,7 @@
                                         </div>
                                     </div>
 
-                                    <!-- Date and Shift (Stacked to avoid truncation) -->
+                                    <!-- Tanggal dan Urutan (Dibuat menumpuk agar tidak terpotong) -->
                                     <div>
                                         <label for="tanggal" class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Tanggal</label>
                                         <div class="relative group">
@@ -354,7 +354,7 @@
         </div>
     </div>
 
-    <!-- Alpine.js script for sorting layout -->
+    <!-- Script Alpine.js untuk mengatur layout sortir -->
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('sortingGrid', (initialPecahan = '', themes = {}) => ({
@@ -362,17 +362,29 @@
                 themes: themes,
                 get currentTheme() { return this.themes[this.selectedPecahan] || null },
                 @if(request()->has('selected_packs'))
-                    selectedPacks: [{{ request('selected_packs') }}],
+                    selectedPacks: {{ json_encode(array_map('intval', is_array(request('selected_packs')) ? request('selected_packs') : explode(',', request('selected_packs')))) }},
                 @else
                     selectedPacks: [],
                 @endif
+                init() {
+                    // Cek atau pilih supplier otomatis jika pack-nya sudah terpilih dari awal
+                    if (this.selectedPacks.length > 0) {
+                        this.validateSelection();
+                    }
+                },
                 isDragging: false,
                 dragStart: null,
                 validationError: '',
                 isManual: {{ old('is_manual') ? 'true' : 'false' }},
+                supplier: '{{ old('supplier', '') }}',
                 packQuantities: {
                     @foreach ($packsData as $pack)
                         {{ $pack->pack_number }}: {{ $pack->jumlah }},
+                    @endforeach
+                },
+                packSuppliers: {
+                    @foreach ($packsData as $pack)
+                        {{ $pack->pack_number }}: '{{ $pack->pack_supplier }}',
                     @endforeach
                 },
                 
@@ -391,16 +403,16 @@
                 },
 
                 startSelection(num) {
-                    // Logic to toggle block or start drag
+                    // Logika buat pilih satu-satu atau tarik (drag)
                     this.isDragging = true;
                     this.dragStart = num;
                     
-                    // If clicking an already selected one, we don't clear, we just start fresh selection point
+                    // Jika klik yang sudah dipilih, jangan dihapus semua, anggap saja mulai titik baru
                     if (!this.isSelected(num)) {
-                       // Optional: If we want strict block clicking, we might just re-evaluate here
+                       // Opsional: Jika ingin klik blok yang kaku, bisa diatur lagi di sini
                        this.selectedPacks = [num];
                     } else {
-                        // Deselect block logic
+                        // Logika untuk membatalkan pilihan blok
                         let newSelection = [...this.selectedPacks];
                         const index = newSelection.indexOf(num);
                         if (index > -1) {
@@ -410,9 +422,9 @@
                     }
                     this.validateSelection();
                     
-                    // Actually, a better UX is clicking toggles selection. Let's make it simpler for user:
-                    // If start click is not selected, select it. If drag, add to it.
-                    this.selectedPacks = [num]; // reset on new click to start fresh block selection
+                    // Sebenarnya lebih enak jika klik itu buat milih. Dibikin simpel aja buat user:
+                    // Jika pas klik belum dipilih, ya pilih. Jika ditarik (drag), tinggal nambah.
+                    this.selectedPacks = [num]; // reset pas klik baru biar milih blok dari awal lagi
                 },
 
                 onHover(num) {
@@ -445,8 +457,8 @@
                 validateSelection() {
                     this.validationError = '';
                     if (this.selectedPacks.length === 0) return;
-
-                    // Group into contiguous blocks
+    
+                    // Kelompokkan pack yang urutannya menyambung
                     let blocks = [];
                     let currentBlock = [];
                     
@@ -467,10 +479,10 @@
                         blocks.push(currentBlock);
                     }
 
-                    // Validate each block
+                    // Cek tiap blok yang dipilih
                     let hasError = false;
                     for (let block of blocks) {
-                        // Jika mode manual (sisa pack) dimatikan, baru cek kelipatan 4 dan boundary-nya
+                        // Jika bukan mode manual (sisa pack), cek apakah sudah kelipatan 4 dan urutannya benar
                         if (!this.isManual) {
                             if (block.length % 4 !== 0 || (block[0] - 1) % 4 !== 0) {
                                 hasError = true;
@@ -481,6 +493,34 @@
 
                     if (hasError) {
                         this.validationError = 'Pack yang dipilih harus berurutan, berkelipatan 4, dan dimulai dari urutan yang benar (1, 5, 9... dst).';
+                    }
+                    
+                    // Selalu coba update supplier jika ada pack yang dipilih
+                    this.updateAutoSupplier();
+                },
+
+                updateAutoSupplier() {
+                    if (this.selectedPacks.length === 0) return;
+                    
+                    let counts = { 'Cutpack': 0, 'Rikyet': 0 };
+                    this.selectedPacks.forEach(num => {
+                        let s = this.packSuppliers[num];
+                        if (s) {
+                            // Samakan huruf besar kecilnya biar pas dengan pilihan dropdown
+                            let normalizedS = s.toLowerCase().includes('rikyet') ? 'Rikyet' : 'Cutpack';
+                            counts[normalizedS]++;
+                        }
+                    });
+
+                    console.log('Supplier dari pack yang dipilih:', this.selectedPacks.map(n => this.packSuppliers[n]));
+                    console.log('Jumlah hitungan:', counts);
+
+                    if (counts['Cutpack'] > counts['Rikyet']) {
+                        console.log('Otomatis pilih Cutpack');
+                        this.supplier = 'Cutpack';
+                    } else if (counts['Rikyet'] > counts['Cutpack']) {
+                        console.log('Otomatis pilih Rikyet');
+                        this.supplier = 'Rikyet';
                     }
                 },
                 

@@ -20,7 +20,7 @@
     <div class="py-6">
         <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
 
-            {{-- Panel: Warning nomor dus belum dikemas --}}
+            {{-- Panel: Peringatan nomor dus belum dikemas --}}
             @if($missingWarnings->isNotEmpty())
                 <div class="mb-6 bg-red-50 border border-red-200 rounded-xl shadow-sm overflow-hidden">
                     <div class="flex items-center gap-3 px-5 py-3 bg-red-100 border-b border-red-200">

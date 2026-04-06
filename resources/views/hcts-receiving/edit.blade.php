@@ -78,7 +78,7 @@
                                 @method('PUT')
 
                                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                                    <!-- LEFT COLUMN: Informasi Administrasi (Sidebar style) -->
+                                    <!-- KOLOM KIRI: Informasi Administrasi (Gaya Sidebar) -->
                                     <div class="lg:col-span-4 space-y-6">
                                         <div
                                             class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden h-full">
@@ -130,9 +130,9 @@
                                         </div>
                                     </div>
 
-                                    <!-- RIGHT COLUMN: Detail Spesifikasi & Amount -->
+                                    <!-- KOLOM KANAN: Detail Spesifikasi & Jumlah -->
                                     <div class="lg:col-span-8 space-y-6">
-                                        <!-- Detailed Specs Row -->
+                                        <!-- Baris Spesifikasi Detail -->
                                         <div
                                             class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden">
                                             <div class="absolute top-0 left-0 w-1 h-full"
@@ -152,7 +152,7 @@
                                             </div>
 
                                             <div class="space-y-6">
-                                                <!-- Consolidated Grid 1: Basic Specs -->
+                                                <!-- Grid Terkonsolidasi 1: Spesifikasi Dasar -->
                                                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                                                     <div>
                                                         <x-input-label for="pecahan" value="Pecahan"
@@ -208,7 +208,7 @@
                                                     </div>
                                                 </div>
 
-                                                <!-- Consolidated Grid 2: Batch & Seri -->
+                                                <!-- Grid Terkonsolidasi 2: Batch & Seri -->
                                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                     <div class="group">
                                                         <x-input-label for="batch" value="Batch"
@@ -233,7 +233,7 @@
                                             </div>
                                         </div>
 
-                                        <!-- Amount & Limit Progress Row -->
+                                        <!-- Baris Progres Jumlah & Batas -->
                                         <div class="p-6 bg-rose-50/50 rounded-3xl border border-rose-100 relative group transition-all"
                                             :class="currentTheme ? ('bg-' + currentTheme.soft.replace('bg-', '') + '/50 border-' + currentTheme.border.replace('border-', '') + '/20') : ''">
                                             <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
@@ -281,7 +281,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <!-- Visual Progress Bar -->
+                                                    <!-- Bar Progres Visual -->
                                                     <div
                                                         class="h-4 bg-white/80 rounded-full overflow-hidden p-1 shadow-inner border border-gray-100">
                                                         <div class="h-full rounded-full transition-all duration-700 relative overflow-hidden"

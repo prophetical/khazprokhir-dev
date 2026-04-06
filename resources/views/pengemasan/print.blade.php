@@ -1,41 +1,86 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistem Data Pengemasan HCS - {{ \Carbon\Carbon::now()->locale('id')->isoFormat('D MMMM YYYY') }}</title>
-    <!-- Tailwind Local -->
+    <!-- Tailwind Lokal -->
     <script src="{{ asset('vendor/tailwindcss/tailwindcss.min.js') }}"></script>
     <style>
         @media print {
-            .no-print { display: none !important; }
-            body { padding: 0 !important; margin: 0 !important; background: white; }
-            .print-container { width: 100% !important; max-width: none !important; border: none !important; shadow: none !important; padding: 0.2cm !important; border-radius: 0 !important; }
-            /* Force background colors in print */
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            @page { margin: 0.2cm; }
+            .no-print {
+                display: none !important;
+            }
+
+            body {
+                padding: 0 !important;
+                margin: 0 !important;
+                background: white;
+            }
+
+            .print-container {
+                width: 100% !important;
+                max-width: none !important;
+                border: none !important;
+                shadow: none !important;
+                padding: 0.2cm !important;
+                border-radius: 0 !important;
+            }
+
+            /* Paksa warna latar belakang saat mencetak */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            @page {
+                margin: 0.2cm;
+            }
         }
-        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background-color: #f9fafb; }
-        .table-tight th, .table-tight td { padding: 6px 10px; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #f9fafb;
+        }
+
+        .table-tight th,
+        .table-tight td {
+            padding: 6px 10px;
+        }
     </style>
 </head>
+
 <body class="p-4 md:p-10">
-    <div class="print-container max-w-6xl mx-auto bg-white p-8 border border-gray-100 shadow-sm rounded-2xl min-h-screen relative overflow-hidden">
+    <div
+        class="print-container max-w-6xl mx-auto bg-white p-8 border border-gray-100 shadow-sm rounded-2xl min-h-screen relative overflow-hidden">
         {{-- Dekorasi pojok kanan atas --}}
-        <div class="absolute top-0 right-0 w-40 h-40 rounded-bl-[80px] opacity-[0.08] pointer-events-none" style="background: linear-gradient(135deg, #1e40af 0%, #7c3aed 55%, #db2877 100%);"></div>
-        <div class="absolute top-0 right-0 w-20 h-20 rounded-bl-[40px] opacity-[0.13] pointer-events-none" style="background: linear-gradient(135deg, #1e40af 0%, #7c3aed 55%, #db2877 100%);"></div>
+        <div class="absolute top-0 right-0 w-40 h-40 rounded-bl-[80px] opacity-[0.08] pointer-events-none"
+            style="background: linear-gradient(135deg, #1e40af 0%, #7c3aed 55%, #db2877 100%);"></div>
+        <div class="absolute top-0 right-0 w-20 h-20 rounded-bl-[40px] opacity-[0.13] pointer-events-none"
+            style="background: linear-gradient(135deg, #1e40af 0%, #7c3aed 55%, #db2877 100%);"></div>
         {{-- Dekorasi pojok kanan bawah --}}
-        <div class="absolute bottom-0 right-0 w-40 h-40 rounded-tl-[80px] opacity-[0.05] pointer-events-none" style="background: linear-gradient(315deg, #1e40af 0%, #7c3aed 55%, #db2877 100%);"></div>
-        <div class="absolute bottom-0 right-0 w-20 h-20 rounded-tl-[40px] opacity-[0.10] pointer-events-none" style="background: linear-gradient(315deg, #1e40af 0%, #7c3aed 55%, #db2877 100%);"></div>
+        <div class="absolute bottom-0 right-0 w-40 h-40 rounded-tl-[80px] opacity-[0.05] pointer-events-none"
+            style="background: linear-gradient(315deg, #1e40af 0%, #7c3aed 55%, #db2877 100%);"></div>
+        <div class="absolute bottom-0 right-0 w-20 h-20 rounded-tl-[40px] opacity-[0.10] pointer-events-none"
+            style="background: linear-gradient(315deg, #1e40af 0%, #7c3aed 55%, #db2877 100%);"></div>
 
         <!-- Action Toolbar (Hidden on Print) -->
         <div class="no-print flex justify-between items-center mb-8 pb-6 border-b border-gray-100">
-            <a href="{{ route('pengemasan.data', request()->all()) }}" class="text-sm font-medium text-gray-500 hover:text-indigo-600 flex items-center transition-colors">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+            <a href="{{ route('pengemasan.data', request()->all()) }}"
+                class="text-sm font-medium text-gray-500 hover:text-indigo-600 flex items-center transition-colors">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
                 Kembali ke Data Pengemasan
             </a>
-            <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-indigo-100 transition-all flex items-center">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+            <button onclick="window.print()"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-indigo-100 transition-all flex items-center">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
                 Cetak Laporan / Simpan PDF
             </button>
         </div>
@@ -44,57 +89,59 @@
         <header class="flex justify-between items-start mb-8">
             <div>
                 <h1 class="text-2xl font-extrabold text-gray-900 mb-1 tracking-tight">LAPORAN DATA PENGEMASAN HCS</h1>
-                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-4">Khazprokhir Management System</p>
-                
-                <!-- Filter Context -->
+                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-4">Khazprokhir Management
+                    System</p>
+
+                <!-- Konteks Filter -->
                 <div class="flex flex-wrap items-center gap-3 text-xs mb-4">
                     <div class="bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100 flex items-center">
                         <span class="text-gray-400 mr-2">Status Data:</span>
                         <span class="font-bold text-gray-700">Telah Dikemas</span>
                     </div>
                     @if(request('pecahan'))
-                    <div class="bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100 flex items-center">
-                        <span class="text-indigo-400 mr-2">Pecahan:</span>
-                        <span class="font-bold text-indigo-700 uppercase">{{ request('pecahan') }}</span>
-                    </div>
+                        <div class="bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100 flex items-center">
+                            <span class="text-indigo-400 mr-2">Pecahan:</span>
+                            <span class="font-bold text-indigo-700 uppercase">{{ request('pecahan') }}</span>
+                        </div>
                     @endif
                     @if(request('search'))
-                    <div class="bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-100 flex items-center">
-                        <span class="text-amber-400 mr-2">Cari Data:</span>
-                        <span class="font-bold text-amber-700 uppercase">{{ request('search') }}</span>
-                    </div>
+                        <div class="bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-100 flex items-center">
+                            <span class="text-amber-400 mr-2">Cari Data:</span>
+                            <span class="font-bold text-amber-700 uppercase">{{ request('search') }}</span>
+                        </div>
                     @endif
                     @if(request('search_dus'))
-                    <div class="bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100 flex items-center">
-                        <span class="text-emerald-400 mr-2">No Dus:</span>
-                        <span class="font-bold text-emerald-700 uppercase">{{ request('search_dus') }}</span>
-                    </div>
+                        <div class="bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100 flex items-center">
+                            <span class="text-emerald-400 mr-2">No Dus:</span>
+                            <span class="font-bold text-emerald-700 uppercase">{{ request('search_dus') }}</span>
+                        </div>
                     @endif
                     @if(request('gilir'))
-                    <div class="bg-purple-50 px-3 py-1.5 rounded-lg border border-purple-100 flex items-center">
-                        <span class="text-purple-400 mr-2">Gilir:</span>
-                        <span class="font-bold text-purple-700 uppercase">G{{ request('gilir') }}</span>
-                    </div>
+                        <div class="bg-purple-50 px-3 py-1.5 rounded-lg border border-purple-100 flex items-center">
+                            <span class="text-purple-400 mr-2">Gilir:</span>
+                            <span class="font-bold text-purple-700 uppercase">G{{ request('gilir') }}</span>
+                        </div>
                     @endif
                     @if(request('tanggal_awal') || request('tanggal_akhir'))
-                    <div class="bg-rose-50 px-3 py-1.5 rounded-lg border border-rose-100 flex items-center">
-                        <span class="text-rose-400 mr-2">Periode:</span>
-                        <span class="font-bold text-rose-700">
-                            {{ request('tanggal_awal') ? \Carbon\Carbon::parse(request('tanggal_awal'))->format('d/m/Y') : '...' }}
-                             - 
-                            {{ request('tanggal_akhir') ? \Carbon\Carbon::parse(request('tanggal_akhir'))->format('d/m/Y') : '...' }}
-                        </span>
-                    </div>
+                        <div class="bg-rose-50 px-3 py-1.5 rounded-lg border border-rose-100 flex items-center">
+                            <span class="text-rose-400 mr-2">Periode:</span>
+                            <span class="font-bold text-rose-700">
+                                {{ request('tanggal_awal') ? \Carbon\Carbon::parse(request('tanggal_awal'))->format('d/m/Y') : '...' }}
+                                -
+                                {{ request('tanggal_akhir') ? \Carbon\Carbon::parse(request('tanggal_akhir'))->format('d/m/Y') : '...' }}
+                            </span>
+                        </div>
                     @endif
                 </div>
             </div>
             <div class="text-right">
                 <p class="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Dicetak Pada</p>
-                <p class="text-xs font-bold text-gray-700">{{ \Carbon\Carbon::now()->locale('id')->isoFormat('D MMMM YYYY, HH:mm') }}</p>
+                <p class="text-xs font-bold text-gray-700">
+                    {{ \Carbon\Carbon::now()->locale('id')->isoFormat('D MMMM YYYY, HH:mm') }}</p>
             </div>
         </header>
 
-        <!-- Detailed Report Table -->
+        <!-- Tabel Laporan Rinci -->
         <div class="mb-10">
             <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Data Rincian Pengemasan</h2>
             <div class="border border-gray-200 rounded-xl overflow-hidden shadow-sm">
@@ -129,42 +176,54 @@
                             ];
                         @endphp
                         @forelse($pengemasans as $row)
-                        <tr>
-                            <td class="text-[10px] font-medium text-gray-600">{{ \Carbon\Carbon::parse($row->tanggal_pengemasan)->locale('id')->isoFormat('D MMMM YYYY') }}</td>
-                            <td class="text-[10px] font-medium text-gray-900">{{ $row->gilir }}</td>
-                            <td class="text-[10px] font-bold text-gray-700 text-center">{{ $row->tahun_anggaran }}</td>
-                            <td class="text-[10px] font-bold text-gray-700 text-center">{{ $row->tahun_emisi }}</td>
-                            <td class="text-center">
-                                <span class="{{ $colorMap[$row->pecahan] ?? 'bg-gray-500' }} text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
-                                    {{ $row->pecahan }}
-                                </span>
-                            </td>
-                            <td class="text-[10px] font-bold text-gray-900">{{ $row->batch }}</td>
-                            <td class="text-[10px] font-medium text-gray-900">{{ $row->seri }}</td>
-                            <td class="text-[10px] font-medium text-gray-600 bg-blue-50/50 rounded px-2 text-center">
-                                {{ $row->pack_awal }} - {{ $row->pack_akhir }}
-                            </td>
-                            <td class="text-[10px] font-bold text-gray-900 text-right">{{ number_format($row->jumlah_pack, 0, ',', '.') }}</td>
-                            <td class="text-[10px] font-bold text-emerald-600 text-right">{{ number_format($row->total_bilyet, 0, ',', '.') }}</td>
+                            <tr>
+                                <td class="text-[10px] font-medium text-gray-600">
+                                    {{ \Carbon\Carbon::parse($row->tanggal_pengemasan)->locale('id')->isoFormat('D MMMM YYYY') }}
+                                </td>
+                                <td class="text-[10px] font-medium text-gray-900">{{ $row->gilir }}</td>
+                                <td class="text-[10px] font-bold text-gray-700 text-center">{{ $row->tahun_anggaran }}</td>
+                                <td class="text-[10px] font-bold text-gray-700 text-center">{{ $row->tahun_emisi }}</td>
+                                <td class="text-center">
+                                    <span
+                                        class="{{ $colorMap[$row->pecahan] ?? 'bg-gray-500' }} text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
+                                        {{ $row->pecahan }}
+                                    </span>
+                                </td>
+                                <td class="text-[10px] font-bold text-gray-900">{{ $row->batch }}</td>
+                                <td class="text-[10px] font-medium text-gray-900">{{ $row->seri }}</td>
+                                <td class="text-[10px] font-medium text-gray-600 bg-blue-50/50 rounded px-2 text-center">
+                                    {{ $row->pack_awal }} - {{ $row->pack_akhir }}
+                                </td>
+                                <td class="text-[10px] font-bold text-gray-900 text-right">
+                                    {{ number_format($row->jumlah_pack, 0, ',', '.') }}</td>
+                                <td class="text-[10px] font-bold text-emerald-600 text-right">
+                                    {{ number_format($row->total_bilyet, 0, ',', '.') }}</td>
 
-                            <td class="text-[10px] font-bold text-purple-700 text-right">{{ number_format($row->jumlah_dus, 0, ',', '.') }}</td>
-                            <td class="text-[10px] font-bold text-green-700 text-center">{{ $row->dus_awal }} - {{ $row->dus_akhir }}</td>
-                            <td class="text-[10px] font-medium text-gray-600">
-                                {{ $row->user->name ?? '-' }}
-                            </td>
-                        </tr>
+                                <td class="text-[10px] font-bold text-purple-700 text-right">
+                                    {{ number_format($row->jumlah_dus, 0, ',', '.') }}</td>
+                                <td class="text-[10px] font-bold text-green-700 text-center">{{ $row->dus_awal }} -
+                                    {{ $row->dus_akhir }}</td>
+                                <td class="text-[10px] font-medium text-gray-600">
+                                    {{ $row->user->name ?? '-' }}
+                                </td>
+                            </tr>
                         @empty
-                        <tr>
-                            <td colspan="13" class="text-center py-10 text-gray-400 text-sm italic">Tidak ada data ditemukan untuk rincian ini.</td>
-                        </tr>
+                            <tr>
+                                <td colspan="13" class="text-center py-10 text-gray-400 text-sm italic">Tidak ada data
+                                    ditemukan untuk rincian ini.</td>
+                            </tr>
                         @endforelse
                     </tbody>
                     <tfoot class="bg-gray-50 border-t border-gray-200">
                         <tr>
-                            <td colspan="8" class="text-[10px] font-bold text-gray-700 uppercase p-3 text-right">Total Filter Ini</td>
-                            <td class="text-[10px] font-extrabold text-gray-900 text-right p-3">{{ number_format($pengemasans->sum('jumlah_pack'), 0, ',', '.') }}</td>
-                            <td class="text-[10px] font-extrabold text-emerald-600 text-right p-3">{{ number_format($pengemasans->sum('total_bilyet'), 0, ',', '.') }}</td>
-                            <td class="text-[10px] font-extrabold text-purple-700 text-right p-3">{{ number_format($pengemasans->sum('jumlah_dus'), 0, ',', '.') }}</td>
+                            <td colspan="8" class="text-[10px] font-bold text-gray-700 uppercase p-3 text-right">Total
+                                Filter Ini</td>
+                            <td class="text-[10px] font-extrabold text-gray-900 text-right p-3">
+                                {{ number_format($pengemasans->sum('jumlah_pack'), 0, ',', '.') }}</td>
+                            <td class="text-[10px] font-extrabold text-emerald-600 text-right p-3">
+                                {{ number_format($pengemasans->sum('total_bilyet'), 0, ',', '.') }}</td>
+                            <td class="text-[10px] font-extrabold text-purple-700 text-right p-3">
+                                {{ number_format($pengemasans->sum('jumlah_dus'), 0, ',', '.') }}</td>
                             <td colspan="2"></td>
                         </tr>
                     </tfoot>
@@ -188,13 +247,14 @@
 
     </div>
 
-    <!-- Auto-trigger print if requested via query param -->
+    <!-- Pemicu cetak otomatis jika diminta melalui parameter query -->
     @if(request()->has('autoprint'))
-    <script>
-        window.onload = function() {
-            setTimeout(() => { window.print(); }, 500);
-        };
-    </script>
+        <script>
+            window.onload = function () {
+                setTimeout(() => { window.print(); }, 500);
+            };
+        </script>
     @endif
 </body>
+
 </html>

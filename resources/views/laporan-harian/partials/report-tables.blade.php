@@ -36,7 +36,9 @@
                     <thead class="bg-gray-100/80">
                         <tr
                             class="text-[10px] font-black uppercase text-gray-500 tracking-widest divide-x divide-gray-200">
-                            <th rowspan="2" class="px-2 py-4 sm:px-4 text-center sticky left-0 bg-gray-100 z-10 w-16 sm:w-20">Pecahan
+                            <th rowspan="2"
+                                class="px-2 py-4 sm:px-4 text-center sticky left-0 bg-gray-100 z-10 w-16 sm:w-20">
+                                Pecahan
                             </th>
                             <th colspan="3" class="px-4 py-2 text-center text-indigo-600 bg-indigo-50/50">Persediaan
                             </th>
@@ -85,10 +87,12 @@
                                         {{ $row['pecahan'] }}
                                     </span>
                                 </td>
-                                <td class="px-2 py-4 sm:px-4 text-right text-[10px] sm:text-xs font-bold text-gray-600 border-r border-gray-100">
+                                <td
+                                    class="px-2 py-4 sm:px-4 text-right text-[10px] sm:text-xs font-bold text-gray-600 border-r border-gray-100">
                                     {{ $row['siap_kemas_bilyet'] == 0 ? '-' : number_format($row['siap_kemas_bilyet'], 0, ',', '.') }}
                                 </td>
-                                <td class="px-2 py-4 sm:px-4 text-right text-[10px] sm:text-xs font-bold text-gray-600 border-r border-gray-100">
+                                <td
+                                    class="px-2 py-4 sm:px-4 text-right text-[10px] sm:text-xs font-bold text-gray-600 border-r border-gray-100">
                                     {{ $row['siap_kirim_bilyet'] == 0 ? '-' : number_format($row['siap_kirim_bilyet'], 0, ',', '.') }}
                                 </td>
                                 <td
@@ -99,7 +103,8 @@
                                     class="px-2 py-4 sm:px-4 text-right text-[10px] sm:text-xs font-black text-indigo-700 bg-indigo-50/10 border-r border-gray-100">
                                     {{ $row['total_persediaan_bilyet'] == 0 ? '-' : number_format($row['total_persediaan_bilyet'], 0, ',', '.') }}
                                 </td>
-                                <td class="px-2 py-4 sm:px-4 text-right text-[10px] sm:text-xs font-bold text-gray-600 border-r border-gray-100">
+                                <td
+                                    class="px-2 py-4 sm:px-4 text-right text-[10px] sm:text-xs font-bold text-gray-600 border-r border-gray-100">
                                     {{ $row['penyerahan_hari_ini_bilyet'] == 0 ? '-' : number_format($row['penyerahan_hari_ini_bilyet'], 0, ',', '.') }}
                                 </td>
                                 <td
@@ -110,10 +115,12 @@
                                     class="px-2 py-4 sm:px-4 text-right text-[10px] sm:text-xs font-black text-pink-700 bg-pink-50/10 border-r border-gray-100">
                                     {{ $row['akumulasi_penyerahan'] == 0 ? '-' : number_format($row['akumulasi_penyerahan'], 0, ',', '.') }}
                                 </td>
-                                <td class="px-2 py-4 sm:px-4 text-right text-[10px] sm:text-xs font-bold text-gray-600 border-r border-gray-100">
+                                <td
+                                    class="px-2 py-4 sm:px-4 text-right text-[10px] sm:text-xs font-bold text-gray-600 border-r border-gray-100">
                                     {{ $row['target'] == 0 ? '-' : number_format($row['target'], 0, ',', '.') }}
                                 </td>
-                                <td class="px-2 py-4 sm:px-4 text-right text-[10px] sm:text-xs font-bold text-gray-600 border-r border-gray-100">
+                                <td
+                                    class="px-2 py-4 sm:px-4 text-right text-[10px] sm:text-xs font-bold text-gray-600 border-r border-gray-100">
                                     {{ $row['sisa_target'] == 0 ? '-' : number_format($row['sisa_target'], 0, ',', '.') }}
                                 </td>
                                 <td class="px-4 py-4 text-center border-r border-gray-100">
@@ -192,7 +199,7 @@
     </div>
 </div>
 
-<!-- Monitoring & Production Section -->
+<!-- Bagian Monitoring & Produksi -->
 <div class="bg-white overflow-hidden shadow-2xl sm:rounded-2xl border border-gray-100 mt-8 p-1">
     <div class="bg-gray-50/50 rounded-[1.25rem] p-6">
         <div class="flex justify-between items-center mb-6">
@@ -401,7 +408,7 @@
     </div>
 </div>
 
-<!-- HCTS Inventory Section -->
+<!-- Bagian Persediaan HCTS -->
 <div class="bg-white overflow-hidden shadow-2xl sm:rounded-2xl border border-gray-100 mt-8 p-1">
     <div class="bg-gray-50/50 rounded-[1.25rem] p-6">
         <div class="flex justify-between items-center mb-6">
@@ -523,7 +530,7 @@
     </div>
 </div>
 
-<!-- Annual Target Achievement Section -->
+<!-- Bagian Pencapaian Target Tahunan -->
 <div class="bg-white overflow-hidden shadow-2xl sm:rounded-2xl border border-gray-100 mt-8 p-1">
     <div class="bg-gray-50/50 rounded-[1.25rem] p-6">
         <div class="flex justify-between items-center mb-6">
@@ -652,7 +659,7 @@
     </div>
 </div>
 
-<!-- Monthly Target Achievement Section -->
+<!-- Bagian Pencapaian Target Bulanan -->
 <div class="bg-white overflow-hidden shadow-2xl sm:rounded-2xl border border-gray-100 mt-8 p-1">
     <div class="bg-gray-50/50 rounded-[1.25rem] p-6">
         <div class="flex justify-between items-center mb-6">

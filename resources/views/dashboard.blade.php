@@ -227,7 +227,7 @@
                                 options: this.pieOptions('Proporsi Supplier')
                             });
 
-                            // 4. Grafik Inschiet (Terima/Serah) - Initially none, handled by popup
+                            // 4. Grafik Inschiet (Terima/Serah) - Awalnya kosong, ditangani oleh popup
                         });
                     },
                     getInschietChartData(tab) {
@@ -665,7 +665,7 @@
                                         @endforeach
                                     </div>
                                     <div class="grid grid-cols-7 gap-1 w-full justify-items-center">
-                                        {{-- Empty slots before first day of month --}}
+                                        {{-- Slot kosong sebelum hari pertama bulan tersebut --}}
                                         @for($i = 1; $i < $firstDayOfMonth; $i++)
                                             <div class="w-3 h-3"></div>
                                         @endfor

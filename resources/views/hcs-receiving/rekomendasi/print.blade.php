@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laporan Rekomendasi Penerimaan HCS - {{ \Carbon\Carbon::now()->format('d/m/Y') }}</title>
-    <!-- Tailwind Local -->
+    <!-- Tailwind Lokal -->
     <script src="{{ asset('vendor/tailwindcss/tailwindcss.min.js') }}"></script>
     <style>
         @media print {
             .no-print { display: none !important; }
             body { padding: 0 !important; margin: 0 !important; background: white; }
             .print-container { width: 100% !important; max-width: none !important; border: none !important; shadow: none !important; padding: 0.2cm !important; border-radius: 0 !important; }
-            /* Force background colors in print */
+            /* Paksa warna latar belakang saat cetak */
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             @page { margin: 0.2cm; }
         }
@@ -28,7 +28,7 @@
         <div class="absolute bottom-0 right-0 w-40 h-40 rounded-tl-[80px] opacity-[0.05] pointer-events-none" style="background: linear-gradient(315deg, #1e40af 0%, #7c3aed 55%, #db2877 100%);"></div>
         <div class="absolute bottom-0 right-0 w-20 h-20 rounded-tl-[40px] opacity-[0.10] pointer-events-none" style="background: linear-gradient(315deg, #1e40af 0%, #7c3aed 55%, #db2877 100%);"></div>
 
-        <!-- Action Toolbar (Hidden on Print) -->
+        <!-- Toolbar Aksi (Tersembunyi saat Cetak) -->
         <div class="no-print flex justify-between items-center mb-8 pb-6 border-b border-gray-100">
             <a href="{{ route('rekomendasi-penerimaan.index', request()->all()) }}" class="text-sm font-medium text-gray-500 hover:text-indigo-600 flex items-center transition-colors">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
@@ -58,7 +58,7 @@
                     ];
                 @endphp
 
-                <!-- Filter Context & Legend -->
+                <!-- Konteks Filter & Keterangan -->
                 <div class="flex items-center justify-between mt-6">
                     <div class="flex items-center space-x-3 text-xs">
                         @if(request('pecahan'))
@@ -83,7 +83,7 @@
                         @endif
                     </div>
 
-                    <!-- Legend -->
+                    <!-- Keterangan -->
                     <div class="flex items-center gap-4 bg-gray-50/50 px-4 py-1.5 rounded-lg border border-gray-100">
                         <span class="text-[9px] font-black uppercase tracking-widest text-gray-400">Keterangan:</span>
                         <div class="flex items-center gap-2">
@@ -103,7 +103,7 @@
             </div>
         </header>
 
-        <!-- Main Content -->
+        <!-- Konten Utama -->
         <div class="mb-12">
             <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Daftar Rekomendasi Pack</h2>
             <div class="border border-gray-200 rounded-xl overflow-hidden shadow-sm">
@@ -163,7 +163,7 @@
             </div>
         </div>
 
-        <!-- Footer / Approval -->
+        <!-- Footer / Persetujuan -->
         <footer class="mt-auto pt-10 border-t border-dashed border-gray-200 grid grid-cols-2 gap-20">
             <div class="text-center">
                 <p class="text-[10px] text-gray-400 uppercase font-bold mb-16">Penanggung Jawab</p>
@@ -179,7 +179,7 @@
     </div>
 
     <script>
-        // Auto print if requested
+        // Cetak otomatis jika diminta
         if (window.location.search.indexOf('autoprint=1') > -1) {
             window.onload = function() {
                 setTimeout(() => { window.print(); }, 500);

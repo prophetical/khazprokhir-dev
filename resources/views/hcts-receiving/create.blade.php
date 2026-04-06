@@ -8,7 +8,7 @@
     <div class="py-2">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-2xl sm:rounded-3xl border border-gray-100 relative">
-                <!-- Decorative element -->
+                <!-- Elemen dekoratif -->
                 <div class="absolute top-0 right-0 w-32 h-32 bg-rose-50 rounded-bl-full -z-10 opacity-50"></div>
 
                 @php
@@ -76,7 +76,7 @@
                             @csrf
 
                             <div class="grid grid-cols-1 lg:grid-cols-12 gap-3">
-                                <!-- LEFT COLUMN: Informasi Administrasi (Sidebar style) -->
+                                <!-- KOLOM KIRI: Informasi Administrasi (Gaya Sidebar) -->
                                 <div class="lg:col-span-4 space-y-4">
                                     <div
                                         class="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden h-full">
@@ -124,9 +124,9 @@
                                     </div>
                                 </div>
 
-                                <!-- RIGHT COLUMN: Detail Spesifikasi & Amount -->
+                                <!-- KOLOM KANAN: Detail Spesifikasi & Jumlah -->
                                 <div class="lg:col-span-8 space-y-4">
-                                    <!-- Detailed Specs Row -->
+                                    <!-- Baris Spesifikasi Detail -->
                                     <div
                                         class="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden">
                                         <div class="absolute top-0 left-0 w-1 h-full"
@@ -143,7 +143,7 @@
                                         </div>
 
                                         <div class="space-y-4">
-                                            <!-- Consolidated Grid 1: Basic Specs -->
+                                            <!-- Grid Terkonsolidasi 1: Spesifikasi Dasar -->
                                             <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
                                                 <div>
                                                     <x-input-label for="pecahan" value="Pecahan"
@@ -199,7 +199,7 @@
                                                 </div>
                                             </div>
 
-                                            <!-- Consolidated Grid 2: Batch & Seri -->
+                                            <!-- Grid Terkonsolidasi 2: Batch & Seri -->
                                             <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                                                 <div class="group">
                                                     <x-input-label for="batch" value="Batch"
@@ -224,7 +224,7 @@
                                         </div>
                                     </div>
 
-                                    <!-- Amount & Limit Progress Row -->
+                                    <!-- Baris Progres Jumlah & Batas -->
                                     <div class="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden"
                                         :class="currentTheme ? ('bg-' + currentTheme.soft.replace('bg-', '') + '/50 border-' + currentTheme.border.replace('border-', '') + '/20') : ''">
                                         <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
@@ -268,7 +268,7 @@
                                                     </div>
                                                 </div>
 
-                                                <!-- Visual Progress Bar -->
+                                                <!-- Bar Progres Visual -->
                                                 <div
                                                     class="h-4 bg-white/80 rounded-full overflow-hidden p-1 shadow-inner border border-gray-100">
                                                     <div class="h-full rounded-full transition-all duration-700 relative overflow-hidden"

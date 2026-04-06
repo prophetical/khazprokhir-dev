@@ -34,7 +34,7 @@
 
                         <div class="flex flex-col lg:flex-row gap-0">
 
-                            <!-- Left: Form Fields -->
+                            <!-- Kiri: Field Form -->
                             <div class="w-full lg:w-[45%] p-6 lg:p-8 border-r border-gray-100 bg-white/40">
                                 <div class="mb-8 flex items-center justify-between">
                                     <h3 class="text-xl font-black text-gray-900 tracking-tight flex items-center">
@@ -232,7 +232,7 @@
 
                                             <div class="flex flex-col gap-3 relative"
                                                 x-data="{ isManual: {{ ($hcsReceiving->is_manual || ($hcsReceiving->jumlah % 45000 !== 0)) ? 'true' : 'false' }} }">
-                                                <!-- Toggle Slider for Manual -->
+                                                <!-- Slider Pengalih untuk Manual -->
                                                 <div
                                                     class="flex items-center justify-between bg-white/50 border border-gray-200 p-2 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 min-w-[280px]">
                                                     <div class="flex items-center mr-4">
@@ -274,7 +274,7 @@
                                                     <button type="submit"
                                                         class="w-full sm:w-auto flex justify-center items-center py-3.5 px-10 border border-transparent shadow-xl text-xs font-black rounded-xl transition-all duration-300 uppercase tracking-[0.2em] relative overflow-hidden group min-w-[200px] hover:scale-[1.02] active:scale-[0.98] hover:shadow-2xl"
                                                         :class="currentTheme ? (currentTheme.btn + ' ' + currentTheme.text) : 'bg-indigo-600 text-white'">
-                                                        <!-- Shine Effect -->
+                                                        <!-- Efek Kilau -->
                                                         <div
                                                             class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shine_1.5s_infinite]">
                                                         </div>
@@ -298,7 +298,7 @@
                                 </div>
                             </div>
 
-                            <!-- Right: Pack Grid -->
+                            <!-- Kanan: Grid Pack -->
                             <div class="w-full lg:w-[55%] p-8 lg:p-10 bg-gray-50/20 backdrop-blur-sm">
                                 <div class="mb-1">
                                     <h3 class="text-xl font-black text-gray-900 tracking-tight flex items-center">
@@ -311,7 +311,7 @@
                                     </h3>
                                 </div>
 
-                                <!-- Summary Cards -->
+                                <!-- Kartu Ringkasan -->
                                 <div class="grid grid-cols-2 gap-2 mb-1">
                                     <div
                                         class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm transition-all duration-500 hover:shadow-md">
@@ -338,7 +338,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Legend -->
+                                <!-- Keterangan -->
                                 <div class="bg-white/40 p-4 rounded-xl border border-white mb-1">
                                     <h4
                                         class="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-1">
@@ -372,7 +372,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Hidden Inputs to submit the array -->
+                                <!-- Input Tersembunyi untuk mengirim array -->
                                 <div id="hidden_packs_container"></div>
 
                                 <!-- Grid Container -->
@@ -780,14 +780,14 @@
         <style>
             [x-cloak] { display: none !important; }
 
-            /* Restoring High-Fidelity Dark Mode Aesthetics for Edit Page */
+            /* Mengembalikan Estetika Mode Gelap High-Fidelity untuk Halaman Edit */
             body.dark-mode [class*="bg-gray-50/30"] { background-color: var(--theme-bg-main) !important; }
             body.dark-mode [class*="bg-white/70"] { background-color: rgba(30, 41, 59, 0.7) !important; border-color: var(--theme-border-main) !important; backdrop-blur: 40px !important; }
             
             body.dark-mode .lg\:w-\[45\%\] { background-color: rgba(15, 23, 42, 0.4) !important; border-right-color: var(--theme-border-main) !important; }
             body.dark-mode .lg\:w-\[55\%\] { background-color: rgba(15, 23, 42, 0.2) !important; }
             
-            /* Nested Elements & Inner Cards - Depth Restoration */
+            /* Elemen Bersarang & Kartu Dalam - Restorasi Kedalaman */
             body.dark-mode .bg-white\/80, 
             body.dark-mode .bg-white\/40, 
             body.dark-mode .bg-white\/50,
@@ -797,7 +797,7 @@
                 backdrop-blur: 10px !important;
             }
 
-            /* Input & Field Overrides */
+            /* Pengambilalihan Input & Field */
             body.dark-mode input.bg-white\/50,
             body.dark-mode select.bg-white\/50 {
                 background-color: rgba(15, 23, 42, 0.6) !important;
@@ -808,14 +808,14 @@
             body.dark-mode .text-gray-900, body.dark-mode .text-gray-800 { color: var(--theme-text-main) !important; }
             body.dark-mode .text-gray-600, body.dark-mode .text-gray-700 { color: var(--theme-text-muted) !important; }
             
-            /* Borders & Utilities */
+            /* Border & Utilitas */
             body.dark-mode .border-white, 
             body.dark-mode .border-gray-100, 
             body.dark-mode .border-gray-200 { 
                 border-color: var(--theme-border-main) !important; 
             }
 
-            /* Pack Grid Tooltip & Grid Elements */
+            /* Tooltip Grid Pack & Elemen Grid */
             body.dark-mode .pack-btn-available {
                 background-color: #1a2434 !important;
                 color: #64748b !important;
@@ -838,7 +838,7 @@
                 border-color: #e2e8f0 !important;
             }
 
-            /* Light Mode Refinements for Edit Page */
+            /* Pemurnian Mode Terang untuk Halaman Edit */
             body.light-mode .bg-white\/70.backdrop-blur-xl { background-color: #ffffff !important; border-color: #e5e7eb !important; }
             body.light-mode .lg\:w-\[45\%\]\.bg-white\/40 { background-color: #f8fafc !important; border-right-color: #e5e7eb !important; }
             body.light-mode .lg\:w-\[55\%\]\.bg-gray-50\/20 { background-color: #ffffff !important; }

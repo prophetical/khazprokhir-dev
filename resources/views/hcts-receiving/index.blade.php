@@ -47,7 +47,7 @@
                         :class="currentTheme ? currentTheme.border : 'border-gray-100'">
                         <form action="{{ route('hcts-receiving.index') }}" method="GET" class="space-y-6">
                             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                                <!-- Group 1: Periode & Anggaran -->
+                                <!-- Grup 1: Periode & Anggaran -->
                                 <div
                                     class="lg:col-span-5 grid grid-cols-2 md:grid-cols-4 gap-3 p-4 bg-white/50 rounded-2xl border border-gray-100 shadow-sm">
                                     <div class="col-span-2 md:col-span-4 mb-1">
@@ -95,7 +95,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Group 2: Spesifikasi -->
+                                <!-- Grup 2: Spesifikasi -->
                                 <div
                                     class="lg:col-span-3 grid grid-cols-2 gap-3 p-4 bg-white/50 rounded-2xl border border-gray-100 shadow-sm h-full">
                                     <div class="col-span-2 mb-1">
@@ -131,7 +131,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Group 3: Pencarian & Aksi -->
+                                <!-- Grup 3: Pencarian & Aksi -->
                                 <div class="lg:col-span-4 flex flex-col md:flex-row gap-3 h-full">
                                     <div
                                         class="flex-1 p-4 bg-white/50 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">

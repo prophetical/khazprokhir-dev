@@ -23,7 +23,7 @@
                         ];
                     @endphp
 
-                    <!-- SEARCH & FILTER FORM -->
+                    <!-- FORM PENCARIAN & FILTER -->
                     <div x-data="{ 
                         selectedPecahan: '{{ $selectedPecahan }}',
                         themes: {{ json_encode($themeClasses) }},
@@ -73,10 +73,10 @@
                                 </div>
                             </div>
 
-                            <!-- Action Buttons & Legend -->
+                            <!-- Tombol Aksi & Keterangan -->
                             <div
                                 class="mt-6 pt-4 border-t border-gray-100 flex flex-wrap items-center justify-between gap-4">
-                                <!-- Legend -->
+                                <!-- Keterangan -->
                                 <div
                                     class="flex flex-wrap items-center gap-4 bg-gray-50/50 px-4 py-2 rounded-lg border border-gray-100">
                                     <span

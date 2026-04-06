@@ -21,7 +21,7 @@
         lastUpdate: '{{ now()->format('H:i:s') }}',
         tahunAnggaran: '{{ $tahunAnggaran }}',
         tahunEmisi: '{{ $tahunEmisi }}',
-        search: '', // Keep for compatibility with partial but hide UI
+        search: '', // Tetap ada untuk kompatibilitas dengan parsial namun sembunyikan UI
         tablesHtml: '',
         showHcs: true, 
         showMonitoring: true, 
@@ -64,7 +64,8 @@
                                 <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-0.5">
                                     Terakhir Update</h3>
                                 <p class="text-xl font-black text-gray-800 tabular-nums" x-text="lastUpdate">
-                                    {{ now()->format('H:i:s') }}</p>
+                                    {{ now()->format('H:i:s') }}
+                                </p>
                             </div>
                         </div>
 

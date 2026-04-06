@@ -1,5 +1,5 @@
 @php
-    // colorMap moved to partials.report-tables
+    // colorMap dipindahkan ke partials.report-tables
 @endphp
 
 <x-app-layout>
@@ -18,7 +18,7 @@
         showMonthly: true 
     }">
         <div class="w-full mx-auto sm:px-6 lg:px-8 overflow-hidden">
-            <!-- Filter & Action Row -->
+            <!-- Baris Filter & Aksi -->
             <div class="bg-white overflow-hidden shadow-2xl sm:rounded-2xl mb-8 border border-gray-100 p-1">
                 <div class="bg-gray-50/50 rounded-[1.25rem] p-6">
                     <div class="flex flex-col 2xl:flex-row justify-between items-end gap-8">

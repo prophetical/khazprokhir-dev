@@ -105,7 +105,7 @@
                 </form>
             </div>
 
-            {{-- Transactions Table --}}
+            {{-- Tabel Transaksi --}}
             <div
                 class="bg-white dark:bg-slate-800 rounded-3xl shadow-xl shadow-indigo-100/50 dark:shadow-none border border-gray-100 dark:border-slate-700 overflow-hidden">
                 <div class="overflow-x-auto">

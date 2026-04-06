@@ -33,7 +33,7 @@
                 @method('PUT')
 
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-                    <!-- Left: Administration & Specs -->
+                    <!-- Kiri: Administrasi & Spesifikasi -->
                     <div class="lg:col-span-4 space-y-4">
                         <!-- Administration Card -->
                         <div

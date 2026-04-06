@@ -71,7 +71,7 @@
                             class="w-full pl-10 pr-4 py-2.5 bg-gray-50/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors dark:text-slate-200 placeholder:text-gray-400 dark:placeholder:text-slate-600">
                     </div>
 
-                    {{-- Action Buttons --}}
+                    {{-- Tombol Aksi --}}
                     <div class="w-full lg:w-auto flex flex-wrap lg:flex-nowrap gap-2 items-center shrink-0">
                         <button type="submit"
                             class="flex-1 lg:flex-none px-5 py-2.5 bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 text-sm font-semibold rounded-xl transition-colors flex items-center justify-center gap-2 border border-indigo-100 dark:border-indigo-800">
@@ -242,7 +242,7 @@
             </div>
         </div>
 
-        {{-- Modal for Add/Edit --}}
+        {{-- Modal untuk Tambah/Edit --}}
         <div x-show="showModal" class="fixed inset-0 z-[100] overflow-y-auto" x-cloak>
             <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
                 <div x-show="showModal" x-transition:enter="transition ease-out duration-300"
@@ -316,7 +316,7 @@
                                             class="w-full px-4 py-2.5 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl text-sm dark:text-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
                                             placeholder="pcs / roll / buah">
                                     </div>
-                                    {{-- Min Stok --}}
+                                    {{-- Stok Minimal --}}
                                     <div class="space-y-1.5">
                                         <label
                                             class="block text-[11px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest ml-1">Min.

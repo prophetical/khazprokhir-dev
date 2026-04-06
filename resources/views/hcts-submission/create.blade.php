@@ -32,9 +32,9 @@
                 @csrf
 
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-                    <!-- Left: Administration & Specs -->
+                    <!-- Kiri: Administrasi & Spesifikasi -->
                     <div class="lg:col-span-4 space-y-4">
-                        <!-- Administration Card -->
+                        <!-- Kartu Administrasi -->
                         <div
                             class="bg-white/70 backdrop-blur-md overflow-hidden shadow-xl shadow-gray-200/50 sm:rounded-[1.5rem] border border-white relative group transition-all duration-500">
                             <div class="p-5 relative">
@@ -85,7 +85,7 @@
                             </div>
                         </div>
 
-                        <!-- Main Spec Card -->
+                        <!-- Kartu Spesifikasi Utama -->
                         <div
                             class="bg-white/70 backdrop-blur-md overflow-hidden shadow-xl shadow-gray-200/50 sm:rounded-[1.5rem] border border-white relative group transition-all duration-500">
                             <div class="p-5">
@@ -158,7 +158,7 @@
                             </div>
                         </div>
 
-                        <!-- Summary Widget -->
+                        <!-- Widget Ringkasan -->
                         <div class="bg-blue-500 overflow-hidden shadow-xl sm:rounded-[1.5rem] relative p-0.5">
                             <div
                                 class="bg-blue-500 backdrop-blur-sm rounded-[1.4rem] p-5 relative z-10 border border-white/5">
@@ -214,7 +214,7 @@
                         </div>
                     </div>
 
-                    <!-- Right: Dynamic Rows -->
+                    <!-- Kanan: Baris Dinamis -->
                     <div class="lg:col-span-8">
                         <div
                             class="bg-white/70 backdrop-blur-md overflow-hidden shadow-xl shadow-gray-200/50 sm:rounded-[2rem] border border-white h-full flex flex-col transition-all duration-500">
@@ -303,7 +303,7 @@
                     </div>
                 </div>
 
-                <!-- Standalone Submission Bar -->
+                <!-- Bar Penyerahan -->
                 <div
                     class="mt-6 p-6 bg-white/70 dark:bg-slate-900/60 backdrop-blur-md rounded-[2rem] border border-white dark:border-white/5 shadow-xl shadow-gray-200/50 dark:shadow-none flex items-center justify-end gap-3 transition-all duration-500">
                     <a href="{{ route('hcts-submission.index') }}"

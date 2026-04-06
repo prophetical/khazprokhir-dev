@@ -38,7 +38,7 @@
                     </a>
                 </div>
             @endif
-            <!-- Filter Section -->
+            <!-- Bagian Filter -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-2xl border border-gray-100">
                 <div class="p-6">
                     <form action="{{ route('hcts-submission.index') }}" method="GET"
@@ -115,7 +115,7 @@
                         </div>
                     </form>
 
-                    <!-- Export Buttons -->
+                    <!-- Tombol Ekspor -->
                     <div class="mt-6 pt-6 border-t border-gray-100 flex flex-wrap gap-2 justify-end">
                         <a href="{{ route('hcts-submission.export', request()->all()) }}"
                             class="inline-flex items-center px-4 py-2 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-100 transition-all active:scale-95">
@@ -149,7 +149,7 @@
                 </div>
             </div>
 
-            <!-- Table Section -->
+            <!-- Bagian Tabel -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-2xl border border-gray-100">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">

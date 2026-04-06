@@ -11,7 +11,7 @@
                 <div class="p-8 text-gray-900">
                     
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                        <!-- Page Title -->
+                        <!-- Judul Halaman -->
                         <h3 class="text-lg font-medium text-gray-900">Data Penerimaan HCS</h3>
                         @if(in_array(auth()->user()->role, ['sortir', 'admin']))
                             <a href="{{ route('hcs-receiving.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 shrink-0">
@@ -215,7 +215,7 @@
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @forelse ($receivings->groupBy(function($item) { return $item->batch . ' / ' . $item->seri . ' / ' . $item->pecahan; }) as $groupKey => $groupItems)
-                                    <!-- Group Header Row -->
+                                    <!-- Baris Header Grup -->
                                     <tr class="bg-indigo-50/50 border-t border-b border-indigo-100/50">
                                         <td colspan="9" class="px-4 py-3 sm:px-6 text-[10px] sm:text-sm font-bold text-indigo-400">
                                             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center w-full gap-1 sm:gap-4">
@@ -225,7 +225,7 @@
                                         </td>
                                     </tr>
                                     
-                                    <!-- Group Data Rows -->
+                                    <!-- Baris Data Grup -->
                                     @foreach($groupItems as $receiving)
                                         <tr class="hover:bg-indigo-50/30 transition-colors">
                                             <td class="px-2 py-4 sm:px-4 whitespace-nowrap text-[10px] sm:text-sm text-gray-500">
