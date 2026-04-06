@@ -228,6 +228,67 @@
                             });
 
                             // 4. Grafik Inschiet (Terima/Serah) - Awalnya kosong, ditangani oleh popup
+
+                            // 5. Grafik HCS Today Bar
+                            const hCtx = document.getElementById('today-hcs-chart').getContext('2d');
+                            const hData = @json($todayHcsByPecahan);
+                            const hLabels = Object.keys(hData);
+
+                            const hGradients = hLabels.map(l => {
+                                const color = idrColors[l] || '#6366f1';
+                                const grad = hCtx.createLinearGradient(0, 0, 0, 300);
+                                grad.addColorStop(0, color);
+                                grad.addColorStop(1, color + '22');
+                                return grad;
+                            });
+
+                            new Chart(hCtx, {
+                                type: 'bar',
+                                data: {
+                                    labels: hLabels,
+                                    datasets: [{
+                                        data: Object.values(hData),
+                                        backgroundColor: hGradients,
+                                        borderRadius: 12,
+                                        borderWidth: 0,
+                                        barThickness: 32,
+                                        hoverBackgroundColor: hLabels.map(l => idrColors[l] || '#6366f1')
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        legend: { display: false },
+                                        tooltip: {
+                                            backgroundColor: '#111827',
+                                            padding: 14,
+                                            titleFont: { size: 12, weight: '900' },
+                                            bodyFont: { size: 12, weight: 'bold' },
+                                            usePointStyle: true,
+                                            callbacks: {
+                                                label: (context) => ` ${new Intl.NumberFormat('id-ID').format(context.raw)} Bilyet`
+                                            }
+                                        }
+                                    },
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true,
+                                            grid: { color: 'rgba(226, 232, 240, 0.4)', drawBorder: false },
+                                            ticks: {
+                                                font: { size: 9, weight: 'bold' },
+                                                color: '#94a3b8',
+                                                padding: 8,
+                                                callback: v => v >= 1000 ? (v / 1000) + 'k' : v
+                                            }
+                                        },
+                                        x: {
+                                            grid: { display: false },
+                                            ticks: { font: { size: 11, weight: '900' }, color: '#64748b', padding: 8 }
+                                        }
+                                    }
+                                }
+                            });
                         });
                     },
                     getInschietChartData(tab) {
@@ -554,7 +615,7 @@
                             </div>
                         </div>
 
-                        {{-- Legend --}}
+                        {{-- Legenda --}}
                         <div
                             class="flex items-center gap-4 bg-gray-50/50 px-3 py-1.5 rounded-xl border border-gray-100/50">
                             <div class="flex items-center gap-1.5 group">
@@ -653,7 +714,7 @@
                                 <div class="flex flex-col items-center">
                                     <span
                                         class="text-[9px] font-black text-gray-500 uppercase tracking-[0.1em] mb-2">{{ $monthName }}</span>
-                                    {{-- Days Initials Header --}}
+                                    {{-- Header singkatan hari --}}
                                     <div class="grid grid-cols-7 gap-1 w-full text-center px-1 mb-1">
                                         @foreach(['S', 'S', 'R', 'K', 'J', 'S', 'M'] as $day)
                                             <span class="text-[7px] font-black text-gray-300">{{ $day }}</span>
@@ -697,7 +758,7 @@
                 </div>
             </div>
 
-            {{-- Bagian grafik donat analitik --}}
+            {{-- Bagian chart --}}
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
                 {{-- Inschiet Card --}}
                 <div
@@ -769,7 +830,7 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-                        {{-- Donat sebaran pecahan --}}
+                        {{-- Chart sebaran pecahan --}}
                         <div class="space-y-6">
                             <div class="h-[220px] w-full relative">
                                 <canvas id="pecahan-donut"></canvas>
@@ -779,7 +840,7 @@
                                 Penerimaan</p>
                         </div>
 
-                        {{-- Lifecycle Donut --}}
+                        {{-- Lifecycle chart --}}
                         <div class="space-y-6">
                             <div class="h-[220px] w-full relative">
                                 <canvas id="lifecycle-donut"></canvas>
@@ -788,7 +849,7 @@
                                 Lifecycle</p>
                         </div>
 
-                        {{-- Supplier Donut --}}
+                        {{-- Supplier chart --}}
                         <div class="space-y-6">
                             <div class="h-[220px] w-full relative">
                                 <canvas id="supplier-donut"></canvas>
@@ -863,8 +924,10 @@
                             <p class="text-xs font-black text-gray-700 dark:text-gray-300 font-mono" x-text="time"></p>
                         </div>
                     </div>
-                    <div class="h-[60px] bg-gradient-to-r from-lime-600 to-yellow-700 dark:from-lime-800 dark:to-yellow-900 p-4 flex justify-center items-center group cursor-pointer hover:from-indigo-500 hover:to-indigo-600 dark:hover:from-indigo-900 dark:hover:to-indigo-800 transition-all duration-500 hover:shadow-[0_-5px_15px_rgba(79,70,229,0.2)]">
-                        <span class="text-[8px] font-black text-white/90 dark:text-gray-400 group-hover:text-white group-hover:scale-110 group-hover:tracking-[0.6em] transition-all duration-500 uppercase tracking-[0.4em]">KHAZPROKHIR</span>
+                    <div
+                        class="h-[60px] bg-gradient-to-r from-lime-600 to-yellow-700 dark:from-lime-800 dark:to-yellow-900 p-4 flex justify-center items-center group cursor-pointer hover:from-indigo-500 hover:to-indigo-600 dark:hover:from-indigo-900 dark:hover:to-indigo-800 transition-all duration-500 hover:shadow-[0_-5px_15px_rgba(79,70,229,0.2)]">
+                        <span
+                            class="text-[8px] font-black text-white/90 dark:text-gray-400 group-hover:text-white group-hover:scale-110 group-hover:tracking-[0.6em] transition-all duration-500 uppercase tracking-[0.4em]">KHAZPROKHIR</span>
                     </div>
                 </div>
 
@@ -899,9 +962,11 @@
                                         <div>
                                             <p
                                                 class="text-[10px] font-black text-gray-800 dark:text-gray-200 uppercase leading-none mb-1">
-                                                {{ $item->nama_bahan }}</p>
+                                                {{ $item->nama_bahan }}
+                                            </p>
                                             <p class="text-[8px] font-black text-gray-400 uppercase tracking-tighter">
-                                                {{ $item->kode_material ?? 'NO-CODE' }}</p>
+                                                {{ $item->kode_material ?? 'NO-CODE' }}
+                                            </p>
                                         </div>
                                         <div class="text-right">
                                             <span
@@ -944,11 +1009,63 @@
                     </div>
                     <div class="h-[60px] bg-gradient-to-r from-indigo-600 to-purple-700 dark:from-indigo-800 dark:to-purple-900 p-4 flex justify-center items-center group cursor-pointer hover:from-indigo-500 hover:to-indigo-600 dark:hover:from-indigo-900 dark:hover:to-indigo-800 transition-all duration-500 hover:shadow-[0_-5px_15px_rgba(79,70,229,0.2)]"
                         onclick="window.location='{{ route('bahan-penolong.persediaan') }}'">
-                        <span class="text-[8px] font-black text-white/90 dark:text-gray-400 group-hover:text-white group-hover:scale-110 transition-all duration-500 uppercase tracking-[0.2em]">Detail Persediaan</span>
+                        <span
+                            class="text-[8px] font-black text-white/90 dark:text-gray-400 group-hover:text-white group-hover:scale-110 transition-all duration-500 uppercase tracking-[0.2em]">Detail
+                            Persediaan</span>
                         <svg class="w-4 h-4 ml-2 text-white/70 group-hover:text-white group-hover:translate-x-2 transition-all duration-500"
                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
                         </svg>
+                    </div>
+                </div>
+
+                {{-- Kartu penerimaan HCS hari ini (sesuai tanggal di sistem) --}}
+                <div
+                    class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-xl shadow-gray-200/20 dark:shadow-none border border-gray-100 dark:border-slate-800 flex flex-col justify-between overflow-hidden transition-colors duration-500">
+                    <div
+                        class="px-8 py-6 border-b border-gray-50 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50 flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-8 h-8 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center text-indigo-600 dark:text-indigo-400 shadow-inner">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                </svg>
+                            </div>
+                            <h3
+                                class="text-[10px] font-black text-gray-800 dark:text-gray-200 uppercase tracking-[0.2em]">
+                                Penerimaan HCS {{ $todayFormatted }}</h3>
+                        </div>
+                        <div
+                            class="flex items-center gap-2 px-3 py-1 bg-emerald-50 dark:bg-emerald-900/20 rounded-full border border-emerald-100 dark:border-emerald-900/30">
+                            <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                            <span
+                                class="text-[8px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest leading-none">Live
+                                Data</span>
+                        </div>
+                    </div>
+                    <div class="p-8 flex-grow">
+                        <div class="h-[250px] w-full relative">
+                            <canvas id="today-hcs-chart"></canvas>
+                        </div>
+                    </div>
+                    <div
+                        class="h-[60px] bg-gray-50 dark:bg-slate-800/50 border-t border-gray-100 dark:border-slate-800 p-4 flex justify-between items-center px-10">
+                        <div class="flex flex-col">
+                            <span
+                                class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest leading-none">TA
+                                {{ $currentYear }} / TE {{ $currentTE ?: 'SEMUA' }}</span>
+                        </div>
+                        <div class="text-right">
+                            <span
+                                class="text-[7px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-0.5">Akumulasi
+                                Harian</span>
+                            <div class="flex items-baseline gap-1.5">
+                                <span
+                                    class="text-xl font-black text-gray-900 dark:text-white tracking-tighter leading-none">{{ number_format(array_sum($todayHcsByPecahan)) }}</span>
+                                <span class="text-[9px] font-black text-gray-400 uppercase">Bilyet</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <!--

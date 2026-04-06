@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\DB;
 class DashboardService
 {
     /**
-     * Get all data required for the dashboard.
+     * Ambil semua data yang dibutuhkan untuk dashboard.
      * 
      * @param Request $request
      * @return array
@@ -26,8 +26,43 @@ class DashboardService
     public function getDashboardData(Request $request): array
     {
         $today = Carbon::today();
-        
-        // Ambil daftar tahun dari semua data yang ada (Bisa dioptimalkan dengan cache nanti)
+
+        // 1. Ambil Filter (Tahun & Emisi)
+        $filters = $this->getAvailableFilters($request, $today);
+        $currentYear = $filters['currentYear'];
+        $currentTE = $filters['currentTE'];
+
+        // 2. Data Hari Ini
+        $todayMetrics = $this->getTodayMetrics($today);
+        $todayHcsByPecahan = $this->getTodayHcsByPecahan($today, $currentYear, $currentTE);
+
+        // 3. Kesimpulan Tahunan & Inschiet
+        $annualSummary = $this->getAnnualSummary($currentYear, $currentTE);
+
+        // 4. Data Bulanan untuk Grafik
+        $chartData = $this->getMonthlyChartData($currentYear, $currentTE);
+
+        // 5. Sebaran Pecahan & Heatmap
+        $distributionData = $this->getDistributionAndHeatmapData($currentYear, $currentTE);
+
+        return array_merge(
+            $filters,
+            $todayMetrics,
+            ['todayHcsByPecahan' => $todayHcsByPecahan],
+            ['todayFormatted' => $today->locale('id')->translatedFormat('l, j F Y')],
+            $annualSummary,
+            ['chartData' => $chartData],
+            $distributionData,
+            ['months' => range(1, 12)],
+            ['bahanPenolong' => BahanPenolong::all()]
+        );
+    }
+
+    /**
+     * Ambil tahun emisi dan tahun anggaran.
+     */
+    private function getAvailableFilters(Request $request, Carbon $today): array
+    {
         $yearsPengemasan = Pengemasan::distinct()->pluck('tahun_anggaran')->toArray();
         $yearsPenyerahan = PenyerahanBi::distinct()->pluck('tahun_anggaran')->toArray();
         $yearsTarget = TargetTahunan::distinct()->pluck('tahun_anggaran')->toArray();
@@ -39,71 +74,52 @@ class DashboardService
             $availableYears = [$today->year];
         }
 
-        $currentYear = $request->get('tahun_anggaran', $today->year);
+        $currentYear = $request->input('tahun_anggaran', $today->year);
 
-        // Ambil daftar tahun emisi yang tersedia
         $emissionsTargetTahun = TargetTahunan::distinct()->pluck('tahun_emisi')->toArray();
         $emissionsTargetBulan = TargetBulanan::distinct()->pluck('tahun_emisi')->toArray();
         $availableEmissions = array_unique(array_merge($emissionsTargetTahun, $emissionsTargetBulan));
         sort($availableEmissions);
 
-        $currentTE = $request->get('tahun_emisi', (!empty($availableEmissions) ? max($availableEmissions) : ''));
+        $currentTE = $request->input('tahun_emisi', (!empty($availableEmissions) ? max($availableEmissions) : ''));
 
-        $pecahanList = ['S', 'T', 'U', 'V', 'W', 'X', 'Y'];
+        return [
+            'availableYears' => $availableYears,
+            'currentYear' => $currentYear,
+            'availableEmissions' => $availableEmissions,
+            'currentTE' => $currentTE
+        ];
+    }
 
-        // 1. Data Hari Ini
+    /**
+     * Ambil metrik untuk aktivitas hari ini.
+     */
+    private function getTodayMetrics(Carbon $today): array
+    {
         $totalHcsToday = HcsReceiving::whereDate('tanggal_penerimaan', $today)->count();
         $totalBilyetToday = HcsReceiving::whereDate('tanggal_penerimaan', $today)->sum('jumlah');
         $totalPacksToday = Pack::whereDate('created_at', $today)->count();
 
-        // 2. Sebaran Supplier Hari Ini
         $supplierDistribution = Pack::whereDate('created_at', $today)
             ->selectRaw('supplier, count(*) as count')
             ->groupBy('supplier')
             ->pluck('count', 'supplier')
             ->toArray();
 
-        $cutpackCount = $supplierDistribution['Cutpack'] ?? 0;
-        $rikyetCount = $supplierDistribution['Rikyet'] ?? 0;
+        return [
+            'totalHcsToday' => $totalHcsToday,
+            'totalBilyetToday' => $totalBilyetToday,
+            'totalPacksToday' => $totalPacksToday,
+            'cutpackCount' => $supplierDistribution['Cutpack'] ?? 0,
+            'rikyetCount' => $supplierDistribution['Rikyet'] ?? 0,
+        ];
+    }
 
-        // 3. Sebaran Supplier Tahunan
-        $supplierDistributionYear = Pack::join('pengemasans', 'packs.id_pengemasan', '=', 'pengemasans.id')
-            ->where('pengemasans.tahun_anggaran', $currentYear)
-            ->when($currentTE, fn($q) => $q->where('pengemasans.tahun_emisi', $currentTE))
-            ->selectRaw('packs.supplier, SUM(packs.jumlah) as total')
-            ->groupBy('packs.supplier')
-            ->pluck('total', 'packs.supplier')
-            ->toArray();
-
-        // 4. Data Bulanan untuk Grafik (Eager grouping di PHP)
-        $months = range(1, 12);
-
-        $pengemasanMonthly = Pengemasan::where('tahun_anggaran', $currentYear)
-            ->when($currentTE, fn($q) => $q->where('tahun_emisi', $currentTE))
-            ->selectRaw("pecahan, strftime('%m', tanggal_pengemasan) as month, SUM(total_bilyet) as total")
-            ->groupBy('pecahan', 'month')
-            ->get()
-            ->groupBy('pecahan');
-
-        $penyerahanMonthly = PenyerahanBi::where('tahun_anggaran', $currentYear)
-            ->when($currentTE, fn($q) => $q->where('tahun_emisi', $currentTE))
-            ->selectRaw("pecahan, strftime('%m', tanggal_penyerahan) as month, SUM(jumlah_bilyet) as total")
-            ->groupBy('pecahan', 'month')
-            ->get()
-            ->groupBy('pecahan');
-
-        $monthlyTargetsRaw = TargetBulanan::where('tahun_anggaran', $currentYear)
-            ->when($currentTE, fn($q) => $q->where('tahun_emisi', $currentTE))
-            ->selectRaw('pecahan, 
-                SUM(bulan_1) as bulan_1, SUM(bulan_2) as bulan_2, SUM(bulan_3) as bulan_3, 
-                SUM(bulan_4) as bulan_4, SUM(bulan_5) as bulan_5, SUM(bulan_6) as bulan_6, 
-                SUM(bulan_7) as bulan_7, SUM(bulan_8) as bulan_8, SUM(bulan_9) as bulan_9, 
-                SUM(bulan_10) as bulan_10, SUM(bulan_11) as bulan_11, SUM(bulan_12) as bulan_12')
-            ->groupBy('pecahan')
-            ->get()
-            ->keyBy('pecahan');
-
-        // 5. Kesimpulan Tahunan
+    /**
+     * Ambil total ringkasan tahunan dan perhitungan inschiet.
+     */
+    private function getAnnualSummary(int $currentYear, $currentTE): array
+    {
         $totalKemasYear = Pengemasan::where('tahun_anggaran', $currentYear)
             ->when($currentTE, fn($q) => $q->where('tahun_emisi', $currentTE))
             ->sum('total_bilyet');
@@ -126,15 +142,68 @@ class DashboardService
         $inschietProduksi = $totalTerimaYear > 0 ? ($totalHctsYear / $totalTerimaYear) * 100 : 0;
         $inschietFinal = $totalSerahYear > 0 ? ($totalHctsSerahYear / $totalSerahYear) * 100 : 0;
 
-        // 6. Mapping Dataset Grafik
+        $supplierDistributionYear = Pack::join('pengemasans', 'packs.id_pengemasan', '=', 'pengemasans.id')
+            ->where('pengemasans.tahun_anggaran', $currentYear)
+            ->when($currentTE, fn($q) => $q->where('pengemasans.tahun_emisi', $currentTE))
+            ->selectRaw('packs.supplier, SUM(packs.jumlah) as total')
+            ->groupBy('packs.supplier')
+            ->pluck('total', 'packs.supplier')
+            ->toArray();
+
+        return [
+            'totalKemasYear' => $totalKemasYear,
+            'totalSerahYear' => $totalSerahYear,
+            'totalTargetYear' => $totalTargetYear,
+            'totalTerimaYear' => $totalTerimaYear,
+            'totalHctsYear' => $totalHctsYear,
+            'totalHctsSerahYear' => $totalHctsSerahYear,
+            'inschietProduksi' => $inschietProduksi,
+            'inschietFinal' => $inschietFinal,
+            'supplierDistributionYear' => $supplierDistributionYear,
+        ];
+    }
+
+    /**
+     * Ambil data grafik bulanan untuk semua pecahan.
+     */
+    private function getMonthlyChartData(int $currentYear, $currentTE): array
+    {
+        $months = range(1, 12);
+        $pecahanList = ['S', 'T', 'U', 'V', 'W', 'X', 'Y'];
+
+        $pengemasanMonthly = Pengemasan::where('tahun_anggaran', $currentYear)
+            ->when($currentTE, fn($q) => $q->where('tahun_emisi', $currentTE))
+            ->selectRaw("pecahan, strftime('%m', tanggal_pengemasan) as month, SUM(total_bilyet) as total")
+            ->groupBy('pecahan', 'month')
+            ->get()
+            ->groupBy('pecahan');
+
+        $penyerahanMonthly = PenyerahanBi::where('tahun_anggaran', $currentYear)
+            ->when($currentTE, fn($q) => $q->where('tahun_emisi', $currentTE))
+            ->selectRaw("pecahan, strftime('%m', tanggal_penyerahan) as month, SUM(jumlah_bilyet) as total")
+            ->groupBy('pecahan', 'month')
+            ->get()
+            ->groupBy('pecahan');
+
+        $monthlyTargets = TargetBulanan::where('tahun_anggaran', $currentYear)
+            ->when($currentTE, fn($q) => $q->where('tahun_emisi', $currentTE))
+            ->selectRaw('pecahan, 
+                SUM(bulan_1) as bulan_1, SUM(bulan_2) as bulan_2, SUM(bulan_3) as bulan_3, 
+                SUM(bulan_4) as bulan_4, SUM(bulan_5) as bulan_5, SUM(bulan_6) as bulan_6, 
+                SUM(bulan_7) as bulan_7, SUM(bulan_8) as bulan_8, SUM(bulan_9) as bulan_9, 
+                SUM(bulan_10) as bulan_10, SUM(bulan_11) as bulan_11, SUM(bulan_12) as bulan_12')
+            ->groupBy('pecahan')
+            ->get()
+            ->keyBy('pecahan');
+
         $chartData = [];
         $totalMonthlyKemas = array_fill(0, 12, 0);
         $totalMonthlySerah = array_fill(0, 12, 0);
-        $totalMonthlyTargetArr = array_fill(0, 12, 0);
+        $totalMonthlyTarget = array_fill(0, 12, 0);
 
         foreach ($pecahanList as $pec) {
             $dataPecahan = ['pengemasan' => [], 'penyerahan' => [], 'target' => []];
-            $pecTarget = $monthlyTargetsRaw->get($pec);
+            $pecTarget = $monthlyTargets->get($pec);
 
             foreach ($months as $month) {
                 $monthStr = str_pad($month, 2, '0', STR_PAD_LEFT);
@@ -148,7 +217,7 @@ class DashboardService
 
                 $totalMonthlyKemas[$month - 1] += $kemas;
                 $totalMonthlySerah[$month - 1] += $serah;
-                $totalMonthlyTargetArr[$month - 1] += $target;
+                $totalMonthlyTarget[$month - 1] += $target;
             }
             $chartData[$pec] = $dataPecahan;
         }
@@ -156,10 +225,17 @@ class DashboardService
         $chartData['TOTAL'] = [
             'pengemasan' => $totalMonthlyKemas,
             'penyerahan' => $totalMonthlySerah,
-            'target' => $totalMonthlyTargetArr,
+            'target' => $totalMonthlyTarget,
         ];
 
-        // 7. Sebaran Pecahan & Heatmap
+        return $chartData;
+    }
+
+    /**
+     * Ambil data sebaran pecahan dan heatmap aktivitas.
+     */
+    private function getDistributionAndHeatmapData(int $currentYear, $currentTE): array
+    {
         $pecahanDistribution = Pengemasan::where('tahun_anggaran', $currentYear)
             ->when($currentTE, fn($q) => $q->where('tahun_emisi', $currentTE))
             ->selectRaw('pecahan, SUM(total_bilyet) as total')
@@ -177,33 +253,31 @@ class DashboardService
         $latestHeatmapDate = !empty($heatmapData) ? max(array_keys($heatmapData)) : null;
         $heatmapYear = $latestHeatmapDate ? Carbon::parse($latestHeatmapDate)->year : $currentYear;
 
-        $bahanPenolong = BahanPenolong::all();
-
         return [
-            'totalHcsToday' => $totalHcsToday,
-            'totalBilyetToday' => $totalBilyetToday,
-            'totalPacksToday' => $totalPacksToday,
-            'cutpackCount' => $cutpackCount,
-            'rikyetCount' => $rikyetCount,
-            'chartData' => $chartData,
-            'heatmapData' => $heatmapData,
-            'heatmapYear' => $heatmapYear,
-            'months' => $months,
-            'currentYear' => $currentYear,
-            'availableYears' => $availableYears,
-            'currentTE' => $currentTE,
-            'availableEmissions' => $availableEmissions,
-            'totalKemasYear' => $totalKemasYear,
-            'totalSerahYear' => $totalSerahYear,
-            'totalTargetYear' => $totalTargetYear,
-            'totalTerimaYear' => $totalTerimaYear,
-            'totalHctsYear' => $totalHctsYear,
-            'inschietProduksi' => $inschietProduksi,
-            'inschietFinal' => $inschietFinal,
-            'totalHctsSerahYear' => $totalHctsSerahYear,
             'pecahanDistribution' => $pecahanDistribution,
-            'supplierDistributionYear' => $supplierDistributionYear,
-            'bahanPenolong' => $bahanPenolong
+            'heatmapData' => $heatmapData,
+            'heatmapYear' => $heatmapYear
         ];
+    }
+
+    /**
+     * Ambil data penerimaan HCS berdasarkan pecahan untuk hari ini.
+     */
+    private function getTodayHcsByPecahan(Carbon $today, int $currentYear, $currentTE): array
+    {
+        $pecahanList = ['S', 'T', 'U', 'V', 'W', 'X', 'Y'];
+        $data = HcsReceiving::whereDate('tanggal_penerimaan', $today)
+            ->where('tahun_anggaran', $currentYear)
+            ->when($currentTE, fn($q) => $q->where('emisi', $currentTE))
+            ->selectRaw('pecahan, SUM(jumlah) as total')
+            ->groupBy('pecahan')
+            ->pluck('total', 'pecahan')
+            ->toArray();
+
+        $result = [];
+        foreach ($pecahanList as $pec) {
+            $result[$pec] = (int) ($data[$pec] ?? 0);
+        }
+        return $result;
     }
 }
