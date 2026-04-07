@@ -65,12 +65,7 @@
     <div class="py-3 px-2 sm:px-3">
 
         {{-- Flash --}}
-        @if(session('success'))
-            <div class="mb-3 p-3 bg-emerald-50 dark:bg-emerald-900/20 border-l-4 border-emerald-500 text-emerald-700 dark:text-emerald-400 rounded-r-lg flex items-center gap-2">
-                <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                <span class="font-bold text-sm">{{ session('success') }}</span>
-            </div>
-        @endif
+        {{-- Flash message removed (replaced by SweetAlert) --}}
         @if($errors->any())
             <div class="mb-3 p-3 bg-rose-50 dark:bg-rose-900/20 border-l-4 border-rose-500 text-rose-700 dark:text-rose-400 rounded-r-lg">
                 <p class="font-black text-sm mb-1">Terjadi Kesalahan!</p>
@@ -81,6 +76,7 @@
         <form id="khazai-form" action="{{ route('x-pengganti.khazai.store') }}" method="POST">
             @csrf
             <input type="hidden" name="x_pengganti_seri_id" value="{{ $seri->id }}">
+            <input type="hidden" name="packs_json" id="packs-json-input">
 
             {{-- ══════════════════════════════════
                  HALAMAN 1: Pack 1–50
@@ -309,6 +305,8 @@
 
         // ── Auto-format Seri Pengganti ───────────────────────
         function formatSeriPengganti(input) {
+            let oldLen = input.value.length;
+            let cursor = input.selectionStart;
             let raw = input.value.toUpperCase().replace(/[^A-Z0-9\-]/g, '');
             let clean = raw.replace(/-/g, '');
             let f = '';
@@ -325,6 +323,12 @@
                 f = p1 + '-' + p2 + p3;
             }
             input.value = f;
+
+            // Jika ada penambahan strip otomatis, geser kursor
+            if (f.length > oldLen && f.includes('-') && cursor >= 3) {
+                cursor++;
+            }
+            input.setSelectionRange(cursor, cursor);
             const ok = /^[A-Z]{2}-[A-Z]{2}[0-9]$/.test(f);
             if (!f.length) { input.classList.remove('is-valid','is-invalid'); }
             else if (ok)   { input.classList.add('is-valid'); input.classList.remove('is-invalid'); }
@@ -343,13 +347,90 @@
             }
         }
 
-        // ── Loading state ─────────────────────────────────────
-        document.getElementById('khazai-form')?.addEventListener('submit', function() {
-            document.querySelectorAll('button[type="submit"]').forEach(btn => {
-                btn.disabled = true;
-                btn.innerHTML = `<svg class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Menyimpan...`;
+        // ── Smart Submit (JSON Edition): Definitive fix for PHP max_input_vars limit ──
+        document.getElementById('khazai-form')?.addEventListener('submit', function(e) {
+            const form = e.target;
+            const btns = document.querySelectorAll('button[type="submit"]');
+
+            if (btns.length > 0) {
+                btns.forEach(btn => {
+                    btn.style.pointerEvents = 'none';
+                    btn.style.opacity = '0.7';
+                    btn.innerHTML = `<svg class="w-3.5 h-3.5 animate-spin mr-2" fill="none" viewBox="0 0 24 24" style="display:inline-block;"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Menyimpan...`;
+                });
+            }
+
+            // GATHER DATA MANUALLY INTO JSON OBJECT
+            const packsData = {};
+            let hasAnyData = false;
+
+            for (let p = 1; p <= 100; p++) {
+                const index = p - 1;
+                // Identify if pack has any meaningful input
+                const packInputs = form.querySelectorAll(`[name^="packs[${index}]["]:not([type="hidden"]), .seri-pengganti-input[name^="packs[${index}]["]`);
+                
+                let hasData = false;
+                packInputs.forEach(inp => {
+                    if (inp.value && inp.value.trim() !== '') hasData = true;
+                });
+
+                if (hasData) {
+                    hasAnyData = true;
+                    // Gather all variables for this pack (Khazai uses 0-based index p-1)
+                    const packObj = {
+                        nomor_pack: p,
+                        seri_pengganti: form.querySelector(`input[name="packs[${index}][seri_pengganti]"]`)?.value || null,
+                        slots: {}
+                    };
+
+                    // Khazai slots are 0-indexed (0 to 3) in _table-body.blade.php
+                    for (let s = 0; s <= 3; s++) {
+                        packObj.slots[s] = {
+                            slot: s + 1,
+                            jumlah_rusak_vell: form.querySelector(`input[name="packs[${index}][slots][${s}][jumlah_rusak_vell]"]`)?.value || null,
+                            nomor_pack_pengganti: form.querySelector(`input[name="packs[${index}][slots][${s}][nomor_pack_pengganti]"]`)?.value || null,
+                            nomor_vell_pengganti: form.querySelector(`input[name="packs[${index}][slots][${s}][nomor_vell_pengganti]"]`)?.value || null
+                        };
+                    }
+                    packsData[index] = packObj;
+                }
+            }
+
+            if (hasAnyData) {
+                document.getElementById('packs-json-input').value = JSON.stringify(packsData);
+            }
+
+            // DISABLE ALL ORIGINAL INPUTS to stay under 1000 limit
+            form.querySelectorAll('input[name^="packs["]').forEach(inp => {
+                inp.disabled = true;
             });
+
+            // Recovery timeout
+            setTimeout(() => {
+                form.querySelectorAll('input:disabled').forEach(inp => {
+                    inp.disabled = false;
+                });
+                if (btns.length > 0) {
+                    btns.forEach(btn => {
+                        btn.style.pointerEvents = 'auto';
+                        btn.style.opacity = '1';
+                    });
+                }
+            }, 3000);
         });
+
+        // 5. Success Alert (SweetAlert2)
+        @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: "{{ session('success') }}",
+                timer: 2000,
+                showConfirmButton: false,
+                background: document.documentElement.classList.contains('dark-mode') ? '#1e293b' : '#fff',
+                color: document.documentElement.classList.contains('dark-mode') ? '#f8fafc' : '#111827'
+            });
+        @endif
     </script>
     @endpush
 </x-app-layout>

@@ -84,6 +84,14 @@ class XPenggantiKhazaiController extends Controller
      */
     public function store(Request $request)
     {
+        // Handle JSON-encoded packs data to bypass PHP max_input_vars limit
+        if ($request->filled('packs_json')) {
+            $jsonData = json_decode($request->packs_json, true);
+            if (is_array($jsonData)) {
+                $request->merge(['packs' => $jsonData]);
+            }
+        }
+
         $validated = $request->validate([
             'x_pengganti_seri_id'                  => 'required|exists:x_pengganti_seris,id',
             'packs'                                => 'nullable|array',
