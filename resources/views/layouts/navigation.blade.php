@@ -437,6 +437,10 @@
                         class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('x-pengganti.khazai.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
                         Form Input Khazai
                     </a>
+                    <a href="{{ route('x-pengganti.cutpack.index') }}"
+                        class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('x-pengganti.cutpack.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                        Form Input Cutpack
+                    </a>
                 </div>
             </div>
             @endif

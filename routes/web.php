@@ -156,6 +156,12 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\RoleMiddleware::clas
         Route::get('/khazai/input', [\App\Http\Controllers\XPenggantiKhazaiController::class, 'inputForm'])->name('khazai.input');
         Route::get('/khazai/pdf', [\App\Http\Controllers\XPenggantiKhazaiController::class, 'exportPdf'])->name('khazai.pdf');
 
+        // Sub-menu 3: Form Input Cutpack (Grid Transaksional Kompleks)
+        Route::get('/cutpack', [\App\Http\Controllers\XPenggantiCutpackController::class, 'index'])->name('cutpack.index');
+        Route::post('/cutpack', [\App\Http\Controllers\XPenggantiCutpackController::class, 'store'])->name('cutpack.store');
+        Route::get('/cutpack/input', [\App\Http\Controllers\XPenggantiCutpackController::class, 'inputForm'])->name('cutpack.input');
+        Route::get('/cutpack/pdf', [\App\Http\Controllers\XPenggantiCutpackController::class, 'exportPdf'])->name('cutpack.pdf');
+
         // API: list masters untuk dropdown
         Route::get('/api/masters', [\App\Http\Controllers\XPenggantiKhazaiController::class, 'getMasters'])->name('api.masters');
     });

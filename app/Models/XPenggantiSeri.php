@@ -25,4 +25,9 @@ class XPenggantiSeri extends Model
     {
         return "Batch: {$this->batch} | Seri: {$this->seri} | Pecahan: {$this->pecahan} | TA: {$this->tahun_anggaran} / TE: {$this->tahun_emisi}";
     }
+
+    public function cutpackPacks()
+    {
+        return $this->hasMany(XPenggantiCutpackPack::class, 'x_pengganti_seri_id');
+    }
 }
