@@ -9,13 +9,15 @@ use Illuminate\View\View;
 class AppLayout extends Component
 {
     public $backUrl;
+    public $fullScreen;
 
     /**
      * Create a new component instance.
      */
-    public function __construct()
+    public function __construct($fullScreen = false)
     {
         $this->backUrl = $this->determineBackUrl();
+        $this->fullScreen = $fullScreen;
     }
 
     /**

@@ -64,6 +64,8 @@
                                                     'admin' => 'bg-indigo-100 text-indigo-700 border-indigo-200',
                                                     'supervisor' => 'bg-amber-100 text-amber-700 border-amber-200',
                                                     'sortir' => 'bg-emerald-100 text-emerald-700 border-emerald-200',
+                                                    'kemas' => 'bg-sky-100 text-sky-700 border-sky-200',
+                                                    'khazverutas' => 'bg-violet-100 text-violet-700 border-violet-200',
                                                 ];
                                                 $style = $roleStyles[$user->role] ?? 'bg-gray-100 text-gray-700 border-gray-200';
                                             @endphp

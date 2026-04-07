@@ -496,13 +496,21 @@
         </div>
 
         <!-- Sidebar -->
-        @include('layouts.navigation')
+        @if(!$fullScreen)
+            @include('layouts.navigation')
+        @endif
 
         <!-- Main Content Container -->
         <div id="main-scroll-container" class="flex-1 flex flex-col overflow-y-auto overflow-x-hidden relative min-w-0">
             <!-- Top Header -->
-            <nav id="top-header" style="background: var(--theme-bg-header);"
-                class="px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between shrink-0 sticky top-0 z-50 w-full transition-all duration-500 ease-in-out border-b border-white/10 backdrop-blur-xl">
+            @if(!$fullScreen)
+                <nav id="top-header" style="background: var(--theme-bg-header);"
+                    class="px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between shrink-0 sticky top-0 z-50 w-full transition-all duration-500 ease-in-out border-b border-white/10 backdrop-blur-xl">
+@else
+                {{-- Minimal Header for Full Screen Mode --}}
+                <nav id="top-header" style="background: var(--theme-bg-header);"
+                    class="px-4 sm:px-6 h-16 flex items-center justify-between shrink-0 sticky top-0 z-50 w-full border-b border-white/10 backdrop-blur-xl">
+@endif
                 <div class="flex items-center gap-4">
                     <button @click="mobileOpen = !mobileOpen"
                         class="text-white/70 hover:text-white focus:outline-none lg:hidden transition-colors">
@@ -533,219 +541,226 @@
                     @endisset
                 </div>
 
-                <!-- Realtime Jam & Tanggal -->
-                <div class="hidden lg:flex items-center ml-auto mr-4 text-white/80 bg-white/5 dark:bg-slate-800/40 border border-white/10 dark:border-white/5 shadow-inner rounded-2xl px-4 py-1.5 hover:bg-white/10 transition-colors duration-300 group"
-                    x-data="{ 
-                    time: '', 
-                    date: '',
-                    init() {
-                        this.updateClock();
-                        setInterval(() => this.updateClock(), 1000);
-                    },
-                    updateClock() {
-                        const now = new Date();
-                        const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Jakarta' };
-                        const optionsTime = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'Asia/Jakarta' };
-                        this.date = now.toLocaleDateString('id-ID', optionsDate);
-                        this.time = now.toLocaleTimeString('id-ID', optionsTime).replace(/[\.]/g, ':');
-                    }
-                }">
-                    <div
-                        class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-500">
-                        <svg class="w-4 h-4 text-pink-300 drop-shadow-[0_0_8px_rgba(244,114,182,0.5)]" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </div>
-                    <div class="flex flex-col text-right justify-center">
-                        <span class="text-[8px] font-black uppercase tracking-[0.2em] text-white/40 mb-0.5"
-                            x-text="date"></span>
-                        <div class="flex items-baseline gap-1">
-                            <span class="text-sm font-black tracking-tighter text-white leading-none"
-                                x-text="time"></span>
-                            <span class="text-[8px] font-black text-rose-400 uppercase tracking-widest">WIB</span>
+                @if(!$fullScreen)
+                    <!-- Realtime Jam & Tanggal -->
+                    <div class="hidden lg:flex items-center ml-auto mr-4 text-white/80 bg-white/5 dark:bg-slate-800/40 border border-white/10 dark:border-white/5 shadow-inner rounded-2xl px-4 py-1.5 hover:bg-white/10 transition-colors duration-300 group"
+                        x-data="{ 
+                        time: '', 
+                        date: '',
+                        init() {
+                            this.updateClock();
+                            setInterval(() => this.updateClock(), 1000);
+                        },
+                        updateClock() {
+                            const now = new Date();
+                            const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Jakarta' };
+                            const optionsTime = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'Asia/Jakarta' };
+                            this.date = now.toLocaleDateString('id-ID', optionsDate);
+                            this.time = now.toLocaleTimeString('id-ID', optionsTime).replace(/[\.]/g, ':');
+                        }
+                    }">
+                        <div
+                            class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-500">
+                            <svg class="w-4 h-4 text-pink-300 drop-shadow-[0_0_8px_rgba(244,114,182,0.5)]" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Tombol buat ganti tema -->
-                <div class="flex items-center mr-4" x-data="{ 
-                    darkMode: false,
-                    toggleTheme() {
-                        this.darkMode = !this.darkMode;
-                        const theme = this.darkMode ? 'dark-mode' : 'light-mode';
-                        const oldTheme = this.darkMode ? 'light-mode' : 'dark-mode';
-                        
-                        document.documentElement.classList.remove(oldTheme);
-                        document.documentElement.classList.add(theme);
-                        document.body.classList.remove(oldTheme);
-                        document.body.classList.add(theme);
-                        
-                        localStorage.setItem('theme', theme);
-                        window.dispatchEvent(new CustomEvent('theme-changed', { detail: { theme } }));
-                    }
-                }" x-init="darkMode = document.documentElement.classList.contains('dark-mode')">
-                    <button @click="toggleTheme()"
-                        class="p-2 border border-white/20 text-white/90 bg-white/10 hover:bg-white/20 focus:outline-none transition rounded-lg"
-                        title="Toggle Theme">
-                        <template x-if="!darkMode">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                            </svg>
-                        </template>
-                        <template x-if="darkMode">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 3v1m0 16v1m9-9h1M4 9h1m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                            </svg>
-                        </template>
-                    </button>
-                </div>
-
-                <!-- Notifikasi Pengemasan -->
-                @if(in_array(auth()->user()->role, ['admin', 'kemas', 'sortir', 'supervisor']))
-                    <div class="flex items-center mr-4 relative" x-data="hcsNotification()" x-init="init()"
-                        @click.away="open = false">
-                        <button @click="open = !open"
-                            class="relative p-2 border border-white/20 text-white/90 bg-white/10 hover:bg-white/20 focus:outline-none transition rounded-lg"
-                            title="Notifikasi Pengemasan">
-                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"
-                                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                            </svg>
-
-                            <template x-if="count > 0">
-                                <span
-                                    class="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white shadow-sm ring-2 ring-indigo-900 dark:ring-slate-900 border border-white/10"
-                                    x-text="count">
-                                </span>
-                            </template>
-                            </template>
-                        </button>
-
-                        <audio id="hcs-notify-sound" preload="auto" style="display:none;">
-                            <source src="/audio/cihuy.mp3" type="audio/mpeg">
-                        </audio>
-
-                        <div x-show="open" x-transition:enter="transition ease-out duration-200"
-                            x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
-                            x-transition:leave="transition ease-in duration-100"
-                            x-transition:leave-start="opacity-100 scale-100"
-                            x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
-                            class="absolute right-0 top-full mt-3 w-[85vw] sm:w-[550px] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700/50 overflow-hidden z-50 backdrop-blur-xl"
-                            style="display: none;">
-
-                            <div
-                                class="bg-indigo-50 dark:bg-gray-800/80 px-4 py-3 border-b border-indigo-100 dark:border-gray-700">
-                                <h3 class="text-sm font-bold text-indigo-900 dark:text-white flex items-center">
-                                    <svg class="w-4 h-4 mr-2 text-indigo-600 dark:text-indigo-400" fill="none"
-                                        stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                    HCS Siap Dikemas
-                                </h3>
-                            </div>
-
-                            <div class="max-h-80 overflow-y-auto p-2">
-                                <template x-if="count === 0">
-                                    <div class="p-6 text-center text-sm font-medium text-gray-500 dark:text-gray-400">
-                                        Tidak ada data HCS siap dikemas.
-                                    </div>
-                                </template>
-                                <template x-for="(item, index) in data" :key="index">
-                                    <a :href="`/pengemasan/create?tahun_anggaran=${item.tahun_anggaran}&tahun_emisi=${item.emisi}&pecahan=${item.pecahan}&batch=${item.batch}&seri=${item.seri}&pack_awal=${item.pack_awal}&pack_akhir=${item.pack_akhir}&max_pack_akhir=${item.pack_akhir}`"
-                                        class="block p-4 mb-2 rounded-xl transition-all border border-transparent hover:border-indigo-200 dark:hover:border-indigo-500/50 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/60 group">
-                                        <div class="flex justify-between items-start mb-2">
-                                            <div class="flex flex-col">
-                                                <span
-                                                    class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-[0.2em] mb-0.5"
-                                                    x-text="`Pecahan ${item.pecahan}`"></span>
-                                                <span
-                                                    class="text-xs font-bold text-gray-900 dark:text-white group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors"
-                                                    x-text="`TA/TE: ${item.tahun_anggaran}/${item.emisi}`"></span>
-                                            </div>
-                                            <span
-                                                class="text-[11px] font-black px-3 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30"
-                                                x-text="`${item.jumlah_pack} PACK`"></span>
-                                        </div>
-                                        <div class="grid grid-cols-2 gap-4 mb-3">
-                                            <div class="flex flex-col">
-                                                <span
-                                                    class="text-[9px] text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider">Batch</span>
-                                                <span
-                                                    class="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white"
-                                                    x-text="item.batch"></span>
-                                            </div>
-                                            <div class="flex flex-col">
-                                                <span
-                                                    class="text-[9px] text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider">Seri</span>
-                                                <span
-                                                    class="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white"
-                                                    x-text="item.seri"></span>
-                                            </div>
-                                        </div>
-                                        <div
-                                            class="flex items-center justify-between bg-gray-50 dark:bg-gray-900/50 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/80 p-2 rounded-lg border border-gray-100 dark:border-gray-700 transition-colors">
-                                            <div
-                                                class="text-[11px] font-black text-gray-600 dark:text-gray-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300">
-                                                Range: <span
-                                                    class="bg-white dark:bg-gray-800 px-2 py-0.5 rounded border border-gray-200 dark:border-gray-600 ml-1"
-                                                    x-text="`${item.pack_awal} - ${item.pack_akhir}`"></span>
-                                            </div>
-                                            <svg class="w-4 h-4 text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transform group-hover:translate-x-1 transition-all"
-                                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                                    d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                                            </svg>
-                                        </div>
-                                    </a>
-                                </template>
+                        <div class="flex flex-col text-right justify-center">
+                            <span class="text-[8px] font-black uppercase tracking-[0.2em] text-white/40 mb-0.5"
+                                x-text="date"></span>
+                            <div class="flex items-baseline gap-1">
+                                <span class="text-sm font-black tracking-tighter text-white leading-none"
+                                    x-text="time"></span>
+                                <span class="text-[8px] font-black text-rose-400 uppercase tracking-widest">WIB</span>
                             </div>
                         </div>
                     </div>
                 @endif
 
-                <!-- User Profile Dropdown -->
-                <div class="flex items-center ml-auto">
-                    <x-dropdown align="right" width="48">
-                        <x-slot name="trigger">
-                            <button
-                                class="flex items-center gap-3 px-3 py-1.5 border border-white/10 dark:border-white/5 text-sm font-bold rounded-2xl text-white bg-white/5 hover:bg-white/10 focus:outline-none transition-all duration-300 group">
-                                <div
-                                    class="hidden sm:block text-[11px] uppercase tracking-widest opacity-80 group-hover:opacity-100 transition-opacity">
-                                    {{ Auth::user()->name }}
-                                </div>
-                                <div
-                                    class="h-8 w-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black border border-white/20 shadow-lg group-hover:scale-105 transition-transform duration-300">
-                                    {{ substr(Auth::user()->name, 0, 1) }}
-                                </div>
-                                <svg class="w-4 h-4 text-white/40 group-hover:text-white/80 transition-colors"
-                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd"
-                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                        clip-rule="evenodd" />
+                @if(!$fullScreen)
+                    <!-- Tombol buat ganti tema -->
+                    <div class="flex items-center mr-4" x-data="{ 
+                        darkMode: false,
+                        toggleTheme() {
+                            this.darkMode = !this.darkMode;
+                            const theme = this.darkMode ? 'dark-mode' : 'light-mode';
+                            const oldTheme = this.darkMode ? 'light-mode' : 'dark-mode';
+                            
+                            document.documentElement.classList.remove(oldTheme);
+                            document.documentElement.classList.add(theme);
+                            document.body.classList.remove(oldTheme);
+                            document.body.classList.add(theme);
+                            
+                            localStorage.setItem('theme', theme);
+                            window.dispatchEvent(new CustomEvent('theme-changed', { detail: { theme } }));
+                        }
+                    }" x-init="darkMode = document.documentElement.classList.contains('dark-mode')">
+                        <button @click="toggleTheme()"
+                            class="p-2 border border-white/20 text-white/90 bg-white/10 hover:bg-white/20 focus:outline-none transition rounded-lg"
+                            title="Toggle Theme">
+                            <template x-if="!darkMode">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                                 </svg>
-                            </button>
-                        </x-slot>
+                            </template>
+                            <template x-if="darkMode">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 3v1m0 16v1m9-9h1M4 9h1m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                                </svg>
+                            </template>
+                        </button>
+                    </div>
+                @endif
 
-                        <x-slot name="content">
-                            <x-dropdown-link :href="route('profile.edit')">
-                                {{ __('Profile') }}
-                            </x-dropdown-link>
-                            <!-- Authentication -->
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <x-dropdown-link :href="route('logout')"
-                                    onclick="event.preventDefault(); this.closest('form').submit();">
-                                    {{ __('Log Out') }}
+                @if(!$fullScreen)
+                    <!-- Notifikasi Pengemasan -->
+                    @if(in_array(auth()->user()->role, ['admin', 'kemas', 'sortir', 'supervisor']))
+                        <div class="flex items-center mr-4 relative" x-data="hcsNotification()" x-init="init()"
+                            @click.away="open = false">
+                            <button @click="open = !open"
+                                class="relative p-2 border border-white/20 text-white/90 bg-white/10 hover:bg-white/20 focus:outline-none transition rounded-lg"
+                                title="Notifikasi Pengemasan">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"
+                                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                </svg>
+
+                                <template x-if="count > 0">
+                                    <span
+                                        class="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white shadow-sm ring-2 ring-indigo-900 dark:ring-slate-900 border border-white/10"
+                                        x-text="count">
+                                    </span>
+                                </template>
+                            </button>
+
+                            <audio id="hcs-notify-sound" preload="auto" style="display:none;">
+                                <source src="/audio/cihuy.mp3" type="audio/mpeg">
+                            </audio>
+
+                            <div x-show="open" x-transition:enter="transition ease-out duration-200"
+                                x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                                x-transition:leave="transition ease-in duration-100"
+                                x-transition:leave-start="opacity-100 scale-100"
+                                x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+                                class="absolute right-0 top-full mt-3 w-[85vw] sm:w-[550px] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700/50 overflow-hidden z-50 backdrop-blur-xl"
+                                style="display: none;">
+
+                                <div
+                                    class="bg-indigo-50 dark:bg-gray-800/80 px-4 py-3 border-b border-indigo-100 dark:border-gray-700">
+                                    <h3 class="text-sm font-bold text-indigo-900 dark:text-white flex items-center">
+                                        <svg class="w-4 h-4 mr-2 text-indigo-600 dark:text-indigo-400" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        HCS Siap Dikemas
+                                    </h3>
+                                </div>
+
+                                <div class="max-h-80 overflow-y-auto p-2">
+                                    <template x-if="count === 0">
+                                        <div class="p-6 text-center text-sm font-medium text-gray-500 dark:text-gray-400">
+                                            Tidak ada data HCS siap dikemas.
+                                        </div>
+                                    </template>
+                                    <template x-for="(item, index) in data" :key="index">
+                                        <a :href="`/pengemasan/create?tahun_anggaran=${item.tahun_anggaran}&tahun_emisi=${item.emisi}&pecahan=${item.pecahan}&batch=${item.batch}&seri=${item.seri}&pack_awal=${item.pack_awal}&pack_akhir=${item.pack_akhir}&max_pack_akhir=${item.pack_akhir}`"
+                                            class="block p-4 mb-2 rounded-xl transition-all border border-transparent hover:border-indigo-200 dark:hover:border-indigo-500/50 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/60 group">
+                                            <div class="flex justify-between items-start mb-2">
+                                                <div class="flex flex-col">
+                                                    <span
+                                                        class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-[0.2em] mb-0.5"
+                                                        x-text="`Pecahan ${item.pecahan}`"></span>
+                                                    <span
+                                                        class="text-xs font-bold text-gray-900 dark:text-white group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors"
+                                                        x-text="`TA/TE: ${item.tahun_anggaran}/${item.emisi}`"></span>
+                                                </div>
+                                                <span
+                                                    class="text-[11px] font-black px-3 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30"
+                                                    x-text="`${item.jumlah_pack} PACK`"></span>
+                                            </div>
+                                            <div class="grid grid-cols-2 gap-4 mb-3">
+                                                <div class="flex flex-col">
+                                                    <span
+                                                        class="text-[9px] text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider">Batch</span>
+                                                    <span
+                                                        class="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white"
+                                                        x-text="item.batch"></span>
+                                                </div>
+                                                <div class="flex flex-col">
+                                                    <span
+                                                        class="text-[9px] text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider">Seri</span>
+                                                    <span
+                                                        class="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white"
+                                                        x-text="item.seri"></span>
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="flex items-center justify-between bg-gray-50 dark:bg-gray-900/50 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/80 p-2 rounded-lg border border-gray-100 dark:border-gray-700 transition-colors">
+                                                <div
+                                                    class="text-[11px] font-black text-gray-600 dark:text-gray-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300">
+                                                    Range: <span
+                                                        class="bg-white dark:bg-gray-800 px-2 py-0.5 rounded border border-gray-200 dark:border-gray-600 ml-1"
+                                                        x-text="`${item.pack_awal} - ${item.pack_akhir}`"></span>
+                                                </div>
+                                                <svg class="w-4 h-4 text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transform group-hover:translate-x-1 transition-all"
+                                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                                        d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                                </svg>
+                                            </div>
+                                        </a>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                @endif
+
+                @if(!$fullScreen)
+                    <!-- User Profile Dropdown -->
+                    <div class="flex items-center ml-auto">
+                        <x-dropdown align="right" width="48">
+                            <x-slot name="trigger">
+                                <button
+                                    class="flex items-center gap-3 px-3 py-1.5 border border-white/10 dark:border-white/5 text-sm font-bold rounded-2xl text-white bg-white/5 hover:bg-white/10 focus:outline-none transition-all duration-300 group">
+                                    <div
+                                        class="hidden sm:block text-[11px] uppercase tracking-widest opacity-80 group-hover:opacity-100 transition-opacity">
+                                        {{ Auth::user()->name }}
+                                    </div>
+                                    <div
+                                        class="h-8 w-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black border border-white/20 shadow-lg group-hover:scale-105 transition-transform duration-300">
+                                        {{ substr(Auth::user()->name, 0, 1) }}
+                                    </div>
+                                    <svg class="w-4 h-4 text-white/40 group-hover:text-white/80 transition-colors"
+                                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </x-slot>
+
+                            <x-slot name="content">
+                                <x-dropdown-link :href="route('profile.edit')">
+                                    {{ __('Profile') }}
                                 </x-dropdown-link>
-                            </form>
-                        </x-slot>
-                    </x-dropdown>
-                </div>
+                                <!-- Authentication -->
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <x-dropdown-link :href="route('logout')"
+                                        onclick="event.preventDefault(); this.closest('form').submit();">
+                                        {{ __('Log Out') }}
+                                    </x-dropdown-link>
+                                </form>
+                            </x-slot>
+                        </x-dropdown>
+                    </div>
+                @endif
             </nav>
 
             <!-- Page Content -->

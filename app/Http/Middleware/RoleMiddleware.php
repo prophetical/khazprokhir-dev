@@ -31,6 +31,7 @@ class RoleMiddleware
         if ($request->is('targets*') || $request->is('users*')) {
             abort(403, 'Hanya Administrator yang dapat mengakses halaman ini.');
         }
+
         // 3. Logika role supervisor: hanya izinkan GET, jangan izinkan POST, PUT, DELETE
         if ($userRole === 'supervisor') {
             if ($request->isMethod('GET')) {
@@ -39,12 +40,25 @@ class RoleMiddleware
             abort(403, 'Anda login dengan role SUPERVISOR. Anda tidak memiliki hak akses untuk melakukan perubahan data.');
         }
 
-        // 4. Sortir & Kemas logic: akses ke semua halaman kecuali manajemen target
+        // 4. Logika role khazverutas: CRUD penuh pada X Pengganti, read-only halaman lain
+        if ($userRole === 'khazverutas') {
+            // Boleh semua method pada route x-pengganti
+            if ($request->is('x-pengganti*')) {
+                return $next($request);
+            }
+            // Halaman lain: hanya boleh GET
+            if ($request->isMethod('GET')) {
+                return $next($request);
+            }
+            abort(403, 'Role KHAZVERUTAS hanya dapat melakukan perubahan pada modul X Pengganti.');
+        }
+
+        // 5. Sortir & Kemas logic: akses ke semua halaman kecuali manajemen target
         if (in_array($userRole, ['sortir', 'kemas'])) {
             return $next($request);
         }
 
-        // 5. Role Unassigned (User Baru): Terbatas pada Dashboard & Laporan Harian
+        // 6. Role Unassigned (User Baru): Terbatas pada Dashboard & Laporan Harian
         $allowedRoutes = [
             'dashboard',
             'laporan-harian*',

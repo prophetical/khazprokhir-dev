@@ -1068,36 +1068,6 @@
                         </div>
                     </div>
                 </div>
-                <!--
-                {{-- Menu navigasi cepat --}}
-                <div class="lg:col-span-3 grid grid-cols-2 sm:grid-cols-3 gap-6">
-                    @php
-                        $modules = [
-                            ['icon' => 'M2.25 13.5h3.86a2.25 2.25 0 012.012 1.244l.256.512a2.25 2.25 0 002.013 1.244h3.218a2.25 2.25 0 002.013-1.244l.256-.512a2.25 2.25 0 012.013-1.244h3.859m-19.5.338V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18v-4.162c0-2.24-1.815-4.062-4.062-4.062h-11.376c-2.247 0-4.062 1.822-4.062 4.062zM15 7.5l-3 3m0 0l-3-3m3 3v-7.5', 'label' => 'Penerimaan HCS', 'color' => 'indigo', 'route' => 'hcs-receiving.index', 'bg' => 'bg-white'],
-                            ['icon' => 'M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m8.25 3v6.75m0 0l-3-3m3 3l3-3M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z', 'label' => 'Penerimaan HCTS', 'color' => 'rose', 'route' => 'hcts-receiving.index', 'bg' => 'bg-white'],
-                            ['icon' => 'M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4', 'label' => 'Penyortiran HCS', 'color' => 'pink', 'route' => 'hcs-sorting.index', 'bg' => 'bg-white'],
-                            ['icon' => 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4', 'label' => 'Pengemasan HCS', 'color' => 'emerald', 'route' => 'pengemasan.index', 'bg' => 'bg-white'],
-                            ['icon' => 'M7.5 7.5h-.75A2.25 2.25 0 004.5 9.75v7.5a2.25 2.25 0 002.25 2.25h7.5a2.25 2.25 0 002.25-2.25v-7.5a2.25 2.25 0 00-2.25-2.25h-.75m0-3l-3-3m0 0l-3 3m3-3v11.25m6-2.25h.75a2.25 2.25 0 012.25 2.25v7.5a2.25 2.25 0 01-2.25 2.25h-7.5a2.25 2.25 0 01-2.25-2.25v-.75', 'label' => 'Penyerahan ke BI', 'color' => 'orange', 'route' => 'penyerahan-bi.index', 'bg' => 'bg-white'],
-                            ['icon' => 'M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', 'label' => 'Laporan Harian', 'color' => 'blue', 'route' => 'laporan-harian.index', 'bg' => 'bg-white'],
-                            ['icon' => 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z', 'label' => 'Pengaturan', 'color' => 'gray', 'route' => 'profile.edit', 'bg' => 'bg-white/50 border-dashed'],
-                        ];
-                    @endphp
-                    @foreach($modules as $mod)
-                        <a href="{{ route($mod['route']) }}"
-                            class="{{ $mod['bg'] }} flex flex-col items-center justify-center p-4 sm:p-8 rounded-[2.5rem] border border-gray-100 hover:border-{{ $mod['color'] }}-400 hover:shadow-2xl hover:shadow-{{ $mod['color'] }}-100/50 hover:-translate-y-2 transition-all duration-500 group">
-                            <div
-                                class="mb-5 flex items-center justify-center w-16 h-16 rounded-[1.5rem] bg-{{ $mod['color'] }}-50 text-{{ $mod['color'] }}-600 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-inner">
-                                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="{{ $mod['icon'] }}" />
-                                </svg>
-                            </div>
-                            <span
-                                class="text-[10px] font-black text-gray-800 uppercase tracking-[0.2em] group-hover:text-{{ $mod['color'] }}-600 transition-colors">{{ $mod['label'] }}</span>
-                        </a>
-                    @endforeach
-                </div>
-                -->
             </div>
 
         </div>

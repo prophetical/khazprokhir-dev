@@ -81,7 +81,7 @@
                                 class="block text-[10px] font-bold text-indigo-400 uppercase tracking-[0.2em] mb-4">Pilih
                                 Jabatan (Role)</label>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                @foreach(['admin' => 'Administrator', 'supervisor' => 'Supervisor', 'sortir' => 'Staff Sortir', 'kemas' => 'Staff Pengemasan'] as $val => $label)
+                                @foreach(['admin' => 'Administrator', 'supervisor' => 'Supervisor', 'sortir' => 'Staff Sortir', 'kemas' => 'Staff Pengemasan', 'khazverutas' => 'Staff Khazai Verutas'] as $val => $label)
                                     <label
                                         class="relative flex items-center p-4 cursor-pointer rounded-lg border-2 transition-all"
                                         :class="role === '{{ $val }}' ? 'bg-white border-indigo-500 shadow-md ring-2 ring-indigo-500/10' : 'bg-transparent border-gray-100 hover:border-indigo-200'">

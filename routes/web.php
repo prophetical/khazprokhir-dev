@@ -104,7 +104,7 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\RoleMiddleware::clas
     Route::get('/hcts-hcts-summary/print', [\App\Http\Controllers\HctsReceivingController::class, 'summaryPrint'])->name('hcts-receiving.summary-print');
     Route::get('/hcts-hcts-summary', [\App\Http\Controllers\HctsReceivingController::class, 'summary'])->name('hcts-receiving.summary');
 
-    // HCTS Submission Routes
+    // Penyerahan HCTS Routes
     Route::get('/hcts-submission/create', [\App\Http\Controllers\HctsSubmissionController::class, 'create'])->name('hcts-submission.create');
     Route::post('/hcts-submission', [\App\Http\Controllers\HctsSubmissionController::class, 'store'])->name('hcts-submission.store');
     Route::get('/hcts-submission/{hcts_submission}/edit', [\App\Http\Controllers\HctsSubmissionController::class, 'edit'])->name('hcts-submission.edit');
@@ -142,8 +142,26 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\RoleMiddleware::clas
     });
     Route::resource('bahan-penolong', \App\Http\Controllers\BahanPenolongController::class)->only(['store', 'update', 'destroy']);
 
+    // X Pengganti Routes
+    Route::prefix('x-pengganti')->name('x-pengganti.')->group(function () {
+        // Sub-menu 1: Form Input Seri (Master Data)
+        Route::get('/seri', [\App\Http\Controllers\XPenggantiSeriController::class, 'index'])->name('seri.index');
+        Route::get('/seri/create', [\App\Http\Controllers\XPenggantiSeriController::class, 'create'])->name('seri.create');
+        Route::post('/seri', [\App\Http\Controllers\XPenggantiSeriController::class, 'store'])->name('seri.store');
+        Route::delete('/seri/{seri}', [\App\Http\Controllers\XPenggantiSeriController::class, 'destroy'])->name('seri.destroy');
+
+        // Sub-menu 2: Form Input Khazai (Grid Transaksional)
+        Route::get('/khazai', [\App\Http\Controllers\XPenggantiKhazaiController::class, 'index'])->name('khazai.index');
+        Route::post('/khazai', [\App\Http\Controllers\XPenggantiKhazaiController::class, 'store'])->name('khazai.store');
+        Route::get('/khazai/input', [\App\Http\Controllers\XPenggantiKhazaiController::class, 'inputForm'])->name('khazai.input');
+        Route::get('/khazai/pdf', [\App\Http\Controllers\XPenggantiKhazaiController::class, 'exportPdf'])->name('khazai.pdf');
+
+        // API: list masters untuk dropdown
+        Route::get('/api/masters', [\App\Http\Controllers\XPenggantiKhazaiController::class, 'getMasters'])->name('api.masters');
+    });
+
     // User Management (Admin Only, protected in RoleMiddleware)
     Route::resource('users', \App\Http\Controllers\UserController::class);
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
