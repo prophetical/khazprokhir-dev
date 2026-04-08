@@ -96,10 +96,7 @@
                             <table class="w-full border-separate border-spacing-0 relative text-slate-800">
                                 @include('x-pengganti.cutpack._table-head', ['title' => 'PACK 1 — 25'])
                                 <tbody class="divide-y-0">
-                                    {{-- Buffer baris agar tidak menabrak header (108px = Tinggi Header) --}}
-                                    <tr class="h-[63px] pointer-events-none border-none">
-                                        <td colspan="10" class="p-0 border-none"></td>
-                                    </tr>
+
                                     @include('x-pengganti.cutpack._table-body', ['start' => 1, 'end' => 25, 'gridData' => $gridData])
                                 </tbody>
                             </table>
@@ -113,10 +110,7 @@
                             <table class="w-full border-separate border-spacing-0 relative text-slate-800">
                                 @include('x-pengganti.cutpack._table-head', ['title' => 'PACK 26 — 50'])
                                 <tbody class="divide-y-0">
-                                    {{-- Buffer baris agar tidak menabrak header --}}
-                                    <tr class="h-[63px] pointer-events-none border-none">
-                                        <td colspan="10" class="p-0 border-none"></td>
-                                    </tr>
+
                                     @include('x-pengganti.cutpack._table-body', ['start' => 26, 'end' => 50, 'gridData' => $gridData])
                                 </tbody>
                             </table>
@@ -136,10 +130,7 @@
                             <table class="w-full border-separate border-spacing-0 relative text-slate-800">
                                 @include('x-pengganti.cutpack._table-head', ['title' => 'PACK 51 — 75'])
                                 <tbody class="divide-y-0">
-                                    {{-- Buffer baris agar tidak menabrak header --}}
-                                    <tr class="h-[63px] pointer-events-none border-none">
-                                        <td colspan="10" class="p-0 border-none"></td>
-                                    </tr>
+
                                     @include('x-pengganti.cutpack._table-body', ['start' => 51, 'end' => 75, 'gridData' => $gridData])
                                 </tbody>
                             </table>
@@ -153,10 +144,7 @@
                             <table class="w-full border-separate border-spacing-0 relative text-slate-800">
                                 @include('x-pengganti.cutpack._table-head', ['title' => 'PACK 76 — 100'])
                                 <tbody class="divide-y-0">
-                                    {{-- Buffer baris agar tidak menabrak header --}}
-                                    <tr class="h-[63px] pointer-events-none border-none">
-                                        <td colspan="10" class="p-0 border-none"></td>
-                                    </tr>
+
                                     @include('x-pengganti.cutpack._table-body', ['start' => 76, 'end' => 100, 'gridData' => $gridData])
                                 </tbody>
                             </table>

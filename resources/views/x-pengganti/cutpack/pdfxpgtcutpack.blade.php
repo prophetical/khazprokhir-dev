@@ -265,7 +265,7 @@
                     <th colspan="3" class="head-indigo">KETERANGAN</th>
                 </tr>
                 <tr>
-                    <th colspan="3" class="head-sub">JUMLAH RUSAK BILYET</th>
+                    <th colspan="3" class="head-sub">JUMLAH RUSAK (Brood)</th>
                     <th colspan="3" class="head-sub" style="color: #fde68a !important;">TOTAL</th>
                     <th rowspan="2" class="head-indigo">NOMOR PACK<br>PENGGANTI</th>
                     <th rowspan="2" class="head-dark-indigo">SERI<br>PENGGANTI</th>

@@ -30,4 +30,9 @@ class XPenggantiSeri extends Model
     {
         return $this->hasMany(XPenggantiCutpackPack::class, 'x_pengganti_seri_id');
     }
+
+    public function rikyetPacks()
+    {
+        return $this->hasMany(XPenggantiRikyetPack::class, 'x_pengganti_seri_id');
+    }
 }

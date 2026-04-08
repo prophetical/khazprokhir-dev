@@ -1,4 +1,4 @@
-<thead class="sticky top-16 z-30">
+<thead>
     {{-- BARIS 0: Judul Pack (Unified inside thead) --}}
     <tr class="bg-slate-900 border-b border-slate-700 h-[36px]">
         <th colspan="10" class="px-3 py-0 h-[36px] text-white text-[10px] font-black uppercase tracking-[0.2em] text-center shadow-lg bg-slate-900 border-x border-slate-700">

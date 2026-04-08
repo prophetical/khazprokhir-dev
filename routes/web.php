@@ -162,6 +162,17 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\RoleMiddleware::clas
         Route::get('/cutpack/input', [\App\Http\Controllers\XPenggantiCutpackController::class, 'inputForm'])->name('cutpack.input');
         Route::get('/cutpack/pdf', [\App\Http\Controllers\XPenggantiCutpackController::class, 'exportPdf'])->name('cutpack.pdf');
 
+        // Sub-menu 4: Form Input Rikyet (Grid Transaksional Brood)
+        Route::get('/rikyet', [\App\Http\Controllers\XPenggantiRikyetController::class, 'index'])->name('rikyet.index');
+        Route::post('/rikyet', [\App\Http\Controllers\XPenggantiRikyetController::class, 'store'])->name('rikyet.store');
+        Route::get('/rikyet/input', [\App\Http\Controllers\XPenggantiRikyetController::class, 'inputForm'])->name('rikyet.input');
+        Route::get('/rikyet/pdf', [\App\Http\Controllers\XPenggantiRikyetController::class, 'exportPdf'])->name('rikyet.pdf');
+
+        // Sub-menu 5: Hasil Rekap Khazprokhir (Summary Dashboard)
+        Route::get('/rekap', [\App\Http\Controllers\XPenggantiRekapController::class, 'index'])->name('rekap.index');
+        Route::get('/rekap/show', [\App\Http\Controllers\XPenggantiRekapController::class, 'show'])->name('rekap.show');
+        Route::get('/rekap/print', [\App\Http\Controllers\XPenggantiRekapController::class, 'print'])->name('rekap.print');
+
         // API: list masters untuk dropdown
         Route::get('/api/masters', [\App\Http\Controllers\XPenggantiKhazaiController::class, 'getMasters'])->name('api.masters');
     });

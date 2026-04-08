@@ -441,6 +441,14 @@
                         class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('x-pengganti.cutpack.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
                         Form Input Cutpack
                     </a>
+                    <a href="{{ route('x-pengganti.rikyet.index') }}"
+                        class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('x-pengganti.rikyet.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                        Form Input Rikyet
+                    </a>
+                    <a href="{{ route('x-pengganti.rekap.index') }}"
+                        class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('x-pengganti.rekap.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                        Hasil Rekap Khazprokhir
+                    </a>
                 </div>
             </div>
             @endif
