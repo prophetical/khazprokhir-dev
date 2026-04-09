@@ -231,10 +231,24 @@
         /* Seri valid/invalid */
         .seri-pengganti-input.is-valid {
             border-color: #10b981 !important;
+            background-color: #f0fdf4 !important;
+            color: #15803d !important;
         }
 
         .seri-pengganti-input.is-invalid {
             border-color: #f43f5e !important;
+            background-color: #fff1f2 !important;
+            color: #be123c !important;
+        }
+
+        body.dark-mode .seri-pengganti-input.is-valid {
+            background-color: rgba(16, 185, 129, 0.15) !important;
+            color: #10b981 !important;
+        }
+
+        body.dark-mode .seri-pengganti-input.is-invalid {
+            background-color: rgba(244, 63, 94, 0.15) !important;
+            color: #fb7185 !important;
         }
 
         /* Footer page buttons active state */
@@ -247,6 +261,28 @@
 
     @push('scripts')
         <script>
+            // Handler Pesan Sukses Lokal (X Pengganti Khazai)
+            @if(session('x_success'))
+                (function() {
+                    console.log('X-Pengganti Success Notification Triggered (Khazai)');
+                    const isDark = document.documentElement.classList.contains('dark-mode');
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: {!! json_encode(session('x_success')) !!},
+                        icon: 'success',
+                        timer: 4000,
+                        showConfirmButton: false,
+                        background: isDark ? '#1e293b' : '#fff',
+                        color: isDark ? '#f8fafc' : '#111827',
+                        iconColor: '#10b981',
+                        borderRadius: '1.5rem',
+                        customClass: {
+                            popup: 'rounded-[1.5rem] border-0 shadow-2xl',
+                        }
+                    });
+                })();
+            @endif
+
             // ── Page Navigation ─────────────────────────────────
             let currentPage = 1;
             function showPage(n) {
@@ -419,6 +455,24 @@
                     });
 
                     if (hasData) {
+                        // VALIDATION: Check Seri Pengganti format (XX-XX9)
+                        const spValue = form.querySelector(`input[name="packs[${index}][seri_pengganti]"]`)?.value || '';
+                        if (spValue && !/^[A-Z]{2}-[A-Z]{2}[0-9]$/.test(spValue)) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Format Seri Salah!',
+                                text: `Pack ${p}: Format Seri Pengganti harus XX-XX9 (Contoh: AB-DB6). Maksimal 6 karakter.`,
+                                confirmButtonColor: '#7c3aed'
+                            });
+                            // Re-enable buttons
+                            btns.forEach(btn => {
+                                btn.style.pointerEvents = 'auto';
+                                btn.style.opacity = '1';
+                                btn.innerHTML = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg> Simpan`;
+                            });
+                            return;
+                        }
+
                         hasAnyData = true;
                         const packObj = {
                             nomor_pack: p,
@@ -464,19 +518,6 @@
                 document.body.appendChild(virtualForm);
                 virtualForm.submit(); // Browser sends immediately without DOM repaint/freeze
             });
-
-            // 5. Success Alert (SweetAlert2)
-            @if(session('success'))
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: "{{ session('success') }}",
-                    timer: 2000,
-                    showConfirmButton: false,
-                    background: document.documentElement.classList.contains('dark-mode') ? '#1e293b' : '#fff',
-                    color: document.documentElement.classList.contains('dark-mode') ? '#f8fafc' : '#111827'
-                });
-            @endif
         </script>
     @endpush
 </x-app-layout>

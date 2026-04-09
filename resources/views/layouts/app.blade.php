@@ -167,8 +167,6 @@
 
         body.dark-mode thead * {
             border-color: transparent !important;
-            border-width: 0 !important;
-            background-color: transparent !important;
         }
 
         body.dark-mode thead th.sticky {
@@ -198,8 +196,8 @@
             background-color: #2f3646ff !important;
         }
 
-        body.dark-mode tr:hover td {
-            background-color: var(--theme-hover-bg) !important;
+        body.dark-mode tbody tr:hover td {
+            background-color: rgba(255, 255, 255, 0.08) !important;
         }
 
         /* Menyatukan Sorotan Tabel & Kontainer dalam Mode Gelap */
@@ -837,25 +835,58 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            // Handler Pesan Flash Sesi Global
-            @if(session('success'))
-                Swal.fire({
-                    title: 'Berhasil!',
-                    text: "{{ session('success') }}",
-                    icon: 'success',
-                    confirmButtonColor: '#4f46e5'
-                });
-            @endif
+        // ── GLOBAL NOTIFICATION HANDLER (Premium Style) ──
+    // ── GLOBAL NOTIFICATION HANDLER (Ultra-Resilient) ──
+    window.addEventListener('DOMContentLoaded', () => {
+        if (typeof Swal === 'undefined') {
+            console.error('SweetAlert2 not loaded!');
+            return;
+        }
 
-            @if(session('error'))
-                Swal.fire({
-                    title: 'Oops...',
-                    text: "{{ session('error') }}",
-                    icon: 'error',
-                    confirmButtonColor: '#4f46e5'
-                });
-            @endif
+        const isDark = document.documentElement.classList.contains('dark-mode');
+        const swalBase = {
+            background: isDark ? '#1e293b' : '#fff',
+            color: isDark ? '#f8fafc' : '#111827',
+            borderRadius: '1.5rem',
+            customClass: { popup: 'rounded-[1.5rem] border-0 shadow-2xl' }
+        };
+
+        {{-- Handler Sukses Global (Hanya mendengarkan kunci 'success') --}}
+        @if(session('success'))
+            Swal.fire(Object.assign({}, swalBase, {
+                title: 'Berhasil!',
+                text: {!! json_encode(session('success')) !!},
+                icon: 'success',
+                timer: 3000,
+                showConfirmButton: false,
+                iconColor: '#10b981',
+            }));
+        @endif
+
+        @if(session('error'))
+            Swal.fire(Object.assign({}, swalBase, {
+                title: 'Terjadi Kesalahan',
+                text: {!! json_encode(session('error')) !!},
+                icon: 'error',
+                confirmButtonColor: '#e11d48',
+            }));
+        @endif
+
+        @if($errors->any())
+            Swal.fire(Object.assign({}, swalBase, {
+                title: 'Validasi Gagal',
+                html: `<ul style="text-align:left; font-size:13px; list-style:disc; padding-left:20px;">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                       </ul>`,
+                icon: 'warning',
+                confirmButtonColor: '#f59e0b',
+            }));
+        @endif
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
                 const scrollContainer = document.getElementById('main-scroll-container');
             const header = document.getElementById('top-header');
 

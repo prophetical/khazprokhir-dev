@@ -297,6 +297,28 @@
 
     @push('scripts')
         <script>
+            // Handler Pesan Sukses Lokal (X Pengganti Cutpack)
+            @if(session('x_success'))
+                (function() {
+                    console.log('X-Pengganti Success Notification Triggered (Cutpack)');
+                    const isDark = document.documentElement.classList.contains('dark-mode');
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: {!! json_encode(session('x_success')) !!},
+                        icon: 'success',
+                        timer: 4000,
+                        showConfirmButton: false,
+                        background: isDark ? '#1e293b' : '#fff',
+                        color: isDark ? '#f8fafc' : '#111827',
+                        iconColor: '#10b981',
+                        borderRadius: '1.5rem',
+                        customClass: {
+                            popup: 'rounded-[1.5rem] border-0 shadow-2xl',
+                        }
+                    });
+                })();
+            @endif
+
             // ── 1. Pagination ────────────────────────────────────
             let currentPage = 1;
             function showPage(n) {
@@ -350,10 +372,10 @@
                     gc += parseInt(document.getElementById(`total-campuran-pack-${i}`)?.value || 0);
                 }
                 const fmt = n => n.toLocaleString('id-ID');
-                document.getElementById('grand-total-seri1').textContent = fmt(g1);
-                document.getElementById('grand-total-seri2').textContent = fmt(g2);
-                document.getElementById('grand-total-campuran').textContent = fmt(gc);
-                document.getElementById('grand-total-all').textContent = fmt(g1 + g2 + gc);
+                const g1El = document.getElementById('grand-total-seri1'); if(g1El) g1El.textContent = fmt(g1);
+                const g2El = document.getElementById('grand-total-seri2'); if(g2El) g2El.textContent = fmt(g2);
+                const gcEl = document.getElementById('grand-total-campuran'); if(gcEl) gcEl.textContent = fmt(gc);
+                const gaEl = document.getElementById('grand-total-all'); if(gaEl) gaEl.textContent = fmt(g1 + g2 + gc);
 
                 // Update Header Totals
                 ['seri1', 'seri2', 'campuran'].forEach(t => {
@@ -417,6 +439,24 @@
                     packInputs.forEach(inp => { if (inp.value && inp.value.trim() !== '') hasData = true; });
 
                     if (hasData) {
+                        // VALIDATION: Check Seri Pengganti format (XX-XX9)
+                        const spValue = form.querySelector(`input[name="packs[${p}][seri_pengganti]"]`)?.value || '';
+                        if (spValue && !/^[A-Z]{2}-[A-Z]{2}[0-9]$/.test(spValue)) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Format Seri Salah!',
+                                text: `Pack ${p}: Format Seri Pengganti harus XX-XX9 (Contoh: AB-DB6). Maksimal 6 karakter.`,
+                                confirmButtonColor: '#4f46e5'
+                            });
+                            // Re-enable button
+                            if (btn) {
+                                btn.style.pointerEvents = 'auto';
+                                btn.style.opacity = '1';
+                                btn.innerHTML = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg> Simpan`;
+                            }
+                            return;
+                        }
+
                         hasAnyData = true;
                         const packObj = {
                             nomor_pack: p,
@@ -466,15 +506,6 @@
                 document.body.appendChild(virtualForm);
                 virtualForm.submit(); // Browser sends immediately without DOM repaint/freeze
             });
-
-            // 5. Success Alert
-            @if(session('success'))
-                Swal.fire({
-                    icon: 'success', title: 'Berhasil!', text: "{{ session('success') }}", timer: 2000, showConfirmButton: false,
-                    background: document.documentElement.classList.contains('dark') ? '#1e293b' : '#fff',
-                    color: document.documentElement.classList.contains('dark') ? '#f8fafc' : '#111827'
-                });
-            @endif
         </script>
     @endpush
 </x-app-layout>

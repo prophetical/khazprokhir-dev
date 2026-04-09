@@ -115,7 +115,7 @@ class XPenggantiCutpackController extends Controller
             'packs.*.slots.*.nomor_pack_pengganti'   => 'nullable|integer|min:0',
             'packs.*.slots.*.nomor_bilyet_pengganti' => 'nullable|integer|min:0',
         ], [
-            'packs.*.seri_pengganti.regex' => 'Format Seri Pengganti harus XX-XX9 (contoh: AB-BB1).',
+            'packs.*.seri_pengganti.regex' => 'Format Seri Pengganti harus XX-XX9 (contoh: AB-BB1). Maksimal 6 karakter.',
         ]);
 
         DB::transaction(function () use ($validated) {
@@ -181,9 +181,12 @@ class XPenggantiCutpackController extends Controller
             }
         });
 
+        $seri = \App\Models\XPenggantiSeri::find($validated['x_pengganti_seri_id']);
+        $msg  = "Data Cutpack Seri {$seri->seri} Batch {$seri->batch} berhasil disimpan.";
+
         return redirect()
             ->route('x-pengganti.cutpack.input', ['seri_id' => $validated['x_pengganti_seri_id']])
-            ->with('success', 'Data Cutpack berhasil disimpan.');
+            ->with('x_success', $msg);
     }
 
     private function buildEmptyGrid(): array

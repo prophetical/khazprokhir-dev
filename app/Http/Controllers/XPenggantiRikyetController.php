@@ -114,8 +114,8 @@ class XPenggantiRikyetController extends Controller
             'packs.*.slots.*.rusak_campuran'     => 'nullable|integer|min:0',
             'packs.*.slots.*.seri_pengganti'     => ['nullable', 'string', 'regex:/^[A-Z]{2}-[A-Z]{2}[0-9]$/'],
         ], [
-            'packs.*.seri_pengganti.regex'       => 'Format Seri Pengganti harus XX-XX9 (contoh: AB-BB1).',
-            'packs.*.slots.*.seri_pengganti.regex' => 'Format Seri Pengganti harus XX-XX9 (contoh: AB-BB1).',
+            'packs.*.seri_pengganti.regex'       => 'Format Seri Pengganti harus XX-XX9 (contoh: AB-BB1). Maksimal 6 karakter.',
+            'packs.*.slots.*.seri_pengganti.regex' => 'Format Seri Pengganti harus XX-XX9 (contoh: AB-BB1). Maksimal 6 karakter.',
         ]);
 
         DB::transaction(function () use ($validated) {
@@ -179,9 +179,12 @@ class XPenggantiRikyetController extends Controller
             }
         });
 
+        $seri = \App\Models\XPenggantiSeri::find($validated['x_pengganti_seri_id']);
+        $msg  = "Data Rikyet Seri {$seri->seri} Batch {$seri->batch} berhasil disimpan.";
+
         return redirect()
             ->route('x-pengganti.rikyet.input', ['seri_id' => $validated['x_pengganti_seri_id']])
-            ->with('success', 'Data Rikyet berhasil disimpan.');
+            ->with('x_success', $msg);
     }
 
     /**

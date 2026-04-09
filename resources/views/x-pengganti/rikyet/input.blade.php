@@ -252,11 +252,23 @@
         .seri-pengganti-input.is-valid {
             border-color: #10b981 !important;
             background-color: #f0fdf4 !important;
+            color: #15803d !important;
         }
 
         .seri-pengganti-input.is-invalid {
             border-color: #f43f5e !important;
             background-color: #fff1f2 !important;
+            color: #be123c !important;
+        }
+
+        body.dark-mode .seri-pengganti-input.is-valid {
+            background-color: rgba(16, 185, 129, 0.15) !important;
+            color: #10b981 !important;
+        }
+
+        body.dark-mode .seri-pengganti-input.is-invalid {
+            background-color: rgba(244, 63, 94, 0.15) !important;
+            color: #fb7185 !important;
         }
 
         /* Hapus spin button number input */
@@ -273,6 +285,28 @@
 
     @push('scripts')
         <script>
+            // Handler Pesan Sukses Lokal (X Pengganti Rikyet)
+            @if(session('x_success'))
+                (function() {
+                    console.log('X-Pengganti Success Notification Triggered');
+                    const isDark = document.documentElement.classList.contains('dark-mode');
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: {!! json_encode(session('x_success')) !!},
+                        icon: 'success',
+                        timer: 4000,
+                        showConfirmButton: false,
+                        background: isDark ? '#1e293b' : '#fff',
+                        color: isDark ? '#f8fafc' : '#111827',
+                        iconColor: '#10b981',
+                        borderRadius: '1.5rem',
+                        customClass: {
+                            popup: 'rounded-[1.5rem] border-0 shadow-2xl',
+                        }
+                    });
+                })();
+            @endif
+
             // ── Page Navigation ─────────────────────────────────
             let currentPage = 1;
             function showPage(n) {
@@ -316,13 +350,14 @@
                     gc += parseInt(document.getElementById(`total-campuran-pack-${p}`)?.value || 0);
                 }
                 const fmt = n => n.toLocaleString('id-ID');
-                document.getElementById('grand-total-seri1').textContent = fmt(g1);
-                document.getElementById('grand-total-seri2').textContent = fmt(g2);
-                document.getElementById('grand-total-campuran').textContent = fmt(gc);
-                document.getElementById('grand-total-all').textContent = fmt(g1 + g2 + gc);
-                document.getElementById('grand-total-seri1-header').textContent = fmt(g1);
-                document.getElementById('grand-total-seri2-header').textContent = fmt(g2);
-                document.getElementById('grand-total-campuran-header').textContent = fmt(gc);
+                const g1El = document.getElementById('grand-total-seri1'); if(g1El) g1El.textContent = fmt(g1);
+                const g2El = document.getElementById('grand-total-seri2'); if(g2El) g2El.textContent = fmt(g2);
+                const gcEl = document.getElementById('grand-total-campuran'); if(gcEl) gcEl.textContent = fmt(gc);
+                const gaEl = document.getElementById('grand-total-all'); if(gaEl) gaEl.textContent = fmt(g1 + g2 + gc);
+                
+                const h1El = document.getElementById('grand-total-seri1-header'); if(h1El) h1El.textContent = fmt(g1);
+                const h2El = document.getElementById('grand-total-seri2-header'); if(h2El) h2El.textContent = fmt(g2);
+                const hcEl = document.getElementById('grand-total-campuran-header'); if(hcEl) hcEl.textContent = fmt(gc);
             }
 
             // ── Enter → pindah ke slot berikutnya (kolom sama) ───────────
@@ -444,7 +479,13 @@
                     });
 
                     if (hasData) {
-                        hasAnyData = true;
+                        // VALIDATION: Check Seri Pengganti format (XX-XX9)
+                        // 1. Pack Level
+                        const pSeri = form.querySelector(`input[name="packs[${p}][seri_pengganti]"]`)?.value || '';
+                        if (pSeri && !/^[A-Z]{2}-[A-Z]{2}[0-9]$/.test(pSeri)) {
+                            return showError(`Pack ${p}: Format Seri Pengganti Utama harus XX-XX9 (Contoh: AB-DB6).`);
+                        }
+
                         const packObj = {
                             nomor_pack: p,
                             total_rusak_seri_1: form.querySelector(`input[name="packs[${p}][total_rusak_seri_1]"]`)?.value || null,
@@ -454,16 +495,38 @@
                         };
 
                         for (let s = 1; s <= 4; s++) {
+                            // 2. Slot Level
+                            const sSeri = form.querySelector(`input[name="packs[${p}][slots][${s}][seri_pengganti]"]`)?.value || '';
+                            if (sSeri && !/^[A-Z]{2}-[A-Z]{2}[0-9]$/.test(sSeri)) {
+                                return showError(`Pack ${p} Slot ${s}: Format Seri Pengganti harus XX-XX9 (Contoh: AB-DB6).`);
+                            }
+
                             packObj.slots[s] = {
                                 slot: s,
                                 rusak_seri_1: form.querySelector(`input[name="packs[${p}][slots][${s}][rusak_seri_1]"]`)?.value || null,
                                 rusak_seri_2: form.querySelector(`input[name="packs[${p}][slots][${s}][rusak_seri_2]"]`)?.value || null,
                                 rusak_campuran: form.querySelector(`input[name="packs[${p}][slots][${s}][rusak_campuran]"]`)?.value || null,
-                                seri_pengganti: form.querySelector(`input[name="packs[${p}][slots][${s}][seri_pengganti]"]`)?.value || null,
+                                seri_pengganti: sSeri || null,
                             };
                         }
                         packsData[p] = packObj;
+                        hasAnyData = true;
                     }
+                }
+
+                function showError(msg) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Format Seri Salah!',
+                        text: msg,
+                        confirmButtonColor: '#0d9488'
+                    });
+                    btns.forEach(btn => {
+                        btn.style.pointerEvents = 'auto';
+                        btn.style.opacity = '1';
+                        btn.innerHTML = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg> Simpan`;
+                    });
+                    return false;
                 }
 
                 // ── VIRTUAL FORM SUBMISSION to bypass UI freeze ──
@@ -492,19 +555,6 @@
                 document.body.appendChild(virtualForm);
                 virtualForm.submit(); // Browser sends immediately without DOM repaint/freeze
             });
-
-            // ── SweetAlert2 Success ──
-            @if(session('success'))
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: "{{ session('success') }}",
-                    timer: 2200,
-                    showConfirmButton: false,
-                    background: document.documentElement.classList.contains('dark-mode') ? '#1e293b' : '#fff',
-                    color: document.documentElement.classList.contains('dark-mode') ? '#f8fafc' : '#111827'
-                });
-            @endif
         </script>
     @endpush
 </x-app-layout>
