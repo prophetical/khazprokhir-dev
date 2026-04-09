@@ -297,27 +297,6 @@
 
     @push('scripts')
         <script>
-            // Handler Pesan Sukses Lokal (X Pengganti Cutpack)
-            @if(session('x_success'))
-                (function() {
-                    console.log('X-Pengganti Success Notification Triggered (Cutpack)');
-                    const isDark = document.documentElement.classList.contains('dark-mode');
-                    Swal.fire({
-                        title: 'Berhasil!',
-                        text: {!! json_encode(session('x_success')) !!},
-                        icon: 'success',
-                        timer: 4000,
-                        showConfirmButton: false,
-                        background: isDark ? '#1e293b' : '#fff',
-                        color: isDark ? '#f8fafc' : '#111827',
-                        iconColor: '#10b981',
-                        borderRadius: '1.5rem',
-                        customClass: {
-                            popup: 'rounded-[1.5rem] border-0 shadow-2xl',
-                        }
-                    });
-                })();
-            @endif
 
             // ── 1. Pagination ────────────────────────────────────
             let currentPage = 1;
@@ -378,9 +357,10 @@
                 const gaEl = document.getElementById('grand-total-all'); if(gaEl) gaEl.textContent = fmt(g1 + g2 + gc);
 
                 // Update Header Totals
+                const hdrTotals = { seri1: g1, seri2: g2, campuran: gc };
                 ['seri1', 'seri2', 'campuran'].forEach(t => {
                     const el = document.getElementById(`grand-total-${t}-header`);
-                    if (el) el.textContent = fmt(eval(`g${t === 'seri1' ? '1' : (t === 'seri2' ? '2' : 'c')}`));
+                    if (el) el.textContent = fmt(hdrTotals[t] || 0);
                 });
             }
 

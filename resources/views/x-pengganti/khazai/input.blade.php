@@ -261,27 +261,6 @@
 
     @push('scripts')
         <script>
-            // Handler Pesan Sukses Lokal (X Pengganti Khazai)
-            @if(session('x_success'))
-                (function() {
-                    console.log('X-Pengganti Success Notification Triggered (Khazai)');
-                    const isDark = document.documentElement.classList.contains('dark-mode');
-                    Swal.fire({
-                        title: 'Berhasil!',
-                        text: {!! json_encode(session('x_success')) !!},
-                        icon: 'success',
-                        timer: 4000,
-                        showConfirmButton: false,
-                        background: isDark ? '#1e293b' : '#fff',
-                        color: isDark ? '#f8fafc' : '#111827',
-                        iconColor: '#10b981',
-                        borderRadius: '1.5rem',
-                        customClass: {
-                            popup: 'rounded-[1.5rem] border-0 shadow-2xl',
-                        }
-                    });
-                })();
-            @endif
 
             // ── Page Navigation ─────────────────────────────────
             let currentPage = 1;

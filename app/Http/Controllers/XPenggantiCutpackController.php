@@ -185,7 +185,10 @@ class XPenggantiCutpackController extends Controller
         $msg  = "Data Cutpack Seri {$seri->seri} Batch {$seri->batch} berhasil disimpan.";
 
         return redirect()
-            ->route('x-pengganti.cutpack.input', ['seri_id' => $validated['x_pengganti_seri_id']])
+            ->route('x-pengganti.cutpack.input', [
+                'seri_id' => $validated['x_pengganti_seri_id'],
+                'saved'   => 1
+            ])
             ->with('x_success', $msg);
     }
 

@@ -479,6 +479,10 @@
 </head>
 
 <body class="font-sans antialiased">
+    {{-- Stateful Notification Triggers (Absolute Reliability) --}}
+    @if(session('x_success'))
+        <div id="x-notif-trigger" data-message="{{ session('x_success') }}" class="hidden"></div>
+    @endif
     <div x-data="{ 
             sidebarCollapsed: localStorage.getItem('sidebarCollapsed') === 'true',
             mobileOpen: false 
@@ -837,54 +841,94 @@
 
         // ── GLOBAL NOTIFICATION HANDLER (Premium Style) ──
     // ── GLOBAL NOTIFICATION HANDLER (Ultra-Resilient) ──
-    window.addEventListener('DOMContentLoaded', () => {
-        if (typeof Swal === 'undefined') {
-            console.error('SweetAlert2 not loaded!');
-            return;
-        }
+    {{-- Unified Resilient Notification System (One Brain for all Alerts) --}}
+    (function() {
+        let attempts = 0;
+        const maxAttempts = 100; // 5 seconds max
+        const checkSwal = setInterval(() => {
+            attempts++;
+            if (typeof Swal !== 'undefined') {
+                clearInterval(checkSwal);
+                const isDark = document.documentElement.classList.contains('dark-mode');
+                const swalBase = {
+                    background: isDark ? '#1e293b' : '#fff',
+                    color: isDark ? '#f8fafc' : '#111827',
+                    borderRadius: '1.5rem',
+                    customClass: { popup: 'rounded-[1.5rem] border-0 shadow-2xl' }
+                };
 
-        const isDark = document.documentElement.classList.contains('dark-mode');
-        const swalBase = {
-            background: isDark ? '#1e293b' : '#fff',
-            color: isDark ? '#f8fafc' : '#111827',
-            borderRadius: '1.5rem',
-            customClass: { popup: 'rounded-[1.5rem] border-0 shadow-2xl' }
-        };
+                {{-- 1. Handler Sukses KHUSUS X-PENGGANTI (Universal Fail-Safe) --}}
+                let hasAlerted = false;
+                const xTrigger = document.getElementById('x-notif-trigger');
+                const urlParams = new URLSearchParams(window.location.search);
+                const savedInUrl = urlParams.get('saved');
 
-        {{-- Handler Sukses Global (Hanya mendengarkan kunci 'success') --}}
-        @if(session('success'))
-            Swal.fire(Object.assign({}, swalBase, {
-                title: 'Berhasil!',
-                text: {!! json_encode(session('success')) !!},
-                icon: 'success',
-                timer: 3000,
-                showConfirmButton: false,
-                iconColor: '#10b981',
-            }));
-        @endif
+                if ((xTrigger || savedInUrl) && !hasAlerted) {
+                    hasAlerted = true;
+                    const msg = xTrigger ? xTrigger.getAttribute('data-message') : 'Data berhasil disimpan.';
+                    
+                    Swal.fire(Object.assign({}, swalBase, {
+                        title: 'Berhasil!',
+                        text: msg,
+                        icon: 'success',
+                        timer: 4500,
+                        showConfirmButton: false,
+                        iconColor: '#10b981'
+                    }));
 
-        @if(session('error'))
-            Swal.fire(Object.assign({}, swalBase, {
-                title: 'Terjadi Kesalahan',
-                text: {!! json_encode(session('error')) !!},
-                icon: 'error',
-                confirmButtonColor: '#e11d48',
-            }));
-        @endif
+                    if (xTrigger) xTrigger.remove();
+                    
+                    {{-- Silent URL Cleanup --}}
+                    if (savedInUrl) {
+                        const newUrl = window.location.pathname + window.location.search.replace(/[\?&]saved=1/, '').replace(/^&/, '?');
+                        window.history.replaceState({}, document.title, newUrl);
+                    }
+                }
 
-        @if($errors->any())
-            Swal.fire(Object.assign({}, swalBase, {
-                title: 'Validasi Gagal',
-                html: `<ul style="text-align:left; font-size:13px; list-style:disc; padding-left:20px;">
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                       </ul>`,
-                icon: 'warning',
-                confirmButtonColor: '#f59e0b',
-            }));
-        @endif
-    });
+                {{-- 2. Handler Sukses Standar (JANGAN UBAH SESUAI PERMINTAAN USER) --}}
+                @if(session('success'))
+                    if (!hasAlerted) {
+                        hasAlerted = true;
+                        Swal.fire(Object.assign({}, swalBase, {
+                            title: 'Berhasil!',
+                            text: {!! json_encode(session('success')) !!},
+                            icon: 'success',
+                            timer: 3000,
+                            showConfirmButton: false,
+                            iconColor: '#10b981'
+                        }));
+                    }
+                @endif
+
+                {{-- 3. Handler Error (error) --}}
+                @if(session('error'))
+                    Swal.fire(Object.assign({}, swalBase, {
+                        title: 'Terjadi Kesalahan',
+                        text: {!! json_encode(session('error')) !!},
+                        icon: 'error',
+                        confirmButtonColor: '#e11d48'
+                    }));
+                @endif
+
+                {{-- 4. Handler Validasi ($errors) --}}
+                @if($errors->any())
+                    Swal.fire(Object.assign({}, swalBase, {
+                        title: 'Validasi Gagal',
+                        html: `<ul style="text-align:left; font-size:13px; list-style:disc; padding-left:20px;">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                               </ul>`,
+                        icon: 'warning',
+                        confirmButtonColor: '#f59e0b'
+                    }));
+                @endif
+            } else if (attempts >= maxAttempts) {
+                clearInterval(checkSwal);
+                console.error('SweetAlert2 library failing to initialize.');
+            }
+        }, 50);
+    })();
 
     document.addEventListener('DOMContentLoaded', () => {
                 const scrollContainer = document.getElementById('main-scroll-container');
