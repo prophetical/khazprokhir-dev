@@ -27,7 +27,7 @@
                             {{ $seri->batch }}</span>
                     </div>
                     <p class="text-[9px] font-bold uppercase tracking-widest mt-0.5"
-                        style="color:rgba(255,255,255,0.4);">Seksi Rikyet</p>
+                        style="color:rgba(255,255,255,0.4);">SEKSI SAIPARSIAL</p>
                 </div>
             </div>
 
@@ -52,17 +52,18 @@
                 <div class="hidden md:flex items-center gap-3 px-3 py-1.5 rounded-xl border"
                     style="background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.1);">
                     <div class="text-center">
-                        <div class="text-[8px] font-black uppercase tracking-widest" style="color:#5eead4;">S1</div>
+                        <div class="text-[8px] font-black uppercase tracking-widest" style="color:#5eead4;">SERI 1</div>
                         <div id="grand-total-seri1-header" class="text-sm font-black text-white">0</div>
                     </div>
                     <div class="w-px h-6" style="background:rgba(255,255,255,0.2);"></div>
                     <div class="text-center">
-                        <div class="text-[8px] font-black uppercase tracking-widest" style="color:#5eead4;">S2</div>
+                        <div class="text-[8px] font-black uppercase tracking-widest" style="color:#5eead4;">SERI 2</div>
                         <div id="grand-total-seri2-header" class="text-sm font-black text-white">0</div>
                     </div>
                     <div class="w-px h-6" style="background:rgba(255,255,255,0.2);"></div>
                     <div class="text-center">
-                        <div class="text-[8px] font-black uppercase tracking-widest" style="color:#5eead4;">Camp</div>
+                        <div class="text-[8px] font-black uppercase tracking-widest" style="color:#5eead4;">CAMPURAN
+                        </div>
                         <div id="grand-total-campuran-header" class="text-sm font-black text-white">0</div>
                     </div>
                 </div>
@@ -173,25 +174,27 @@
                 class="mt-4 flex items-center justify-between gap-3 sticky bottom-0 p-3 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-2xl shadow-2xl z-40">
                 <div class="flex items-center gap-5">
                     <div class="flex flex-col items-center">
-                        <span class="text-[8px] font-black uppercase tracking-widest" style="color:#0d9488;">Grand Total
-                            S1</span>
+                        <span class="text-[8px] font-black uppercase tracking-widest" style="color:#0d9488;">
+                            SERI 1</span>
                         <span id="grand-total-seri1" class="text-lg font-black text-slate-800 dark:text-white">0</span>
                     </div>
                     <div class="w-px h-10 bg-gray-200 dark:bg-slate-600"></div>
                     <div class="flex flex-col items-center">
-                        <span class="text-[8px] font-black uppercase tracking-widest" style="color:#0d9488;">Grand Total
-                            S2</span>
+                        <span class="text-[8px] font-black uppercase tracking-widest" style="color:#0d9488;">
+                            SERI 2</span>
                         <span id="grand-total-seri2" class="text-lg font-black text-slate-800 dark:text-white">0</span>
                     </div>
                     <div class="w-px h-10 bg-gray-200 dark:bg-slate-600"></div>
                     <div class="flex flex-col items-center">
-                        <span class="text-[8px] font-black uppercase tracking-widest" style="color:#0d9488;">Grand Total
-                            Camp</span>
-                        <span id="grand-total-campuran" class="text-lg font-black text-slate-800 dark:text-white">0</span>
+                        <span class="text-[8px] font-black uppercase tracking-widest" style="color:#0d9488;">
+                            CAMPURAN</span>
+                        <span id="grand-total-campuran"
+                            class="text-lg font-black text-slate-800 dark:text-white">0</span>
                     </div>
                     <div class="w-px h-10 bg-gray-200 dark:bg-slate-600"></div>
                     <div class="flex flex-col items-center">
-                        <span class="text-[8px] font-black uppercase tracking-widest text-slate-500">Total All</span>
+                        <span class="text-[8px] font-black uppercase tracking-widest text-slate-500">Grand Total
+                            Brood</span>
                         <span id="grand-total-all" class="text-lg font-black" style="color:#0d9488;">0</span>
                     </div>
                 </div>
@@ -287,6 +290,7 @@
             }
 
             // ── Kalkulasi Total per Pack ──────────────────────────────────
+            let grandTotalTimeout;
             function calcTotal(packNum, type) {
                 const inputs = document.querySelectorAll(`.calc-${type}-pack-${packNum}`);
                 let sum = 0;
@@ -296,7 +300,12 @@
                 });
                 const el = document.getElementById(`total-${type}-pack-${packNum}`);
                 if (el) el.value = sum > 0 ? sum : '';
-                updateGrandTotal();
+
+                // Debounce Grand Total agar tidak lag saat mengetik cepat
+                clearTimeout(grandTotalTimeout);
+                grandTotalTimeout = setTimeout(() => {
+                    updateGrandTotal();
+                }, 300);
             }
 
             function updateGrandTotal() {
@@ -412,6 +421,7 @@
 
             // ── JSON Submit ──
             document.getElementById('rikyet-form')?.addEventListener('submit', function (e) {
+                e.preventDefault(); // Stop normal massive DOM submission
                 const form = e.target;
                 const btns = document.querySelectorAll('button[type="submit"]');
 
@@ -456,20 +466,31 @@
                     }
                 }
 
-                if (hasAnyData) {
-                    document.getElementById('packs-json-input').value = JSON.stringify(packsData);
-                }
+                // ── VIRTUAL FORM SUBMISSION to bypass UI freeze ──
+                const virtualForm = document.createElement('form');
+                virtualForm.method = 'POST';
+                virtualForm.action = form.action;
 
-                form.querySelectorAll('input[name^="packs["]').forEach(inp => { inp.disabled = true; });
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = '_token';
+                csrfInput.value = form.querySelector('input[name="_token"]').value;
+                virtualForm.appendChild(csrfInput);
 
-                setTimeout(() => {
-                    form.querySelectorAll('input:disabled').forEach(inp => { inp.disabled = false; });
-                    btns.forEach(btn => {
-                        btn.style.pointerEvents = 'auto';
-                        btn.style.opacity = '1';
-                        btn.innerHTML = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg> Simpan`;
-                    });
-                }, 8000);
+                const seriInput = document.createElement('input');
+                seriInput.type = 'hidden';
+                seriInput.name = 'x_pengganti_seri_id';
+                seriInput.value = form.querySelector('input[name="x_pengganti_seri_id"]').value;
+                virtualForm.appendChild(seriInput);
+
+                const jsonInput = document.createElement('input');
+                jsonInput.type = 'hidden';
+                jsonInput.name = 'packs_json';
+                jsonInput.value = hasAnyData ? JSON.stringify(packsData) : '';
+                virtualForm.appendChild(jsonInput);
+
+                document.body.appendChild(virtualForm);
+                virtualForm.submit(); // Browser sends immediately without DOM repaint/freeze
             });
 
             // ── SweetAlert2 Success ──

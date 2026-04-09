@@ -19,7 +19,7 @@
                             </h3>
                             <p
                                 class="text-xs text-gray-400 dark:text-slate-500 font-bold uppercase tracking-widest mt-1">
-                                Kelola daftar seri bilyet & vell pengganti</p>
+                                Kelola master data seri untuk input X Pengganti</p>
                         </div>
                     </div>
 
@@ -170,18 +170,48 @@
                                     </td>
                                     <td class="px-4 py-3 text-center whitespace-nowrap">
                                         <div class="flex items-center justify-center gap-1">
-                                            {{-- Aksi: buka Khazai untuk seri ini --}}
-                                            <a href="{{ route('x-pengganti.khazai.index', ['seri_id' => $seri->id]) }}"
+                                            {{-- Shortcut 1: Khazai (Vell) --}}
+                                            <a href="{{ route('x-pengganti.khazai.input', ['seri_id' => $seri->id]) }}"
                                                 class="p-1.5 text-violet-400 hover:text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-900/30 rounded-lg transition-all"
-                                                title="Buka Form Khazai">
+                                                title="Input Khazai (Vell)">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M3 10h18M3 14h18M10 3v18M14 3v18" />
                                                 </svg>
                                             </a>
+
+                                            {{-- Shortcut 2: Cutpack (Bilyet) --}}
+                                            <a href="{{ route('x-pengganti.cutpack.input', ['seri_id' => $seri->id]) }}"
+                                                class="p-1.5 text-amber-500 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/30 rounded-lg transition-all"
+                                                title="Input Cutpack (Bilyet)">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M2.25 7.125C2.25 6.504 2.754 6 3.375 6h17.25c.621 0 1.125.504 1.125 1.125v1.125c0 .621-.504 1.125-1.125 1.125H3.375A1.125 1.125 0 012.25 8.25V7.125zM2.25 12c0-.621.504-1.125 1.125-1.125h17.25c.621 0 1.125.504 1.125 1.125v1.125c0 .621-.504 1.125-1.125 1.125H3.375A1.125 1.125 0 012.25 13.125V12zM2.25 16.875c0-.621.504-1.125 1.125-1.125h17.25c.621 0 1.125.504 1.125 1.125v1.125c0 .621-.504 1.125-1.125 1.125H3.375a1.125 1.125 0 01-1.125-1.125v-1.125z" />
+                                                </svg>
+                                            </a>
+
+                                            {{-- Shortcut 3: Rikyet (Brood) --}}
+                                            <a href="{{ route('x-pengganti.rikyet.input', ['seri_id' => $seri->id]) }}"
+                                                class="p-1.5 text-emerald-500 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded-lg transition-all"
+                                                title="Input Rikyet (Brood)">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                                                </svg>
+                                            </a>
+
+                                            {{-- Shortcut 4: Khazprokhir (Rekap) --}}
+                                            <a href="{{ route('x-pengganti.rekap.show', ['seri_id' => $seri->id]) }}"
+                                                class="p-1.5 text-blue-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-all"
+                                                title="Hasil Rekap Khazprokhir">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                                </svg>
+                                            </a>
                                             @if(in_array(auth()->user()->role, ['admin', 'sortir', 'kemas', 'khazverutas']))
                                                 <form action="{{ route('x-pengganti.seri.destroy', $seri) }}" method="POST"
-                                                    class="inline-block delete-confirm">
+                                                    class="inline-block delete-confirm-custom-double">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit"
@@ -249,12 +279,55 @@
     </style>
 
     <script>
-        // Konfirmasi sebelum hapus
-        document.querySelectorAll('.delete-confirm').forEach(form => {
-            form.addEventListener('submit', function (e) {
+        // Konfirmasi sebelum hapus dengan SweetAlert2 (Double Confirmation + Challenge)
+        document.querySelectorAll('.delete-confirm-custom-double').forEach(form => {
+            form.addEventListener('submit', async function (e) {
                 e.preventDefault();
-                if (confirm('Yakin ingin menghapus data seri ini beserta seluruh data Khazai-nya? Tindakan ini tidak dapat dibatalkan.')) {
-                    this.submit();
+                const formElement = this;
+
+                // Tahap 1: Peringatan Umum
+                const firstStep = await Swal.fire({
+                    title: 'Hapus Data Seri?',
+                    text: "Data seri ini akan dihapus permanen dari sistem.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#e11d48', // rose-600
+                    cancelButtonColor: '#64748b',  // slate-500
+                    confirmButtonText: 'Ya, Lanjutkan',
+                    cancelButtonText: 'Batal',
+                    background: document.documentElement.classList.contains('dark-mode') ? '#1e293b' : '#ffffff',
+                    color: document.documentElement.classList.contains('dark-mode') ? '#f8fafc' : '#111827'
+                });
+
+                if (!firstStep.isConfirmed) return;
+
+                // Tahap 2: Konfirmasi Kedua dengan Challenge Text
+                const secondStep = await Swal.fire({
+                    title: 'KONFIRMASI TERAKHIR!',
+                    html: `Seluruh data di seksi <b class="text-rose-500">Khazai</b>, <b class="text-rose-500">Cutpack</b>, dan <b class="text-rose-500">Rikyet</b> akan ikut <b>TERHAPUS PERMANEN</b>.<br><br>Untuk melanjutkan, ketik <b class="text-rose-600">HAPUS</b> di bawah ini:`,
+                    icon: 'error',
+                    input: 'text',
+                    inputAttributes: {
+                        autocapitalize: 'off',
+                        autocomplete: 'off'
+                    },
+                    showCancelButton: true,
+                    confirmButtonColor: '#be123c', // rose-700
+                    confirmButtonText: 'Hapus Sekarang!',
+                    cancelButtonText: 'Batal',
+                    background: document.documentElement.classList.contains('dark-mode') ? '#1e293b' : '#ffffff',
+                    color: document.documentElement.classList.contains('dark-mode') ? '#f8fafc' : '#111827',
+                    preConfirm: (inputValue) => {
+                        if (inputValue !== 'HAPUS') {
+                            Swal.showValidationMessage('Anda harus mengetik HAPUS (huruf besar) untuk melanjutkan');
+                            return false;
+                        }
+                        return true;
+                    }
+                });
+
+                if (secondStep.isConfirmed) {
+                    formElement.submit();
                 }
             });
         });

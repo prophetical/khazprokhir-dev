@@ -105,7 +105,7 @@ $start, $end, $gridData wajib disertakan.
                 value="{{ $packData['slots'][1]['seri_pengganti'] }}" class="rikyet-input seri-pengganti-input"
                 style="width:100%; height:22px; text-align:center; font-size:9px; font-weight:900; text-transform:uppercase; letter-spacing:-0.03em; background:#fff; border:1px solid #e5e7eb; border-radius:3px; outline:none;"
                 data-pack="{{ $pack }}" data-slot="1" data-col="seri" oninput="formatSeriPengganti(this)"
-                onkeydown="handleSeriKeydown(event, this)" placeholder="seri">
+                onkeydown="handleSeriKeydown(event, this)" placeholder="">
         </td>
     </tr>
 
@@ -148,7 +148,7 @@ $start, $end, $gridData wajib disertakan.
                 value="{{ $packData['slots'][2]['seri_pengganti'] }}" class="rikyet-input seri-pengganti-input"
                 style="width:100%; height:22px; text-align:center; font-size:9px; font-weight:900; text-transform:uppercase; letter-spacing:-0.03em; background:#fff; border:1px solid #e5e7eb; border-radius:3px; outline:none;"
                 data-pack="{{ $pack }}" data-slot="2" data-col="seri" oninput="formatSeriPengganti(this)"
-                onkeydown="handleSeriKeydown(event, this)" placeholder="seri">
+                onkeydown="handleSeriKeydown(event, this)" placeholder="">
         </td>
     </tr>
 
@@ -191,7 +191,7 @@ $start, $end, $gridData wajib disertakan.
                 value="{{ $packData['slots'][3]['seri_pengganti'] }}" class="rikyet-input seri-pengganti-input"
                 style="width:100%; height:22px; text-align:center; font-size:9px; font-weight:900; text-transform:uppercase; letter-spacing:-0.03em; background:#fff; border:1px solid #e5e7eb; border-radius:3px; outline:none;"
                 data-pack="{{ $pack }}" data-slot="3" data-col="seri" oninput="formatSeriPengganti(this)"
-                onkeydown="handleSeriKeydown(event, this)" placeholder="seri">
+                onkeydown="handleSeriKeydown(event, this)" placeholder="">
         </td>
     </tr>
 
@@ -231,7 +231,7 @@ $start, $end, $gridData wajib disertakan.
                 value="{{ $packData['slots'][4]['seri_pengganti'] }}" class="rikyet-input seri-pengganti-input"
                 style="width:100%; height:22px; text-align:center; font-size:9px; font-weight:900; text-transform:uppercase; letter-spacing:-0.03em; background:#fff; border:1px solid #e5e7eb; border-radius:3px; outline:none;"
                 data-pack="{{ $pack }}" data-slot="4" data-col="seri" oninput="formatSeriPengganti(this)"
-                onkeydown="handleSeriKeydown(event, this)" placeholder="seri">
+                onkeydown="handleSeriKeydown(event, this)" placeholder="">
         </td>
     </tr>
 @endfor

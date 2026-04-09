@@ -22,18 +22,18 @@
                 {{-- Card Header --}}
                 <div class="p-5 border-b border-gray-100 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center shrink-0">
-                            <svg class="w-4 h-4 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18M10 3v18M14 3v18"/>
+                        <div class="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center shrink-0">
+                            <svg class="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 7.125C2.25 6.504 2.754 6 3.375 6h17.25c.621 0 1.125.504 1.125 1.125v1.125c0 .621-.504 1.125-1.125 1.125H3.375A1.125 1.125 0 012.25 8.25V7.125zM2.25 12c0-.621.504-1.125 1.125-1.125h17.25c.621 0 1.125.504 1.125 1.125v1.125c0 .621-.504 1.125-1.125 1.125H3.375A1.125 1.125 0 012.25 13.125V12zM2.25 16.875c0-.621.504-1.125 1.125-1.125h17.25c.621 0 1.125.504 1.125 1.125v1.125c0 .621-.504 1.125-1.125 1.125H3.375a1.125 1.125 0 01-1.125-1.125v-1.125z"/>
                             </svg>
                         </div>
                         <div>
                             <p class="text-sm font-black text-gray-700 dark:text-gray-200">Pilih Data Master Seri</p>
-                            <p class="text-[10px] text-gray-400 dark:text-slate-500 font-bold">Klik <span class="text-indigo-500 font-black">Buka &amp; Input</span> — tabel pengisian akan terbuka di tab baru</p>
+                            <p class="text-[10px] text-gray-400 dark:text-slate-500 font-bold">Klik <span class="text-amber-500 font-black">Buka &amp; Input</span> — tabel pengisian akan terbuka di tab baru</p>
                         </div>
                     </div>
                     <a href="{{ route('x-pengganti.seri.create') }}"
-                        class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-indigo-700 transition-all whitespace-nowrap shrink-0">
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-amber-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-amber-700 transition-all whitespace-nowrap shrink-0">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
                         Tambah Seri Baru
                     </a>
@@ -44,21 +44,21 @@
                     <form method="GET" action="{{ route('x-pengganti.cutpack.index') }}" class="flex flex-wrap gap-3 items-end">
                         {{-- Search --}}
                         <div class="flex-1 min-w-[180px]">
-                            <label class="block text-[9px] font-black tracking-widest text-indigo-600 mb-1 uppercase">Cari Seri / Batch</label>
+                            <label class="block text-[9px] font-black tracking-widest text-amber-600 mb-1 uppercase">Cari Seri / Batch</label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <svg class="h-4 w-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                                    <svg class="h-4 w-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                                 </div>
                                 <input name="search" type="text" value="{{ $search }}"
                                     placeholder="Ketik seri atau batch..."
-                                    class="block w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 focus:border-indigo-500 rounded-xl text-xs font-bold text-gray-700 dark:text-gray-200 dark:placeholder:text-slate-500">
+                                    class="block w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 focus:border-amber-500 rounded-xl text-xs font-bold text-gray-700 dark:text-gray-200 dark:placeholder:text-slate-500">
                             </div>
                         </div>
 
                         {{-- Pecahan --}}
                         <div class="min-w-[90px]">
-                            <label class="block text-[9px] font-black tracking-widest text-indigo-600 mb-1 uppercase">Pecahan</label>
-                            <select name="pecahan" class="block w-full py-2 px-3 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 focus:border-indigo-500 rounded-xl text-xs font-black text-gray-700 dark:text-gray-200 text-center-last">
+                            <label class="block text-[9px] font-black tracking-widest text-amber-600 mb-1 uppercase">Pecahan</label>
+                            <select name="pecahan" class="block w-full py-2 px-3 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 focus:border-amber-500 rounded-xl text-xs font-black text-gray-700 dark:text-gray-200 text-center-last">
                                 <option value="">Semua</option>
                                 @foreach($pecahanOptions as $p)
                                     <option value="{{ $p }}" {{ $filterPecahan == $p ? 'selected' : '' }}>{{ $p }}</option>
@@ -68,8 +68,8 @@
 
                         {{-- Tahun Anggaran --}}
                         <div class="min-w-[110px]">
-                            <label class="block text-[9px] font-black tracking-widest text-indigo-600 mb-1 uppercase">Tahun Anggaran</label>
-                            <select name="tahun_anggaran" class="block w-full py-2 px-3 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 focus:border-indigo-500 rounded-xl text-xs font-black text-gray-700 dark:text-gray-200 text-center-last">
+                            <label class="block text-[9px] font-black tracking-widest text-amber-600 mb-1 uppercase">Tahun Anggaran</label>
+                            <select name="tahun_anggaran" class="block w-full py-2 px-3 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 focus:border-amber-500 rounded-xl text-xs font-black text-gray-700 dark:text-gray-200 text-center-last">
                                 <option value="">Semua</option>
                                 @foreach($tahunAnggaranList as $ta)
                                     <option value="{{ $ta }}" {{ $filterTA == $ta ? 'selected' : '' }}>{{ $ta }}</option>
@@ -79,8 +79,8 @@
 
                         {{-- Tahun Emisi --}}
                         <div class="min-w-[100px]">
-                            <label class="block text-[9px] font-black tracking-widest text-indigo-600 mb-1 uppercase">Tahun Emisi</label>
-                            <select name="tahun_emisi" class="block w-full py-2 px-3 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 focus:border-indigo-500 rounded-xl text-xs font-black text-gray-700 dark:text-gray-200 text-center-last">
+                            <label class="block text-[9px] font-black tracking-widest text-amber-600 mb-1 uppercase">Tahun Emisi</label>
+                            <select name="tahun_emisi" class="block w-full py-2 px-3 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 focus:border-amber-500 rounded-xl text-xs font-black text-gray-700 dark:text-gray-200 text-center-last">
                                 <option value="">Semua</option>
                                 @foreach($tahunEmisiList as $te)
                                     <option value="{{ $te }}" {{ $filterTE == $te ? 'selected' : '' }}>{{ $te }}</option>

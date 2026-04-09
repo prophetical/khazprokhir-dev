@@ -17,8 +17,8 @@ class XPenggantiSeriController extends Controller
             $s = $request->search;
             $query->where(function ($q) use ($s) {
                 $q->where('batch', 'like', "%{$s}%")
-                  ->orWhere('seri', 'like', "%{$s}%")
-                  ->orWhere('pecahan', 'like', "%{$s}%");
+                    ->orWhere('seri', 'like', "%{$s}%")
+                    ->orWhere('pecahan', 'like', "%{$s}%");
             });
         }
         if ($request->filled('pecahan')) {
@@ -26,8 +26,8 @@ class XPenggantiSeriController extends Controller
         }
 
         return view('x-pengganti.seri.index', [
-            'seris'   => $query->paginate(15)->withQueryString(),
-            'search'  => $request->search,
+            'seris' => $query->paginate(15)->withQueryString(),
+            'search' => $request->search,
             'pecahan' => $request->pecahan,
             'pecahanOptions' => self::PECAHAN_OPTIONS,
         ]);
@@ -43,13 +43,13 @@ class XPenggantiSeriController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'pecahan'        => 'required|in:S,T,U,V,W,X,Y',
-            'seri'           => 'required|string|max:255',
-            'batch'          => ['required', 'digits:7'],
+            'pecahan' => 'required|in:S,T,U,V,W,X,Y',
+            'seri' => 'required|string|max:255',
+            'batch' => ['required', 'digits:7'],
             'tahun_anggaran' => 'required|digits:4|integer|min:2000|max:2099',
-            'tahun_emisi'    => 'required|digits:4|integer|min:2000|max:2099',
+            'tahun_emisi' => 'required|digits:4|integer|min:2000|max:2099',
         ], [
-            'batch.digits'   => 'Batch harus tepat 7 digit angka.',
+            'batch.digits' => 'Batch harus tepat 7 digit angka.',
         ]);
 
         $validated['created_by'] = auth()->id();
@@ -66,7 +66,7 @@ class XPenggantiSeriController extends Controller
             // Cascade delete via FK (packs & details) handled by DB
             $seri->delete();
             return redirect()->route('x-pengganti.seri.index')
-                ->with('success', 'Data seri dan seluruh data Khazai-nya berhasil dihapus.');
+                ->with('success', 'Data seri dan seluruh data X Pengganti semua seksi berhasil dihapus.');
         } catch (\Exception $e) {
             \Log::error('XPenggantiSeri Destroy Error: ' . $e->getMessage());
             return back()->withErrors(['error' => 'Gagal menghapus data. Silakan coba lagi.']);
