@@ -116,8 +116,8 @@
 
                 {{-- ── Kiri: Pack 1–25 ── --}}
                 <div
-                    class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden">
-                    <table class="w-full border-collapse" id="table-A">
+                    class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm">
+                    <table class="w-full border-separate border-spacing-0" id="table-A">
                         @include('x-pengganti.rikyet._table-head', ['title' => 'PACK 1 — 25'])
                         <tbody>
                             @include('x-pengganti.rikyet._table-body', ['start' => 1, 'end' => 25, 'gridData' => $gridData])
@@ -127,8 +127,8 @@
 
                 {{-- ── Kanan: Pack 26–50 ── --}}
                 <div
-                    class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden">
-                    <table class="w-full border-collapse" id="table-B">
+                    class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm">
+                    <table class="w-full border-separate border-spacing-0" id="table-B">
                         @include('x-pengganti.rikyet._table-head', ['title' => 'PACK 26 — 50'])
                         <tbody>
                             @include('x-pengganti.rikyet._table-body', ['start' => 26, 'end' => 50, 'gridData' => $gridData])
@@ -146,8 +146,8 @@
 
                 {{-- ── Kiri: Pack 51–75 ── --}}
                 <div
-                    class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden">
-                    <table class="w-full border-collapse" id="table-C">
+                    class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm">
+                    <table class="w-full border-separate border-spacing-0" id="table-C">
                         @include('x-pengganti.rikyet._table-head', ['title' => 'PACK 51 — 75'])
                         <tbody>
                             @include('x-pengganti.rikyet._table-body', ['start' => 51, 'end' => 75, 'gridData' => $gridData])
@@ -157,8 +157,8 @@
 
                 {{-- ── Kanan: Pack 76–100 ── --}}
                 <div
-                    class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden">
-                    <table class="w-full border-collapse" id="table-D">
+                    class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm">
+                    <table class="w-full border-separate border-spacing-0" id="table-D">
                         @include('x-pengganti.rikyet._table-head', ['title' => 'PACK 76 — 100'])
                         <tbody>
                             @include('x-pengganti.rikyet._table-body', ['start' => 76, 'end' => 100, 'gridData' => $gridData])

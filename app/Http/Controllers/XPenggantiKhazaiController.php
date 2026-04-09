@@ -107,27 +107,53 @@ class XPenggantiKhazaiController extends Controller
         ]);
 
         DB::transaction(function () use ($validated) {
-            $seriId = $validated['x_pengganti_seri_id'];
+            $seriId     = $validated['x_pengganti_seri_id'];
+            $packValues = [];
+            $now        = now();
+
             foreach ($validated['packs'] ?? [] as $packData) {
-                $nomorPack     = $packData['nomor_pack'];
-                $seriPengganti = ($packData['seri_pengganti'] ?? '') ?: null;
-                $slots         = $packData['slots'] ?? [];
+                $packValues[] = [
+                    'x_pengganti_seri_id' => $seriId,
+                    'nomor_pack'          => $packData['nomor_pack'],
+                    'seri_pengganti'      => ($packData['seri_pengganti'] ?? '') ?: null,
+                    'created_at'          => $now,
+                    'updated_at'          => $now,
+                ];
+            }
 
-                $pack = XPenggantiPack::updateOrCreate(
-                    ['x_pengganti_seri_id' => $seriId, 'nomor_pack' => $nomorPack],
-                    ['seri_pengganti' => $seriPengganti]
-                );
+            if (!empty($packValues)) {
+                XPenggantiPack::upsert($packValues, ['x_pengganti_seri_id', 'nomor_pack'], ['seri_pengganti', 'updated_at']);
+            }
 
-                foreach ($slots as $slotData) {
-                    XPenggantiDetail::updateOrCreate(
-                        ['x_pengganti_pack_id' => $pack->id, 'slot' => $slotData['slot']],
-                        [
-                            'jumlah_rusak_vell'    => ($slotData['jumlah_rusak_vell']    ?? '') !== '' ? $slotData['jumlah_rusak_vell']    : null,
-                            'nomor_pack_pengganti' => ($slotData['nomor_pack_pengganti'] ?? '') !== '' ? $slotData['nomor_pack_pengganti'] : null,
-                            'nomor_vell_pengganti' => ($slotData['nomor_vell_pengganti'] ?? '') !== '' ? $slotData['nomor_vell_pengganti'] : null,
-                        ]
-                    );
+            // Get mapping nomor_pack -> id
+            $packsMap = XPenggantiPack::where('x_pengganti_seri_id', $seriId)
+                ->pluck('id', 'nomor_pack');
+
+            $detailValues = [];
+            foreach ($validated['packs'] ?? [] as $packData) {
+                $packId = $packsMap[$packData['nomor_pack']] ?? null;
+                if (!$packId) continue;
+
+                foreach ($packData['slots'] ?? [] as $slotData) {
+                    $detailValues[] = [
+                        'x_pengganti_pack_id'  => $packId,
+                        'slot'                 => $slotData['slot'],
+                        'jumlah_rusak_vell'    => ($slotData['jumlah_rusak_vell']    ?? '') !== '' ? $slotData['jumlah_rusak_vell']    : null,
+                        'nomor_pack_pengganti' => ($slotData['nomor_pack_pengganti'] ?? '') !== '' ? $slotData['nomor_pack_pengganti'] : null,
+                        'nomor_vell_pengganti' => ($slotData['nomor_vell_pengganti'] ?? '') !== '' ? $slotData['nomor_vell_pengganti'] : null,
+                        'created_at'           => $now,
+                        'updated_at'           => $now,
+                    ];
                 }
+            }
+
+            if (!empty($detailValues)) {
+                XPenggantiDetail::upsert($detailValues, ['x_pengganti_pack_id', 'slot'], [
+                    'jumlah_rusak_vell',
+                    'nomor_pack_pengganti',
+                    'nomor_vell_pengganti',
+                    'updated_at'
+                ]);
             }
         });
 

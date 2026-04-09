@@ -1,5 +1,5 @@
 {{-- Partial: thead untuk setiap tabel kolom khazai --}}
-<thead class="sticky top-[96px] z-20">
+<thead class="sticky top-[92px] z-20">
     {{-- Row 1: Group Headers --}}
     <tr class="bg-amber-500 text-white text-[8px] font-black uppercase tracking-widest text-center">
         <th rowspan="2" class="px-2 py-2 border border-slate-700/50 w-8 shadow-sm">No<br>Pack</th>

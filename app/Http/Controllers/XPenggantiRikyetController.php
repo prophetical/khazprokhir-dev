@@ -119,36 +119,63 @@ class XPenggantiRikyetController extends Controller
         ]);
 
         DB::transaction(function () use ($validated) {
-            $seriId = $validated['x_pengganti_seri_id'];
+            $seriId     = $validated['x_pengganti_seri_id'];
+            $packValues = [];
+            $now        = now();
+
             foreach ($validated['packs'] ?? [] as $packData) {
-                $nomorPack     = $packData['nomor_pack'];
-                $seriPengganti = ($packData['seri_pengganti'] ?? '') ?: null;
-                $tSeri1        = ($packData['total_rusak_seri_1']   ?? '') !== '' ? $packData['total_rusak_seri_1']   : null;
-                $tSeri2        = ($packData['total_rusak_seri_2']   ?? '') !== '' ? $packData['total_rusak_seri_2']   : null;
-                $tCampuran     = ($packData['total_rusak_campuran'] ?? '') !== '' ? $packData['total_rusak_campuran'] : null;
-                $slots         = $packData['slots'] ?? [];
+                $packValues[] = [
+                    'x_pengganti_seri_id'  => $seriId,
+                    'nomor_pack'           => $packData['nomor_pack'],
+                    'seri_pengganti'       => ($packData['seri_pengganti'] ?? '') ?: null,
+                    'total_rusak_seri_1'   => ($packData['total_rusak_seri_1']   ?? '') !== '' ? $packData['total_rusak_seri_1']   : null,
+                    'total_rusak_seri_2'   => ($packData['total_rusak_seri_2']   ?? '') !== '' ? $packData['total_rusak_seri_2']   : null,
+                    'total_rusak_campuran' => ($packData['total_rusak_campuran'] ?? '') !== '' ? $packData['total_rusak_campuran'] : null,
+                    'created_at'           => $now,
+                    'updated_at'           => $now,
+                ];
+            }
 
-                $pack = XPenggantiRikyetPack::updateOrCreate(
-                    ['x_pengganti_seri_id' => $seriId, 'nomor_pack' => $nomorPack],
-                    [
-                        'seri_pengganti'       => $seriPengganti,
-                        'total_rusak_seri_1'   => $tSeri1,
-                        'total_rusak_seri_2'   => $tSeri2,
-                        'total_rusak_campuran' => $tCampuran,
-                    ]
-                );
+            if (!empty($packValues)) {
+                XPenggantiRikyetPack::upsert($packValues, ['x_pengganti_seri_id', 'nomor_pack'], [
+                    'seri_pengganti',
+                    'total_rusak_seri_1',
+                    'total_rusak_seri_2',
+                    'total_rusak_campuran',
+                    'updated_at'
+                ]);
+            }
 
-                foreach ($slots as $slotData) {
-                    XPenggantiRikyetDetail::updateOrCreate(
-                        ['x_pengganti_rikyet_pack_id' => $pack->id, 'slot' => $slotData['slot']],
-                        [
-                            'rusak_seri_1'   => ($slotData['rusak_seri_1']   ?? '') !== '' ? $slotData['rusak_seri_1']   : null,
-                            'rusak_seri_2'   => ($slotData['rusak_seri_2']   ?? '') !== '' ? $slotData['rusak_seri_2']   : null,
-                            'rusak_campuran' => ($slotData['rusak_campuran'] ?? '') !== '' ? $slotData['rusak_campuran'] : null,
-                            'seri_pengganti' => ($slotData['seri_pengganti'] ?? '') ?: null,
-                        ]
-                    );
+            // Get mapping nomor_pack -> id
+            $packsMap = XPenggantiRikyetPack::where('x_pengganti_seri_id', $seriId)->pluck('id', 'nomor_pack');
+
+            $detailValues = [];
+            foreach ($validated['packs'] ?? [] as $packData) {
+                $packId = $packsMap[$packData['nomor_pack']] ?? null;
+                if (!$packId) continue;
+
+                foreach ($packData['slots'] ?? [] as $slotData) {
+                    $detailValues[] = [
+                        'x_pengganti_rikyet_pack_id' => $packId,
+                        'slot'                       => $slotData['slot'],
+                        'rusak_seri_1'               => ($slotData['rusak_seri_1']   ?? '') !== '' ? $slotData['rusak_seri_1']   : null,
+                        'rusak_seri_2'               => ($slotData['rusak_seri_2']   ?? '') !== '' ? $slotData['rusak_seri_2']   : null,
+                        'rusak_campuran'             => ($slotData['rusak_campuran'] ?? '') !== '' ? $slotData['rusak_campuran'] : null,
+                        'seri_pengganti'             => ($slotData['seri_pengganti'] ?? '') ?: null,
+                        'created_at'                 => $now,
+                        'updated_at'                 => $now,
+                    ];
                 }
+            }
+
+            if (!empty($detailValues)) {
+                XPenggantiRikyetDetail::upsert($detailValues, ['x_pengganti_rikyet_pack_id', 'slot'], [
+                    'rusak_seri_1',
+                    'rusak_seri_2',
+                    'rusak_campuran',
+                    'seri_pengganti',
+                    'updated_at'
+                ]);
             }
         });
 

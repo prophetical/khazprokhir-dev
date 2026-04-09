@@ -86,7 +86,7 @@
 
                 {{-- ── KIRI: Pack 1–25 ── --}}
                 <div class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm relative">
-                    <div class="sticky top-16 z-30 px-3 py-2 bg-slate-800 text-white text-[9px] font-black uppercase tracking-widest text-center border-b border-slate-700 rounded-t-xl">
+                    <div class="sticky top-16 z-30 h-7 flex items-center justify-center bg-slate-800 text-white text-[9px] font-black uppercase tracking-widest border-b border-slate-700 rounded-t-xl">
                         Pack 1 – 25
                     </div>
                     <div class="">
@@ -101,7 +101,7 @@
 
                 {{-- ── KANAN: Pack 26–50 ── --}}
                 <div class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm relative">
-                    <div class="sticky top-16 z-30 px-3 py-2 bg-slate-800 text-white text-[9px] font-black uppercase tracking-widest text-center border-b border-slate-700 rounded-t-xl">
+                    <div class="sticky top-16 z-30 h-7 flex items-center justify-center bg-slate-800 text-white text-[9px] font-black uppercase tracking-widest border-b border-slate-700 rounded-t-xl">
                         Pack 26 – 50
                     </div>
                     <div class="">
@@ -123,7 +123,7 @@
 
                 {{-- ── KIRI: Pack 51–75 ── --}}
                 <div class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm relative">
-                    <div class="sticky top-16 z-30 px-3 py-2 bg-slate-800 text-white text-[9px] font-black uppercase tracking-widest text-center border-b border-slate-700 rounded-t-xl">
+                    <div class="sticky top-16 z-30 h-7 flex items-center justify-center bg-slate-800 text-white text-[9px] font-black uppercase tracking-widest border-b border-slate-700 rounded-t-xl">
                         Pack 51 – 75
                     </div>
                     <div class="">
@@ -138,7 +138,7 @@
 
                 {{-- ── KANAN: Pack 76–100 ── --}}
                 <div class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm relative">
-                    <div class="sticky top-16 z-30 px-3 py-2 bg-slate-800 text-white text-[9px] font-black uppercase tracking-widest text-center border-b border-slate-700 rounded-t-xl">
+                    <div class="sticky top-16 z-30 h-7 flex items-center justify-center bg-slate-800 text-white text-[9px] font-black uppercase tracking-widest border-b border-slate-700 rounded-t-xl">
                         Pack 76 – 100
                     </div>
                     <div class="">
