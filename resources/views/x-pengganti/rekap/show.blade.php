@@ -72,106 +72,169 @@
             @endfor
         </div>
 
-        {{-- Dashboard Recap - All 100 Packs (Paginated via CSS/JS) --}}
-        <div class="max-w-4xl mx-auto">
-            <div
-                class="bg-white dark:bg-slate-800 rounded-3xl border border-gray-100 dark:border-slate-700 shadow-2xl overflow-hidden">
-                <table class="w-full text-center border-collapse text-[11px]">
-                    <thead>
-                        <tr class="bg-gray-50 dark:bg-slate-700/50 border-b border-gray-100 dark:border-slate-700">
-                            <th rowspan="2"
-                                class="w-20 py-4 border-r border-gray-100 dark:border-slate-700 text-[10px] font-black text-gray-400 uppercase">
-                                No Pack</th>
-                            <th colspan="3"
-                                class="py-3 border-b border-gray-100 dark:border-slate-700 text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em]">
-                                Jumlah X Pengganti</th>
-                            <th rowspan="2"
-                                class="w-28 py-4 border-l border-gray-100 dark:border-slate-700 text-[10px] font-black text-rose-600 uppercase leading-tight tracking-wider">
-                                Jumlah<br>Campuran</th>
-                        </tr>
-                        <tr class="bg-gray-50 dark:bg-slate-700/50 border-b border-gray-100 dark:border-slate-700">
-                            <th class="py-3 text-[9px] font-black text-gray-400 border-r border-gray-100 dark:border-slate-700 uppercase tracking-widest">
-                                <div class="flex items-center justify-center gap-2">
-                                    Seri 1
-                                    <button onclick="copyColumn(1)" class="p-1 hover:bg-indigo-100 rounded-md transition-colors text-indigo-400 group/copy" title="Copy Seluruh Kolom Seri 1">
-                                        <svg class="w-3 h-3 group-hover/copy:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
-                                    </button>
-                                </div>
-                            </th>
-                            <th class="py-3 text-[9px] font-black text-gray-400 border-r border-gray-100 dark:border-slate-700 uppercase tracking-widest">
-                                <div class="flex items-center justify-center gap-2">
-                                    Seri 2
-                                    <button onclick="copyColumn(2)" class="p-1 hover:bg-indigo-100 rounded-md transition-colors text-indigo-400 group/copy" title="Copy Seluruh Kolom Seri 2">
-                                        <svg class="w-3 h-3 group-hover/copy:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
-                                    </button>
-                                </div>
-                            </th>
-                            <th class="py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest">
-                                <div class="flex items-center justify-center gap-2">
-                                    Campuran
-                                    <button onclick="copyColumn(3)" class="p-1 hover:bg-indigo-100 rounded-md transition-colors text-indigo-400 group/copy" title="Copy Seluruh Kolom Campuran">
-                                        <svg class="w-3 h-3 group-hover/copy:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
-                                    </button>
-                                </div>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100 dark:divide-slate-700">
-                        @for($p = 1; $p <= 100; $p++)
-                            @php
-                                $d = $grid[$p];
-                                $isStartOfGroup = ($p % 4 == 1);
-                                $gIdx = floor(($p - 1) / 4);
-                                $pageIdx = ceil($p / 20);
-                            @endphp
-                            <tr data-page="{{ $pageIdx }}"
-                                class="rekap-row {{ $pageIdx > 1 ? 'hidden' : '' }} hover:bg-indigo-50/30 dark:hover:bg-indigo-900/10 transition-colors group">
-                                <td
-                                    class="py-3 border-r border-gray-100 dark:border-slate-700 font-black text-slate-400 text-sm">
-                                    {{ $p }}
-                                </td>
-                                <td
-                                    class="py-3 border-r border-gray-100 dark:border-slate-700 font-black {{ $d['s1'] > 0 ? 'text-slate-700 dark:text-white' : 'text-slate-300 dark:text-slate-600' }} text-sm">
-                                    {{ $d['s1'] > 0 ? number_format($d['s1'], 0, ',', '.') : '-' }}
-                                </td>
-                                <td
-                                    class="py-3 border-r border-gray-100 dark:border-slate-700 font-black {{ $d['s2'] > 0 ? 'text-slate-700 dark:text-white' : 'text-slate-300 dark:text-slate-600' }} text-sm">
-                                    {{ $d['s2'] > 0 ? number_format($d['s2'], 0, ',', '.') : '-' }}
-                                </td>
-                                <td
-                                    class="py-3 border-r border-gray-100 dark:border-slate-700 font-black {{ $d['camp'] > 0 ? 'text-slate-700 dark:text-white' : 'text-slate-300 dark:text-slate-600' }} text-sm">
-                                    {{ $d['camp'] > 0 ? number_format($d['camp'], 0, ',', '.') : '-' }}
-                                </td>
 
-                                @if($isStartOfGroup)
-                                    <td rowspan="4"
-                                        class="py-3 border-l border-gray-100 dark:border-slate-700 bg-rose-50/40 dark:bg-rose-900/20 font-black text-rose-600 text-base shadow-[inset_0_0_20px_rgba(225,29,72,0.05)]">
-                                        {{ number_format($groupTotals[$gIdx], 0, ',', '.') }}
-                                    </td>
-                                @endif
+
+        {{-- Unified Integrated Table --}}
+        <div class="px-2 pb-20">
+            <div class="flex items-center justify-between mb-8 px-4">
+                <div class="flex flex-col gap-1">
+                    <h3 class="text-sm font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em]">Rekap X Pengganti</h3>
+                    <p class="text-[10px] text-slate-400 font-medium">DATA JUMLAH ASLI X PENGGANTI DAN PENYESUAIAN UNTUK SAP</p>
+                </div>
+                <button onclick="copySapColumn()"
+                    class="group inline-flex items-center gap-2.5 px-6 py-3 bg-gradient-to-r from-indigo-500 via-indigo-600 to-violet-700 hover:from-indigo-600 hover:to-violet-800 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl transition-all shadow-xl shadow-indigo-100 dark:shadow-none active:scale-95 border border-white/20">
+                    <svg class="w-4 h-4 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                    </svg>
+                    Copy Seluruh Kolom SAP
+                </button>
+            </div>
+
+            <div class="bg-white dark:bg-slate-800 rounded-[2.5rem] border border-gray-100 dark:border-slate-700 shadow-2xl overflow-hidden border-b-8 border-b-indigo-500/10">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-center border-collapse text-[10px]">
+                        <thead>
+                            <tr class="bg-slate-50 dark:bg-slate-700/50 border-b border-gray-100 dark:border-slate-700">
+                                <th class="py-5 border-r border-gray-100 dark:border-slate-700 text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-100/30">Identitas Pack</th>
+                                <th colspan="2" class="py-5 border-r border-gray-100 dark:border-slate-700 text-[10px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-50/30">Format Copy SAP</th>
+                                <th colspan="4" class="py-5 text-[10px] font-black text-indigo-600 uppercase tracking-widest bg-indigo-50/30">Detail Rekapitulasi</th>
                             </tr>
-                        @endfor
-                    </tbody>
-                </table>
+                            <tr class="bg-white dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700 text-[9px] font-black text-gray-400 uppercase tracking-wider">
+                                <th class="w-20 py-3 border-r border-gray-100 dark:border-slate-700">No Pack</th>
+                                <th class="w-20 py-3 border-r border-gray-100 dark:border-slate-700">Nama</th>
+                                <th class="w-32 py-3 border-r border-gray-100 dark:border-slate-700 text-emerald-600">Copy SAP</th>
+                                <th class="w-24 py-3 border-r border-gray-100 dark:border-slate-700">Seri 1</th>
+                                <th class="w-24 py-3 border-r border-gray-100 dark:border-slate-700">Seri 2</th>
+                                <th class="w-24 py-3 border-r border-gray-100 dark:border-slate-700">Campuran</th>
+                                <th class="w-32 py-3 text-indigo-600">Total Group</th>
+                            </tr>
+                        </thead>
+                        <tbody class="">
+                            @for($g = 0; $g < 25; $g++)
+                                @php
+                                    $C = $groupTotals[$g];
+                                    $packStart = ($g * 4) + 1;
+                                    $packEnd = ($g * 4) + 4;
+                                    $pageIdx = ceil(($g + 1) / 5);
+                                    
+                                    // Row Mapping (10 Rows)
+                                    $rows = [
+                                        ['nama' => 'CAMPURAN 1', 'val' => min($C, 16000), 'p' => null],
+                                        ['nama' => 'CAMPURAN 2', 'val' => min(max($C - 16000, 0), 4000), 'p' => null],
+                                    ];
+                                    for($i = 0; $i < 4; $i++) {
+                                        $pNum = ($g * 4) + $i + 1;
+                                        // Limit individual series to max 20,000
+                                        $rows[] = ['nama' => "PACK $pNum SERI 1", 'val' => min($grid[$pNum]['s1'], 20000), 'p' => $pNum, 'seri' => 1];
+                                        $rows[] = ['nama' => "PACK $pNum SERI 2", 'val' => min($grid[$pNum]['s2'], 20000), 'p' => $pNum, 'seri' => 2];
+                                    }
+                                @endphp
+
+                                @foreach($rows as $rIdx => $row)
+                                    @php 
+                                        $isGroupEnd = ($rIdx === 9);
+                                        $isPack4End = ($rIdx === 8); // Pack 4 starts at 8, spans to 9
+                                        $separatorClass = $isGroupEnd ? 'group-separator' : '';
+                                        
+                                        $commonCellBase = 'border-r border-gray-100 dark:border-slate-700';
+                                        if (!$isGroupEnd) {
+                                            $commonCellBase .= ' border-b border-gray-100 dark:border-slate-700';
+                                        }
+                                    @endphp
+                                    <tr data-page="{{ $pageIdx }}" 
+                                        class="unified-row {{ $pageIdx > 1 ? 'hidden' : '' }} hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors group/row">
+                                        
+                                        {{-- Column: No Pack --}}
+                                        @if($row['p'] && $row['seri'] === 1)
+                                            {{-- Individual pack rowspans 2. Pack 4 is the last, so its end is the group end --}}
+                                            <td rowspan="2" class="{{ $commonCellBase }} font-black text-slate-500 text-xs bg-slate-50/10 {{ $row['p'] % 4 === 0 ? 'group-separator' : '' }}">
+                                                {{ $row['p'] }}
+                                            </td>
+                                        @elseif(!$row['p'] && $rIdx === 0)
+                                            <td rowspan="2" class="{{ $commonCellBase }} font-black text-slate-400 text-[9px] bg-slate-50/10 uppercase tracking-tighter">
+                                                {{ $packStart }}-{{ $packEnd }}
+                                            </td>
+                                        @endif
+
+                                        <td class="py-2.5 px-3 {{ $commonCellBase }} text-left font-bold text-slate-500 dark:text-slate-400 uppercase tracking-normal text-[9px] {{ $separatorClass }}">
+                                            {{ $row['nama'] }}
+                                        </td>
+
+                                        {{-- Column: SAP Nilai (COPY TARGET) --}}
+                                        <td class="sap-value-cell py-2.5 {{ $commonCellBase }} font-black text-xs text-indigo-600 dark:text-indigo-400 bg-emerald-50/5 dark:bg-emerald-400/5 group-hover/row:bg-emerald-50 {{ $separatorClass }}">
+                                            {{ $row['val'] }}
+                                        </td>
+
+                                        {{-- Columns: Main Rekap (Seri 1, Seri 2, Campuran) --}}
+                                        @if($row['p'] && $row['seri'] === 1)
+                                            @php $d = $grid[$row['p']]; @endphp
+                                            <td rowspan="2" class="{{ $commonCellBase }} font-black text-slate-700 dark:text-white text-[11px] {{ $row['p'] % 4 === 0 ? 'group-separator' : '' }}">
+                                                {{ $d['s1'] > 0 ? number_format($d['s1'], 0, ',', '.') : '-' }}
+                                            </td>
+                                            <td rowspan="2" class="{{ $commonCellBase }} font-black text-slate-700 dark:text-white text-[11px] {{ $row['p'] % 4 === 0 ? 'group-separator' : '' }}">
+                                                {{ $d['s2'] > 0 ? number_format($d['s2'], 0, ',', '.') : '-' }}
+                                            </td>
+                                            <td rowspan="2" class="{{ $commonCellBase }} font-black text-slate-700 dark:text-white text-[11px] {{ $row['p'] % 4 === 0 ? 'group-separator' : '' }}">
+                                                {{ $d['camp'] > 0 ? number_format($d['camp'], 0, ',', '.') : '-' }}
+                                            </td>
+                                        @elseif(!$row['p'] && $rIdx === 0)
+                                            <td rowspan="2" colspan="3" class="{{ $commonCellBase }} bg-slate-50/10 font-black text-slate-300 uppercase tracking-widest text-[9px]">
+                                                DETAIL PACK {{ $packStart }}-{{ $packEnd }}
+                                            </td>
+                                        @endif
+
+                                        {{-- Column: Total Group --}}
+                                        @if($rIdx === 0)
+                                            <td rowspan="10" class="font-black text-sm text-rose-600 bg-rose-50/5 dark:bg-rose-900/10 shadow-[inset_0_0_15px_rgba(225,29,72,0.01)] selection:bg-rose-200 group-separator">
+                                                {{ number_format($groupTotals[$g], 0, ',', '.') }}
+                                            </td>
+                                        @endif
+
+                                    </tr>
+                                @endforeach
+                            @endfor
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
-
-
     </div>
 
-    </div>
+    @push('css')
+        <style>
+            .sap-value-cell {
+                user-select: all; /* Memudahkan seleksi teks manual jika diperlukan */
+                cursor: pointer;
+            }
+            .sap-value-cell::selection {
+                background-color: #818cf8;
+                color: white;
+            }
+            .group-separator {
+                box-shadow: inset 0 -2px 0 0 #6366f1 !important; /* Indigo-500 */
+            }
+            .dark .group-separator {
+                box-shadow: inset 0 -2px 0 0 #818cf8 !important; /* Indigo-400 */
+            }
+        </style>
+    @endpush
 
     @push('scripts')
         <script>
             function showPage(page) {
-                // 1. Sembunyikan semua baris
-                document.querySelectorAll('.rekap-row').forEach(row => {
+                // 1. Sembunyikan semua baris unified
+                document.querySelectorAll('.unified-row').forEach(row => {
                     row.classList.add('hidden');
                 });
 
                 // 2. Tampilkan baris untuk halaman yang dipilih
-                document.querySelectorAll(`.rekap-row[data-page="${page}"]`).forEach(row => {
+                document.querySelectorAll(`.unified-row[data-page="${page}"]`).forEach(row => {
                     row.classList.remove('hidden');
                 });
 
@@ -217,6 +280,57 @@
                 }).catch(err => {
                     console.error('Gagal copy: ', err);
                 });
+            }
+
+            function copySapColumn() {
+                const cells = document.querySelectorAll('.sap-value-cell');
+                let clipboardText = "";
+
+                cells.forEach(cell => {
+                    let val = cell.innerText.trim();
+                    clipboardText += val + "\n";
+                });
+
+                // Copy ke clipboard
+                navigator.clipboard.writeText(clipboardText).then(() => {
+                    Swal.fire({
+                        title: 'Berhasil di-copy!',
+                        text: '250 baris nilai SAP telah disalin ke clipboard.',
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false,
+                        background: document.documentElement.classList.contains('dark-mode') ? '#1e293b' : '#ffffff',
+                        color: document.documentElement.classList.contains('dark-mode') ? '#f8fafc' : '#1e293b',
+                    });
+                }).catch(err => {
+                    console.error('Gagal copy: ', err);
+                });
+            }
+
+            /**
+             * Utility Function: Transform 100 Pack Data to 250 SAP Rows
+             * @param {Array} gridData - Array of 100 objects with {s1, s2, camp}
+             * @param {Array} groupTotals - Array of 25 numbers (sum of camp per 4 packs)
+             * @returns {Array} - Array of 250 objects {name, value}
+             */
+            function transformToSapFormat(gridData, groupTotals) {
+                const sapRows = [];
+                for (let g = 0; g < 25; g++) {
+                    const C = groupTotals[g];
+                    
+                    // Logic Campuran
+                    sapRows.push({ name: 'CAMPURAN 1', value: Math.min(C, 16000) });
+                    sapRows.push({ name: 'CAMPURAN 2', value: Math.min(Math.max(C - 16000, 0), 4000) });
+
+                    // Logic Per Pack (4 pack per grup)
+                    for (let i = 1; i <= 4; i++) {
+                        const pNum = (g * 4) + i;
+                        const pack = gridData[pNum];
+                        sapRows.push({ name: `PACK ${pNum} SERI 1`, value: pack.s1 });
+                        sapRows.push({ name: `PACK ${pNum} SERI 2`, value: pack.s2 });
+                    }
+                }
+                return sapRows;
             }
         </script>
     @endpush
