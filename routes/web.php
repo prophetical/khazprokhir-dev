@@ -62,6 +62,11 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\RoleMiddleware::clas
     Route::get('/data-pengemasan', [\App\Http\Controllers\PengemasanController::class, 'data'])->name('pengemasan.data');
     Route::get('/data-pengemasan/export', [\App\Http\Controllers\PengemasanController::class, 'export'])->name('pengemasan.export');
     Route::get('/data-pengemasan/print', [\App\Http\Controllers\PengemasanController::class, 'print'])->name('pengemasan.print');
+    
+    // Laporan Pengemasan HCS
+    Route::get('/pengemasan-report', [\App\Http\Controllers\PengemasanReportController::class, 'index'])->name('pengemasan.report.index');
+    Route::get('/pengemasan-report/print', [\App\Http\Controllers\PengemasanReportController::class, 'print'])->name('pengemasan.report.print');
+
     Route::get('/pengemasan/{id}', [\App\Http\Controllers\PengemasanController::class, 'show'])->name('pengemasan.show');
 
     // Penyerahan ke BI Routes
@@ -141,6 +146,21 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\RoleMiddleware::clas
         Route::get('/print', [\App\Http\Controllers\BahanPenolongController::class, 'print'])->name('print');
     });
     Route::resource('bahan-penolong', \App\Http\Controllers\BahanPenolongController::class)->only(['store', 'update', 'destroy']);
+
+    // Penyablonan (Screen Printing)
+    Route::prefix('penyablonan')->name('penyablonan.')->group(function () {
+        Route::get('/penerimaan', [\App\Http\Controllers\PenyablonanController::class, 'penerimaan'])->name('penerimaan');
+        Route::post('/penerimaan', [\App\Http\Controllers\PenyablonanController::class, 'storePenerimaan'])->name('penerimaan.store');
+        
+        Route::get('/dus', [\App\Http\Controllers\PenyablonanController::class, 'dus'])->name('dus');
+        Route::post('/dus', [\App\Http\Controllers\PenyablonanController::class, 'storeDus'])->name('dus.store');
+        
+        Route::get('/kerusakan', [\App\Http\Controllers\PenyablonanController::class, 'kerusakan'])->name('kerusakan');
+        Route::post('/kerusakan', [\App\Http\Controllers\PenyablonanController::class, 'storeKerusakan'])->name('kerusakan.store');
+        
+        Route::get('/laporan', [\App\Http\Controllers\PenyablonanController::class, 'laporan'])->name('laporan');
+        Route::get('/laporan/print', [\App\Http\Controllers\PenyablonanController::class, 'print'])->name('laporan.print');
+    });
 
     // X Pengganti Routes
     Route::prefix('x-pengganti')->name('x-pengganti.')->group(function () {

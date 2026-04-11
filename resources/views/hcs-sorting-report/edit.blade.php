@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex items-center">
             <div class="flex-1 [&_h2]:text-white [&_h2]:font-extrabold [&_h2]:tracking-tight [&_h2]:drop-shadow">
-                <h2 class="font-black text-2xl text-white leading-tight drop-shadow-md tracking-tight">
+                <h2 class="font-black text-xl text-white leading-tight drop-shadow-md tracking-tight">
                     {{ __('Edit Laporan Penyortiran') }}
                 </h2>
             </div>
@@ -213,10 +213,10 @@
 
                                         <div class="relative group/pack">
                                             <div class="h-10 w-full flex items-center justify-center rounded-lg text-sm font-black border-2 select-none transition-all duration-200 relative overflow-hidden shadow-sm dark:shadow-none
-                                                           {{ $extraClasses }}" :class="{
-                                                        'ring-4 scale-110 z-10 shadow-xl brightness-125 ring-amber-400 ring-offset-0 !opacity-100 !border-amber-500': isSelected({{ $i }})
-                                                    }" @if($isReady) @mousedown="startSelection({{ $i }})"
-                                                    @mouseenter="onHover({{ $i }})" @mouseup="endSelection()" @endif>
+                                                               {{ $extraClasses }}" :class="{
+                                                            'ring-4 scale-110 z-10 shadow-xl brightness-125 ring-amber-400 ring-offset-0 !opacity-100 !border-amber-500': isSelected({{ $i }})
+                                                        }" @if($isReady) @mousedown="startSelection({{ $i }})"
+                                                        @mouseenter="onHover({{ $i }})" @mouseup="endSelection()" @endif>
                                                 <span class="relative z-10">{{ $i }}</span>
 
                                                 <!-- Selected Overlay -->

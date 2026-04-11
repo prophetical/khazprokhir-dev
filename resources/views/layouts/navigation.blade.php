@@ -6,6 +6,7 @@
         hctsOpen: {{ request()->routeIs('hcts-receiving.*', 'hcts-inventory.*') ? 'true' : 'false' }},
         penyerahanHctsOpen: {{ request()->routeIs('hcts-submission.*') ? 'true' : 'false' }},
         bahanPenolongOpen: {{ request()->routeIs('bahan-penolong.*') ? 'true' : 'false' }},
+        penyablonanOpen: {{ request()->routeIs('penyablonan.*') ? 'true' : 'false' }},
         xPenggantiOpen: {{ request()->routeIs('x-pengganti.*') ? 'true' : 'false' }}
     }" :class="[
         sidebarCollapsed ? 'w-20' : 'w-64',
@@ -245,6 +246,52 @@
                 </div>
             @endif
 
+            <!-- Grup Penyablonan -->
+            <div class="space-y-1 mt-2">
+                <button @click="penyablonanOpen = !penyablonanOpen; if(sidebarCollapsed) sidebarCollapsed = false;"
+                    class="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('penyablonan.*') ? 'text-white font-semibold bg-white/20 shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
+                    title="Penyablonan">
+                    <div class="flex items-center">
+                        <div class="shrink-0 w-8 flex justify-center">
+                            <!-- Icon Kuas (Brush) -->
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                            </svg>
+                        </div>
+                        <span x-show="!sidebarCollapsed" x-transition
+                            class="ml-3 text-sm font-medium whitespace-nowrap overflow-hidden">Penyablonan</span>
+                    </div>
+                    <svg x-show="!sidebarCollapsed" :class="penyablonanOpen ? 'rotate-180' : ''"
+                        class="w-3 h-3 transition-transform duration-200" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+
+                <!-- Item Sub-menu -->
+                <div x-show="penyablonanOpen && !sidebarCollapsed" x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+                    class="pl-11 space-y-1">
+                    <a href="{{ route('penyablonan.penerimaan') }}"
+                        class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('penyablonan.penerimaan') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                        Penerimaan Blanko
+                    </a>
+                    <a href="{{ route('penyablonan.dus') }}"
+                        class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('penyablonan.dus') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                        Penyablonan Dus
+                    </a>
+                    <a href="{{ route('penyablonan.kerusakan') }}"
+                        class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('penyablonan.kerusakan') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                        Kerusakan Blanko
+                    </a>
+                    <a href="{{ route('penyablonan.laporan') }}"
+                        class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('penyablonan.laporan') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                        Laporan Penyablonan
+                    </a>
+                </div>
+            </div>
+
             <!-- Grup Pengemasan -->
             <div class="space-y-1 mt-2 mb-4"
                 x-data="{ pengemasanOpen: {{ request()->routeIs('pengemasan.*') ? 'true' : 'false' }} }">
@@ -279,6 +326,10 @@
                     <a href="{{ route('pengemasan.data') }}"
                         class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('pengemasan.data', 'pengemasan.show') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
                         Data Pengemasan HCS
+                    </a>
+                    <a href="{{ route('pengemasan.report.index') }}"
+                        class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('pengemasan.report.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                        Laporan Pengemasan HCS
                     </a>
                 </div>
             </div>
