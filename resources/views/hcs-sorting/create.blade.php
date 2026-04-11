@@ -132,46 +132,44 @@
 
                                     <div class="relative group/pack">
                                         <div 
-                                            class="h-10 w-full flex items-center justify-center rounded-md text-sm font-black border select-none transition-all duration-200 relative overflow-hidden
+                                            class="h-10 w-full flex items-center justify-center rounded-md text-sm font-black border select-none transition-all duration-75 relative overflow-hidden cursor-pointer
                                                    {{ $statusClass }}"
                                             style="{{ $hatchStyle }}"
                                             :class="{
-                                                'ring-4 scale-110 z-10 shadow-xl brightness-125 ring-amber-400 !border-amber-500 !bg-white !text-gray-900': isSelected({{ $i }}),
+                                                'ring-4 scale-110 z-10 shadow-lg brightness-125 ring-amber-400 !border-amber-500 !bg-white !text-gray-900': selectedPacks.has({{ $i }}),
                                             }"
                                             @if($isReady)
-                                                @mousedown="startSelection({{ $i }})"
-                                                @mouseenter="onHover({{ $i }})"
-                                                @mouseup="endSelection()"
+                                                @click="togglePack({{ $i }})"
                                             @endif
                                         >
                                             <span class="relative z-10">{{ $i }}</span>
 
                                             <!-- Tampilan saat dipilih -->
-                                            <template x-if="isSelected({{ $i }})">
-                                                <div class="absolute -top-1 -right-1 w-5 h-5 bg-amber-400 rounded-full flex items-center justify-center shadow-lg border-2 border-white animate-bounce-subtle z-20">
+                                            <template x-if="selectedPacks.has({{ $i }})">
+                                                <div class="absolute -top-1 -right-1 w-5 h-5 bg-amber-400 rounded-full flex items-center justify-center shadow border-2 border-white animate-bounce-subtle z-20">
                                                     <svg class="w-3 h-3 text-gray-900" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
                                                 </div>
                                             </template>
                                         </div>
 
-                                        <!-- Tooltip -->
-                                        <div class="pointer-events-none absolute {{ $vClass }} {{ $hClass }} z-[100] hidden group-hover/pack:flex items-center transition-all duration-300">
-                                            <div class="bg-gray-900/95 dark:bg-slate-900/95 backdrop-blur-md text-white text-[10px] rounded-2xl px-4 py-3 whitespace-nowrap shadow-2xl text-center leading-tight border border-white/10 dark:border-slate-700/50 min-w-[150px]">
+                                        <!-- Tooltip (Optimized Performance: No Backdrop Blur) -->
+                                        <div class="pointer-events-none absolute {{ $vClass }} {{ $hClass }} z-[100] hidden group-hover/pack:flex items-center transition-opacity duration-200">
+                                            <div class="bg-gray-900/95 dark:bg-slate-900 text-white text-[10px] rounded-2xl px-4 py-3 whitespace-nowrap shadow-xl text-center leading-tight border border-white/10 dark:border-slate-700/50 min-w-[150px]">
                                                 <div class="font-black border-b border-white/10 dark:border-slate-700 pb-2 mb-2 flex items-center justify-center gap-2">
                                                     PACK {{ $i }}
                                                     <span class="px-2 py-0.5 rounded-full text-[8px] text-white" 
-                                                          :class="isSelected({{ $i }}) ? 'bg-amber-500' : 'bg-rose-500'" 
-                                                          x-show="isSelected({{ $i }}) || {{ $isSorted ? 'true' : 'false' }}">
-                                                        <span x-show="isSelected({{ $i }})">DIPILIH</span>
-                                                        <span x-show="!isSelected({{ $i }}) && {{ $isSorted ? 'true' : 'false' }}">TERSORTIR</span>
+                                                          :class="selectedPacks.has({{ $i }}) ? 'bg-amber-500' : 'bg-rose-500'" 
+                                                          x-show="selectedPacks.has({{ $i }}) || {{ $isSorted ? 'true' : 'false' }}">
+                                                        <span x-show="selectedPacks.has({{ $i }})">DIPILIH</span>
+                                                        <span x-show="!selectedPacks.has({{ $i }}) && {{ $isSorted ? 'true' : 'false' }}">TERSORTIR</span>
                                                     </span>
                                                 </div>
                                                 <div class="font-black uppercase tracking-wider text-xs"
-                                                     :class="isSelected({{ $i }}) ? 'text-amber-400' : '{{ $supplierClass }}'">
+                                                     :class="selectedPacks.has({{ $i }}) ? 'text-amber-400' : '{{ $supplierClass }}'">
                                                     {{ $supplierText }}
                                                 </div>
                                                 <div class="text-gray-400 dark:text-slate-500 text-[9px] mt-1.5 font-bold uppercase tracking-widest"
-                                                     x-text="isSelected({{ $i }}) ? 'Pack Terpilih di Sesi Ini' : '{{ $statusText }}'">
+                                                     x-text="selectedPacks.has({{ $i }}) ? 'Pack Terpilih di Sesi Ini' : '{{ $statusText }}'">
                                                 </div>
                                             </div>
                                             <div class="w-2.5 h-2.5 bg-gray-900 dark:bg-slate-900 rotate-45 border-r border-b border-white/10 dark:border-slate-700/50 {{ $arrowV }} {{ $arrowH }}"></div>
@@ -186,7 +184,7 @@
                              x-text="validationError"></div>
                         <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-4 flex items-center">
                             <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
-                            Klik & Geser untuk memilih Pack (Harus berurutan & kelipatan 4).
+                            Klik pada kotak untuk memilih/menghapus Grup Pack (Otomatis Kelipatan 4).
                         </div>
                     </div>
                 </div>
@@ -209,11 +207,11 @@
                             <input type="hidden" name="tahun_anggaran" value="{{ $tahun_anggaran }}">
                             
                             <!-- Input tersembunyi untuk menyimpan pack yang dipilih -->
-                            <template x-for="pack in selectedPacks" :key="pack">
+                            <template x-for="pack in Array.from(selectedPacks)" :key="pack">
                                 <input type="hidden" name="selected_packs[]" :value="pack">
                             </template>
 
-                            <div class="space-y-6">
+                            <div class="space-y-4">
                                 <!-- Tombol memilih Mode Manual -->
                                 <div class="flex items-center justify-between p-4 bg-white/40 backdrop-blur-md rounded-2xl border border-white/60 shadow-sm transition-all duration-300" 
                                      :class="isManual ? 'ring-2 ring-red-500/20 border-red-100 bg-red-50/50' : ''">
@@ -237,36 +235,48 @@
                                 </div>
 
                                 <!-- Isian Form -->
-                                <div class="grid grid-cols-1 gap-5">
-                                    <!-- Ringkasan Total (Dibuat menumpuk agar tidak terpotong) -->
-                                    <div>
-                                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Total Pack</label>
-                                        <div class="relative group">
-                                            <input type="text" :value="selectedPacks.length" 
-                                                   class="block w-full border-gray-200 rounded-xl bg-gray-50 shadow-inner text-sm py-3 px-10 font-bold text-center opacity-80"
-                                                   readonly />
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <!-- Ringkasan Total (Dibuat menumpuk agar tidak terpotong) -->
+                                        <div>
+                                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Total Pack</label>
+                                            <div class="relative group">
+                                                <input type="text" :value="selectedPacks.size" 
+                                                       class="block w-full border-gray-200 rounded-xl bg-gray-50 shadow-inner text-sm py-3 px-10 font-bold text-center opacity-80"
+                                                       readonly />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div>
-                                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Total Bilyet</label>
-                                        <div class="relative group">
-                                            <input type="text" :value="formatNumber(totalBilyet)" 
-                                                   class="block w-full border-gray-200 rounded-xl bg-gray-50 shadow-inner text-sm py-3 px-10 font-bold text-center opacity-80"
-                                                   readonly />
+                                        <div>
+                                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Total Bilyet</label>
+                                            <div class="relative group">
+                                                <input type="text" :value="formatNumber(totalBilyet)" 
+                                                       class="block w-full border-gray-200 rounded-xl bg-gray-50 shadow-inner text-sm py-3 px-10 font-bold text-center opacity-80"
+                                                       readonly />
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div>
-                                        <label for="supplier" class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Supplier</label>
-                                        <div class="relative group">
-                                            <select id="supplier" name="supplier" x-model="supplier"
-                                                    class="block w-full border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm text-sm py-3 px-10 transition-all duration-300 focus:ring-4 font-bold text-center appearance-none"
-                                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'" 
-                                                    required>
-                                                <option value="">Pilih Supplier</option>
-                                                <option value="Cutpack">Cutpack</option>
-                                                <option value="Rikyet">Rikyet</option>
-                                            </select>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label for="supplier" class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Supplier</label>
+                                            <div class="relative group">
+                                                <select id="supplier" name="supplier" x-model="supplier"
+                                                        class="block w-full border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm text-sm py-3 px-10 transition-all duration-300 focus:ring-4 font-bold text-center appearance-none"
+                                                        :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'" 
+                                                        required>
+                                                    <option value="">Supplier</option>
+                                                    <option value="Cutpack">Cutpack</option>
+                                                    <option value="Rikyet">Rikyet</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label for="tanggal" class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Tanggal</label>
+                                            <div class="relative group">
+                                                <input id="tanggal" name="tanggal" type="date"
+                                                       class="block w-full border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm text-sm py-3 px-10 font-bold text-center transition-all duration-300 focus:ring-4"
+                                                       :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
+                                                       value="{{ old('tanggal', date('Y-m-d')) }}" required />
+                                            </div>
                                         </div>
                                     </div>
 
@@ -286,66 +296,56 @@
                                         </div>
                                     </div>
 
-                                    <div>
-                                        <label for="petugas_1" class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Petugas 1</label>
-                                        <div class="relative group">
-                                            <input id="petugas_1" name="petugas_1" type="text" 
-                                                   class="block w-full border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm text-sm py-3 px-10 transition-all duration-300 focus:ring-4 font-bold text-center"
-                                                   :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
-                                                   value="{{ old('petugas_1') }}" placeholder="Input Nama Petugas" required />
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label for="petugas_1" class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Petugas 1</label>
+                                            <div class="relative group">
+                                                <input id="petugas_1" name="petugas_1" type="text" 
+                                                       class="block w-full border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm text-sm py-3 px-10 transition-all duration-300 focus:ring-4 font-bold text-center"
+                                                       :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
+                                                       value="{{ old('petugas_1') }}" placeholder="Petugas 1" required />
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label for="petugas_2" class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Petugas 2 (Ops)</label>
+                                            <div class="relative group">
+                                                <input id="petugas_2" name="petugas_2" type="text"
+                                                       class="block w-full border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm text-sm py-3 px-10 transition-all duration-300 focus:ring-4 font-bold text-center"
+                                                       :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
+                                                       value="{{ old('petugas_2') }}" placeholder="Petugas 2" />
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div>
-                                        <label for="petugas_2" class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Petugas 2 (Opsional)</label>
-                                        <div class="relative group">
-                                            <input id="petugas_2" name="petugas_2" type="text"
-                                                   class="block w-full border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm text-sm py-3 px-10 transition-all duration-300 focus:ring-4 font-bold text-center"
-                                                   :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
-                                                   value="{{ old('petugas_2') }}" placeholder="Petugas Pendamping" />
+                                    <div class="grid grid-cols-5 gap-3 items-end">
+                                        <div class="col-span-1">
+                                            <label for="gilir" class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1 text-center">Gilir</label>
+                                            <div class="relative group">
+                                                <select id="gilir" name="gilir" 
+                                                        class="block w-full border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm text-[10px] py-4 px-2 transition-all duration-300 focus:ring-4 font-black text-center appearance-none"
+                                                        :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
+                                                        required>
+                                                    <option value="">Gilir</option>
+                                                    <option value="Gilir 1" {{ old('gilir') == 'Gilir 1' ? 'selected' : '' }}>1</option>
+                                                    <option value="Gilir 2" {{ old('gilir') == 'Gilir 2' ? 'selected' : '' }}>2</option>
+                                                    <option value="Gilir 3" {{ old('gilir') == 'Gilir 3' ? 'selected' : '' }}>3</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-span-4">
+                                            <button type="submit" 
+                                                    class="w-full relative group overflow-hidden py-4 px-4 rounded-2xl shadow-[0_10px_30px_-10px_rgba(0,0,0,0.3)] text-xs font-black uppercase tracking-[0.2em] transition-all duration-500 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed disabled:grayscale"
+                                                    :class="currentTheme ? (currentTheme.btn + ' ' + currentTheme.text) : 'bg-gray-900 text-white'"
+                                                    :disabled="selectedPacks.size === 0 || validationError !== ''">
+                                                <div class="absolute inset-0 bg-white/20 translate-y-full transition-transform duration-300 group-hover:translate-y-0"></div>
+                                                <span class="relative z-10 flex items-center justify-center">
+                                                    Simpan Data Penyortiran
+                                                    <svg class="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                                                </span>
+                                            </button>
                                         </div>
                                     </div>
-
-                                    <!-- Tanggal dan Urutan (Dibuat menumpuk agar tidak terpotong) -->
-                                    <div>
-                                        <label for="tanggal" class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Tanggal</label>
-                                        <div class="relative group">
-                                            <input id="tanggal" name="tanggal" type="date"
-                                                   class="block w-full border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm text-sm py-3 px-10 font-bold text-center transition-all duration-300 focus:ring-4"
-                                                   :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
-                                                   value="{{ old('tanggal', date('Y-m-d')) }}" required />
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <label for="gilir" class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5 px-1">Gilir</label>
-                                        <div class="relative group">
-
-                                            <select id="gilir" name="gilir" 
-                                                    class="block w-full border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm shadow-sm text-sm py-3 px-10 transition-all duration-300 focus:ring-4 font-bold text-center appearance-none"
-                                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
-                                                    required>
-                                                <option value="">Gilir</option>
-                                                <option value="Gilir 1" {{ old('gilir') == 'Gilir 1' ? 'selected' : '' }}>1</option>
-                                                <option value="Gilir 2" {{ old('gilir') == 'Gilir 2' ? 'selected' : '' }}>2</option>
-                                                <option value="Gilir 3" {{ old('gilir') == 'Gilir 3' ? 'selected' : '' }}>3</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="pt-8">
-                                    <button type="submit" 
-                                            class="w-full relative group overflow-hidden py-4 px-4 rounded-2xl shadow-[0_10px_30px_-10px_rgba(0,0,0,0.3)] text-xs font-black uppercase tracking-[0.2em] transition-all duration-500 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed disabled:grayscale"
-                                            :class="currentTheme ? (currentTheme.btn + ' ' + currentTheme.text) : 'bg-gray-900 text-white'"
-                                            :disabled="selectedPacks.length === 0 || validationError !== ''">
-                                        <div class="absolute inset-0 bg-white/20 translate-y-full transition-transform duration-300 group-hover:translate-y-0"></div>
-                                        <span class="relative z-10 flex items-center justify-center">
-                                            Simpan Data Sortir
-                                            <svg class="w-4 h-4 ml-2 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-                                        </span>
-                                    </button>
-                                </div>
                             </div>
                         </form>
                     </div>
@@ -361,19 +361,17 @@
                 selectedPecahan: initialPecahan,
                 themes: themes,
                 get currentTheme() { return this.themes[this.selectedPecahan] || null },
-                @if(request()->has('selected_packs'))
-                    selectedPacks: {{ json_encode(array_map('intval', is_array(request('selected_packs')) ? request('selected_packs') : explode(',', request('selected_packs')))) }},
+                 @if(request()->has('selected_packs'))
+                    selectedPacks: new Set({{ json_encode(array_map('intval', is_array(request('selected_packs')) ? request('selected_packs') : explode(',', request('selected_packs')))) }}),
                 @else
-                    selectedPacks: [],
+                    selectedPacks: new Set(),
                 @endif
                 init() {
                     // Cek atau pilih supplier otomatis jika pack-nya sudah terpilih dari awal
-                    if (this.selectedPacks.length > 0) {
+                    if (this.selectedPacks.size > 0) {
                         this.validateSelection();
                     }
                 },
-                isDragging: false,
-                dragStart: null,
                 validationError: '',
                 isManual: {{ old('is_manual') ? 'true' : 'false' }},
                 supplier: '{{ old('supplier', '') }}',
@@ -389,81 +387,61 @@
                 },
                 
                 get totalBilyet() {
-                    return this.selectedPacks.reduce((total, num) => {
-                        return total + (this.packQuantities[num] || 45000);
-                    }, 0);
+                    let total = 0;
+                    this.selectedPacks.forEach(num => {
+                        total += (this.packQuantities[num] || 45000);
+                    });
+                    return total;
                 },
 
                 formatNumber(num) {
                     return new Intl.NumberFormat('id-ID').format(num);
                 },
 
-                isSelected(num) {
-                    return this.selectedPacks.includes(num);
+                 isSelected(num) {
+                    return this.selectedPacks.has(num);
                 },
 
-                startSelection(num) {
-                    // Logika buat pilih satu-satu atau tarik (drag)
-                    this.isDragging = true;
-                    this.dragStart = num;
-                    
-                    // Jika klik yang sudah dipilih, jangan dihapus semua, anggap saja mulai titik baru
-                    if (!this.isSelected(num)) {
-                       // Opsional: Jika ingin klik blok yang kaku, bisa diatur lagi di sini
-                       this.selectedPacks = [num];
-                    } else {
-                        // Logika untuk membatalkan pilihan blok
-                        let newSelection = [...this.selectedPacks];
-                        const index = newSelection.indexOf(num);
-                        if (index > -1) {
-                            newSelection.splice(index, 1);
+                 togglePack(num) {
+                    if (!this.isManual) {
+                        // Logic Grup Kelipatan 4
+                        let startBlock = Math.floor((num - 1) / 4) * 4 + 1;
+                        let block = [startBlock, startBlock + 1, startBlock + 2, startBlock + 3];
+                        
+                        // Cek apakah seluruh blok sudah ada
+                        let allSelected = block.every(p => this.selectedPacks.has(p));
+                        
+                        if (allSelected) {
+                            // Hapus satu blok
+                            block.forEach(p => this.selectedPacks.delete(p));
+                        } else {
+                            // Tambah satu blok
+                            block.forEach(p => this.selectedPacks.add(p));
                         }
-                        this.selectedPacks = [...newSelection].sort((a,b)=>a-b);
-                    }
-                    this.validateSelection();
-                    
-                    // Sebenarnya lebih enak jika klik itu buat milih. Dibikin simpel aja buat user:
-                    // Jika pas klik belum dipilih, ya pilih. Jika ditarik (drag), tinggal nambah.
-                    this.selectedPacks = [num]; // reset pas klik baru biar milih blok dari awal lagi
-                },
-
-                onHover(num) {
-                     if(!this.isDragging || this.dragStart === null) return;
-                     
-                     let start = Math.min(this.dragStart, num);
-                     let end = Math.max(this.dragStart, num);
-                     
-                     let newSelection = [];
-                     for(let i=start; i<=end; i++){
-                        newSelection.push(i);
-                     }
-                     this.selectedPacks = [...newSelection];
-                },
-                
-                endSelection() {
-                    this.isDragging = false;
-                    this.validateSelection();
-                },
-
-                togglePack(num) {
-                    if (this.isSelected(num)) {
-                        this.selectedPacks = this.selectedPacks.filter(p => p !== num);
                     } else {
-                        this.selectedPacks = [...this.selectedPacks, num].sort((a,b) => a-b);
+                        // Logic Manual (Satu per satu)
+                        if (this.selectedPacks.has(num)) {
+                            this.selectedPacks.delete(num);
+                        } else {
+                            this.selectedPacks.add(num);
+                        }
                     }
+                    
+                    this.selectedPacks = new Set(this.selectedPacks); // trigger reactivity
                     this.validateSelection();
                 },
 
                 validateSelection() {
                     this.validationError = '';
-                    if (this.selectedPacks.length === 0) return;
+                    if (this.selectedPacks.size === 0) return;
     
-                    // Kelompokkan pack yang urutannya menyambung
+                    // Kelompokkan pack yang urutannya menyambung (Convert Set to array strictly for logic)
+                    let sortedPacks = Array.from(this.selectedPacks).sort((a, b) => a - b);
                     let blocks = [];
                     let currentBlock = [];
                     
-                    for (let i = 0; i < this.selectedPacks.length; i++) {
-                        let pack = this.selectedPacks[i];
+                    for (let i = 0; i < sortedPacks.length; i++) {
+                        let pack = sortedPacks[i];
                         if (currentBlock.length === 0) {
                             currentBlock.push(pack);
                         } else {
@@ -499,36 +477,30 @@
                     this.updateAutoSupplier();
                 },
 
-                updateAutoSupplier() {
-                    if (this.selectedPacks.length === 0) return;
+                 updateAutoSupplier() {
+                    if (this.selectedPacks.size === 0) return;
                     
                     let counts = { 'Cutpack': 0, 'Rikyet': 0 };
                     this.selectedPacks.forEach(num => {
                         let s = this.packSuppliers[num];
                         if (s) {
-                            // Samakan huruf besar kecilnya biar pas dengan pilihan dropdown
                             let normalizedS = s.toLowerCase().includes('rikyet') ? 'Rikyet' : 'Cutpack';
                             counts[normalizedS]++;
                         }
                     });
 
-                    console.log('Supplier dari pack yang dipilih:', this.selectedPacks.map(n => this.packSuppliers[n]));
-                    console.log('Jumlah hitungan:', counts);
-
                     if (counts['Cutpack'] > counts['Rikyet']) {
-                        console.log('Otomatis pilih Cutpack');
                         this.supplier = 'Cutpack';
                     } else if (counts['Rikyet'] > counts['Cutpack']) {
-                        console.log('Otomatis pilih Rikyet');
                         this.supplier = 'Rikyet';
                     }
                 },
                 
                 validateSubmission(e) {
                     this.validateSelection();
-                    if(this.validationError !== '' || this.selectedPacks.length === 0) {
+                    if(this.validationError !== '' || this.selectedPacks.size === 0) {
                         e.preventDefault();
-                        if(this.selectedPacks.length === 0) {
+                        if(this.selectedPacks.size === 0) {
                             this.validationError = 'Silahkan pilih pack terlebih dahulu.';
                         }
                     }

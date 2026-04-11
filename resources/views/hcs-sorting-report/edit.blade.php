@@ -212,17 +212,16 @@
                                         @endphp
 
                                         <div class="relative group/pack">
-                                            <div class="h-10 w-full flex items-center justify-center rounded-lg text-sm font-black border-2 select-none transition-all duration-200 relative overflow-hidden shadow-sm dark:shadow-none
+                                            <div class="h-10 w-full flex items-center justify-center rounded-lg text-sm font-black border-2 select-none transition-all duration-75 relative overflow-hidden shadow-sm dark:shadow-none cursor-pointer
                                                                {{ $extraClasses }}" :class="{
-                                                            'ring-4 scale-110 z-10 shadow-xl brightness-125 ring-amber-400 ring-offset-0 !opacity-100 !border-amber-500': isSelected({{ $i }})
-                                                        }" @if($isReady) @mousedown="startSelection({{ $i }})"
-                                                        @mouseenter="onHover({{ $i }})" @mouseup="endSelection()" @endif>
+                                                            'ring-4 scale-110 z-10 shadow-lg brightness-125 ring-amber-400 ring-offset-0 !opacity-100 !border-amber-500': selectedPacks.has({{ $i }})
+                                                        }" @if($isReady) @click="togglePack({{ $i }})" @endif>
                                                 <span class="relative z-10">{{ $i }}</span>
 
                                                 <!-- Selected Overlay -->
-                                                <template x-if="isSelected({{ $i }})">
+                                                <template x-if="selectedPacks.has({{ $i }})">
                                                     <div
-                                                        class="absolute -top-1 -right-1 w-5 h-5 bg-amber-400 rounded-full flex items-center justify-center shadow-lg border-2 border-white animate-bounce-subtle z-20">
+                                                        class="absolute -top-1 -right-1 w-5 h-5 bg-amber-400 rounded-full flex items-center justify-center shadow border-2 border-white animate-bounce-subtle z-20">
                                                         <svg class="w-3 h-3 text-gray-900" fill="currentColor"
                                                             viewBox="0 0 20 20">
                                                             <path fill-rule="evenodd"
@@ -233,28 +232,28 @@
                                                 </template>
                                             </div>
 
-                                            <!-- Custom Tooltip -->
+                                             <!-- Custom Tooltip (Optimized Performance: No Backdrop Blur) -->
                                             <div
-                                                class="pointer-events-none absolute {{ $vClass }} {{ $hClass }} z-[100] hidden group-hover/pack:flex items-center transition-all duration-300">
+                                                class="pointer-events-none absolute {{ $vClass }} {{ $hClass }} z-[100] hidden group-hover/pack:flex items-center transition-opacity duration-200">
                                                 <div
-                                                    class="bg-gray-900/95 dark:bg-slate-900/95 backdrop-blur-md text-white text-[10px] rounded-2xl px-4 py-3 whitespace-nowrap shadow-2xl text-center leading-tight border border-white/10 dark:border-slate-700/50 min-w-[150px]">
+                                                    class="bg-gray-900/95 dark:bg-slate-900 text-white text-[10px] rounded-2xl px-4 py-3 whitespace-nowrap shadow-xl text-center leading-tight border border-white/10 dark:border-slate-700/50 min-w-[150px]">
                                                     <div
                                                         class="font-black border-b border-white/10 dark:border-slate-700 pb-2 mb-2 flex items-center justify-center gap-2">
                                                         PACK {{ $i }}
                                                         <span class="px-2 py-0.5 rounded-full text-[8px] text-white"
-                                                            :class="isSelected({{ $i }}) ? 'bg-amber-500' : 'bg-rose-500'"
-                                                            x-show="isSelected({{ $i }}) || {{ $isSortedByOther ? 'true' : 'false' }}">
-                                                            <span x-show="isSelected({{ $i }})">DIPILIH</span>
+                                                            :class="selectedPacks.has({{ $i }}) ? 'bg-amber-500' : 'bg-rose-500'"
+                                                            x-show="selectedPacks.has({{ $i }}) || {{ $isSortedByOther ? 'true' : 'false' }}">
+                                                            <span x-show="selectedPacks.has({{ $i }})">DIPILIH</span>
                                                             <span
-                                                                x-show="!isSelected({{ $i }}) && {{ $isSortedByOther ? 'true' : 'false' }}">TERSORTIR</span>
+                                                                x-show="!selectedPacks.has({{ $i }}) && {{ $isSortedByOther ? 'true' : 'false' }}">TERSORTIR</span>
                                                         </span>
                                                     </div>
                                                     <div class="font-black uppercase tracking-wider text-xs"
-                                                        :class="isSelected({{ $i }}) ? 'text-amber-400' : '{{ $supplierClass }}'">
+                                                        :class="selectedPacks.has({{ $i }}) ? 'text-amber-400' : '{{ $supplierClass }}'">
                                                         {{ $supplierText }}
                                                     </div>
                                                     <div class="text-gray-400 dark:text-slate-500 text-[9px] mt-1.5 font-bold uppercase tracking-widest"
-                                                        x-text="isSelected({{ $i }}) ? 'Pack Terpilih di Sesi Ini' : '{{ $statusText }}'">
+                                                        x-text="selectedPacks.has({{ $i }}) ? 'Pack Terpilih di Sesi Ini' : '{{ $statusText }}'">
                                                     </div>
                                                 </div>
                                                 <div
@@ -276,7 +275,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
-                                    Klik & Geser (Drag) untuk memilih kelipatan 4 pack secara berurutan.
+                                    Klik pada kotak untuk memilih/menghapus Grup Pack (Otomatis Kelipatan 4).
                                 </div>
 
                                 <div x-show="validationError" x-cloak
@@ -307,18 +306,16 @@
                             <h3
                                 class="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-4">
                                 Ringkasan Seleksi</h3>
-                            <div class="grid grid-cols-1 gap-4">
+                            <div class="grid grid-cols-2 gap-3">
                                 <div
                                     class="bg-gradient-to-br from-indigo-500 to-indigo-700 p-4 rounded-2xl text-white relative overflow-hidden group">
                                     <div
                                         class="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700">
                                     </div>
                                     <div class="relative z-10">
-                                        <p class="text-[9px] font-bold text-white/70 uppercase tracking-widest">Pilihan
-                                            Aktif</p>
+                                        <p class="text-[9px] font-bold text-white/70 uppercase tracking-widest">Packs</p>
                                         <div class="flex items-baseline gap-1 mt-0.5">
-                                            <span class="text-3xl font-black" x-text="selectedPacks.length"></span>
-                                            <span class="text-xs font-bold opacity-80">Pack</span>
+                                            <span class="text-2xl font-black" x-text="selectedPacks.size"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -329,10 +326,9 @@
                                         class="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700">
                                     </div>
                                     <div class="relative z-10">
-                                        <p class="text-[9px] font-bold text-white/70 uppercase tracking-widest">Total
-                                            Bilyet</p>
+                                        <p class="text-[9px] font-bold text-white/70 uppercase tracking-widest">Total Bilyet</p>
                                         <div class="mt-0.5">
-                                            <span class="text-xl font-black tracking-tight"
+                                            <span class="text-sm font-black tracking-tight"
                                                 x-text="formatNumber(totalBilyet)"></span>
                                         </div>
                                     </div>
@@ -348,7 +344,7 @@
                                 @method('PUT')
 
                                 <!-- Input tersembunyi untuk pack terpilih -->
-                                <template x-for="pack in selectedPacks" :key="pack">
+                                <template x-for="pack in Array.from(selectedPacks)" :key="pack">
                                     <input type="hidden" name="selected_packs[]" :value="pack">
                                 </template>
 
@@ -378,28 +374,29 @@
                                     </label>
                                 </div>
 
-                                <div class="space-y-5">
-                                    <div>
-                                        <label
-                                            class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-2 px-1">Supplier
-                                            Utama</label>
-                                        <div class="relative group">
-                                            <select id="supplier" name="supplier"
-                                                class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 focus:border-indigo-500 focus:ring-0 rounded-2xl px-4 py-3 text-sm font-bold text-gray-700 dark:text-gray-200 transition-all appearance-none outline-none"
-                                                required>
-                                                <option value="Cutpack" {{ old('supplier', $hcs_sorting_report->supplier) == 'Cutpack' ? 'selected' : '' }}>
-                                                    Cutpack</option>
-                                                <option value="Rikyet" {{ old('supplier', $hcs_sorting_report->supplier) == 'Rikyet' ? 'selected' : '' }}>Rikyet
-                                                </option>
-                                            </select>
-                                            <div
-                                                class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 dark:text-gray-600">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="3" d="M19 9l-7 7-7-7" />
-                                                </svg>
+                                <div class="space-y-3">
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label for="supplier"
+                                                class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-2 px-1">Supplier</label>
+                                            <div class="relative group">
+                                                <select id="supplier" name="supplier"
+                                                    class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 focus:border-indigo-500 focus:ring-0 rounded-2xl px-4 py-3 text-sm font-bold text-gray-700 dark:text-gray-200 transition-all appearance-none outline-none"
+                                                    required>
+                                                    <option value="Cutpack" {{ old('supplier', $hcs_sorting_report->supplier) == 'Cutpack' ? 'selected' : '' }}>
+                                                        Cutpack</option>
+                                                    <option value="Rikyet" {{ old('supplier', $hcs_sorting_report->supplier) == 'Rikyet' ? 'selected' : '' }}>Rikyet
+                                                    </option>
+                                                </select>
                                             </div>
+                                        </div>
+                                        <div>
+                                            <label for="tanggal_sortir"
+                                                class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-2 px-1">Tgl Sortir</label>
+                                            <input id="tanggal_sortir" type="date" name="tanggal_sortir"
+                                                value="{{ old('tanggal_sortir', $hcs_sorting_report->tanggal_sortir->format('Y-m-d')) }}"
+                                                required
+                                                class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 focus:border-indigo-500 focus:ring-0 rounded-2xl px-4 py-3 text-sm font-bold text-gray-700 dark:text-gray-200 transition-all outline-none">
                                         </div>
                                     </div>
 
@@ -426,99 +423,66 @@
                                         </div>
                                     </div>
 
-                                    <div>
-                                        <label
-                                            class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-2 px-1">Petugas
-                                            Penyortir</label>
-                                        <div class="space-y-3">
-                                            <div class="relative group">
-                                                <div
-                                                    class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 dark:text-gray-600 group-focus-within:text-indigo-400 transition-colors">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor"
-                                                        viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2.5"
-                                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                                    </svg>
-                                                </div>
-                                                <input id="petugas_1" type="text" name="petugas_1"
-                                                    value="{{ old('petugas_1', $hcs_sorting_report->petugas_1) }}"
-                                                    required placeholder="Nama Petugas 1"
-                                                    class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 focus:border-indigo-500 focus:ring-0 rounded-2xl pl-11 pr-4 py-3 text-sm font-bold text-gray-700 dark:text-gray-200 transition-all outline-none">
-                                            </div>
-                                            <div class="relative group">
-                                                <div
-                                                    class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 dark:text-gray-600 group-focus-within:text-indigo-400 transition-colors">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor"
-                                                        viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2.5"
-                                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                                    </svg>
-                                                </div>
-                                                <input id="petugas_2" type="text" name="petugas_2"
-                                                    value="{{ old('petugas_2', $hcs_sorting_report->petugas_2) }}"
-                                                    placeholder="Nama Petugas 2 (Opsional)"
-                                                    class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 focus:border-indigo-500 focus:ring-0 rounded-2xl pl-11 pr-4 py-3 text-sm font-bold text-gray-700 dark:text-gray-200 transition-all outline-none">
-                                            </div>
-                                        </div>
-                                    </div>
-
                                     <div class="grid grid-cols-2 gap-3">
                                         <div>
-                                            <label
-                                                class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-2 px-1">Tgl
-                                                Sortir</label>
-                                            <input id="tanggal_sortir" type="date" name="tanggal_sortir"
-                                                value="{{ old('tanggal_sortir', $hcs_sorting_report->tanggal_sortir->format('Y-m-d')) }}"
-                                                required
-                                                class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 focus:border-indigo-500 focus:ring-0 rounded-2xl px-4 py-3 text-sm font-bold text-gray-700 dark:text-gray-200 transition-all outline-none">
+                                            <label for="petugas_1"
+                                                class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-2 px-1">Petugas 1</label>
+                                            <div class="relative group">
+                                                <input id="petugas_1" type="text" name="petugas_1"
+                                                    value="{{ old('petugas_1', $hcs_sorting_report->petugas_1) }}"
+                                                    required placeholder="Petugas 1"
+                                                    class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 focus:border-indigo-500 focus:ring-0 rounded-2xl px-4 py-3 text-sm font-bold text-gray-700 dark:text-gray-200 transition-all outline-none">
+                                            </div>
                                         </div>
                                         <div>
-                                            <label
-                                                class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-2 px-1">Gilir</label>
+                                            <label for="petugas_2"
+                                                class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-2 px-1">Petugas 2</label>
                                             <div class="relative group">
-                                                <select id="gilir" name="gilir"
-                                                    class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 focus:border-indigo-500 focus:ring-0 rounded-2xl px-4 py-3 text-sm font-bold text-gray-700 dark:text-gray-200 transition-all appearance-none outline-none"
-                                                    required>
-                                                    <option value="Gilir 1" {{ old('gilir', $hcs_sorting_report->gilir) == 'Gilir 1' ? 'selected' : '' }}>
-                                                        Gilir 1</option>
-                                                    <option value="Gilir 2" {{ old('gilir', $hcs_sorting_report->gilir) == 'Gilir 2' ? 'selected' : '' }}>
-                                                        Gilir 2</option>
-                                                    <option value="Gilir 3" {{ old('gilir', $hcs_sorting_report->gilir) == 'Gilir 3' ? 'selected' : '' }}>
-                                                        Gilir 3</option>
-                                                </select>
-                                                <div
-                                                    class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 dark:text-gray-600">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor"
-                                                        viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="3" d="M19 9l-7 7-7-7" />
-                                                    </svg>
-                                                </div>
+                                                <input id="petugas_2" type="text" name="petugas_2"
+                                                    value="{{ old('petugas_2', $hcs_sorting_report->petugas_2) }}"
+                                                    placeholder="Petugas 2 (Ops)"
+                                                    class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 focus:border-indigo-500 focus:ring-0 rounded-2xl px-4 py-3 text-sm font-bold text-gray-700 dark:text-gray-200 transition-all outline-none">
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="pt-6 flex flex-col gap-3">
-                                        <button type="submit"
-                                            class="w-full py-4 px-6 rounded-2xl text-sm font-black text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-100 dark:focus:ring-indigo-900 transition-all active:scale-[0.98] disabled:opacity-50 disabled:grayscale disabled:scale-100 disabled:cursor-not-allowed flex items-center justify-center gap-3"
-                                            :disabled="selectedPacks.length === 0 || validationError !== ''">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                                    d="M5 13l4 4L19 7" />
-                                            </svg>
-                                            Simpan Perubahan
-                                        </button>
-                                        <a href="{{ route('hcs-sorting-reports.index') }}"
-                                            class="w-full py-3.5 px-6 rounded-2xl text-xs font-black text-gray-500 dark:text-gray-400 bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 hover:bg-rose-50 dark:hover:bg-rose-950/20 hover:text-rose-600 dark:hover:text-rose-400 hover:border-rose-100 dark:hover:border-rose-900/40 transition-all duration-300 flex items-center justify-center gap-2">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                                    d="M6 18L18 6M6 6l12 12" />
-                                            </svg>
-                                            Batalkan
-                                        </a>
+                                    <div class="grid grid-cols-5 gap-3 items-end">
+                                        <div class="col-span-1">
+                                            <label for="gilir"
+                                                class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-2 px-1 text-center">Gilir</label>
+                                            <div class="relative group">
+                                                <select id="gilir" name="gilir"
+                                                    class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 focus:border-indigo-500 focus:ring-0 rounded-2xl py-4 px-2 text-[10px] font-black text-gray-700 dark:text-gray-200 transition-all appearance-none outline-none text-center"
+                                                    required>
+                                                    <option value="Gilir 1" {{ old('gilir', $hcs_sorting_report->gilir) == 'Gilir 1' ? 'selected' : '' }}>
+                                                        1</option>
+                                                    <option value="Gilir 2" {{ old('gilir', $hcs_sorting_report->gilir) == 'Gilir 2' ? 'selected' : '' }}>
+                                                        2</option>
+                                                    <option value="Gilir 3" {{ old('gilir', $hcs_sorting_report->gilir) == 'Gilir 3' ? 'selected' : '' }}>
+                                                        3</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-span-4">
+                                            <button type="submit"
+                                                class="w-full py-4 px-4 rounded-2xl text-xs font-black text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-100 dark:focus:ring-indigo-900 transition-all active:scale-[0.98] disabled:opacity-50 disabled:grayscale disabled:scale-100 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                                :disabled="selectedPacks.size === 0 || validationError !== ''">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                                        d="M5 13l4 4L19 7" />
+                                                </svg>
+                                                Simpan Perubahan
+                                            </button>
+                                        </div>
                                     </div>
+                                    <a href="{{ route('hcs-sorting-reports.index') }}"
+                                        class="w-full py-2.5 px-6 rounded-2xl text-[10px] font-black text-gray-500 dark:text-gray-400 bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 hover:bg-rose-50 dark:hover:bg-rose-950/20 hover:text-rose-600 dark:hover:text-rose-400 hover:border-rose-100 dark:hover:border-rose-900/40 transition-all duration-300 flex items-center justify-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                                d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                        Batalkan
+                                    </a>
                                 </div>
                             </form>
                         </div>
@@ -532,10 +496,8 @@
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('sortingGrid', () => ({
-                // Inisialisasi dengan pack yang ada
-                selectedPacks: {!! json_encode(old('selected_packs', $hcs_sorting_report->packs_selected)) !!}.map(Number),
-                isDragging: false,
-                dragStart: null,
+                // Inisialisasi dengan pack yang ada (Set conversion)
+                selectedPacks: new Set({!! json_encode(old('selected_packs', $hcs_sorting_report->packs_selected)) !!}.map(Number)),
                 validationError: '',
                 isManual: {{ (old('is_manual') || $hcs_sorting_report->jumlah_pack % 4 !== 0 || $hcs_sorting_report->jumlah_bilyet !== $hcs_sorting_report->jumlah_pack * 45000) ? 'true' : 'false' }},
                 packQuantities: {
@@ -544,97 +506,99 @@
                     @endforeach
                 },
 
-            get totalBilyet() {
-            return this.selectedPacks.reduce((total, num) => {
-                return total + (this.packQuantities[num] || 45000);
-            }, 0);
-        },
-
-            formatNumber(num) {
-            return new Intl.NumberFormat('id-ID').format(num);
-        },
-
-            isSelected(num) {
-            return this.selectedPacks.includes(num);
-        },
-
-            startSelection(num) {
-            this.isDragging = true;
-            this.togglePack(num);
-        },
-
-            onHover(num) {
-            if(!this.isDragging) return;
-        if (!this.isSelected(num)) {
-            this.togglePack(num);
-        }
+                get totalBilyet() {
+                    let total = 0;
+                    this.selectedPacks.forEach(num => {
+                        total += (this.packQuantities[num] || 45000);
+                    });
+                    return total;
                 },
 
-        endSelection() {
-            this.isDragging = false;
-            this.validateSelection();
-        },
+                formatNumber(num) {
+                    return new Intl.NumberFormat('id-ID').format(num);
+                },
 
-        togglePack(num) {
-            if (this.isSelected(num)) {
-                this.selectedPacks = this.selectedPacks.filter(p => p !== num);
-            } else {
-                this.selectedPacks.push(num);
-            }
-            this.selectedPacks.sort((a, b) => a - b);
-            this.validateSelection();
-        },
+                isSelected(num) {
+                    return this.selectedPacks.has(num);
+                },
 
-        validateSelection() {
-            this.validationError = '';
-            if (this.selectedPacks.length === 0) return;
+                 togglePack(num) {
+                    if (!this.isManual) {
+                        // Logic Grup Kelipatan 4
+                        let startBlock = Math.floor((num - 1) / 4) * 4 + 1;
+                        let block = [startBlock, startBlock + 1, startBlock + 2, startBlock + 3];
 
-            // Kelompokkan menjadi blok yang berurutan
-            let blocks = [];
-            let currentBlock = [];
+                        // Cek apakah seluruh blok sudah ada dalam Set
+                        let allSelected = block.every(p => this.selectedPacks.has(p));
 
-            for (let i = 0; i < this.selectedPacks.length; i++) {
-                let pack = this.selectedPacks[i];
-                if (currentBlock.length === 0) {
-                    currentBlock.push(pack);
-                } else {
-                    if (pack === currentBlock[currentBlock.length - 1] + 1) {
-                        currentBlock.push(pack);
+                        if (allSelected) {
+                            block.forEach(p => this.selectedPacks.delete(p));
+                        } else {
+                            block.forEach(p => this.selectedPacks.add(p));
+                        }
                     } else {
+                        // Logic Manual (Satu per satu)
+                        if (this.isSelected(num)) {
+                            this.selectedPacks.delete(num);
+                        } else {
+                            this.selectedPacks.add(num);
+                        }
+                    }
+                    this.selectedPacks = new Set(this.selectedPacks); // trigger reactivity
+                    this.validateSelection();
+                },
+
+                validateSelection() {
+                    this.validationError = '';
+                    if (this.selectedPacks.size === 0) return;
+
+                    // Kelompokkan menjadi blok yang berurutan
+                    let sortedPacks = Array.from(this.selectedPacks).sort((a, b) => a - b);
+                    let blocks = [];
+                    let currentBlock = [];
+
+                    for (let i = 0; i < sortedPacks.length; i++) {
+                        let pack = sortedPacks[i];
+                        if (currentBlock.length === 0) {
+                            currentBlock.push(pack);
+                        } else {
+                            if (pack === currentBlock[currentBlock.length - 1] + 1) {
+                                currentBlock.push(pack);
+                            } else {
+                                blocks.push(currentBlock);
+                                currentBlock = [pack];
+                            }
+                        }
+                    }
+                    if (currentBlock.length > 0) {
                         blocks.push(currentBlock);
-                        currentBlock = [pack];
+                    }
+
+                    // Validasi setiap blok
+                    let hasError = false;
+                    for (let block of blocks) {
+                        if (!this.isManual) {
+                            if (block.length % 4 !== 0 || (block[0] - 1) % 4 !== 0) {
+                                hasError = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (hasError) {
+                        this.validationError = 'Packs harus dipilih secara berurutan dalam kelipatan 4 (misal: 1-4, 5-8) dan dimulai dari urutan standar (1, 5, 9, ...).';
+                    }
+                },
+
+                validateSubmission(e) {
+                    this.validateSelection();
+                    if (this.validationError !== '' || this.selectedPacks.size === 0) {
+                        e.preventDefault();
+                        if (this.selectedPacks.size === 0) {
+                            this.validationError = 'Silahkan pilih minimal satu kelompok pack (4 pack) terlebih dahulu.';
+                        }
                     }
                 }
-            }
-            if (currentBlock.length > 0) {
-                blocks.push(currentBlock);
-            }
-
-            // Validasi setiap blok
-            let hasError = false;
-            for (let block of blocks) {
-                if (!this.isManual) {
-                    if (block.length % 4 !== 0 || (block[0] - 1) % 4 !== 0) {
-                        hasError = true;
-                        break;
-                    }
-                }
-            }
-
-            if (hasError) {
-                this.validationError = 'Packs harus dipilih secara berurutan dalam kelipatan 4 (misal: 1-4, 5-8) dan dimulai dari urutan standar (1, 5, 9, ...).';
-            }
-        },
-
-        validateSubmission(e) {
-            this.validateSelection();
-            if (this.validationError !== '' || this.selectedPacks.length === 0) {
-                e.preventDefault();
-                if (this.selectedPacks.length === 0) {
-                    this.validationError = 'Silahkan pilih minimal satu kelompok pack (4 pack) terlebih dahulu.';
-                }
-            }
-        }
             }));
         });
     </script>

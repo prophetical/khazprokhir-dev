@@ -94,7 +94,8 @@
                                             <option value="">Pilih Pecahan</option>
                                             @foreach(['S' => '1.000', 'T' => '2.000', 'U' => '5.000', 'V' => '10.000', 'W' => '20.000', 'X' => '50.000', 'Y' => '100.000'] as $key => $label)
                                                 <option value="{{ $key }}" {{ $selectedPecahan == $key ? 'selected' : '' }}>
-                                                    {{ $key }} - {{ $label }}</option>
+                                                    {{ $key }} - {{ $label }}
+                                                </option>
                                             @endforeach
                                         </select>
                                         @if($isLocked) <input type="hidden" name="pecahan"
@@ -278,7 +279,7 @@
                                                     <div class="h-8 w-[1px] bg-gray-100 hidden sm:block"></div>
                                                     <div
                                                         class="text-[10px] font-black uppercase tracking-widest text-gray-400 leading-tight">
-                                                        Total Packs:<br>
+                                                        Total Pack:<br>
                                                         <span id="packs_needed_display"
                                                             class="text-xl transition-colors duration-500"
                                                             :class="currentTheme ? currentTheme.icon : 'text-indigo-600'">0</span>
