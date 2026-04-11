@@ -33,7 +33,7 @@ class BahanPenolongController extends Controller
         // Hitung stok rendah (global, tidak peduli filter pencarian)
         $low_stock_count = BahanPenolong::whereColumn('stok', '<=', 'min_stok')->count();
 
-        $materials = $query->orderBy('nama_bahan')->paginate(15)->withQueryString();
+        $materials = $query->orderBy('nama_bahan')->simplePaginate(20)->withQueryString();
         
         return view('bahan-penolong.persediaan', compact('materials', 'low_stock_count'));
     }
@@ -116,7 +116,7 @@ class BahanPenolongController extends Controller
             });
         }
  
-        $transactions = $query->latest()->paginate(10)->withQueryString();
+        $transactions = $query->latest()->simplePaginate(20)->withQueryString();
         $materials = BahanPenolong::orderBy('nama_bahan')->get();
  
         return view('bahan-penolong.penerimaan', compact('transactions', 'materials'));
@@ -142,7 +142,7 @@ class BahanPenolongController extends Controller
 
         if ($request->filled('kategori')) $query->where('kategori', $request->kategori);
 
-        $transactions = $query->latest()->paginate(10)->withQueryString();
+        $transactions = $query->latest()->simplePaginate(20)->withQueryString();
         $materials = BahanPenolong::where('stok', '>', 0)->orderBy('nama_bahan')->get();
 
         return view('bahan-penolong.pemakaian', compact('transactions', 'materials'));

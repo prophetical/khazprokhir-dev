@@ -21,7 +21,7 @@ class HcsSortingReportController extends Controller
         $this->applyFilters($query, $request);
 
         return view('hcs-sorting-report.index', [
-            'reports' => $query->orderBy('tanggal_sortir', 'desc')->orderBy('created_at', 'desc')->paginate(20)->withQueryString()
+            'reports' => $query->orderBy('tanggal_sortir', 'desc')->orderBy('created_at', 'desc')->simplePaginate(20)->withQueryString()
         ]);
     }
 
@@ -111,7 +111,7 @@ class HcsSortingReportController extends Controller
     {
         $query = HcsSorting::query();
         $this->applyFilters($query, $request);
-        $reports = $query->orderBy('tanggal_sortir', 'desc')->orderBy('created_at', 'desc')->get();
+        $reports = $query->orderBy('tanggal_sortir', 'desc')->orderBy('created_at', 'desc')->limit(1000)->get();
 
         return view('hcs-sorting-report.print', compact('reports'));
     }

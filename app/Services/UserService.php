@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\Hash;
 
 class UserService
 {
-    public function listUsers(int $perPage = 15)
+    public function listUsers(int $perPage = 20)
     {
-        return User::paginate($perPage);
+        return User::simplePaginate(20);
     }
 
     public function createUser(array $data): User

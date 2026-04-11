@@ -10,11 +10,11 @@ use Illuminate\Validation\ValidationException;
 
 class TargetService
 {
-    public function listTargets(int $perPage = 15)
+    public function listTargets(int $perPage = 20)
     {
         return TargetTahunan::orderBy('tahun_anggaran', 'desc')
             ->orderBy('pecahan', 'asc')
-            ->paginate($perPage);
+            ->simplePaginate(20);
     }
 
     public function storeTarget(array $data)

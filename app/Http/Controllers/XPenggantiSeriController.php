@@ -26,7 +26,7 @@ class XPenggantiSeriController extends Controller
         }
 
         return view('x-pengganti.seri.index', [
-            'seris' => $query->paginate(15)->withQueryString(),
+            'seris' => $query->simplePaginate(20)->withQueryString(),
             'search' => $request->search,
             'pecahan' => $request->pecahan,
             'pecahanOptions' => self::PECAHAN_OPTIONS,

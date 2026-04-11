@@ -25,7 +25,7 @@ class HctsReceivingController extends Controller
         $summaryData = $summaryQuery->selectRaw('pecahan, SUM(jumlah) as total')->groupBy('pecahan')->pluck('total', 'pecahan')->toArray();
 
         return view('hcts-receiving.index', array_merge($request->all(), [
-            'receivings' => $query->latest()->paginate(10)->withQueryString(),
+            'receivings' => $query->latest()->simplePaginate(20)->withQueryString(),
             'availableYears' => $options['years'],
             'availableEmissions' => $options['emissions'],
             'summaryData' => $summaryData,
@@ -109,7 +109,7 @@ class HctsReceivingController extends Controller
 
     public function summary(Request $request)
     {
-        $groups = $this->service->getSummaryQuery($request->all())->paginate(15)->withQueryString();
+        $groups = $this->service->getSummaryQuery($request->all())->simplePaginate(20)->withQueryString();
         return view('hcts-receiving.summary', [
             'groups' => $groups,
             'startDate' => $request->start_date,

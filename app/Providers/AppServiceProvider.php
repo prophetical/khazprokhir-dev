@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Gate;
+use App\Models\User;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,5 +23,10 @@ class AppServiceProvider extends ServiceProvider
     {
         $router = $this->app->make(\Illuminate\Routing\Router::class);
         $router->aliasMiddleware('role', \App\Http\Middleware\RoleMiddleware::class);
+
+        // Otorisasi Laravel Pulse
+        Gate::define('viewPulse', function (User $user) {
+            return $user->role === 'admin';
+        });
     }
 }

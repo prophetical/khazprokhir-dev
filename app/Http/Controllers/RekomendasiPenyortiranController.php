@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\RekomendasiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 
 class RekomendasiPenyortiranController extends Controller
 {
@@ -38,9 +38,9 @@ class RekomendasiPenyortiranController extends Controller
 
         $page = $request->get('page', 1);
         $perPage = 20;
-        $paginator = new LengthAwarePaginator(
+        $paginator = new Paginator(
             array_slice($recommendations, ($page - 1) * $perPage, $perPage),
-            count($recommendations), $perPage, $page, ['path' => $request->url(), 'query' => $request->query()]
+            $perPage, $page, ['path' => $request->url(), 'query' => $request->query()]
         );
 
         return view('rekomendasi-penyortiran.index', compact('paginator', 'summaries', 'totalAllPacks', 'totalAllBilyet', 'availableYears', 'availableEmissions'));

@@ -19,7 +19,7 @@ class HcsReceivingController extends Controller
 
     public function index(Request $request)
     {
-        $query = HcsReceiving::with(['user', 'packs']);
+        $query = HcsReceiving::with('user')->withCount('packs');
 
         // Pencarian Teks
         if ($request->filled('search')) {
@@ -49,8 +49,8 @@ class HcsReceivingController extends Controller
 
         // Pengurutan Data (Sorting)
         $sortableColumns = ['tanggal_penerimaan', 'nomor_bon', 'pecahan', 'jumlah', 'supplier', 'batch', 'seri'];
-        $sortBy = $request->get('sort_by', 'created_at');
-        $sortDirection = $request->get('sort_direction', 'desc');
+        $sortBy = $request->input('sort_by', 'created_at');
+        $sortDirection = $request->input('sort_direction', 'desc');
 
         if (in_array($sortBy, $sortableColumns)) {
             $query->orderBy($sortBy, $sortDirection === 'asc' ? 'asc' : 'desc');
@@ -59,7 +59,7 @@ class HcsReceivingController extends Controller
         }
 
         // Tambahin query string ke link pagination biar filter dan urutan datanya gak ilang pas pindah halaman
-        $receivings = $query->paginate(10)->withQueryString();
+        $receivings = $query->simplePaginate(20)->withQueryString();
 
         return view('hcs-receiving.index', compact('receivings'));
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\RekomendasiService;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\Paginator;
 
 class RekomendasiPenerimaanController extends Controller
 {
@@ -16,7 +17,15 @@ class RekomendasiPenerimaanController extends Controller
 
     public function index(Request $request)
     {
-        $batches = $this->service->getPenerimaanRecommendations($request->all());
+        $allBatches = $this->service->getPenerimaanRecommendations($request->all());
+        
+        $page = $request->get('page', 1);
+        $perPage = 20;
+        $batches = new Paginator(
+            $allBatches->forPage($page, $perPage),
+            $perPage, $page, ['path' => $request->url(), 'query' => $request->query()]
+        );
+
         return view('hcs-receiving.rekomendasi.index', compact('batches'));
     }
 

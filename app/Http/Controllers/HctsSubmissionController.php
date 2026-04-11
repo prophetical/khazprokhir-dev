@@ -21,7 +21,7 @@ class HctsSubmissionController extends Controller
         $this->applyFilters($query, $request);
 
         return view('hcts-submission.index', [
-            'submissions' => $query->latest()->paginate(10)->withQueryString(),
+            'submissions' => $query->latest()->simplePaginate(20)->withQueryString(),
             'startDate' => $request->start_date, 'endDate' => $request->end_date, 'search' => $request->search,
         ]);
     }

@@ -12,7 +12,7 @@ class MessageController extends Controller
         $messages = Message::whereNull('parent_id')
             ->with(['user', 'replies.user'])
             ->latest()
-            ->paginate(20);
+            ->simplePaginate(20);
         $users = \App\Models\User::all(['id', 'name']);
         return view('messages.index', compact('messages', 'users'));
     }

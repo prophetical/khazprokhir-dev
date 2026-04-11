@@ -72,7 +72,7 @@ class PengemasanController extends Controller
             $query->orderBy($sortColumn, $sortDirection);
         }
 
-        $pengemasans = $query->paginate(20)->withQueryString();
+        $pengemasans = $query->simplePaginate(20)->withQueryString();
         $missingGaps = $this->service->detectMissingDusGaps();
 
         return view('pengemasan.data', compact('pengemasans', 'sortColumn', 'sortDirection', 'missingGaps'));
@@ -159,7 +159,7 @@ class PengemasanController extends Controller
             $query->orderBy($sortColumn, $sortDirection);
         }
 
-        $pengemasans = $query->get();
+        $pengemasans = $query->limit(1000)->get();
         return view('pengemasan.print', compact('pengemasans'));
     }
 

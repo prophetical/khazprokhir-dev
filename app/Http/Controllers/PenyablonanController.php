@@ -31,7 +31,7 @@ class PenyablonanController extends Controller
     // --- Sub-menu 1: Penerimaan Blanko ---
     public function penerimaan(Request $request)
     {
-        $data = PenyablonanPenerimaan::with('user')->orderBy('tanggal', 'desc')->paginate(10);
+        $data = PenyablonanPenerimaan::with('user')->orderBy('tanggal', 'desc')->simplePaginate(20);
         return view('penyablonan.penerimaan', compact('data'));
     }
 
@@ -60,7 +60,7 @@ class PenyablonanController extends Controller
     // --- Sub-menu 2: Penyablonan Dus ---
     public function dus(Request $request)
     {
-        $data = PenyablonanDus::with('user')->orderBy('tanggal', 'desc')->paginate(10);
+        $data = PenyablonanDus::with('user')->orderBy('tanggal', 'desc')->simplePaginate(20);
         return view('penyablonan.dus', compact('data'));
     }
 
@@ -109,7 +109,7 @@ class PenyablonanController extends Controller
     // --- Sub-menu 3: Kerusakan Blanko ---
     public function kerusakan(Request $request)
     {
-        $data = PenyablonanKerusakan::with('user')->orderBy('tanggal', 'desc')->paginate(10);
+        $data = PenyablonanKerusakan::with('user')->orderBy('tanggal', 'desc')->simplePaginate(20);
         return view('penyablonan.kerusakan', compact('data'));
     }
 
@@ -151,7 +151,7 @@ class PenyablonanController extends Controller
             $query->where('gilir', $gilir);
         }
 
-        $data = $query->orderBy('tanggal', 'desc')->paginate(20);
+        $data = $query->orderBy('tanggal', 'desc')->simplePaginate(20);
         $sisaStok = $this->service->getCurrentStok();
 
         return view('penyablonan.laporan', compact('data', 'sisaStok'));

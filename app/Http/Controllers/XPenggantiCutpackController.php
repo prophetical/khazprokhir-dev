@@ -28,7 +28,7 @@ class XPenggantiCutpackController extends Controller
         if ($request->filled('tahun_anggaran')) $query->where('tahun_anggaran', $request->tahun_anggaran);
         if ($request->filled('tahun_emisi'))    $query->where('tahun_emisi',    $request->tahun_emisi);
 
-        $masters           = $query->paginate(10)->withQueryString();
+        $masters           = $query->simplePaginate(20)->withQueryString();
         $tahunAnggaranList = XPenggantiSeri::distinct()->orderByDesc('tahun_anggaran')->pluck('tahun_anggaran');
         $tahunEmisiList    = XPenggantiSeri::distinct()->orderByDesc('tahun_emisi')->pluck('tahun_emisi');
         $pecahanOptions    = ['S', 'T', 'U', 'V', 'W', 'X', 'Y'];

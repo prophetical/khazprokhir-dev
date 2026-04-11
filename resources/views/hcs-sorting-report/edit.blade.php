@@ -213,9 +213,9 @@
 
                                         <div class="relative group/pack">
                                             <div class="h-10 w-full flex items-center justify-center rounded-lg text-sm font-black border-2 select-none transition-all duration-75 relative overflow-hidden shadow-sm dark:shadow-none cursor-pointer
-                                                               {{ $extraClasses }}" :class="{
-                                                            'ring-4 scale-110 z-10 shadow-lg brightness-125 ring-amber-400 ring-offset-0 !opacity-100 !border-amber-500': selectedPacks.has({{ $i }})
-                                                        }" @if($isReady) @click="togglePack({{ $i }})" @endif>
+                                                                       {{ $extraClasses }}" :class="{
+                                                                    'ring-4 scale-110 z-10 shadow-lg brightness-125 ring-amber-400 ring-offset-0 !opacity-100 !border-amber-500': selectedPacks.has({{ $i }})
+                                                                }" @if($isReady) @click="togglePack({{ $i }})" @endif>
                                                 <span class="relative z-10">{{ $i }}</span>
 
                                                 <!-- Selected Overlay -->
@@ -232,7 +232,7 @@
                                                 </template>
                                             </div>
 
-                                             <!-- Custom Tooltip (Optimized Performance: No Backdrop Blur) -->
+                                            <!-- Custom Tooltip (Optimized Performance: No Backdrop Blur) -->
                                             <div
                                                 class="pointer-events-none absolute {{ $vClass }} {{ $hClass }} z-[100] hidden group-hover/pack:flex items-center transition-opacity duration-200">
                                                 <div
@@ -313,7 +313,8 @@
                                         class="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700">
                                     </div>
                                     <div class="relative z-10">
-                                        <p class="text-[9px] font-bold text-white/70 uppercase tracking-widest">Packs</p>
+                                        <p class="text-[9px] font-bold text-white/70 uppercase tracking-widest">Packs
+                                        </p>
                                         <div class="flex items-baseline gap-1 mt-0.5">
                                             <span class="text-2xl font-black" x-text="selectedPacks.size"></span>
                                         </div>
@@ -326,7 +327,8 @@
                                         class="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700">
                                     </div>
                                     <div class="relative z-10">
-                                        <p class="text-[9px] font-bold text-white/70 uppercase tracking-widest">Total Bilyet</p>
+                                        <p class="text-[9px] font-bold text-white/70 uppercase tracking-widest">Total
+                                            Bilyet</p>
                                         <div class="mt-0.5">
                                             <span class="text-sm font-black tracking-tight"
                                                 x-text="formatNumber(totalBilyet)"></span>
@@ -385,14 +387,16 @@
                                                     required>
                                                     <option value="Cutpack" {{ old('supplier', $hcs_sorting_report->supplier) == 'Cutpack' ? 'selected' : '' }}>
                                                         Cutpack</option>
-                                                    <option value="Rikyet" {{ old('supplier', $hcs_sorting_report->supplier) == 'Rikyet' ? 'selected' : '' }}>Rikyet
+                                                    <option value="Rikyet" {{ old('supplier', $hcs_sorting_report->supplier) == 'Rikyet' ? 'selected' : '' }}>
+                                                        Rikyet
                                                     </option>
                                                 </select>
                                             </div>
                                         </div>
                                         <div>
                                             <label for="tanggal_sortir"
-                                                class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-2 px-1">Tgl Sortir</label>
+                                                class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-2 px-1">Tgl
+                                                Sortir</label>
                                             <input id="tanggal_sortir" type="date" name="tanggal_sortir"
                                                 value="{{ old('tanggal_sortir', $hcs_sorting_report->tanggal_sortir->format('Y-m-d')) }}"
                                                 required
@@ -426,7 +430,8 @@
                                     <div class="grid grid-cols-2 gap-3">
                                         <div>
                                             <label for="petugas_1"
-                                                class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-2 px-1">Petugas 1</label>
+                                                class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-2 px-1">Petugas
+                                                1</label>
                                             <div class="relative group">
                                                 <input id="petugas_1" type="text" name="petugas_1"
                                                     value="{{ old('petugas_1', $hcs_sorting_report->petugas_1) }}"
@@ -436,7 +441,8 @@
                                         </div>
                                         <div>
                                             <label for="petugas_2"
-                                                class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-2 px-1">Petugas 2</label>
+                                                class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-2 px-1">Petugas
+                                                2</label>
                                             <div class="relative group">
                                                 <input id="petugas_2" type="text" name="petugas_2"
                                                     value="{{ old('petugas_2', $hcs_sorting_report->petugas_2) }}"
@@ -467,9 +473,10 @@
                                             <button type="submit"
                                                 class="w-full py-4 px-4 rounded-2xl text-xs font-black text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-100 dark:focus:ring-indigo-900 transition-all active:scale-[0.98] disabled:opacity-50 disabled:grayscale disabled:scale-100 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                                 :disabled="selectedPacks.size === 0 || validationError !== ''">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                                        d="M5 13l4 4L19 7" />
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2.5" d="M5 13l4 4L19 7" />
                                                 </svg>
                                                 Simpan Perubahan
                                             </button>
@@ -506,99 +513,99 @@
                     @endforeach
                 },
 
-                get totalBilyet() {
-                    let total = 0;
-                    this.selectedPacks.forEach(num => {
-                        total += (this.packQuantities[num] || 45000);
-                    });
-                    return total;
+            get totalBilyet() {
+            let total = 0;
+            this.selectedPacks.forEach(num => {
+                total += (this.packQuantities[num] || 45000);
+            });
+            return total;
+        },
+
+            formatNumber(num) {
+            return new Intl.NumberFormat('id-ID').format(num);
+        },
+
+            isSelected(num) {
+            return this.selectedPacks.has(num);
+        },
+
+            togglePack(num) {
+            if(!this.isManual) {
+            // Logic Grup Kelipatan 4
+            let startBlock = Math.floor((num - 1) / 4) * 4 + 1;
+            let block = [startBlock, startBlock + 1, startBlock + 2, startBlock + 3];
+
+            // Cek apakah seluruh blok sudah ada dalam Set
+            let allSelected = block.every(p => this.selectedPacks.has(p));
+
+            if (allSelected) {
+                block.forEach(p => this.selectedPacks.delete(p));
+            } else {
+                block.forEach(p => this.selectedPacks.add(p));
+            }
+        } else {
+            // Logic Manual (Satu per satu)
+            if (this.isSelected(num)) {
+                this.selectedPacks.delete(num);
+            } else {
+                this.selectedPacks.add(num);
+            }
+        }
+        this.selectedPacks = new Set(this.selectedPacks); // trigger reactivity
+        this.validateSelection();
                 },
 
-                formatNumber(num) {
-                    return new Intl.NumberFormat('id-ID').format(num);
-                },
+        validateSelection() {
+            this.validationError = '';
+            if (this.selectedPacks.size === 0) return;
 
-                isSelected(num) {
-                    return this.selectedPacks.has(num);
-                },
+            // Kelompokkan menjadi blok yang berurutan
+            let sortedPacks = Array.from(this.selectedPacks).sort((a, b) => a - b);
+            let blocks = [];
+            let currentBlock = [];
 
-                 togglePack(num) {
-                    if (!this.isManual) {
-                        // Logic Grup Kelipatan 4
-                        let startBlock = Math.floor((num - 1) / 4) * 4 + 1;
-                        let block = [startBlock, startBlock + 1, startBlock + 2, startBlock + 3];
-
-                        // Cek apakah seluruh blok sudah ada dalam Set
-                        let allSelected = block.every(p => this.selectedPacks.has(p));
-
-                        if (allSelected) {
-                            block.forEach(p => this.selectedPacks.delete(p));
-                        } else {
-                            block.forEach(p => this.selectedPacks.add(p));
-                        }
+            for (let i = 0; i < sortedPacks.length; i++) {
+                let pack = sortedPacks[i];
+                if (currentBlock.length === 0) {
+                    currentBlock.push(pack);
+                } else {
+                    if (pack === currentBlock[currentBlock.length - 1] + 1) {
+                        currentBlock.push(pack);
                     } else {
-                        // Logic Manual (Satu per satu)
-                        if (this.isSelected(num)) {
-                            this.selectedPacks.delete(num);
-                        } else {
-                            this.selectedPacks.add(num);
-                        }
-                    }
-                    this.selectedPacks = new Set(this.selectedPacks); // trigger reactivity
-                    this.validateSelection();
-                },
-
-                validateSelection() {
-                    this.validationError = '';
-                    if (this.selectedPacks.size === 0) return;
-
-                    // Kelompokkan menjadi blok yang berurutan
-                    let sortedPacks = Array.from(this.selectedPacks).sort((a, b) => a - b);
-                    let blocks = [];
-                    let currentBlock = [];
-
-                    for (let i = 0; i < sortedPacks.length; i++) {
-                        let pack = sortedPacks[i];
-                        if (currentBlock.length === 0) {
-                            currentBlock.push(pack);
-                        } else {
-                            if (pack === currentBlock[currentBlock.length - 1] + 1) {
-                                currentBlock.push(pack);
-                            } else {
-                                blocks.push(currentBlock);
-                                currentBlock = [pack];
-                            }
-                        }
-                    }
-                    if (currentBlock.length > 0) {
                         blocks.push(currentBlock);
-                    }
-
-                    // Validasi setiap blok
-                    let hasError = false;
-                    for (let block of blocks) {
-                        if (!this.isManual) {
-                            if (block.length % 4 !== 0 || (block[0] - 1) % 4 !== 0) {
-                                hasError = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (hasError) {
-                        this.validationError = 'Packs harus dipilih secara berurutan dalam kelipatan 4 (misal: 1-4, 5-8) dan dimulai dari urutan standar (1, 5, 9, ...).';
-                    }
-                },
-
-                validateSubmission(e) {
-                    this.validateSelection();
-                    if (this.validationError !== '' || this.selectedPacks.size === 0) {
-                        e.preventDefault();
-                        if (this.selectedPacks.size === 0) {
-                            this.validationError = 'Silahkan pilih minimal satu kelompok pack (4 pack) terlebih dahulu.';
-                        }
+                        currentBlock = [pack];
                     }
                 }
+            }
+            if (currentBlock.length > 0) {
+                blocks.push(currentBlock);
+            }
+
+            // Validasi setiap blok
+            let hasError = false;
+            for (let block of blocks) {
+                if (!this.isManual) {
+                    if (block.length % 4 !== 0 || (block[0] - 1) % 4 !== 0) {
+                        hasError = true;
+                        break;
+                    }
+                }
+            }
+
+            if (hasError) {
+                this.validationError = 'Pack harus dipilih secara berurutan dalam kelipatan 4 (misal: 1-4, 5-8) dan dimulai dari urutan standar (1, 5, 9, ...).';
+            }
+        },
+
+        validateSubmission(e) {
+            this.validateSelection();
+            if (this.validationError !== '' || this.selectedPacks.size === 0) {
+                e.preventDefault();
+                if (this.selectedPacks.size === 0) {
+                    this.validationError = 'Silahkan pilih minimal satu kelompok pack (4 pack) terlebih dahulu.';
+                }
+            }
+        }
             }));
         });
     </script>

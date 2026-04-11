@@ -26,7 +26,7 @@ class PenyerahanBiController extends Controller
         $allowed = ['tanggal_penyerahan', 'nomor_ba', 'pecahan', 'tahun_emisi', 'tahun_anggaran', 'nomor_dus_awal', 'jumlah_dus', 'jumlah_bilyet', 'status_data'];
         $sortCol = in_array($sortCol, $allowed) ? $sortCol : 'tanggal_penyerahan';
 
-        $penyerahans = $query->orderBy($sortCol, $sortDir)->paginate(20)->withQueryString();
+        $penyerahans = $query->orderBy($sortCol, $sortDir)->simplePaginate(20)->withQueryString();
         $missingWarnings = $this->service->getIncompletePenyerahanWarnings();
 
         return view('penyerahan-bi.index', [
