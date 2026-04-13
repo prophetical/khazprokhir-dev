@@ -162,8 +162,8 @@ class PenyerahanBiController extends Controller
                 return $q->where('nomor_ba', 'like', "%$s%")->orWhere('pecahan', 'like', "%$s%")->orWhere('tahun_anggaran', 'like', "%$s%");
             });
         }
-        if ($request->filled('tanggal_awal')) $query->whereDate('tanggal_penyerahan', '>=', $request->tanggal_awal);
-        if ($request->filled('tanggal_akhir')) $query->whereDate('tanggal_penyerahan', '<=', $request->tanggal_akhir);
+        if ($request->filled('tanggal_awal')) $query->where('tanggal_penyerahan', '>=', $request->tanggal_awal);
+        if ($request->filled('tanggal_akhir')) $query->where('tanggal_penyerahan', '<=', $request->tanggal_akhir);
     }
 
 

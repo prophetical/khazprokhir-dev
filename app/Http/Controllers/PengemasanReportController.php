@@ -51,7 +51,7 @@ class PengemasanReportController extends Controller
      */
     private function getReportData($tanggal, $gilir)
     {
-        $query = Pengemasan::whereDate('tanggal_pengemasan', $tanggal);
+        $query = Pengemasan::where('tanggal_pengemasan', $tanggal);
 
         if ($gilir) {
             $query->where('gilir', $gilir);

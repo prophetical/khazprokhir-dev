@@ -96,11 +96,11 @@ class DashboardService
      */
     private function getTodayMetrics(Carbon $today): array
     {
-        $totalHcsToday = HcsReceiving::whereDate('tanggal_penerimaan', $today)->count();
-        $totalBilyetToday = HcsReceiving::whereDate('tanggal_penerimaan', $today)->sum('jumlah');
-        $totalPacksToday = Pack::whereDate('created_at', $today)->count();
+        $totalHcsToday = HcsReceiving::whereBetween('tanggal_penerimaan', [$today->copy()->startOfDay(), $today->copy()->endOfDay()])->count();
+        $totalBilyetToday = HcsReceiving::whereBetween('tanggal_penerimaan', [$today->copy()->startOfDay(), $today->copy()->endOfDay()])->sum('jumlah');
+        $totalPacksToday = Pack::whereBetween('created_at', [$today->copy()->startOfDay(), $today->copy()->endOfDay()])->count();
 
-        $supplierDistribution = Pack::whereDate('created_at', $today)
+        $supplierDistribution = Pack::whereBetween('created_at', [$today->copy()->startOfDay(), $today->copy()->endOfDay()])
             ->selectRaw('supplier, count(*) as count')
             ->groupBy('supplier')
             ->pluck('count', 'supplier')
@@ -243,7 +243,8 @@ class DashboardService
             ->pluck('total', 'pecahan')
             ->toArray();
 
-        $heatmapData = Pengemasan::where('tahun_anggaran', $currentYear)
+        $heatmapData = DB::table('pengemasans')
+            ->where('tahun_anggaran', (string)$currentYear)
             ->when($currentTE, fn($q) => $q->where('tahun_emisi', $currentTE))
             ->selectRaw('DATE(tanggal_pengemasan) as date, SUM(total_bilyet) as total')
             ->groupBy('date')
@@ -266,7 +267,7 @@ class DashboardService
     private function getTodayHcsByPecahan(Carbon $today, int $currentYear, $currentTE): array
     {
         $pecahanList = ['S', 'T', 'U', 'V', 'W', 'X', 'Y'];
-        $data = HcsReceiving::whereDate('tanggal_penerimaan', $today)
+        $data = HcsReceiving::whereBetween('tanggal_penerimaan', [$today->copy()->startOfDay(), $today->copy()->endOfDay()])
             ->where('tahun_anggaran', $currentYear)
             ->when($currentTE, fn($q) => $q->where('emisi', $currentTE))
             ->selectRaw('pecahan, SUM(jumlah) as total')

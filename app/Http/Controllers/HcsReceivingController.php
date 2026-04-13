@@ -33,10 +33,10 @@ class HcsReceivingController extends Controller
 
         // Filter Rentang Tanggal
         if ($request->filled('start_date')) {
-            $query->whereDate('tanggal_penerimaan', '>=', $request->start_date);
+            $query->where('tanggal_penerimaan', '>=', $request->start_date);
         }
         if ($request->filled('end_date')) {
-            $query->whereDate('tanggal_penerimaan', '<=', $request->end_date);
+            $query->where('tanggal_penerimaan', '<=', $request->end_date);
         }
 
         // Filter Dropdown
