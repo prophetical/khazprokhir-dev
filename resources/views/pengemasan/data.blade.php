@@ -155,7 +155,7 @@
                              <div
                                  class="mt-6 pt-4 border-t border-gray-100 dark:border-slate-800 flex flex-wrap gap-2 justify-end lg:justify-end">
                                  <a href="{{ route('pengemasan.export', request()->all()) }}"
-                                     class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium bg-emerald-50 dark:bg-emerald-900/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/20 transition-colors shadow-sm"
+                                     class="btn-report btn-excel"
                                      title="Export Excel (CSV)">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -164,7 +164,7 @@
                                     Excel
                                 </a>
                                  <a href="{{ route('pengemasan.print', request()->all()) }}" target="_blank"
-                                     class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium bg-rose-50 dark:bg-rose-900/10 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/50 rounded-lg hover:bg-rose-100 dark:hover:bg-rose-900/20 transition-colors shadow-sm"
+                                     class="btn-report btn-pdf"
                                      title="Export PDF / Print">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -174,7 +174,7 @@
                                 </a>
                                  <a href="{{ route('pengemasan.print', array_merge(request()->all(), ['autoprint' => 1])) }}"
                                      target="_blank"
-                                     class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium bg-gray-50 dark:bg-slate-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-slate-700 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors shadow-sm"
+                                     class="btn-report btn-print"
                                      title="Cetak Langsung">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

@@ -65,7 +65,7 @@
         <div class="mb-6 flex flex-wrap justify-center gap-2">
             @for($p = 1; $p <= 5; $p++)
                 <button type="button" onclick="showPage({{ $p }})" id="btn-page-{{ $p }}"
-                    class="page-nav-btn px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm border {{ $p == 1 ? 'bg-indigo-600 text-white border-indigo-600 shadow-indigo-100' : 'bg-white text-gray-400 border-gray-100 hover:border-indigo-200 hover:text-indigo-600' }}">
+                    class="page-nav-btn px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm border {{ $p == 1 ? 'bg-indigo-600 text-white border-indigo-600 shadow-indigo-100' : 'bg-white text-gray-400 border-gray-100 hover:border-indigo-200 hover:text-white-600' }}">
                     Halaman {{ $p }}
                     <span class="block text-[8px] opacity-70">Pack {{ (($p - 1) * 20) + 1 }} - {{ $p * 20 }}</span>
                 </button>
@@ -79,7 +79,7 @@
             <div class="flex items-center justify-between mb-8 px-4">
                 <div class="flex flex-col gap-1">
                     <h3 class="text-sm font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em]">Rekap X Pengganti</h3>
-                    <p class="text-[10px] text-slate-400 font-medium">DATA JUMLAH ASLI X PENGGANTI DAN PENYESUAIAN UNTUK SAP</p>
+                    <p class="text-[10px] text-slate-400 font-medium">Data Jumlah Asli X Pengganti dan Penyesuaian Untuk SAP</p>
                 </div>
                 <button onclick="copySapColumn()"
                     class="group inline-flex items-center gap-2.5 px-6 py-3 bg-gradient-to-r from-indigo-500 via-indigo-600 to-violet-700 hover:from-indigo-600 hover:to-violet-800 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl transition-all shadow-xl shadow-indigo-100 dark:shadow-none active:scale-95 border border-white/20">
@@ -119,14 +119,14 @@
                                     
                                     // Row Mapping (10 Rows)
                                     $rows = [
-                                        ['nama' => 'CAMPURAN 1', 'val' => min($C, 16000), 'p' => null],
-                                        ['nama' => 'CAMPURAN 2', 'val' => min(max($C - 16000, 0), 4000), 'p' => null],
+                                        ['nama' => 'Campuran 1', 'val' => min($C, 16000), 'p' => null],
+                                        ['nama' => 'Campuran 2', 'val' => min(max($C - 16000, 0), 4000), 'p' => null],
                                     ];
                                     for($i = 0; $i < 4; $i++) {
                                         $pNum = ($g * 4) + $i + 1;
                                         // Limit individual series to max 20,000
-                                        $rows[] = ['nama' => "PACK $pNum SERI 1", 'val' => min($grid[$pNum]['s1'], 20000), 'p' => $pNum, 'seri' => 1];
-                                        $rows[] = ['nama' => "PACK $pNum SERI 2", 'val' => min($grid[$pNum]['s2'], 20000), 'p' => $pNum, 'seri' => 2];
+                                        $rows[] = ['nama' => "Pack $pNum Seri 1", 'val' => min($grid[$pNum]['s1'], 20000), 'p' => $pNum, 'seri' => 1];
+                                        $rows[] = ['nama' => "Pack $pNum Seri 2", 'val' => min($grid[$pNum]['s2'], 20000), 'p' => $pNum, 'seri' => 2];
                                     }
                                 @endphp
 

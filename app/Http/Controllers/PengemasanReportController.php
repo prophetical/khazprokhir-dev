@@ -8,9 +8,6 @@ use Carbon\Carbon;
 
 class PengemasanReportController extends Controller
 {
-    /**
-     * Display the packaging report index with filters.
-     */
     public function index(Request $request)
     {
         // Check access: must have role
@@ -27,7 +24,7 @@ class PengemasanReportController extends Controller
     }
 
     /**
-     * Display the print view of the report.
+     * Tampilan cetak laporan pengemasan.
      */
     public function print(Request $request)
     {
@@ -47,7 +44,7 @@ class PengemasanReportController extends Controller
     }
 
     /**
-     * Helper to fetch and process report data with merging logic.
+     * Helper untuk mengambil dan memproses data laporan dengan logika penggabungan. 
      */
     private function getReportData($tanggal, $gilir)
     {
@@ -73,12 +70,14 @@ class PengemasanReportController extends Controller
             $lastIndex = count($processed) - 1;
             $last = &$processed[$lastIndex];
 
-            // logic: same group and continuous box numbers
-            if ($last['pecahan'] == $row->pecahan &&
+            // logika : jika pecahan, ta, te sama dan nomor dus berurutan maka digabung
+            if (
+                $last['pecahan'] == $row->pecahan &&
                 $last['ta'] == $row->tahun_anggaran &&
                 $last['te'] == $row->tahun_emisi &&
-                $row->dus_awal == $last['nomor_dus_akhir'] + 1) {
-                
+                $row->dus_awal == $last['nomor_dus_akhir'] + 1
+            ) {
+
                 $last['nomor_dus_akhir'] = $row->dus_akhir;
                 $last['jumlah_bilyet'] += $row->total_bilyet;
                 $last['jumlah_dus'] += $row->jumlah_dus;
@@ -91,7 +90,7 @@ class PengemasanReportController extends Controller
     }
 
     /**
-     * Helper to format a single row for the report.
+     * Helper untuk memformat satu baris untuk laporan.
      */
     private function formatRow($row)
     {

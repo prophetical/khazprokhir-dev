@@ -11,108 +11,67 @@ use Illuminate\Validation\ValidationException;
 
 class PengemasanService
 {
-    public function getReadyToPackageGroups(array $filters = [])
+    public function getReadyToPackageGroupsQuery(array $filters = [])
     {
-        $query = Pack::whereNotNull('hcs_sorting_id')
-            ->whereNull('id_pengemasan')
+        // Islands and Gaps using SQL to find contiguous pack numbers
+        $rawQuery = Pack::query()
             ->join('hcs_receivings', 'packs.hcs_receiving_id', '=', 'hcs_receivings.id')
-            ->select(
+            ->whereNotNull('packs.hcs_sorting_id')
+            ->whereNull('packs.id_pengemasan')
+            ->select([
                 'packs.pack_number',
                 'packs.batch',
                 'packs.seri',
+                'packs.jumlah',
                 'hcs_receivings.pecahan',
                 'hcs_receivings.emisi',
-                'hcs_receivings.tahun_anggaran'
-            );
+                'hcs_receivings.tahun_anggaran',
+                DB::raw('packs.pack_number - ROW_NUMBER() OVER (
+                    PARTITION BY packs.batch, packs.seri, hcs_receivings.pecahan, hcs_receivings.tahun_anggaran, hcs_receivings.emisi 
+                    ORDER BY packs.pack_number
+                ) as island_id')
+            ]);
 
         if (!empty($filters['pecahan'])) {
-            $query->where('hcs_receivings.pecahan', $filters['pecahan']);
+            $rawQuery->where('hcs_receivings.pecahan', $filters['pecahan']);
         }
         if (!empty($filters['tahun_anggaran'])) {
-            $query->where('hcs_receivings.tahun_anggaran', $filters['tahun_anggaran']);
+            $rawQuery->where('hcs_receivings.tahun_anggaran', $filters['tahun_anggaran']);
         }
         if (!empty($filters['search'])) {
             $s = $filters['search'];
-            $query->where(function ($q) use ($s) {
+            $rawQuery->where(function ($q) use ($s) {
                 $q->where('packs.batch', 'like', "%{$s}%")
-                    ->orWhere('packs.seri', 'like', "%{$s}%")
-                    ->orWhere('hcs_receivings.pecahan', 'like', "%{$s}%");
+                  ->orWhere('packs.seri', 'like', "%{$s}%");
             });
         }
 
-        $packs = $query->orderBy('packs.pack_number')
-            ->limit(20000) // Safety limit: 5.000 dus
-            ->get();
+        // Wrap the raw island calculation in a summary query
+        $summaryQuery = DB::table(DB::raw("({$rawQuery->toSql()}) as clusters"))
+            ->mergeBindings($rawQuery->getQuery())
+            ->select([
+                'pecahan',
+                'emisi',
+                'tahun_anggaran',
+                'batch',
+                'seri',
+                DB::raw('MIN(pack_number) as pack_awal'),
+                DB::raw('MAX(pack_number) as pack_akhir'),
+                DB::raw('COUNT(*) as jumlah_pack'),
+                DB::raw('(COUNT(*) % 4 != 0 OR MIN(jumlah) < 45000) as has_buntut')
+            ])
+            ->groupBy('pecahan', 'emisi', 'tahun_anggaran', 'batch', 'seri', 'island_id')
+            ->orderBy('batch')
+            ->orderBy('seri')
+            ->orderBy('pack_awal');
 
-        $grouped = [];
-        foreach ($packs as $pack) {
-            $key = "{$pack->tahun_anggaran}|{$pack->emisi}|{$pack->pecahan}|{$pack->batch}|{$pack->seri}";
-            if (!isset($grouped[$key])) {
-                $grouped[$key] = [
-                    'tahun_anggaran' => $pack->tahun_anggaran,
-                    'emisi' => $pack->emisi,
-                    'pecahan' => $pack->pecahan,
-                    'batch' => $pack->batch,
-                    'seri' => $pack->seri,
-                    'numbers' => [],
-                ];
-            }
-            $grouped[$key]['numbers'][] = $pack->pack_number;
-        }
+        return $summaryQuery;
+    }
 
-        $readyGroups = [];
-        foreach ($grouped as $group) {
-            $numbers = $group['numbers'];
-            if (empty($numbers))
-                continue;
-
-            $contiguousBlocks = [];
-            $currentBlock = [];
-            foreach ($numbers as $num) {
-                if (empty($currentBlock)) {
-                    $currentBlock[] = $num;
-                } else {
-                    $last = end($currentBlock);
-                    if ($num == $last + 1) {
-                        $currentBlock[] = $num;
-                    } else {
-                        $contiguousBlocks[] = $currentBlock;
-                        $currentBlock = [$num];
-                    }
-                }
-            }
-            if (!empty($currentBlock))
-                $contiguousBlocks[] = $currentBlock;
-
-            foreach ($contiguousBlocks as $block) {
-                $totalInBlock = count($block);
-                if ($totalInBlock < 1)
-                    continue;
-
-                $packIds = Pack::where('batch', $group['batch'])
-                    ->where('seri', $group['seri'])
-                    ->whereNotNull('hcs_sorting_id')
-                    ->whereNull('id_pengemasan')
-                    ->whereIn('pack_number', $block)
-                    ->pluck('id');
-
-                $hasBuntut = ($totalInBlock % 4 !== 0) || Pack::whereIn('id', $packIds)->where('jumlah', '<', 45000)->exists();
-
-                $readyGroups[] = [
-                    'tahun_anggaran' => $group['tahun_anggaran'],
-                    'emisi' => $group['emisi'],
-                    'pecahan' => $group['pecahan'],
-                    'batch' => $group['batch'],
-                    'seri' => $group['seri'],
-                    'pack_awal' => $block[0],
-                    'pack_akhir' => end($block),
-                    'jumlah_pack' => $totalInBlock,
-                    'has_buntut' => $hasBuntut,
-                ];
-            }
-        }
-
-        return collect($readyGroups);
+    public function getReadyToPackageGroups(array $filters = [])
+    {
+        // Legacy support for methods expecting a collection
+        return $this->getReadyToPackageGroupsQuery($filters)->get()->map(fn($item) => (array)$item);
     }
 
     public function processStore(array $data, int $userId)
@@ -201,36 +160,62 @@ class PengemasanService
 
     public function detectMissingDusGaps(): array
     {
-        $detailList = DB::table('detail_pengemasans')
-            ->join('pengemasans', 'detail_pengemasans.id_pengemasan', '=', 'pengemasans.id')
-            ->select('pengemasans.pecahan', 'pengemasans.tahun_anggaran', 'pengemasans.tahun_emisi', 'detail_pengemasans.no_dus')
-            ->orderBy('pengemasans.pecahan')->orderBy('pengemasans.tahun_anggaran')->orderBy('pengemasans.tahun_emisi')->orderBy('detail_pengemasans.no_dus')
+        // Optimized: Islands and Gaps using SQL Window Functions
+        // 1. Get gaps between existing numbers
+        $gaps = DB::table(function ($query) {
+                $query->from('detail_pengemasans as dp_inner')
+                    ->join('pengemasans as p_inner', 'dp_inner.id_pengemasan', '=', 'p_inner.id')
+                    ->select([
+                        'p_inner.pecahan',
+                        'p_inner.tahun_anggaran',
+                        'p_inner.tahun_emisi',
+                        'dp_inner.no_dus',
+                        DB::raw('LEAD(dp_inner.no_dus) OVER (PARTITION BY p_inner.pecahan, p_inner.tahun_anggaran, p_inner.tahun_emisi ORDER BY dp_inner.no_dus) as next_no')
+                    ]);
+            }, 'tmp')
+            ->select([
+                'pecahan',
+                'tahun_anggaran',
+                'tahun_emisi',
+                DB::raw('no_dus + 1 as gap_start'),
+                DB::raw('next_no - 1 as gap_end')
+            ])
+            ->whereRaw('next_no > no_dus + 1')
             ->get();
 
-        $groupedDus = [];
-        foreach ($detailList as $d) {
-            $key = $d->pecahan . '|' . $d->tahun_anggaran . '|' . $d->tahun_emisi;
-            $groupedDus[$key][] = $d->no_dus;
+        // 2. Check if first box is missing (starts from 1)
+        $starts = DB::table('detail_pengemasans as dp')
+            ->join('pengemasans as p', 'dp.id_pengemasan', '=', 'p.id')
+            ->select('p.pecahan', 'p.tahun_anggaran', 'p.tahun_emisi', DB::raw('MIN(dp.no_dus) as first_no'))
+            ->groupBy('p.pecahan', 'p.tahun_anggaran', 'p.tahun_emisi')
+            ->having('first_no', '>', 1)
+            ->get();
+
+        $rawGaps = [];
+        foreach ($starts as $s) {
+            $key = "{$s->pecahan}|{$s->tahun_anggaran}|{$s->tahun_emisi}";
+            $range = ($s->first_no == 2) ? "1" : "1-" . ($s->first_no - 1);
+            $rawGaps[$key][] = $range;
         }
 
-        $missingGaps = [];
-        foreach ($groupedDus as $key => $numbers) {
-            [$pecahan, $ta, $te] = explode('|', $key);
-            $expected = 1;
-            $missingRanges = [];
-            foreach ($numbers as $num) {
-                if ($num > $expected) {
-                    $startGap = $expected;
-                    $endGap = $num - 1;
-                    $missingRanges[] = ($startGap == $endGap) ? $startGap : $startGap . '-' . $endGap;
-                }
-                if ($num >= $expected)
-                    $expected = $num + 1;
-            }
-            if (!empty($missingRanges))
-                $missingGaps[] = ['pecahan' => $pecahan, 'tahun_anggaran' => $ta, 'tahun_emisi' => $te, 'gaps' => implode(', ', $missingRanges)];
+        foreach ($gaps as $g) {
+            $key = "{$g->pecahan}|{$g->tahun_anggaran}|{$g->tahun_emisi}";
+            $range = ($g->gap_start == $g->gap_end) ? $g->gap_start : "{$g->gap_start}-{$g->gap_end}";
+            $rawGaps[$key][] = $range;
         }
-        return $missingGaps;
+
+        $formatted = [];
+        foreach ($rawGaps as $key => $ranges) {
+            [$pecahan, $ta, $te] = explode('|', $key);
+            $formatted[] = [
+                'pecahan' => $pecahan,
+                'tahun_anggaran' => $ta,
+                'tahun_emisi' => $te,
+                'ranges' => implode(', ', $ranges)
+            ];
+        }
+
+        return $formatted;
     }
 
     private function generateDetailPengemasan($pengemasan, $seriRaw, $startNumber, $batch, $parsedChunks, $packs)

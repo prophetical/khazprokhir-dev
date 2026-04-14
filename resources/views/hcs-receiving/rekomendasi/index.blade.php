@@ -97,7 +97,7 @@
 
                                 <div class="flex flex-wrap gap-2 justify-end">
                                     <a href="{{ route('rekomendasi-penerimaan.export', request()->all()) }}"
-                                        class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors shadow-sm"
+                                        class="btn-report btn-excel"
                                         title="Export Excel">
                                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -107,7 +107,7 @@
                                     </a>
                                     <a href="{{ route('rekomendasi-penerimaan.print', request()->all()) }}"
                                         target="_blank"
-                                        class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium bg-rose-50 text-rose-700 border border-rose-200 rounded-lg hover:bg-rose-100 transition-colors shadow-sm"
+                                        class="btn-report btn-pdf"
                                         title="Export PDF / Print">
                                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -117,7 +117,7 @@
                                     </a>
                                     <a href="{{ route('rekomendasi-penerimaan.print', request()->all()) }}"
                                         target="_blank"
-                                        class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium bg-gray-50 text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors shadow-sm"
+                                        class="btn-report btn-print"
                                         title="Cetak / PDF">
                                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

@@ -124,12 +124,12 @@
                                 <thead class="bg-indigo-50/50">
                                     <thead class="bg-indigo-50/50">
                                         <tr>
-                                            <th class="px-2 py-3 sm:px-6 text-center text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-widest text-center">TA/TE</th>
-                                            <th class="px-2 py-3 sm:px-6 text-center text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-widest text-center">Pecahan</th>
-                                            <th class="px-2 py-3 sm:px-6 text-center text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-widest text-center">Batch/Seri</th>
-                                            <th class="px-2 py-3 sm:px-6 text-center text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-widest text-center">Rentang Pack</th>
-                                            <th class="px-2 py-3 sm:px-6 text-center text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-widest text-center">Jumlah Pack</th>
-                                            <th class="px-2 py-3 sm:px-6 text-center text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-widest text-center">Aksi</th>
+                                             <th class="px-2 py-3 sm:px-6 text-center text-[8px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-widest text-center">TA/TE</th>
+                                            <th class="px-2 py-3 sm:px-6 text-center text-[8px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-widest text-center">Pecahan</th>
+                                            <th class="px-2 py-3 sm:px-6 text-center text-[8px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-widest text-center">Batch/Seri</th>
+                                            <th class="px-2 py-3 sm:px-6 text-center text-[8px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-widest text-center">Rentang Pack</th>
+                                            <th class="px-2 py-3 sm:px-6 text-center text-[8px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-widest text-center">Jumlah Pack</th>
+                                            <th class="px-2 py-3 sm:px-6 text-center text-[8px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-widest text-center">Aksi</th>
                                         </tr>
                                     </thead>
                                 </thead>
@@ -137,8 +137,8 @@
                                     @forelse($readyGroups as $group)
                                         <tr class="hover:bg-indigo-50/30 transition-colors duration-150">
                                             <td class="px-2 py-4 sm:px-6 whitespace-nowrap text-center">
-                                                <div class="text-[10px] sm:text-sm font-bold text-gray-900">{{ $group['tahun_anggaran'] }}</div>
-                                                <div class="text-[9px] sm:text-xs text-gray-500 text-center">{{ $group['emisi'] }}</div>
+                                                <div class="text-[8px] sm:text-xs font-bold text-gray-900">{{ $group['tahun_anggaran'] }}</div>
+                                                <div class="text-[7px] sm:text-[10px] text-gray-500 text-center">{{ $group['emisi'] }}</div>
                                             </td>
                                             <td class="px-2 py-4 sm:px-6 whitespace-nowrap text-center">
                                                 @php
@@ -153,25 +153,25 @@
                                                     ];
                                                     $badgeColor = $pecahanColors[$group['pecahan']] ?? 'bg-gray-100 text-gray-800';
                                                 @endphp
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] sm:text-xs font-black {{ $badgeColor }} border border-transparent shadow-sm">
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[7px] sm:text-[10px] font-black {{ $badgeColor }} border border-transparent shadow-sm">
                                                     {{ $group['pecahan'] }}
                                                 </span>
                                             </td>
                                             <td class="px-2 py-4 sm:px-6 whitespace-nowrap text-center">
-                                                <div class="text-[10px] sm:text-sm font-bold text-gray-900">{{ $group['batch'] }}</div>
-                                                <div class="text-[9px] sm:text-xs font-mono text-gray-500">{{ $group['seri'] }}</div>
+                                                <div class="text-[8px] sm:text-xs font-bold text-gray-900">{{ $group['batch'] }}</div>
+                                                <div class="text-[7px] sm:text-[10px] font-mono text-gray-500">{{ $group['seri'] }}</div>
                                             </td>
                                             <td class="px-2 py-4 sm:px-6 whitespace-nowrap text-center">
-                                                <span class="text-[10px] sm:text-sm font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded">
+                                                <span class="text-[8px] sm:text-xs font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded">
                                                     {{ $group['pack_awal'] }} - {{ $group['pack_akhir'] }}
                                                 </span>
                                             </td>
-                                            <td class="px-2 py-4 sm:px-6 whitespace-nowrap text-center font-black text-[10px] sm:text-sm text-gray-900">
+                                            <td class="px-2 py-4 sm:px-6 whitespace-nowrap text-center font-black text-[8px] sm:text-xs text-gray-900">
                                                 {{ $group['jumlah_pack'] }}
                                             </td>
                                             <td class="px-2 py-4 sm:px-6 whitespace-nowrap text-center space-x-1 sm:space-x-2">
                                                 @if($group['has_buntut'])
-                                                    <a href="{{ route('pengemasan.create', [
+                                                     <a href="{{ route('pengemasan.create', [
                                                         'tahun_anggaran' => $group['tahun_anggaran'],
                                                         'tahun_emisi' => $group['emisi'],
                                                         'pecahan' => $group['pecahan'],
@@ -182,7 +182,7 @@
                                                         'max_pack_akhir' => $group['pack_akhir'],
                                                         'is_manual_sisa' => 1
                                                     ]) }}" 
-                                                       class="inline-flex items-center justify-center px-2 py-1.5 sm:px-4 sm:py-2 bg-red-600 border border-transparent rounded-lg font-bold text-[9px] sm:text-xs text-white uppercase tracking-widest hover:bg-red-700 active:bg-red-900 transition ease-in-out duration-150 shadow-sm shadow-red-100">
+                                                       class="inline-flex items-center justify-center px-2 py-1.5 sm:px-4 sm:py-2 bg-red-600 border border-transparent rounded-lg font-bold text-[7px] sm:text-[10px] text-white uppercase tracking-widest hover:bg-red-700 active:bg-red-900 transition ease-in-out duration-150 shadow-sm shadow-red-100">
                                                         <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                                                         Buntut
                                                     </a>
@@ -190,7 +190,7 @@
                                                     @php
                                                         $maxValidPackAkhir = $group['pack_akhir'];
                                                     @endphp
-                                                    <a href="{{ route('pengemasan.create', [
+                                                     <a href="{{ route('pengemasan.create', [
                                                         'tahun_anggaran' => $group['tahun_anggaran'],
                                                         'tahun_emisi' => $group['emisi'],
                                                         'pecahan' => $group['pecahan'],
@@ -200,10 +200,10 @@
                                                         'pack_akhir' => $maxValidPackAkhir,
                                                         'max_pack_akhir' => $maxValidPackAkhir
                                                     ]) }}" 
-                                                       class="inline-flex items-center justify-center px-2 py-1.5 sm:px-4 sm:py-2 bg-indigo-600 border border-transparent rounded-lg font-bold text-[9px] sm:text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 transition ease-in-out duration-150 shadow-sm">
+                                                       class="inline-flex items-center justify-center px-2 py-1.5 sm:px-4 sm:py-2 bg-indigo-600 border border-transparent rounded-lg font-bold text-[7px] sm:text-[10px] text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 transition ease-in-out duration-150 shadow-sm">
                                                         Semua
                                                     </a>
-                                                    <a href="{{ route('pengemasan.create', [
+                                                     <a href="{{ route('pengemasan.create', [
                                                         'tahun_anggaran' => $group['tahun_anggaran'],
                                                         'tahun_emisi' => $group['emisi'],
                                                         'pecahan' => $group['pecahan'],
@@ -213,7 +213,7 @@
                                                         'pack_akhir' => '',
                                                         'max_pack_akhir' => $maxValidPackAkhir
                                                     ]) }}"
-                                                       class="inline-flex items-center justify-center px-2 py-1.5 sm:px-4 sm:py-2 bg-white border border-gray-300 rounded-lg font-bold text-[9px] sm:text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-50 active:bg-gray-100 transition ease-in-out duration-150 shadow-sm">
+                                                       class="inline-flex items-center justify-center px-2 py-1.5 sm:px-4 sm:py-2 bg-white border border-gray-300 rounded-lg font-bold text-[7px] sm:text-[10px] text-gray-700 uppercase tracking-widest hover:bg-gray-50 active:bg-gray-100 transition ease-in-out duration-150 shadow-sm">
                                                         Sebagian
                                                     </a>
                                                 @endif

@@ -89,8 +89,8 @@
                         </button>
 
                         <a href="{{ route('bahan-penolong.export', array_merge(request()->all(), ['tipe' => 'keluar'])) }}"
-                            class="flex-1 md:flex-none px-6 py-3 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-300 text-xs font-black rounded-2xl hover:bg-gray-50 dark:hover:bg-slate-800 transition-all flex items-center justify-center gap-2 uppercase tracking-widest">
-                            <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            class="btn-report btn-excel">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                     d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
@@ -99,8 +99,8 @@
 
                         <a href="{{ route('bahan-penolong.print', array_merge(request()->all(), ['tipe' => 'keluar', 'autoprint' => 1])) }}"
                             target="_blank"
-                            class="flex-1 md:flex-none px-6 py-3 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-300 text-xs font-black rounded-2xl hover:bg-gray-50 dark:hover:bg-slate-800 transition-all flex items-center justify-center gap-2 uppercase tracking-widest">
-                            <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            class="btn-report btn-pdf">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                     d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                             </svg>

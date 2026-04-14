@@ -1,6 +1,6 @@
-/* Khazprokhir */
+/* Khazprokhir - Author : Syah Roni*/
 
-/* Badge Denominasi - Gaya Dasar */
+/* Badge Denominasi */
 .badge-fixed {
     display: inline-flex;
     align-items: center;
@@ -31,7 +31,7 @@
     }
 }
 
-/* Pemetaan Tema Denominasi (Gaya Halus & Kontras Tinggi) */
+/* Pemetaan Tema Denominasi */
 .badge-pecahan-S {
     background-color: #f7fee7;
     color: #4d7c0f;
@@ -81,6 +81,23 @@
 }
 
 /* Ref: bg-rose-50 text-rose-700 border-rose-200 */
+
+/* Tombol Laporan Standar (Excel, PDF, Print) */
+.btn-report {
+    @apply inline-flex items-center justify-center px-4 py-2 text-sm font-bold tracking-wide transition-all duration-200 rounded-sm hover:scale-[1.02] active:scale-95;
+}
+
+.btn-excel {
+    @apply bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 dark:bg-emerald-900/10 dark:text-emerald-400 dark:border-emerald-800/50 dark:hover:bg-emerald-900/20;
+}
+
+.btn-pdf {
+    @apply bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 dark:bg-rose-900/10 dark:text-rose-400 dark:border-rose-800/50 dark:hover:bg-rose-900/20;
+}
+
+.btn-print {
+    @apply bg-lime-50 text-lime-700 border border-lime-200 hover:bg-lime-100 dark:bg-lime-900/10 dark:text-lime-400 dark:border-lime-800/50 dark:hover:bg-lime-900/20;
+}
 
 /* Penyesuaian Khusus Dark Mode */
 body.dark-mode .badge-pecahan-S {

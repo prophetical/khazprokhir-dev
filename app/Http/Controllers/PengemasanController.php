@@ -20,15 +20,10 @@ class PengemasanController extends Controller
 
     public function index(Request $request)
     {
-        $readyGroupsAll = $this->service->getReadyToPackageGroups($request->all());
-
-        $currentPage = $request->input('page', 1);
-        $perPage = 20;
-        $currentItems = $readyGroupsAll->slice(($currentPage - 1) * $perPage, $perPage)->all();
-        $readyGroups = new \Illuminate\Pagination\LengthAwarePaginator($currentItems, $readyGroupsAll->count(), $perPage, $currentPage, [
-            'path' => $request->url(),
-            'query' => $request->query(),
-        ]);
+        $readyGroups = $this->service->getReadyToPackageGroupsQuery($request->all())
+            ->simplePaginate(15)
+            ->through(fn($item) => (array)$item)
+            ->withQueryString();
 
         $missingGaps = $this->service->detectMissingDusGaps();
 

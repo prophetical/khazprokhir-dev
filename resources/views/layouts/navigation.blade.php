@@ -1,3 +1,18 @@
+<style>
+    @keyframes logo-chroma {
+        0% { color: #f8fafc; } /* Slate-50 */
+        20% { color: #818cf8; } /* Indigo-400 */
+        40% { color: #34d399; } /* Emerald-400 */
+        60% { color: #fb7185; } /* Rose-400 */
+        80% { color: #fbbf24; } /* Amber-400 */
+        100% { color: #38bdf8; } /* Sky-400 */
+    }
+
+    .logo-chroma {
+        animation: logo-chroma 12s infinite alternate ease-in-out;
+    }
+</style>
+
 <nav x-data="{ 
         hcsOpen: {{ request()->routeIs('hcs-receiving.*', 'batch-tracking.*', 'reports.*', 'rekomendasi-penerimaan.*') ? 'true' : 'false' }},
         sortingOpen: {{ request()->routeIs('hcs-sorting.*', 'hcs-sorting-reports.*', 'rekomendasi-penyortiran.*') ? 'true' : 'false' }},
@@ -7,7 +22,9 @@
         penyerahanHctsOpen: {{ request()->routeIs('hcts-submission.*') ? 'true' : 'false' }},
         bahanPenolongOpen: {{ request()->routeIs('bahan-penolong.*') ? 'true' : 'false' }},
         penyablonanOpen: {{ request()->routeIs('penyablonan.*') ? 'true' : 'false' }},
-        xPenggantiOpen: {{ request()->routeIs('x-pengganti.*') ? 'true' : 'false' }}
+        xPenggantiOpen: {{ request()->routeIs('x-pengganti.*') ? 'true' : 'false' }},
+        logoHover: false,
+        logoClick: false
     }" :class="[
         sidebarCollapsed ? 'w-20' : 'w-64',
         mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
@@ -29,15 +46,26 @@
     <div class="px-4 pt-6 pb-6 border-b border-white/10 flex items-center"
         :class="sidebarCollapsed ? 'justify-center' : 'px-6'">
         <!-- Logo -->
-        <a href="{{ route('dashboard') }}" class="flex items-center">
-            <x-application-logo class="block h-8 w-auto fill-current text-white" />
+        <a href="{{ route('dashboard') }}" class="flex items-center group relative z-50" @mouseenter="logoHover = true"
+            @mouseleave="logoHover = false; logoClick = false" @mousedown="logoClick = true"
+            @mouseup="logoClick = false">
+
+            <div class="transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+                :style="logoClick ? 'transform: scale(0.9) rotate(-5deg)' : (logoHover ? 'transform: scale(1.15) rotate(12deg)' : 'transform: scale(1) rotate(0deg)')">
+                <x-application-logo class="block h-8 w-auto fill-current text-white logo-chroma" />
+            </div>
+
             <div x-show="!sidebarCollapsed" x-transition:enter="transition ease-out duration-300"
                 x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                class="ml-3 flex flex-col justify-center">
+                class="ml-3 flex flex-col justify-center cursor-pointer">
                 <span
-                    class="font-bold text-white text-lg tracking-wider whitespace-nowrap uppercase leading-none mb-0.5">KHAZPRO</span>
-                <span class="text-[9px] text-indigo-300 font-medium tracking-wide whitespace-nowrap italic">Presisi
-                    mengelola, data terpercaya</span>
+                    class="font-bold text-white text-lg tracking-wider whitespace-nowrap uppercase leading-none mb-0.5 transition-all duration-400 logo-chroma"
+                    :style="logoHover ? 'letter-spacing: 0.15em' : 'letter-spacing: normal'">
+                    KHAZPRO
+                </span>
+                <span class="text-[9px] text-indigo-300 font-medium tracking-wide whitespace-nowrap italic logo-chroma">
+                    Presisi mengelola, data terpercaya
+                </span>
             </div>
         </a>
     </div>
@@ -455,53 +483,53 @@
 
             <!-- Grup X Pengganti -->
             @if(in_array(auth()->user()->role, ['admin', 'sortir', 'kemas', 'khazverutas', 'supervisor']))
-            <div class="space-y-1 mt-2 mb-4">
-                <button @click="xPenggantiOpen = !xPenggantiOpen; if(sidebarCollapsed) sidebarCollapsed = false;"
-                    class="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('x-pengganti.*') ? 'text-white font-semibold bg-white/20 shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
-                    title="X Pengganti">
-                    <div class="flex items-center">
-                        <div class="shrink-0 w-8 flex justify-center">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
+                <div class="space-y-1 mt-2 mb-4">
+                    <button @click="xPenggantiOpen = !xPenggantiOpen; if(sidebarCollapsed) sidebarCollapsed = false;"
+                        class="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('x-pengganti.*') ? 'text-white font-semibold bg-white/20 shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
+                        title="X Pengganti">
+                        <div class="flex items-center">
+                            <div class="shrink-0 w-8 flex justify-center">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                            </div>
+                            <span x-show="!sidebarCollapsed" x-transition
+                                class="ml-3 text-sm font-medium whitespace-nowrap overflow-hidden">X Pengganti</span>
                         </div>
-                        <span x-show="!sidebarCollapsed" x-transition
-                            class="ml-3 text-sm font-medium whitespace-nowrap overflow-hidden">X Pengganti</span>
-                    </div>
-                    <svg x-show="!sidebarCollapsed" :class="xPenggantiOpen ? 'rotate-180' : ''"
-                        class="w-3 h-3 transition-transform duration-200" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                </button>
+                        <svg x-show="!sidebarCollapsed" :class="xPenggantiOpen ? 'rotate-180' : ''"
+                            class="w-3 h-3 transition-transform duration-200" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
 
-                <!-- Item Sub-menu -->
-                <div x-show="xPenggantiOpen && !sidebarCollapsed" x-transition:enter="transition ease-out duration-200"
-                    x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
-                    class="pl-11 space-y-1">
-                    <a href="{{ route('x-pengganti.seri.index') }}"
-                        class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('x-pengganti.seri.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
-                        Form Input Seri
-                    </a>
-                    <a href="{{ route('x-pengganti.khazai.index') }}"
-                        class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('x-pengganti.khazai.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
-                        Form Input Khazai
-                    </a>
-                    <a href="{{ route('x-pengganti.cutpack.index') }}"
-                        class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('x-pengganti.cutpack.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
-                        Form Input Cutpack
-                    </a>
-                    <a href="{{ route('x-pengganti.rikyet.index') }}"
-                        class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('x-pengganti.rikyet.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
-                        Form Input Rikyet
-                    </a>
-                    <a href="{{ route('x-pengganti.rekap.index') }}"
-                        class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('x-pengganti.rekap.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
-                        Hasil Rekap Khazprokhir
-                    </a>
+                    <!-- Item Sub-menu -->
+                    <div x-show="xPenggantiOpen && !sidebarCollapsed" x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+                        class="pl-11 space-y-1">
+                        <a href="{{ route('x-pengganti.seri.index') }}"
+                            class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('x-pengganti.seri.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                            Form Input Seri
+                        </a>
+                        <a href="{{ route('x-pengganti.khazai.index') }}"
+                            class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('x-pengganti.khazai.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                            Form Input Khazai
+                        </a>
+                        <a href="{{ route('x-pengganti.cutpack.index') }}"
+                            class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('x-pengganti.cutpack.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                            Form Input Cutpack
+                        </a>
+                        <a href="{{ route('x-pengganti.rikyet.index') }}"
+                            class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('x-pengganti.rikyet.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                            Form Input Rikyet
+                        </a>
+                        <a href="{{ route('x-pengganti.rekap.index') }}"
+                            class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('x-pengganti.rekap.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                            Hasil Rekap Khazprokhir
+                        </a>
+                    </div>
                 </div>
-            </div>
             @endif
 
             @if(in_array(auth()->user()->role, ['admin', 'sortir', 'kemas', 'supervisor']))
