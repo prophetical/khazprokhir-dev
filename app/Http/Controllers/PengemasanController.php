@@ -7,6 +7,7 @@ use App\Models\Pack;
 use App\Models\Pengemasan;
 use App\Services\PengemasanService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class PengemasanController extends Controller
@@ -236,10 +237,14 @@ class PengemasanController extends Controller
     public function getReadyToPackNotifications()
     {
         try {
-            $readyGroups = $this->service->getReadyToPackageGroups([]);
+            // Cache for 60 seconds to prevent DDoS-like behavior on artisan serve
+            $readyGroups = Cache::remember('hcs_ready_notifications', 60, function () {
+                return $this->service->getReadyToPackageGroups([]);
+            });
+
             return response()->json([
                 'status' => 'success',
-                'count' => $readyGroups->count(),
+                'count' => count($readyGroups), // and collection vs array handling
                 'data' => $readyGroups
             ]);
         } catch (\Exception $e) {

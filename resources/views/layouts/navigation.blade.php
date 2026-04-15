@@ -1,11 +1,35 @@
 <style>
     @keyframes logo-chroma {
-        0% { color: #f8fafc; } /* Slate-50 */
-        20% { color: #818cf8; } /* Indigo-400 */
-        40% { color: #34d399; } /* Emerald-400 */
-        60% { color: #fb7185; } /* Rose-400 */
-        80% { color: #fbbf24; } /* Amber-400 */
-        100% { color: #38bdf8; } /* Sky-400 */
+        0% {
+            color: #f8fafc;
+        }
+
+        /* Slate-50 */
+        20% {
+            color: #818cf8;
+        }
+
+        /* Indigo-400 */
+        40% {
+            color: #34d399;
+        }
+
+        /* Emerald-400 */
+        60% {
+            color: #fb7185;
+        }
+
+        /* Rose-400 */
+        80% {
+            color: #fbbf24;
+        }
+
+        /* Amber-400 */
+        100% {
+            color: #38bdf8;
+        }
+
+        /* Sky-400 */
     }
 
     .logo-chroma {
@@ -375,7 +399,7 @@
                             </svg>
                         </div>
                         <span x-show="!sidebarCollapsed" x-transition
-                            class="ml-3 text-sm font-medium whitespace-nowrap overflow-hidden">Penyerahan ke BI</span>
+                            class="ml-3 text-sm font-medium whitespace-nowrap overflow-hidden">Penyerahan HCS</span>
                     </div>
                     <svg x-show="!sidebarCollapsed" :class="penyerahanBiOpen ? 'rotate-180' : ''"
                         class="w-3 h-3 transition-transform duration-200" fill="none" stroke="currentColor"
@@ -508,9 +532,18 @@
                     <div x-show="xPenggantiOpen && !sidebarCollapsed" x-transition:enter="transition ease-out duration-200"
                         x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
                         class="pl-11 space-y-1">
+                        <a href="{{ route('x-pengganti.mapping.index') }}"
+                            class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('x-pengganti.mapping.*') && !request()->routeIs('x-pengganti.mapping.lookup') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                            Input Seri X Pengganti
+                        </a>
+                        <a href="{{ route('x-pengganti.mapping.lookup') }}"
+                            class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('x-pengganti.mapping.lookup') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                            Cari Seri Pengganti
+                        </a>
+                        <div class="h-px w-full bg-white/10 my-1"></div>
                         <a href="{{ route('x-pengganti.seri.index') }}"
                             class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('x-pengganti.seri.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
-                            Form Input Seri
+                            Form Input Master Seri
                         </a>
                         <a href="{{ route('x-pengganti.khazai.index') }}"
                             class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('x-pengganti.khazai.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">

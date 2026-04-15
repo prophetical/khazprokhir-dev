@@ -7,13 +7,14 @@ use App\Models\Pack;
 use App\Models\Pengemasan;
 use App\Models\HcsSorting;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\ValidationException;
 
 class PengemasanService
 {
     public function getReadyToPackageGroupsQuery(array $filters = [])
     {
-        // Islands and Gaps using SQL to find contiguous pack numbers
+        // Algoritma Islands and Gaps menggunakan SQL untuk menemukan nomor pack yang berurutan.
         $rawQuery = Pack::query()
             ->join('hcs_receivings', 'packs.hcs_receiving_id', '=', 'hcs_receivings.id')
             ->whereNotNull('packs.hcs_sorting_id')
@@ -42,11 +43,11 @@ class PengemasanService
             $s = $filters['search'];
             $rawQuery->where(function ($q) use ($s) {
                 $q->where('packs.batch', 'like', "%{$s}%")
-                  ->orWhere('packs.seri', 'like', "%{$s}%");
+                    ->orWhere('packs.seri', 'like', "%{$s}%");
             });
         }
 
-        // Wrap the raw island calculation in a summary query
+        // Membungkus perhitungan dasar island ke dalam query ringkasan.
         $summaryQuery = DB::table(DB::raw("({$rawQuery->toSql()}) as clusters"))
             ->mergeBindings($rawQuery->getQuery())
             ->select([
@@ -70,8 +71,8 @@ class PengemasanService
 
     public function getReadyToPackageGroups(array $filters = [])
     {
-        // Legacy support for methods expecting a collection
-        return $this->getReadyToPackageGroupsQuery($filters)->get()->map(fn($item) => (array)$item);
+        // Dukungan untuk metode lama yang mengharapkan hasil dalam bentuk koleksi.
+        return $this->getReadyToPackageGroupsQuery($filters)->get()->map(fn($item) => (array) $item);
     }
 
     public function processStore(array $data, int $userId)
@@ -129,6 +130,7 @@ class PengemasanService
                 $this->generateDetailPengemasan($pengemasan, $data['seri'], $nomorDusAwal, $data['batch'], $parsedChunks, $packs);
             }
             DB::commit();
+            Cache::forget('hcs_ready_notifications');
             return $pengemasan;
         } catch (\Exception $e) {
             DB::rollBack();
@@ -151,6 +153,7 @@ class PengemasanService
             DetailPengemasan::where('id_pengemasan', $pengemasan->id)->delete();
             $pengemasan->delete();
             DB::commit();
+            Cache::forget('hcs_ready_notifications');
             return true;
         } catch (\Exception $e) {
             DB::rollBack();
@@ -160,19 +163,19 @@ class PengemasanService
 
     public function detectMissingDusGaps(): array
     {
-        // Optimized: Islands and Gaps using SQL Window Functions
-        // 1. Get gaps between existing numbers
+        // Menggunakan SQL Window Functions untuk algoritma Islands and Gaps.
+        // 1. Mengambil celah (gaps) di antara nomor-nomor yang sudah ada.
         $gaps = DB::table(function ($query) {
-                $query->from('detail_pengemasans as dp_inner')
-                    ->join('pengemasans as p_inner', 'dp_inner.id_pengemasan', '=', 'p_inner.id')
-                    ->select([
-                        'p_inner.pecahan',
-                        'p_inner.tahun_anggaran',
-                        'p_inner.tahun_emisi',
-                        'dp_inner.no_dus',
-                        DB::raw('LEAD(dp_inner.no_dus) OVER (PARTITION BY p_inner.pecahan, p_inner.tahun_anggaran, p_inner.tahun_emisi ORDER BY dp_inner.no_dus) as next_no')
-                    ]);
-            }, 'tmp')
+            $query->from('detail_pengemasans as dp_inner')
+                ->join('pengemasans as p_inner', 'dp_inner.id_pengemasan', '=', 'p_inner.id')
+                ->select([
+                    'p_inner.pecahan',
+                    'p_inner.tahun_anggaran',
+                    'p_inner.tahun_emisi',
+                    'dp_inner.no_dus',
+                    DB::raw('LEAD(dp_inner.no_dus) OVER (PARTITION BY p_inner.pecahan, p_inner.tahun_anggaran, p_inner.tahun_emisi ORDER BY dp_inner.no_dus) as next_no')
+                ]);
+        }, 'tmp')
             ->select([
                 'pecahan',
                 'tahun_anggaran',
@@ -183,12 +186,12 @@ class PengemasanService
             ->whereRaw('next_no > no_dus + 1')
             ->get();
 
-        // 2. Check if first box is missing (starts from 1)
+        // 2. Memeriksa apakah dus pertama hilang (dimulai dari nomor 1).
         $starts = DB::table('detail_pengemasans as dp')
             ->join('pengemasans as p', 'dp.id_pengemasan', '=', 'p.id')
             ->select('p.pecahan', 'p.tahun_anggaran', 'p.tahun_emisi', DB::raw('MIN(dp.no_dus) as first_no'))
             ->groupBy('p.pecahan', 'p.tahun_anggaran', 'p.tahun_emisi')
-            ->having('first_no', '>', 1)
+            ->havingRaw('MIN(dp.no_dus) > 1')
             ->get();
 
         $rawGaps = [];

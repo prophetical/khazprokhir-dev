@@ -193,6 +193,18 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\RoleMiddleware::clas
         Route::get('/rekap/show', [\App\Http\Controllers\XPenggantiRekapController::class, 'show'])->name('rekap.show');
         Route::get('/rekap/print', [\App\Http\Controllers\XPenggantiRekapController::class, 'print'])->name('rekap.print');
 
+        // Sub-menu 6: Serial Range Mapping (Pemetaan Seri Asal ↔ Pengganti)
+        Route::prefix('mapping')->name('mapping.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\SerialMappingController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\SerialMappingController::class, 'create'])->name('create');
+            Route::post('/pack', [\App\Http\Controllers\SerialMappingController::class, 'storePack'])->name('store.pack');
+            Route::post('/brood', [\App\Http\Controllers\SerialMappingController::class, 'storeBrood'])->name('store.brood');
+            Route::post('/vell', [\App\Http\Controllers\SerialMappingController::class, 'storeVell'])->name('store.vell');
+            Route::post('/single', [\App\Http\Controllers\SerialMappingController::class, 'storeSingle'])->name('store.single');
+            Route::get('/lookup', [\App\Http\Controllers\SerialMappingController::class, 'lookup'])->name('lookup');
+            Route::delete('/{id}', [\App\Http\Controllers\SerialMappingController::class, 'destroy'])->name('destroy');
+        });
+
         // API: list masters untuk dropdown
         Route::get('/api/masters', [\App\Http\Controllers\XPenggantiKhazaiController::class, 'getMasters'])->name('api.masters');
     });

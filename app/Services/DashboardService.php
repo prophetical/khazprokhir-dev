@@ -18,31 +18,31 @@ use Illuminate\Support\Facades\DB;
 class DashboardService
 {
     /**
-     * Ambil semua data yang dibutuhkan untuk dashboard.
+     * Mengambil seluruh data yang diperlukan untuk ditampilkan pada dashboard.
      * 
-     * @param Request $request
-     * @return array
+     * @param Request $request Objek request yang berisi parameter filter.
+     * @return array Kumpulan data metrik dashboard.
      */
     public function getDashboardData(Request $request): array
     {
         $today = Carbon::today();
 
-        // 1. Ambil Filter (Tahun & Emisi)
+        // 1. Mengambil data filter (Tahun Anggaran dan Tahun Emisi)
         $filters = $this->getAvailableFilters($request, $today);
         $currentYear = $filters['currentYear'];
         $currentTE = $filters['currentTE'];
 
-        // 2. Data Hari Ini
+        // 2. Mendapatkan metrik aktivitas untuk hari ini
         $todayMetrics = $this->getTodayMetrics($today);
         $todayHcsByPecahan = $this->getTodayHcsByPecahan($today, $currentYear, $currentTE);
 
-        // 3. Kesimpulan Tahunan & Inschiet
+        // 3. Menghitung ringkasan tahunan dan persentase inschiet
         $annualSummary = $this->getAnnualSummary($currentYear, $currentTE);
 
-        // 4. Data Bulanan untuk Grafik
+        // 4. Mengambil data bulanan untuk keperluan grafik
         $chartData = $this->getMonthlyChartData($currentYear, $currentTE);
 
-        // 5. Sebaran Pecahan & Heatmap
+        // 5. Mendaftarkan sebaran pecahan dan heatmap aktivitas
         $distributionData = $this->getDistributionAndHeatmapData($currentYear, $currentTE);
 
         return array_merge(
@@ -59,7 +59,7 @@ class DashboardService
     }
 
     /**
-     * Ambil tahun emisi dan tahun anggaran.
+     * Mendapatkan daftar Tahun Emisi dan Tahun Anggaran yang tersedia di database.
      */
     private function getAvailableFilters(Request $request, Carbon $today): array
     {
@@ -92,7 +92,7 @@ class DashboardService
     }
 
     /**
-     * Ambil metrik untuk aktivitas hari ini.
+     * Mengambil metrik performa untuk aktivitas yang terjadi pada hari ini.
      */
     private function getTodayMetrics(Carbon $today): array
     {
@@ -116,7 +116,7 @@ class DashboardService
     }
 
     /**
-     * Ambil total ringkasan tahunan dan perhitungan inschiet.
+     * Menghitung total ringkasan tahunan dan algoritma perhitungan inschiet.
      */
     private function getAnnualSummary(int $currentYear, $currentTE): array
     {
@@ -164,7 +164,7 @@ class DashboardService
     }
 
     /**
-     * Ambil data grafik bulanan untuk semua pecahan.
+     * Mengumpulkan data grafik bulanan untuk seluruh jenis pecahan.
      */
     private function getMonthlyChartData(int $currentYear, $currentTE): array
     {
@@ -173,14 +173,14 @@ class DashboardService
 
         $pengemasanMonthly = Pengemasan::where('tahun_anggaran', $currentYear)
             ->when($currentTE, fn($q) => $q->where('tahun_emisi', $currentTE))
-            ->selectRaw("pecahan, strftime('%m', tanggal_pengemasan) as month, SUM(total_bilyet) as total")
+            ->selectRaw("pecahan, TO_CHAR(tanggal_pengemasan, 'MM') as month, SUM(total_bilyet) as total")
             ->groupBy('pecahan', 'month')
             ->get()
             ->groupBy('pecahan');
 
         $penyerahanMonthly = PenyerahanBi::where('tahun_anggaran', $currentYear)
             ->when($currentTE, fn($q) => $q->where('tahun_emisi', $currentTE))
-            ->selectRaw("pecahan, strftime('%m', tanggal_penyerahan) as month, SUM(jumlah_bilyet) as total")
+            ->selectRaw("pecahan, TO_CHAR(tanggal_penyerahan, 'MM') as month, SUM(jumlah_bilyet) as total")
             ->groupBy('pecahan', 'month')
             ->get()
             ->groupBy('pecahan');
@@ -232,7 +232,7 @@ class DashboardService
     }
 
     /**
-     * Ambil data sebaran pecahan dan heatmap aktivitas.
+     * Mendapatkan data sebaran pecahan dan heatmap aktivitas harian.
      */
     private function getDistributionAndHeatmapData(int $currentYear, $currentTE): array
     {
@@ -246,8 +246,8 @@ class DashboardService
         $heatmapData = DB::table('pengemasans')
             ->where('tahun_anggaran', (string)$currentYear)
             ->when($currentTE, fn($q) => $q->where('tahun_emisi', $currentTE))
-            ->selectRaw('DATE(tanggal_pengemasan) as date, SUM(total_bilyet) as total')
-            ->groupBy('date')
+            ->selectRaw("TO_CHAR(tanggal_pengemasan, 'YYYY-MM-DD') as date, SUM(total_bilyet) as total")
+            ->groupByRaw("TO_CHAR(tanggal_pengemasan, 'YYYY-MM-DD')")
             ->pluck('total', 'date')
             ->toArray();
 
@@ -262,7 +262,7 @@ class DashboardService
     }
 
     /**
-     * Ambil data penerimaan HCS berdasarkan pecahan untuk hari ini.
+     * Ambil data penerimaan HCS hari ini yang dikelompokkan berdasarkan pecahan.
      */
     private function getTodayHcsByPecahan(Carbon $today, int $currentYear, $currentTE): array
     {

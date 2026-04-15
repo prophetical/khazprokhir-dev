@@ -31,7 +31,7 @@ class ReceivingReportService
         $query = HcsReceiving::selectRaw('pecahan, SUM(jumlah) as total');
 
         if ($global) {
-            // Global totals only respect TA/TE
+            // Total global hanya mempertimbangkan Tahun Anggaran dan Tahun Emisi.
             if (!empty($filters['tahun_anggaran'])) $query->where('tahun_anggaran', $filters['tahun_anggaran']);
             if (!empty($filters['tahun_emisi'])) $query->where('emisi', $filters['tahun_emisi']);
         } else {

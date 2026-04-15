@@ -786,7 +786,7 @@
 
                 init() {
                     this.fetchData();
-                    setInterval(() => this.fetchData(), 3000);
+                    setInterval(() => this.fetchData(), 30000);
 
                     // Unlock sound on any interaction
                     const unlock = () => {

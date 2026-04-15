@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 class HcsReceivingService
 {
     /**
-     * Store a new HCS receiving record along with its packs, ledger updates, and audit logs.
+     * Menyimpan data penerimaan HCS baru beserta data pack, pembaruan buku stok, dan log audit.
      *
      * @throws Exception
      */
@@ -22,7 +22,7 @@ class HcsReceivingService
         try {
             DB::beginTransaction();
 
-            // Buat data penerimaan HCS
+            // Membuat entri data penerimaan HCS
             $hcs = HcsReceiving::create([
                 'nomor_bon' => $data['nomor_bon'],
                 'tanggal_penerimaan' => $data['tanggal_penerimaan'],
@@ -39,12 +39,14 @@ class HcsReceivingService
                 'created_by' => $userId,
             ]);
 
-            // Buat data pack-nya
+            // Membuat data pack terkait
             $selectedPacksCount = count($data['packs']);
             $isManual = $data['is_manual'] ?? false;
+            $now = now();
+            $packsToInsert = [];
 
             foreach ($data['packs'] as $packNumber) {
-                Pack::create([
+                $packsToInsert[] = [
                     'hcs_receiving_id' => $hcs->id,
                     'batch' => $data['batch'],
                     'seri' => $data['seri'],
@@ -52,10 +54,17 @@ class HcsReceivingService
                     'supplier' => $data['supplier'],
                     'jumlah' => $isManual ? $data['jumlah'] : 45000,
                     'created_by' => $userId,
-                ]);
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
             }
 
-            // Update buku stok (ledger)
+            // Melakukan Bulk Insert untuk penulisan database yang sangat cepat (menghindari masalah N+1)
+            foreach (array_chunk($packsToInsert, 500) as $chunk) {
+                Pack::insert($chunk);
+            }
+
+            // Memperbarui buku stok (ledger)
             $ledger = StockLedger::firstOrCreate(
                 [
                     'pecahan' => $data['pecahan'],
@@ -85,7 +94,7 @@ class HcsReceivingService
     }
 
     /**
-     * Update an existing HCS receiving record, reverting old ledgers and recalculating.
+     * Memperbarui data penerimaan HCS yang sudah ada, mengembalikan posisi stok lama, dan menghitung ulang.
      */
     public function updateReceiving(HcsReceiving $hcs, array $data, int $userId): HcsReceiving
     {
@@ -95,7 +104,7 @@ class HcsReceivingService
 
             $sortedPacks = $hcs->packs()->whereNotNull('hcs_sorting_id')->get()->keyBy('pack_number');
 
-            // 1. Balikin dulu data buku stok yang lama
+            // 1. Mengembalikan saldo data buku stok yang lama
             $oldPacksCount = $hcs->packs()->count();
             $oldLedger = StockLedger::where([
                 'pecahan' => $hcs->pecahan,
@@ -112,10 +121,10 @@ class HcsReceivingService
                 $oldLedger->decrement('total_packed', $decPacked);
             }
 
-            // 2. Hapus pack lama (cuma yang belum disortir biar gak error)
+            // 2. Menghapus data pack lama (hanya yang belum disortir untuk menghindari kesalahan)
             $hcs->packs()->whereNull('hcs_sorting_id')->delete();
 
-            // 3. Update data penerimaan HCS-nya
+            // 3. Memperbarui informasi data penerimaan HCS
             $hcs->update([
                 'nomor_bon' => $data['nomor_bon'],
                 'tanggal_penerimaan' => $data['tanggal_penerimaan'],
@@ -132,13 +141,15 @@ class HcsReceivingService
                 'updated_by' => $userId,
             ]);
 
-            // 4. Buat pack baru (jangan buat ulang yang udah disortir)
+            // 4. Membuat data pack baru (tanpa membuat ulang pack yang sudah disortir)
             $selectedPacksCount = count($data['packs']);
             $isManual = $data['is_manual'] ?? false;
+            $now = now();
+            $packsToInsert = [];
 
             foreach ($data['packs'] as $packNumber) {
                 if (! $sortedPacks->has($packNumber)) {
-                    Pack::create([
+                    $packsToInsert[] = [
                         'hcs_receiving_id' => $hcs->id,
                         'batch' => $data['batch'],
                         'seri' => $data['seri'],
@@ -146,11 +157,19 @@ class HcsReceivingService
                         'supplier' => $data['supplier'],
                         'jumlah' => $isManual ? $data['jumlah'] : 45000,
                         'created_by' => $userId,
-                    ]);
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ];
                 }
             }
 
-            // 5. Update data buku stok yang baru
+            if (!empty($packsToInsert)) {
+                foreach (array_chunk($packsToInsert, 500) as $chunk) {
+                    Pack::insert($chunk);
+                }
+            }
+
+            // 5. Memperbarui data buku stok dengan informasi yang baru
             $newLedger = StockLedger::firstOrCreate([
                 'pecahan' => $data['pecahan'],
                 'batch' => $data['batch'],
@@ -160,7 +179,7 @@ class HcsReceivingService
             $newLedger->increment('total_received', $data['jumlah']);
             $newLedger->increment('total_packed', $selectedPacksCount);
 
-            // 6. Catat di log audit
+            // 6. Mencatat aktivitas ke dalam log audit
             AuditLog::create([
                 'user_id' => $userId,
                 'action' => 'receiving_updated',
@@ -178,7 +197,7 @@ class HcsReceivingService
     }
 
     /**
-     * Delete an existing HCS receiving record and revert side-effects.
+     * Menghapus data penerimaan HCS yang ada dan mengembalikan saldo data buku stok.
      */
     public function deleteReceiving(HcsReceiving $hcs, int $userId): bool
     {
@@ -189,7 +208,7 @@ class HcsReceivingService
                 throw new Exception('Data tidak dapat dihapus karena pack sudah disortir.');
             }
 
-            // Balikin data buku stok
+            // Mengembalikan saldo data buku stok
             $oldPacksCount = $hcs->packs()->count();
             $ledger = StockLedger::where([
                 'pecahan' => $hcs->pecahan,
@@ -205,12 +224,12 @@ class HcsReceivingService
                 $ledger->decrement('total_packed', $decPacked);
             }
 
-            // Hapus data pack
+            // Menghapus data pack terkait
             $hcs->packs()->delete();
 
             $id = $hcs->id;
 
-            // Hapus data penerimaan HCS
+            // Menghapus data utama penerimaan HCS
             $hcs->delete();
 
             // Catat di log audit

@@ -1,0 +1,27 @@
+services:
+  pgsql:
+    image: 'postgres:17'
+    ports:
+      - '${FORWARD_DB_PORT:-5432}:5432'
+    environment:
+      PGPASSWORD: '${DB_PASSWORD:-secret}'
+      POSTGRES_DB: '${DB_DATABASE:-khazprokhir}'
+      POSTGRES_USER: '${DB_USERNAME:-khazpro}'
+      POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
+    volumes:
+      - 'khazpro-pgsql:/var/lib/postgresql/data'
+      - './docker/pgsql/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
+    networks:
+      - khazpro
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "${DB_DATABASE:-khazprokhir}", "-U", "${DB_USERNAME:-khazpro}"]
+      retries: 3
+      timeout: 5s
+
+networks:
+  khazpro:
+    driver: bridge
+
+volumes:
+  khazpro-pgsql:
+    driver: local

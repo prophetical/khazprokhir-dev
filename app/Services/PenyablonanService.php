@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 class PenyablonanService
 {
     /**
-     * Get the current global stock of blank boxes.
+     * Mendapatkan jumlah stok global kotak blanko saat ini.
      */
     public function getCurrentStok()
     {
@@ -17,9 +17,9 @@ class PenyablonanService
     }
 
     /**
-     * Update the global stock balance.
-     * @param int $jumlah The amount to change
-     * @param string $tipe 'tambah' or 'kurangi'
+     * Memperbarui saldo stok global.
+     * @param int $jumlah Jumlah yang akan diubah.
+     * @param string $tipe Jenis operasi: 'tambah' atau 'kurangi'.
      * @return array ['stok' => int, 'warning' => bool]
      */
     public function updateStok(int $jumlah, string $tipe)
@@ -44,7 +44,7 @@ class PenyablonanService
     }
 
     /**
-     * Check if a box range overlaps with existing screen-printed boxes for the same ID.
+     * Memeriksa apakah rentang nomor dus beririsan dengan data penyablonan dus yang sudah ada.
      */
     public function checkDuplicateRange(string $pecahan, int $ta, int $te, int $awal, int $akhir)
     {
@@ -57,7 +57,7 @@ class PenyablonanService
     }
 
     /**
-     * Calculate the number of boxes based on start and end numbers (inclusive).
+     * Menghitung jumlah dus berdasarkan nomor awal dan nomor akhir (secara inklusif).
      */
     public function calculateJumlah(int $awal, int $akhir)
     {
