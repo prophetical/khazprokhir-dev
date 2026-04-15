@@ -540,7 +540,7 @@
                             class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('x-pengganti.mapping.lookup') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
                             Cari Seri Pengganti
                         </a>
-                        <div class="h-px w-full bg-white/10 my-1"></div>
+                        <div class="h-1 w-full bg-white/30 my-1"></div>
                         <a href="{{ route('x-pengganti.seri.index') }}"
                             class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('x-pengganti.seri.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
                             Form Input Master Seri

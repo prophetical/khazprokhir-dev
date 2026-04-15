@@ -151,15 +151,15 @@ class ReplacementMappingService
     }
 
     /**
-     * Mendaftarkan penggantian satu bilyet.
+     * Input inschiet satu bilyet.
      *
      * LOGIKA PEMECAHAN (SPLIT):
      * Jika nomor seri yang diinput ternyata berada di tengah-tengah rentang yang sudah ada (misal: ada data 1001-2000, 
      * lalu kita input penggantian baru untuk nomor 1500), maka sistem akan MEMECAH rentang lama tersebut menjadi 3:
      * 
-     * 1. Bagian Kiri (1001-1499): Mempertahankan data pemetaan pengganti yang lama.
-     * 2. Bilyet Tunggal (1500): Menggunakan data pemetaan pengganti yang baru saja diinput.
-     * 3. Bagian Kanan (1501-2000): Mempertahankan data pemetaan pengganti yang lama.
+     * 1. Bagian Kiri (1001-1499): Mempertahankan data inschiet pengganti yang lama.
+     * 2. Bilyet Tunggal (1500): Menggunakan data inschiet pengganti yang baru saja diinput.
+     * 3. Bagian Kanan (1501-2000): Mempertahankan data inschiet pengganti yang lama.
      * 
      * Hal ini otomatis dilakukan untuk menghindari overlap data, karena database 
      * melarang adanya dua aturan penggantian pada nomor seri yang sama.
@@ -194,7 +194,7 @@ class ReplacementMappingService
                 ->first();
 
             if (!$existing) {
-                // Tidak ada rentang yang ada --> buat pemetaan satu bilyet baru.
+                // Tidak ada rentang yang ada --> buat inschiet satu bilyet baru.
                 // Turunkan nomor pack dari nomor seri: 701500 --> pack 701.
                 $packNumber = intdiv($sourceSerial - 1, 1000);
 
@@ -215,7 +215,7 @@ class ReplacementMappingService
                 return ['action' => 'created', 'rows_affected' => 1];
             }
 
-            // ── PEMISAHAN RENTANG (RANGE SPLIT) ──
+            // ── PEMISAHAN RANGE (RANGE SPLIT) ──
             // Nomor seri berada di dalam rentang yang sudah ada. Pisahkan menjadi hingga 3 bagian.
 
             $origSourceStart = $existing->source_start;

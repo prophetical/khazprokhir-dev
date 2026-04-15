@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center gap-3">
-            <h2 class="font-black text-xl text-gray-800 dark:text-white leading-tight tracking-tight">Pemetaan Seri X
+            <h2 class="font-black text-xl text-gray-800 dark:text-white leading-tight tracking-tight">Inschiet Seri X
                 Pengganti
             </h2>
         </div>
@@ -15,20 +15,20 @@
                 class="bg-white dark:bg-slate-800 overflow-hidden shadow-sm sm:rounded-2xl border border-gray-100 dark:border-slate-700">
                 <div class="p-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div>
-                        <h3 class="text-lg font-black text-gray-800 dark:text-white leading-tight">Pemetaan Seri Asal ↔
+                        <h3 class="text-lg font-black text-gray-800 dark:text-white leading-tight">Inschiet Seri X
                             Pengganti</h3>
                         <p class="text-xs text-gray-400 dark:text-slate-500 font-bold uppercase tracking-widest mt-1">
-                            Pilih master seri untuk melakukan input mapping range serial
+                            Pilih master seri untuk melakukan input inschiet seri x pengganti
                         </p>
                     </div>
                     <a href="{{ route('x-pengganti.mapping.lookup') }}"
-                        class="inline-flex items-center justify-center gap-3 px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:from-emerald-700 hover:to-teal-700 transition-all duration-300 shadow-xl shadow-emerald-200 dark:shadow-emerald-900/20 active:scale-95 group">
+                        class="inline-flex items-center justify-center gap-3 px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:from-emerald-700 hover:to-teal-700 transition-all duration-300 active:scale-95 group">
                         <svg class="w-4 h-4 transition-transform group-hover:scale-110 duration-300" fill="none"
                             stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
-                        Cari Serial
+                        Cari Seri
                     </a>
                 </div>
             </div>
@@ -126,7 +126,8 @@
                             @forelse($masters as $seri)
                                 <tr class="hover:bg-gray-50/50 dark:hover:bg-slate-700/50 transition-colors text-[12px]">
                                     <td class="px-4 py-3 text-center text-gray-400 dark:text-slate-500 font-bold">
-                                        {{ $masters->firstItem() + $loop->index }}</td>
+                                        {{ $masters->firstItem() + $loop->index }}
+                                    </td>
                                     <td class="px-4 py-3 text-center">
                                         <span
                                             class="inline-flex items-center justify-center w-7 h-7 rounded-lg {{ $pchClasses[$seri->pecahan] ?? 'bg-gray-500' }} text-white font-black text-[11px] shadow-sm">{{ $seri->pecahan }}</span>
@@ -134,16 +135,20 @@
                                     <td class="px-4 py-3 font-bold text-gray-700 dark:text-gray-200">{{ $seri->seri }}</td>
                                     <td
                                         class="px-4 py-3 text-center font-black text-gray-600 dark:text-gray-300 tracking-wider">
-                                        {{ $seri->batch }}</td>
+                                        {{ $seri->batch }}
+                                    </td>
                                     <td class="px-4 py-3 text-center text-gray-500 dark:text-slate-400 font-bold">
-                                        {{ $seri->tahun_anggaran }}</td>
+                                        {{ $seri->tahun_anggaran }}
+                                    </td>
                                     <td class="px-4 py-3 text-center text-gray-500 dark:text-slate-400 font-bold">
-                                        {{ $seri->tahun_emisi }}</td>
+                                        {{ $seri->tahun_emisi }}
+                                    </td>
                                     <td class="px-4 py-3">
                                         <div class="flex items-center justify-center gap-1.5">
                                             <div
                                                 class="w-6 h-6 rounded bg-violet-600 flex items-center justify-center text-[9px] font-black text-white">
-                                                {{ strtoupper(substr($seri->user->name ?? '?', 0, 1)) }}</div>
+                                                {{ strtoupper(substr($seri->user->name ?? '?', 0, 1)) }}
+                                            </div>
                                             <span
                                                 class="text-[9px] font-black text-gray-500 dark:text-slate-400 uppercase truncate max-w-[60px]">{{ $seri->user->name ?? '-' }}</span>
                                         </div>

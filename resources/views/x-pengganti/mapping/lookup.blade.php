@@ -7,7 +7,15 @@
             <h2 class="font-black text-xl text-gray-800 dark:text-white leading-tight tracking-tight">Cari Seri Pengganti</h2>
         </div>
     </x-slot>
-
+    <style>
+        input::placeholder {
+            font-size: 0.7rem !important;
+            text-transform: none !important;
+            font-weight: 500 !important;
+            letter-spacing: normal !important;
+            opacity: 0.6;
+        }
+    </style>
     <div class="py-8">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
@@ -22,13 +30,13 @@
                                 <label class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Prefix (3 Huruf)</label>
                                 <input type="text" name="prefix" value="{{ $prefix }}" required maxlength="3" pattern="[A-Za-z]{3}" oninput="this.value = this.value.toUpperCase()"
                                     class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold uppercase focus:ring-emerald-500 focus:border-emerald-500"
-                                    placeholder="ABA">
+                                    placeholder="Contoh: ABA">
                             </div>
                             <div>
-                                <label class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Nomor Serial</label>
+                                <label class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Nomor Seri</label>
                                 <input type="number" name="serial" value="{{ $serial }}" required min="1"
                                     class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold focus:ring-emerald-500 focus:border-emerald-500"
-                                    placeholder="701500">
+                                    placeholder="Contoh: 701500">
                             </div>
                             <div>
                                 <label class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Mode</label>

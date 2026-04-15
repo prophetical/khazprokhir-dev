@@ -190,7 +190,7 @@
                                             <input type="text" name="rep_seri2_base" required maxlength="2"
                                                 pattern="[A-Za-z]{2}" oninput="this.value = this.value.toUpperCase()"
                                                 class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold uppercase focus:ring-emerald-500 focus:border-emerald-500"
-                                                placeholder="Contoh: ZZ" value="{{ old('rep_seri2_base') }}">
+                                                placeholder="Contoh: RE" value="{{ old('rep_seri2_base') }}">
                                         </div>
                                     </div>
                                     <div>
@@ -229,12 +229,10 @@
                                 <div>
                                     <h5
                                         class="text-xs font-black text-amber-800 dark:text-amber-300 uppercase tracking-widest mb-1">
-                                        Mode Per Brood</h5>
+                                        Inschiet Brood</h5>
                                     <p
                                         class="text-[11px] font-medium text-amber-600/80 dark:text-amber-400/80 leading-relaxed">
-                                        Menangani kerusakan yang terjadi secara berurutan dalam range 1 Brood (1.000
-                                        Bilyet) pada satu spesifik prefix huruf. Ini akan menyisipkan 1 baris peta baru
-                                        di database.</p>
+                                        Input seri inschiet untuk 1 brood pada satu spesifik prefix seri akhir.</p>
                                 </div>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -247,7 +245,7 @@
                                             Pack</label>
                                         <input type="number" name="pack_number" required min="1"
                                             class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold focus:ring-amber-500 focus:border-amber-500"
-                                            placeholder="701" value="{{ old('pack_number') }}">
+                                            placeholder="Contoh: 701" value="{{ old('pack_number') }}">
                                     </div>
                                     <div>
                                         <label
@@ -256,28 +254,28 @@
                                         <input type="text" name="source_prefix" required maxlength="3"
                                             pattern="[A-Za-z]{3}" oninput="this.value = this.value.toUpperCase()"
                                             class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold uppercase focus:ring-amber-500 focus:border-amber-500"
-                                            placeholder="ABA" value="{{ old('source_prefix') }}">
+                                            placeholder="Contoh: ABA" value="{{ old('source_prefix') }}">
                                     </div>
                                     <div class="grid grid-cols-2 gap-3">
                                         <div>
                                             <label
-                                                class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Serial
+                                                class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Seri
                                                 Awal</label>
                                             <input type="text" name="source_start" required maxlength="6"
                                                 inputmode="numeric"
                                                 oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                                 class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold focus:ring-amber-500 focus:border-amber-500"
-                                                placeholder="701001" value="{{ old('source_start') }}">
+                                                placeholder="Contoh: 701001" value="{{ old('source_start') }}">
                                         </div>
                                         <div>
                                             <label
-                                                class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Serial
+                                                class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Seri
                                                 Akhir</label>
                                             <input type="text" name="source_end" required maxlength="6"
                                                 inputmode="numeric"
                                                 oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                                 class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold focus:ring-amber-500 focus:border-amber-500"
-                                                placeholder="702000" value="{{ old('source_end') }}">
+                                                placeholder="Contoh: 702000" value="{{ old('source_end') }}">
                                         </div>
                                     </div>
                                     <div>
@@ -302,7 +300,7 @@
                                         <input type="text" name="replacement_prefix" required maxlength="3"
                                             pattern="[A-Za-z]{3}" oninput="this.value = this.value.toUpperCase()"
                                             class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold uppercase focus:ring-emerald-500 focus:border-emerald-500"
-                                            placeholder="ZZA" value="{{ old('replacement_prefix') }}">
+                                            placeholder="Contoh: RBC" value="{{ old('replacement_prefix') }}">
                                     </div>
                                     <div class="grid grid-cols-2 gap-3">
                                         <div>
@@ -313,7 +311,7 @@
                                                 inputmode="numeric"
                                                 oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                                 class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold focus:ring-emerald-500 focus:border-emerald-500"
-                                                placeholder="000001" value="{{ old('replacement_start') }}">
+                                                placeholder="Contoh: 000001" value="{{ old('replacement_start') }}">
                                         </div>
                                         <div>
                                             <label
@@ -323,7 +321,7 @@
                                                 inputmode="numeric"
                                                 oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                                 class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold focus:ring-emerald-500 focus:border-emerald-500"
-                                                placeholder="001000" value="{{ old('replacement_end') }}">
+                                                placeholder="Contoh:001000" value="{{ old('replacement_end') }}">
                                         </div>
                                     </div>
                                 </div>
@@ -331,7 +329,7 @@
                             <div class="mt-6 flex justify-end">
                                 <button type="submit"
                                     class="px-6 py-3 bg-gradient-to-r from-amber-600 to-orange-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:from-amber-700 hover:to-orange-700 transition-all shadow-lg active:scale-95">
-                                    Simpan Brood Mapping
+                                    Simpan Inschiet Brood
                                 </button>
                             </div>
                         </form>
@@ -353,12 +351,13 @@
                                 <div>
                                     <h5
                                         class="text-xs font-black text-blue-800 dark:text-blue-300 uppercase tracking-widest mb-1">
-                                        Mode Melintang / Vell</h5>
+                                        Inschiet Vell</h5>
                                     <p
                                         class="text-[11px] font-medium text-blue-600/80 dark:text-blue-400/80 leading-relaxed">
-                                        Gunakan ini jika kerusakan menimpa 1 Lembar Cetak Utuh (Sheet/Vell). Sistem akan
-                                        otomatis mencari dan memotong (split-range) nomor seri tersebut dari 45 prefix
-                                        huruf secara bersamaan dalam satu kali eksekusi simpan.</p>
+                                        Untuk inschiet per vell. Sistem akan
+                                        otomatis mencari dan memotong <i>(split-range)</i> nomor seri tersebut dari 45
+                                        prefix
+                                        seri secara bersamaan dalam satu kali eksekusi simpan.</p>
                                 </div>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -368,15 +367,15 @@
                                     <div>
                                         <label
                                             class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Nomor
-                                            Serial (Vell)</label>
+                                            Seri (Vell)</label>
                                         <input type="text" name="source_serial" required maxlength="6"
                                             inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                             class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold focus:ring-blue-500 focus:border-blue-500"
-                                            placeholder="701500" value="{{ old('source_serial') }}">
+                                            placeholder="Contoh: 701500" value="{{ old('source_serial') }}">
                                     </div>
                                     <div class="p-3 bg-blue-50 dark:bg-blue-900/10 rounded-xl">
                                         <p class="text-[9px] font-black text-blue-500 uppercase tracking-widest">Akan
-                                            diulang otomatis ke seluruh 45 prefix base</p>
+                                            diulang otomatis ke seluruh 45 prefix seri</p>
                                     </div>
                                 </div>
                                 <div class="space-y-4">
@@ -390,7 +389,7 @@
                                             <input type="text" name="rep_seri1_base" required maxlength="2"
                                                 pattern="[A-Za-z]{2}" oninput="this.value = this.value.toUpperCase()"
                                                 class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold uppercase focus:ring-emerald-500 focus:border-emerald-500"
-                                                placeholder="ZZ" value="{{ old('rep_seri1_base') }}">
+                                                placeholder="Contoh: NC" value="{{ old('rep_seri1_base') }}">
                                         </div>
                                         <div>
                                             <label
@@ -399,7 +398,7 @@
                                             <input type="text" name="rep_seri2_base" required maxlength="2"
                                                 pattern="[A-Za-z]{2}" oninput="this.value = this.value.toUpperCase()"
                                                 class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold uppercase focus:ring-emerald-500 focus:border-emerald-500"
-                                                placeholder="YY" value="{{ old('rep_seri2_base') }}">
+                                                placeholder="Contoh: RB" value="{{ old('rep_seri2_base') }}">
                                         </div>
                                     </div>
                                     <div>
@@ -416,7 +415,7 @@
                             <div class="mt-6 flex justify-end">
                                 <button type="submit"
                                     class="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg active:scale-95">
-                                    Simpan Vell Mapping (45 Baris)
+                                    Simpan Inschiet Vell (45 Baris)
                                 </button>
                             </div>
                         </form>
@@ -428,8 +427,8 @@
                             @csrf
                             <input type="hidden" name="x_pengganti_seri_id" value="{{ $seri->id }}">
                             <div
-                                class="mb-6 p-4 bg-rose-50/80 dark:bg-rose-900/10 border border-rose-100 dark:border-rose-800/30 rounded-xl flex gap-4">
-                                <div class="shrink-0 text-rose-500">
+                                class="mb-6 p-4 bg-emerald-100 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700/50 rounded-xl flex gap-4">
+                                <div class="shrink-0 text-emerald-600">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -437,19 +436,19 @@
                                 </div>
                                 <div>
                                     <h5
-                                        class="text-xs font-black text-rose-800 dark:text-rose-300 uppercase tracking-widest mb-1">
-                                        Mode Bilyet Tunggal (Range Split)</h5>
+                                        class="text-xs font-black text-emerald-900 dark:text-emerald-200 uppercase tracking-widest mb-1">
+                                        Inschiet Bilyet</h5>
                                     <p
-                                        class="text-[11px] font-medium text-rose-600/80 dark:text-rose-400/80 leading-relaxed">
-                                        Merupakan operasi paling presisi. Mendaftarkan mapping untuk tepat 1 nilai
-                                        Bilyet. Jika nilai seri Anda ini memotong/masuk di tengah range pemetaan yang
-                                        sudah ada, algoritma basis data cerdas mesin ini akan memecah range asal menjadi
-                                        3 pecahan terpisah tanpa menghancurkan data aslinya.</p>
+                                        class="text-[11px] font-medium text-emerald-600/80 dark:text-emerald-400/80 leading-relaxed">
+                                        Inschiet per 1 bilyet. Jika seri x pengganti ini memotong/masuk di tengah range
+                                        inschiet yang
+                                        sudah ada, algoritma ini otomatis akan memecah range asal menjadi
+                                        3 bagian terpisah tanpa menghapus data aslinya.</p>
                                 </div>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div class="space-y-4">
-                                    <h4 class="text-xs font-black text-rose-600 uppercase tracking-widest">Seri Asal
+                                    <h4 class="text-xs font-black text-emerald-600 uppercase tracking-widest">Seri Asal
                                         (Rusak)</h4>
                                     <div>
                                         <label
@@ -457,8 +456,8 @@
                                             Huruf Seri (3 huruf)</label>
                                         <input type="text" name="source_prefix" required maxlength="3"
                                             pattern="[A-Za-z]{3}" oninput="this.value = this.value.toUpperCase()"
-                                            class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold uppercase focus:ring-rose-500 focus:border-rose-500"
-                                            placeholder="ABA" value="{{ old('source_prefix') }}">
+                                            class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold uppercase focus:ring-emerald-500 focus:border-emerald-500"
+                                            placeholder="Contoh: ABA" value="{{ old('source_prefix') }}">
                                     </div>
                                     <div>
                                         <label
@@ -466,8 +465,8 @@
                                             Serial</label>
                                         <input type="text" name="source_serial" required maxlength="6"
                                             inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                            class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold focus:ring-rose-500 focus:border-rose-500"
-                                            placeholder="701500" value="{{ old('source_serial') }}">
+                                            class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold focus:ring-emerald-500 focus:border-emerald-500"
+                                            placeholder="Contoh: 701500" value="{{ old('source_serial') }}">
                                     </div>
                                 </div>
                                 <div class="space-y-4">
@@ -480,27 +479,31 @@
                                         <input type="text" name="replacement_prefix" required maxlength="3"
                                             pattern="[A-Za-z]{3}" oninput="this.value = this.value.toUpperCase()"
                                             class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold uppercase focus:ring-emerald-500 focus:border-emerald-500"
-                                            placeholder="YYA" value="{{ old('replacement_prefix') }}">
+                                            placeholder="Contoh: RCA" value="{{ old('replacement_prefix') }}">
                                     </div>
                                     <div>
                                         <label
                                             class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Nomor
-                                            Serial</label>
+                                            Seri</label>
                                         <input type="text" name="replacement_serial" required maxlength="6"
                                             inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                             class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold focus:ring-emerald-500 focus:border-emerald-500"
-                                            placeholder="000001" value="{{ old('replacement_serial') }}">
+                                            placeholder="Contoh: 000001" value="{{ old('replacement_serial') }}">
                                     </div>
                                 </div>
                             </div>
-                            <div class="mt-4 p-3 bg-rose-50 dark:bg-rose-900/10 rounded-xl">
-                                <p class="text-[9px] font-black text-rose-500 uppercase tracking-widest">⚠️ Jika serial
-                                    ini ada di dalam range existing, range akan otomatis di-split menjadi 3 bagian</p>
+                            <div
+                                class="mt-4 p-3 bg-emerald-100 dark:bg-emerald-950/30 rounded-xl border border-emerald-200 dark:border-emerald-800/50">
+                                <p
+                                    class="text-[9px] font-black text-emerald-800 dark:text-emerald-400 uppercase tracking-widest">
+                                    ⚠️ Jika seri
+                                    ini ada di dalam range x pengganti yang sudah di input sebelumnya, range akan
+                                    otomatis di-split menjadi 3 bagian</p>
                             </div>
                             <div class="mt-4 flex justify-end">
                                 <button type="submit"
-                                    class="px-6 py-3 bg-gradient-to-r from-rose-600 to-pink-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:from-rose-700 hover:to-pink-700 transition-all shadow-lg active:scale-95">
-                                    Simpan Bilyet Mapping
+                                    class="px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:from-emerald-700 hover:to-teal-700 transition-all shadow-lg active:scale-95">
+                                    Simpan Inschiet Bilyet
                                 </button>
                             </div>
                         </form>

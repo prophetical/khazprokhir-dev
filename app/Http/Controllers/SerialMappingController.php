@@ -59,7 +59,7 @@ class SerialMappingController extends Controller
         $seri   = XPenggantiSeri::findOrFail($seriId);
 
         // Existing mappings for this seri
-        $mappings = $this->mappingService->getMappingsForSeri($seriId, 50);
+        $mappings = $this->mappingService->getMappingsForSeri($seriId, 50)->withQueryString();
 
         // Stats
         $totalMappings = SerialRangeMapping::forSeri($seriId)->count();
