@@ -41,7 +41,7 @@
         </td>
 
         {{-- SERI PENGGANTI (EDITABLE) --}}
-        <td style="padding:4px 2px; border:1px solid #e2e8f0; vertical-align:middle; background-color:#faf5ff;">
+        <td style="padding:4px 2px; border:1px solid #e2e8f0; vertical-align:middle; background-color:#faf5ff; display:none;">
             <input type="text" maxlength="6" name="packs[{{ $pack - 1 }}][seri_pengganti]"
                 value="{{ $packData['seri_pengganti'] }}" class="rikyet-input seri-pengganti-input"
                 style="width:100%; height:26px; text-align:center; font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:-0.03em; background:#fff; border:1px solid #e5e7eb; border-radius:3px; outline:none;"

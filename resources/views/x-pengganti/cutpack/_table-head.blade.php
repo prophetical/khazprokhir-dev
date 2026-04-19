@@ -2,7 +2,7 @@
 <thead>
     @if(isset($title))
     <tr style="background-color:#1e293b !important;">
-        <th colspan="7"
+        <th colspan="4"
             style="position:sticky; top:64px; z-index:40; background-color:#1e293b !important;
                 padding:5px 4px; text-align:center; font-size:8.5px; font-weight:900;
                 text-transform:uppercase; letter-spacing:0.1em; color:#ffffff;
@@ -30,7 +30,7 @@
         <th colspan="3"
             style="position:sticky; top:83px; z-index:29; padding:4px 2px;
             border:1px solid rgba(255,255,255,0.2); border-top:none;
-            background-color:#4f46e5 !important;">
+            background-color:#4f46e5 !important; display:none;">
             Keterangan
         </th>
     </tr>
@@ -50,12 +50,12 @@
         {{-- Keterangan sub --}}
         <th style="position:sticky; top:101px; z-index:29; padding:3px 2px;
             border:1px solid rgba(255,255,255,0.2); border-top:none; min-width:45px;
-            background-color:#3730a3 !important;">Pack</th>
+            background-color:#3730a3 !important; display:none;">Pack</th>
         <th style="position:sticky; top:101px; z-index:29; padding:3px 4px;
             border:1px solid rgba(255,255,255,0.2); border-top:none; min-width:75px;
-            background-color:#1e1b4b !important; color:#a5b4fc;">Seri</th>
+            background-color:#1e1b4b !important; color:#a5b4fc; display:none;">Seri</th>
         <th style="position:sticky; top:101px; z-index:29; padding:3px 2px;
             border:1px solid rgba(255,255,255,0.2); border-top:none; min-width:50px;
-            background-color:#3730a3 !important;">Bilyet</th>
+            background-color:#3730a3 !important; display:none;">Bilyet</th>
     </tr>
 </thead>

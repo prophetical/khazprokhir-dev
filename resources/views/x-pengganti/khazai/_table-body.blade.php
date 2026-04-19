@@ -38,7 +38,7 @@ Kolom 'seri_pengganti' dapat diisi manual.
         </td>
 
         {{-- SERI PENGGANTI (Editable) --}}
-        <td class="px-1 py-1 border-x border-gray-100 dark:border-slate-700/50 align-middle">
+        <td class="px-1 py-1 border-x border-gray-100 dark:border-slate-700/50 align-middle" style="display:none;">
             <input type="text" maxlength="6"
                 name="packs[{{ $pack - 1 }}][seri_pengganti]"
                 value="{{ $packData['seri_pengganti'] }}"

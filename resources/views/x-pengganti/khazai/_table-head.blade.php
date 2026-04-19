@@ -3,7 +3,7 @@
     @if(isset($title))
     {{-- Baris judul group pack --}}
     <tr style="background-color:#1e293b !important;">
-        <th colspan="3"
+        <th colspan="2"
             style="position:sticky; top:64px; z-index:40; background-color:#1e293b !important;
                 padding:5px 4px; text-align:center; font-size:8.5px; font-weight:900;
                 text-transform:uppercase; letter-spacing:0.1em; color:#ffffff;
@@ -28,7 +28,7 @@
         </th>
         <th style="position:sticky; top:83px; z-index:29; padding:5px 4px;
             border:1px solid rgba(255,255,255,0.2); border-top:none; min-width:75px;
-            background-color:#7c3aed !important;">
+            background-color:#7c3aed !important; display:none;">
             Seri<br>Pengganti
         </th>
     </tr>

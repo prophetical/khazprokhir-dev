@@ -53,21 +53,21 @@ Partial: tbody Cutpack — FLAT (1 baris per pack, tanpa slot).
         </td>
 
         {{-- KETERANGAN PENGGANTI (EDITABLE) --}}
-        <td class="p-1 border border-gray-100 dark:border-slate-700/50 align-middle">
+        <td class="p-1 border border-gray-100 dark:border-slate-700/50 align-middle" style="display:none;">
             <input type="text" inputmode="numeric" oninput="onlyDigits(this)"
                 name="packs[{{ $pack - 1 }}][nomor_pack_pengganti]"
                 value="{{ $packData['nomor_pack_pengganti'] }}"
                 class="w-full h-6 px-1 text-center text-[10px] font-bold bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-md"
                 autocomplete="off">
         </td>
-        <td class="p-1 border border-gray-200 dark:border-slate-600 align-middle bg-indigo-50/20 dark:bg-indigo-900/5">
+        <td class="p-1 border border-gray-200 dark:border-slate-600 align-middle bg-indigo-50/20 dark:bg-indigo-900/5" style="display:none;">
             <input type="text" maxlength="6" oninput="formatSeriPengganti(this)" onkeydown="handleSeriKeydown(event, this)"
                 name="packs[{{ $pack - 1 }}][seri_pengganti]" data-pack="{{ $pack }}"
                 value="{{ $packData['seri_pengganti'] }}"
                 class="seri-pengganti-input w-full h-6 px-1 text-center text-[10px] font-black uppercase tracking-tighter bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-md focus:border-indigo-400 focus:ring-1 focus:ring-indigo-200"
                 autocomplete="off">
         </td>
-        <td class="p-1 border border-gray-100 dark:border-slate-700/50 align-middle">
+        <td class="p-1 border border-gray-100 dark:border-slate-700/50 align-middle" style="display:none;">
             <input type="text" inputmode="numeric" oninput="onlyDigits(this)"
                 name="packs[{{ $pack - 1 }}][nomor_bilyet_pengganti]"
                 value="{{ $packData['nomor_bilyet_pengganti'] }}"

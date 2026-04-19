@@ -1,7 +1,7 @@
 {{-- Partial: thead Rikyet — FLAT (tanpa slot) --}}
 <thead>
     <tr style="background-color:#0f766e !important;">
-        <th colspan="5"
+        <th colspan="4"
             style="position:sticky; top:64px; z-index:30; background-color:#0f766e !important; padding:5px 4px; text-align:center; font-size:8.5px; font-weight:900; text-transform:uppercase; letter-spacing:0.1em; color:#ffffff; border-bottom:1px solid #0d9488;">
             {{ $title }}
         </th>
@@ -16,7 +16,7 @@
             Jumlah Rusak <span style="font-size:6px; opacity:0.8;">(Auto)</span>
         </th>
         <th rowspan="2"
-            style="position:sticky; top:83px; z-index:30; padding:4px 2px; border:1px solid rgba(255,255,255,0.25); border-top:none; min-width:60px; color:#ffffff; font-size:7px; background-color:#0d9488 !important;">
+            style="position:sticky; top:83px; z-index:30; padding:4px 2px; border:1px solid rgba(255,255,255,0.25); border-top:none; min-width:60px; color:#ffffff; font-size:7px; background-color:#0d9488 !important; display:none;">
             Seri<br>Pengganti
         </th>
     </tr>
