@@ -319,37 +319,18 @@
                 input.value = input.value.replace(/[^0-9]/g, '');
             }
 
-            let grandTotalTimeout;
-
-            function calcTotal(p, type) {
-                const inputs = document.querySelectorAll(`.calc-${type}-pack-${p}`);
-                let sum = 0;
-                inputs.forEach(inp => {
-                    const val = parseInt(inp.value);
-                    if (!isNaN(val)) sum += val;
-                });
-                const targetEl = document.getElementById(`total-${type}-pack-${p}`);
-                if (targetEl) {
-                    targetEl.value = sum > 0 ? sum : '';
-                    targetEl.className = sum > 0
-                        ? `w-full text-center bg-transparent border-none font-black text-[11px] p-0 ${type === 'campuran' ? 'text-indigo-500' : 'text-amber-600 dark:text-amber-400'}`
-                        : "w-full text-center bg-transparent border-none font-bold text-[11px] p-0 text-gray-300 dark:text-slate-700";
-                }
-
-                // Debounce Grand Total agar tidak lag saat mengetik cepat
-                clearTimeout(grandTotalTimeout);
-                grandTotalTimeout = setTimeout(() => {
-                    updateGrandTotal();
-                }, 300);
-            }
-
             function updateGrandTotal() {
                 let g1 = 0, g2 = 0, gc = 0;
-                for (let i = 1; i <= 100; i++) {
-                    g1 += parseInt(document.getElementById(`total-seri1-pack-${i}`)?.value || 0);
-                    g2 += parseInt(document.getElementById(`total-seri2-pack-${i}`)?.value || 0);
-                    gc += parseInt(document.getElementById(`total-campuran-pack-${i}`)?.value || 0);
-                }
+                document.querySelectorAll('.badg-s1').forEach(el => {
+                    const v = parseInt(el.textContent); if (!isNaN(v) && v > 0) g1 += v;
+                });
+                document.querySelectorAll('.badg-s2').forEach(el => {
+                    const v = parseInt(el.textContent); if (!isNaN(v) && v > 0) g2 += v;
+                });
+                document.querySelectorAll('.badg-c').forEach(el => {
+                    const v = parseInt(el.textContent); if (!isNaN(v) && v > 0) gc += v;
+                });
+
                 const fmt = n => n.toLocaleString('id-ID');
                 const g1El = document.getElementById('grand-total-seri1'); if(g1El) g1El.textContent = fmt(g1);
                 const g2El = document.getElementById('grand-total-seri2'); if(g2El) g2El.textContent = fmt(g2);
@@ -372,35 +353,37 @@
             }
 
             document.addEventListener('DOMContentLoaded', () => {
-                // Enter key navigation (like Excel)
+                // Enter key navigation
                 document.addEventListener('keydown', function (e) {
                     if (e.key !== 'Enter') return;
                     const inp = e.target;
-                    if (!inp.classList.contains('khazai-input')) return;
+                    if (!inp.classList.contains('seri-pengganti-input')) return;
                     e.preventDefault();
 
-                    const col = inp.dataset.col;
                     const pack = parseInt(inp.dataset.pack);
-                    const slot = parseInt(inp.dataset.slot);
-
-                    let nPack = pack, nSlot = slot + 1;
-                    if (nSlot > 4) { nSlot = 1; nPack = pack + 1; }
+                    const nPack = pack + 1;
                     if (nPack > 100) return;
 
                     if (nPack === 51 && currentPage === 1) showPage(2);
                     if (nPack === 1 && currentPage === 2) showPage(1);
 
-                    const next = document.querySelector(`.khazai-input[data-pack="${nPack}"][data-slot="${nSlot}"][data-col="${col}"]`);
+                    const next = document.querySelector(`.seri-pengganti-input[data-pack="${nPack}"]`);
                     if (next) { next.focus(); next.select(); }
                 });
 
                 updateGrandTotal();
+
+                // Format existing
+                document.querySelectorAll('.seri-pengganti-input').forEach(inp => {
+                    if (inp.value) formatSeriPengganti(inp);
+                });
+
                 document.getElementById('footer-btn-1')?.classList.add('active');
             });
 
             // ── 4. Smart Submit (JSON Edition) ───────────────────
             document.getElementById('cutpack-form')?.addEventListener('submit', function (e) {
-                e.preventDefault(); // Stop normal massive DOM submission
+                e.preventDefault();
                 const form = e.target;
                 const btn = document.querySelector('button[type="submit"][form="cutpack-form"]');
 
@@ -414,21 +397,20 @@
                 let hasAnyData = false;
 
                 for (let p = 1; p <= 100; p++) {
-                    const packInputs = form.querySelectorAll(`input[data-pack="${p}"]:not([type="hidden"])`);
-                    let hasData = false;
-                    packInputs.forEach(inp => { if (inp.value && inp.value.trim() !== '') hasData = true; });
+                    const index = p - 1;
+                    const spValue = form.querySelector(`input[name="packs[${index}][seri_pengganti]"]`)?.value?.trim() || '';
+                    const nppValue = form.querySelector(`input[name="packs[${index}][nomor_pack_pengganti]"]`)?.value?.trim() || '';
+                    const nbpValue = form.querySelector(`input[name="packs[${index}][nomor_bilyet_pengganti]"]`)?.value?.trim() || '';
 
-                    if (hasData) {
+                    if (spValue || nppValue || nbpValue) {
                         // VALIDATION: Check Seri Pengganti format (XX-XX9)
-                        const spValue = form.querySelector(`input[name="packs[${p}][seri_pengganti]"]`)?.value || '';
                         if (spValue && !/^[A-Z]{2}-[A-Z]{2}[0-9]$/.test(spValue)) {
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Format Seri Salah!',
-                                text: `Pack ${p}: Format Seri Pengganti harus XX-XX9 (Contoh: AB-DB6). Maksimal 6 karakter.`,
+                                text: `Pack ${p}: Format Seri Pengganti harus XX-XX9 (Contoh: AB-DB6).`,
                                 confirmButtonColor: '#4f46e5'
                             });
-                            // Re-enable button
                             if (btn) {
                                 btn.style.pointerEvents = 'auto';
                                 btn.style.opacity = '1';
@@ -438,53 +420,32 @@
                         }
 
                         hasAnyData = true;
-                        const packObj = {
+                        packsData[index] = {
                             nomor_pack: p,
-                            seri_pengganti: form.querySelector(`input[name="packs[${p}][seri_pengganti]"]`)?.value || null,
-                            total_rusak_seri_1: form.querySelector(`input[name="packs[${p}][total_rusak_seri_1]"]`)?.value || null,
-                            total_rusak_seri_2: form.querySelector(`input[name="packs[${p}][total_rusak_seri_2]"]`)?.value || null,
-                            total_rusak_campuran: form.querySelector(`input[name="packs[${p}][total_rusak_campuran]"]`)?.value || null,
-                            slots: {}
+                            seri_pengganti: spValue || null,
+                            nomor_pack_pengganti: nppValue || null,
+                            nomor_bilyet_pengganti: nbpValue || null
                         };
-                        for (let s = 1; s <= 4; s++) {
-                            packObj.slots[s] = {
-                                slot: s,
-                                rusak_seri_1: form.querySelector(`input[name="packs[${p}][slots][${s}][rusak_seri_1]"]`)?.value || null,
-                                rusak_seri_2: form.querySelector(`input[name="packs[${p}][slots][${s}][rusak_seri_2]"]`)?.value || null,
-                                rusak_campuran: form.querySelector(`input[name="packs[${p}][slots][${s}][rusak_campuran]"]`)?.value || null,
-                                nomor_pack_pengganti: form.querySelector(`input[name="packs[${p}][slots][${s}][nomor_pack_pengganti]"]`)?.value || null,
-                                nomor_bilyet_pengganti: form.querySelector(`input[name="packs[${p}][slots][${s}][nomor_bilyet_pengganti]"]`)?.value || null
-                            };
-                        }
-                        packsData[p] = packObj;
                     }
                 }
 
-                // ── VIRTUAL FORM SUBMISSION to bypass UI freeze ──
+                // Virtual Form Submission
                 const virtualForm = document.createElement('form');
                 virtualForm.method = 'POST';
                 virtualForm.action = form.action;
 
-                const csrfInput = document.createElement('input');
-                csrfInput.type = 'hidden';
-                csrfInput.name = '_token';
-                csrfInput.value = form.querySelector('input[name="_token"]').value;
-                virtualForm.appendChild(csrfInput);
+                const addHidden = (name, val) => {
+                    const inp = document.createElement('input');
+                    inp.type = 'hidden'; inp.name = name; inp.value = val;
+                    virtualForm.appendChild(inp);
+                };
 
-                const seriInput = document.createElement('input');
-                seriInput.type = 'hidden';
-                seriInput.name = 'x_pengganti_seri_id';
-                seriInput.value = form.querySelector('input[name="x_pengganti_seri_id"]').value;
-                virtualForm.appendChild(seriInput);
-
-                const jsonInput = document.createElement('input');
-                jsonInput.type = 'hidden';
-                jsonInput.name = 'packs_json';
-                jsonInput.value = hasAnyData ? JSON.stringify(packsData) : '';
-                virtualForm.appendChild(jsonInput);
+                addHidden('_token', form.querySelector('input[name="_token"]').value);
+                addHidden('x_pengganti_seri_id', form.querySelector('input[name="x_pengganti_seri_id"]').value);
+                addHidden('packs_json', hasAnyData ? JSON.stringify(packsData) : '');
 
                 document.body.appendChild(virtualForm);
-                virtualForm.submit(); // Browser sends immediately without DOM repaint/freeze
+                virtualForm.submit();
             });
         </script>
     @endpush

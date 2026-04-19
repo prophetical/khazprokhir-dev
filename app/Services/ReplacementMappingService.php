@@ -195,8 +195,16 @@ class ReplacementMappingService
 
             if (!$existing) {
                 // Tidak ada rentang yang ada --> buat inschiet satu bilyet baru.
-                // Turunkan nomor pack dari nomor seri: 701500 --> pack 701.
-                $packNumber = intdiv($sourceSerial - 1, 1000);
+                $seriObj = XPenggantiSeri::find($seriId);
+                $parsed = SerialPrefixGenerator::parseSeriLabel($seriObj->seri);
+                $inferredCategory = SerialPrefixGenerator::categorizePrefix($sourcePrefix, $parsed['seri1_base'], $parsed['seri2_base']);
+                
+                if ($inferredCategory === 'unknown') {
+                    $inferredCategory = 'manual';
+                }
+
+                // Turunkan nomor pack dari nomor seri: 700500 --> pack 701.
+                $packNumber = intdiv($sourceSerial - 1, 1000) + 1;
 
                 SerialRangeMapping::create([
                     'x_pengganti_seri_id' => $seriId,
@@ -207,7 +215,7 @@ class ReplacementMappingService
                     'replacement_prefix' => $replacementPrefix,
                     'replacement_start' => $replacementSerial,
                     'replacement_end' => $replacementSerial,
-                    'source_category' => 'manual',
+                    'source_category' => $inferredCategory,
                     'unit_type' => $unitType,
                     'created_by' => $createdBy,
                 ]);

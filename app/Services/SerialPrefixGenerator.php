@@ -9,7 +9,7 @@ namespace App\Services;
  * - Format label seri: "XX-XX9" (contoh: AB-BB7)
  *   - 2 karakter pertama = Basis prefix Seri 1 (contoh: AB)
  *   - Karakter ke 4-5      = Basis prefix Seri 2 (contoh: BB)
- *   - Karakter ke 6 (digit)= Indikator rentang pack (7 → pack 701-800)
+ *   - Karakter ke 6 (digit)= Indikator rentang pack (7 --> pack 701-800)
  *
  * - Rotasi huruf ketiga (24 huruf valid, tidak menggunakan huruf I dan X):
  *   Normal:   A B C D E F G H J K L M N O P Q R S T U (20)
@@ -73,8 +73,8 @@ class SerialPrefixGenerator
         }
 
         $digit = (int) $m[3];
-        $packStart = ($digit * 100) + 1; // 7 → 701
-        $packEnd = ($digit * 100) + 100; // 7 → 800
+        $packStart = ($digit * 100) + 1; // 7 --> 701
+        $packEnd = ($digit * 100) + 100; // 7 --> 800
 
         return [
             'seri1_base' => $m[1],  // AB
@@ -151,8 +151,8 @@ class SerialPrefixGenerator
     public static function calculateSerialRange(int $packNumber): array
     {
         return [
-            'start' => ($packNumber * 1000) + 1,   // 701 → 701001
-            'end' => ($packNumber * 1000) + 1000, // 701 → 702000
+            'start' => (($packNumber - 1) * 1000) + 1,   // 701 --> 700001
+            'end' => $packNumber * 1000,                // 701 --> 701000
         ];
     }
 

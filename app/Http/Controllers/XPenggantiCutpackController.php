@@ -53,31 +53,24 @@ class XPenggantiCutpackController extends Controller
         $seriId = $request->input('seri_id');
         $seri   = XPenggantiSeri::findOrFail($seriId);
 
-        $gridData = $this->buildEmptyGrid();
-
-        $packs = XPenggantiCutpackPack::with('details')
-            ->where('x_pengganti_seri_id', $seriId)
+        $packs = XPenggantiCutpackPack::where('x_pengganti_seri_id', $seriId)
             ->get()
             ->keyBy('nomor_pack');
 
+        // Bangun grid flat (1 baris per pack, tanpa slot)
+        $gridData = [];
         for ($p = 1; $p <= 100; $p++) {
-            $pack = $packs->get($p);
-            
-            $gridData[$p]['seri_pengganti'] = $pack?->seri_pengganti ?? '';
-            $gridData[$p]['total_rusak_seri_1'] = $pack?->total_rusak_seri_1 ?? '';
-            $gridData[$p]['total_rusak_seri_2'] = $pack?->total_rusak_seri_2 ?? '';
-            $gridData[$p]['total_rusak_campuran'] = $pack?->total_rusak_campuran ?? '';
-
-            for ($s = 1; $s <= 4; $s++) {
-                $detail = $pack?->details->firstWhere('slot', $s);
-                $gridData[$p]['slots'][$s] = [
-                    'rusak_seri_1'           => $detail?->rusak_seri_1           ?? '',
-                    'rusak_seri_2'           => $detail?->rusak_seri_2           ?? '',
-                    'rusak_campuran'         => $detail?->rusak_campuran         ?? '',
-                    'nomor_pack_pengganti'   => $detail?->nomor_pack_pengganti   ?? '',
-                    'nomor_bilyet_pengganti' => $detail?->nomor_bilyet_pengganti ?? '',
-                ];
-            }
+            $pack         = $packs->get($p);
+            $gridData[$p] = [
+                'seri_pengganti'         => $pack?->seri_pengganti         ?? '',
+                // Read-only: diisi otomatis MappingAggregatorService
+                'total_rusak_seri_1'     => $pack?->total_rusak_seri_1     ?? 0,
+                'total_rusak_seri_2'     => $pack?->total_rusak_seri_2     ?? 0,
+                'total_rusak_campuran'   => $pack?->total_rusak_campuran   ?? 0,
+                // Dapat diisi manual
+                'nomor_pack_pengganti'   => $pack?->nomor_pack_pengganti   ?? '',
+                'nomor_bilyet_pengganti' => $pack?->nomor_bilyet_pengganti ?? '',
+            ];
         }
 
         return view('x-pengganti.cutpack.input', [
@@ -87,7 +80,8 @@ class XPenggantiCutpackController extends Controller
     }
 
     /**
-     * Simpan / update data Cutpack (partial upsert).
+     * Simpan seri_pengganti, nomor_pack_pengganti, nomor_bilyet_pengganti per pack.
+     * Kolom total_rusak_* diisi otomatis oleh MappingAggregatorService.
      */
     public function store(Request $request)
     {
@@ -104,80 +98,37 @@ class XPenggantiCutpackController extends Controller
             'packs'                                  => 'nullable|array',
             'packs.*.nomor_pack'                     => 'required|integer|min:1|max:100',
             'packs.*.seri_pengganti'                 => ['nullable', 'string', 'regex:/^[A-Z]{2}-[A-Z]{2}[0-9]$/'],
-            'packs.*.total_rusak_seri_1'             => 'nullable|integer|min:0',
-            'packs.*.total_rusak_seri_2'             => 'nullable|integer|min:0',
-            'packs.*.total_rusak_campuran'           => 'nullable|integer|min:0',
-            'packs.*.slots'                          => 'nullable|array',
-            'packs.*.slots.*.slot'                   => 'required|integer|min:1|max:4',
-            'packs.*.slots.*.rusak_seri_1'           => 'nullable|integer|min:0',
-            'packs.*.slots.*.rusak_seri_2'           => 'nullable|integer|min:0',
-            'packs.*.slots.*.rusak_campuran'         => 'nullable|integer|min:0',
-            'packs.*.slots.*.nomor_pack_pengganti'   => 'nullable|integer|min:0',
-            'packs.*.slots.*.nomor_bilyet_pengganti' => 'nullable|integer|min:0',
+            'packs.*.nomor_pack_pengganti'           => 'nullable|integer|min:0',
+            'packs.*.nomor_bilyet_pengganti'         => 'nullable|integer|min:0',
         ], [
-            'packs.*.seri_pengganti.regex' => 'Format Seri Pengganti harus XX-XX9 (contoh: AB-BB1). Maksimal 6 karakter.',
+            'packs.*.seri_pengganti.regex' => 'Format Seri Pengganti harus XX-XX9 (contoh: AB-BB1).',
         ]);
 
         DB::transaction(function () use ($validated) {
-            $seriId     = $validated['x_pengganti_seri_id'];
-            $packValues = [];
-            $now        = now();
+            $seriId = $validated['x_pengganti_seri_id'];
+            $now    = now();
 
+            $packValues = [];
             foreach ($validated['packs'] ?? [] as $packData) {
                 $packValues[] = [
-                    'x_pengganti_seri_id'  => $seriId,
-                    'nomor_pack'           => $packData['nomor_pack'],
-                    'seri_pengganti'       => ($packData['seri_pengganti'] ?? '') ?: null,
-                    'total_rusak_seri_1'   => ($packData['total_rusak_seri_1']   ?? '') !== '' ? $packData['total_rusak_seri_1']   : null,
-                    'total_rusak_seri_2'   => ($packData['total_rusak_seri_2']   ?? '') !== '' ? $packData['total_rusak_seri_2']   : null,
-                    'total_rusak_campuran' => ($packData['total_rusak_campuran'] ?? '') !== '' ? $packData['total_rusak_campuran'] : null,
-                    'created_at'           => $now,
-                    'updated_at'           => $now,
+                    'x_pengganti_seri_id'    => $seriId,
+                    'nomor_pack'             => $packData['nomor_pack'],
+                    'seri_pengganti'         => ($packData['seri_pengganti']         ?? '') ?: null,
+                    'nomor_pack_pengganti'   => ($packData['nomor_pack_pengganti']   ?? '') !== '' ? $packData['nomor_pack_pengganti']   : null,
+                    'nomor_bilyet_pengganti' => ($packData['nomor_bilyet_pengganti'] ?? '') !== '' ? $packData['nomor_bilyet_pengganti'] : null,
+                    // total_rusak_* TIDAK disentuh — diurus MappingAggregatorService
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ];
             }
 
             if (!empty($packValues)) {
-                XPenggantiCutpackPack::upsert($packValues, ['x_pengganti_seri_id', 'nomor_pack'], [
-                    'seri_pengganti',
-                    'total_rusak_seri_1',
-                    'total_rusak_seri_2',
-                    'total_rusak_campuran',
-                    'updated_at'
-                ]);
-            }
-
-            // Get mapping nomor_pack -> id
-            $packsMap = XPenggantiCutpackPack::where('x_pengganti_seri_id', $seriId)->pluck('id', 'nomor_pack');
-
-            $detailValues = [];
-            foreach ($validated['packs'] ?? [] as $packData) {
-                $packId = $packsMap[$packData['nomor_pack']] ?? null;
-                if (!$packId) continue;
-
-                foreach ($packData['slots'] ?? [] as $slotData) {
-                    $detailValues[] = [
-                        'x_pengganti_cutpack_pack_id' => $packId,
-                        'slot'                        => $slotData['slot'],
-                        'rusak_seri_1'                => ($slotData['rusak_seri_1']           ?? '') !== '' ? $slotData['rusak_seri_1']           : null,
-                        'rusak_seri_2'                => ($slotData['rusak_seri_2']           ?? '') !== '' ? $slotData['rusak_seri_2']           : null,
-                        'rusak_campuran'              => ($slotData['rusak_campuran']         ?? '') !== '' ? $slotData['rusak_campuran']         : null,
-                        'nomor_pack_pengganti'        => ($slotData['nomor_pack_pengganti']   ?? '') !== '' ? $slotData['nomor_pack_pengganti']   : null,
-                        'nomor_bilyet_pengganti'      => ($slotData['nomor_bilyet_pengganti'] ?? '') !== '' ? $slotData['nomor_bilyet_pengganti'] : null,
-                        'created_at'                  => $now,
-                        'updated_at'                  => $now,
-                    ];
-                }
-            }
-
-            if (!empty($detailValues)) {
-                XPenggantiCutpackDetail::upsert($detailValues, ['x_pengganti_cutpack_pack_id', 'slot'], [
-                    'rusak_seri_1',
-                    'rusak_seri_2',
-                    'rusak_campuran',
-                    'nomor_pack_pengganti',
-                    'nomor_bilyet_pengganti',
-                    'updated_at'
-                ]);
+                XPenggantiCutpackPack::upsert(
+                    $packValues,
+                    ['x_pengganti_seri_id', 'nomor_pack'],
+                    ['seri_pengganti', 'nomor_pack_pengganti', 'nomor_bilyet_pengganti', 'updated_at']
+                    // total_rusak_* sengaja TIDAK ada di update columns
+                );
             }
         });
 
@@ -197,59 +148,46 @@ class XPenggantiCutpackController extends Controller
         $grid = [];
         for ($p = 1; $p <= 100; $p++) {
             $grid[$p] = [
-                'seri_pengganti'       => '',
-                'total_rusak_seri_1'   => '',
-                'total_rusak_seri_2'   => '',
-                'total_rusak_campuran' => '',
-                'slots' => [
-                    1 => ['rusak_seri_1' => '', 'rusak_seri_2' => '', 'rusak_campuran' => '', 'nomor_pack_pengganti' => '', 'nomor_bilyet_pengganti' => ''],
-                    2 => ['rusak_seri_1' => '', 'rusak_seri_2' => '', 'rusak_campuran' => '', 'nomor_pack_pengganti' => '', 'nomor_bilyet_pengganti' => ''],
-                    3 => ['rusak_seri_1' => '', 'rusak_seri_2' => '', 'rusak_campuran' => '', 'nomor_pack_pengganti' => '', 'nomor_bilyet_pengganti' => ''],
-                    4 => ['rusak_seri_1' => '', 'rusak_seri_2' => '', 'rusak_campuran' => '', 'nomor_pack_pengganti' => '', 'nomor_bilyet_pengganti' => ''],
-                ],
+                'seri_pengganti'         => '',
+                'total_rusak_seri_1'     => 0,
+                'total_rusak_seri_2'     => 0,
+                'total_rusak_campuran'   => 0,
+                'nomor_pack_pengganti'   => '',
+                'nomor_bilyet_pengganti' => '',
             ];
         }
         return $grid;
     }
 
     /**
-     * Ekspor PDF Cutpack Grid (Poin E)
+     * Ekspor PDF Cutpack Grid — flat (tanpa slot)
      */
     public function exportPdf(Request $request)
     {
         $seriId = $request->input('seri_id');
         $seri   = XPenggantiSeri::findOrFail($seriId);
 
+        $packs = XPenggantiCutpackPack::where('x_pengganti_seri_id', $seriId)
+            ->orderBy('nomor_pack')
+            ->get();
+
+        // Build gridData flat untuk view PDF
         $gridData = $this->buildEmptyGrid();
-
-        $packs = XPenggantiCutpackPack::with('details')
-            ->where('x_pengganti_seri_id', $seriId)
-            ->get()
-            ->keyBy('nomor_pack');
-
-        for ($p = 1; $p <= 100; $p++) {
-            $pack = $packs->get($p);
-            
-            $gridData[$p]['seri_pengganti'] = $pack?->seri_pengganti ?? '';
-            $gridData[$p]['total_rusak_seri_1'] = $pack?->total_rusak_seri_1 ?? '';
-            $gridData[$p]['total_rusak_seri_2'] = $pack?->total_rusak_seri_2 ?? '';
-            $gridData[$p]['total_rusak_campuran'] = $pack?->total_rusak_campuran ?? '';
-
-            for ($s = 1; $s <= 4; $s++) {
-                $detail = $pack?->details->firstWhere('slot', $s);
-                $gridData[$p]['slots'][$s] = [
-                    'rusak_seri_1'           => $detail?->rusak_seri_1           ?? '',
-                    'rusak_seri_2'           => $detail?->rusak_seri_2           ?? '',
-                    'rusak_campuran'         => $detail?->rusak_campuran         ?? '',
-                    'nomor_pack_pengganti'   => $detail?->nomor_pack_pengganti   ?? '',
-                    'nomor_bilyet_pengganti' => $detail?->nomor_bilyet_pengganti ?? '',
-                ];
-            }
+        foreach ($packs as $pack) {
+            $p = $pack->nomor_pack;
+            $gridData[$p] = [
+                'seri_pengganti'         => $pack->seri_pengganti         ?? '',
+                'total_rusak_seri_1'     => $pack->total_rusak_seri_1     ?? 0,
+                'total_rusak_seri_2'     => $pack->total_rusak_seri_2     ?? 0,
+                'total_rusak_campuran'   => $pack->total_rusak_campuran   ?? 0,
+                'nomor_pack_pengganti'   => $pack->nomor_pack_pengganti   ?? '',
+                'nomor_bilyet_pengganti' => $pack->nomor_bilyet_pengganti ?? '',
+            ];
         }
 
         return view('x-pengganti.cutpack.pdfxpgtcutpack', [
-            'seri'     => $seri,
-            'gridData' => $gridData,
+            'seri'       => $seri,
+            'gridData'   => $gridData,
             'exportDate' => \Carbon\Carbon::now()->timezone('Asia/Jakarta')->translatedFormat('d F Y, H:i') . ' WIB',
         ]);
     }

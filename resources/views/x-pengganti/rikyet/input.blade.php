@@ -303,31 +303,17 @@
             }
 
             // ── Kalkulasi Total per Pack ──────────────────────────────────
-            let grandTotalTimeout;
-            function calcTotal(packNum, type) {
-                const inputs = document.querySelectorAll(`.calc-${type}-pack-${packNum}`);
-                let sum = 0;
-                inputs.forEach(inp => {
-                    const val = parseInt(inp.value);
-                    if (!isNaN(val) && val > 0) sum += val;
-                });
-                const el = document.getElementById(`total-${type}-pack-${packNum}`);
-                if (el) el.value = sum > 0 ? sum : '';
-
-                // Debounce Grand Total agar tidak lag saat mengetik cepat
-                clearTimeout(grandTotalTimeout);
-                grandTotalTimeout = setTimeout(() => {
-                    updateGrandTotal();
-                }, 300);
-            }
-
             function updateGrandTotal() {
                 let g1 = 0, g2 = 0, gc = 0;
-                for (let p = 1; p <= 100; p++) {
-                    g1 += parseInt(document.getElementById(`total-seri1-pack-${p}`)?.value || 0);
-                    g2 += parseInt(document.getElementById(`total-seri2-pack-${p}`)?.value || 0);
-                    gc += parseInt(document.getElementById(`total-campuran-pack-${p}`)?.value || 0);
-                }
+                document.querySelectorAll('.badg-s1').forEach(el => {
+                    const v = parseInt(el.textContent); if (!isNaN(v) && v > 0) g1 += v;
+                });
+                document.querySelectorAll('.badg-s2').forEach(el => {
+                    const v = parseInt(el.textContent); if (!isNaN(v) && v > 0) g2 += v;
+                });
+                document.querySelectorAll('.badg-c').forEach(el => {
+                    const v = parseInt(el.textContent); if (!isNaN(v) && v > 0) gc += v;
+                });
                 const fmt = n => n.toLocaleString('id-ID');
                 const g1El = document.getElementById('grand-total-seri1'); if(g1El) g1El.textContent = fmt(g1);
                 const g2El = document.getElementById('grand-total-seri2'); if(g2El) g2El.textContent = fmt(g2);
@@ -347,30 +333,19 @@
                     if (!inp.classList.contains('rikyet-input')) return;
                     e.preventDefault();
 
-                    const col = inp.dataset.col;
                     const pack = parseInt(inp.dataset.pack);
-                    const slot = parseInt(inp.dataset.slot);
-
-                    let nPack = pack, nSlot = slot + 1;
-                    if (nSlot > 4) { nSlot = 1; nPack = pack + 1; }
+                    const nPack = pack + 1;
                     if (nPack > 100) return;
 
                     // Switch page if necessary
                     if (nPack === 51 && currentPage === 1) showPage(2);
                     if (nPack === 1 && currentPage === 2) showPage(1);
 
-                    const next = document.querySelector(
-                        `.rikyet-input[data-pack="${nPack}"][data-slot="${nSlot}"][data-col="${col}"]`
-                    );
+                    const next = document.querySelector(`.rikyet-input[data-pack="${nPack}"]`);
                     if (next) { next.focus(); next.select(); }
                 });
 
-                // Init calculations
-                for (let p = 1; p <= 100; p++) {
-                    calcTotal(p, 'seri1');
-                    calcTotal(p, 'seri2');
-                    calcTotal(p, 'campuran');
-                }
+                updateGrandTotal();
 
                 // Init serial replacements validation
                 document.querySelectorAll('.seri-pengganti-input').forEach(inp => {
@@ -449,46 +424,18 @@
                 let hasAnyData = false;
 
                 for (let p = 1; p <= 100; p++) {
-                    const allInputs = form.querySelectorAll(
-                        `input[name^="packs[${p}]["]:not([type="hidden"]):not([readonly])`
-                    );
-                    let hasData = false;
-                    allInputs.forEach(inp => {
-                        if (inp.value && inp.value.trim() !== '') hasData = true;
-                    });
+                    const index = p - 1;
+                    const spValue = form.querySelector(`input[name="packs[${index}][seri_pengganti]"]`)?.value?.trim() || '';
 
-                    if (hasData) {
-                        // VALIDATION: Check Seri Pengganti format (XX-XX9)
-                        // 1. Pack Level
-                        const pSeri = form.querySelector(`input[name="packs[${p}][seri_pengganti]"]`)?.value || '';
-                        if (pSeri && !/^[A-Z]{2}-[A-Z]{2}[0-9]$/.test(pSeri)) {
-                            return showError(`Pack ${p}: Format Seri Pengganti Utama harus XX-XX9 (Contoh: AB-DB6).`);
+                    if (spValue) {
+                        if (!/^[A-Z]{2}-[A-Z]{2}[0-9]$/.test(spValue)) {
+                            return showError(`Pack ${p}: Format Seri Pengganti harus XX-XX9 (Contoh: AB-DB6).`);
                         }
 
-                        const packObj = {
+                        packsData[index] = {
                             nomor_pack: p,
-                            total_rusak_seri_1: form.querySelector(`input[name="packs[${p}][total_rusak_seri_1]"]`)?.value || null,
-                            total_rusak_seri_2: form.querySelector(`input[name="packs[${p}][total_rusak_seri_2]"]`)?.value || null,
-                            total_rusak_campuran: form.querySelector(`input[name="packs[${p}][total_rusak_campuran]"]`)?.value || null,
-                            slots: {}
+                            seri_pengganti: spValue,
                         };
-
-                        for (let s = 1; s <= 4; s++) {
-                            // 2. Slot Level
-                            const sSeri = form.querySelector(`input[name="packs[${p}][slots][${s}][seri_pengganti]"]`)?.value || '';
-                            if (sSeri && !/^[A-Z]{2}-[A-Z]{2}[0-9]$/.test(sSeri)) {
-                                return showError(`Pack ${p} Slot ${s}: Format Seri Pengganti harus XX-XX9 (Contoh: AB-DB6).`);
-                            }
-
-                            packObj.slots[s] = {
-                                slot: s,
-                                rusak_seri_1: form.querySelector(`input[name="packs[${p}][slots][${s}][rusak_seri_1]"]`)?.value || null,
-                                rusak_seri_2: form.querySelector(`input[name="packs[${p}][slots][${s}][rusak_seri_2]"]`)?.value || null,
-                                rusak_campuran: form.querySelector(`input[name="packs[${p}][slots][${s}][rusak_campuran]"]`)?.value || null,
-                                seri_pengganti: sSeri || null,
-                            };
-                        }
-                        packsData[p] = packObj;
                         hasAnyData = true;
                     }
                 }

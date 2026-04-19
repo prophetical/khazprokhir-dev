@@ -286,66 +286,23 @@
                 input.value = input.value.replace(/[^0-9]/g, '');
             }
 
-            // ── Kalkulasi per Pack ───────────────────────────────
-            let grandTotalTimeout;
-
-            function calcPack(packNum) {
-                const inputs = document.querySelectorAll(`.rusak-input[data-pack="${packNum}"]`);
-                let sum = 0;
-                inputs.forEach(inp => { const v = parseInt(inp.value); if (!isNaN(v) && v > 0) sum += v; });
-                const el = document.getElementById(`jumlah-${packNum}`);
-                if (el) {
-                    el.textContent = sum > 0 ? sum : '–';
-                    el.className = sum > 0
-                        ? 'text-sm font-black text-violet-700 dark:text-violet-300'
-                        : 'text-sm font-black text-gray-300 dark:text-slate-600';
-                }
-
-                // Debounce Grand Total agar tidak lag saat mengetik cepat
-                clearTimeout(grandTotalTimeout);
-                grandTotalTimeout = setTimeout(() => {
-                    calcGrandTotal();
-                }, 300);
-            }
-
+            // ── Grand Total dari badge read-only ─────────────────
             function calcGrandTotal() {
                 let grand = 0;
-                document.querySelectorAll('.rusak-input').forEach(inp => {
-                    const v = parseInt(inp.value); if (!isNaN(v) && v > 0) grand += v;
+                document.querySelectorAll('.vell-badge').forEach(el => {
+                    const v = parseInt(el.textContent);
+                    if (!isNaN(v) && v > 0) grand += v;
                 });
                 ['grand-total-header', 'grand-total-footer'].forEach(id => {
-                    const el = document.getElementById(id); if (el) el.textContent = grand;
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = grand;
                 });
             }
 
             // ── Enter → pindah baris berikutnya (kolom sama) ────
             document.addEventListener('DOMContentLoaded', () => {
-                document.addEventListener('keydown', function (e) {
-                    if (e.key !== 'Enter') return;
-                    const inp = e.target;
-                    if (!inp.classList.contains('khazai-input')) return;
-                    e.preventDefault();
-
-                    const col = inp.dataset.col;
-                    const pack = parseInt(inp.dataset.pack);
-                    const slot = parseInt(inp.dataset.slot);
-
-                    let nPack = pack, nSlot = slot + 1;
-                    if (nSlot > 4) { nSlot = 1; nPack = pack + 1; }
-                    if (nPack > 100) return;
-
-                    // Jika next pack ada di halaman 2, switch halaman
-                    if (nPack === 51 && currentPage === 1) showPage(2);
-                    if (nPack === 1 && currentPage === 2) showPage(1);
-
-                    const next = document.querySelector(
-                        `.khazai-input[data-pack="${nPack}"][data-slot="${nSlot}"][data-col="${col}"]`
-                    );
-                    if (next) { next.focus(); next.select(); }
-                });
-
-                // Init kalkulasi semua pack
-                for (let p = 1; p <= 100; p++) calcPack(p);
+                // Init grand total dari badge
+                calcGrandTotal();
 
                 // Validasi seri pengganti yang sudah terisi
                 document.querySelectorAll('.seri-pengganti-input').forEach(inp => {
@@ -354,6 +311,20 @@
 
                 // Footer page 1 aktif default
                 document.getElementById('footer-btn-1')?.classList.add('active');
+
+                // Enter key — pindah ke seri_pengganti pack berikutnya
+                document.addEventListener('keydown', function (e) {
+                    if (e.key !== 'Enter') return;
+                    const inp = e.target;
+                    if (!inp.classList.contains('seri-pengganti-input')) return;
+                    e.preventDefault();
+                    const pack = parseInt(inp.dataset.pack);
+                    const nPack = pack + 1;
+                    if (nPack > 100) return;
+                    if (nPack === 51 && currentPage === 1) showPage(2);
+                    const next = document.querySelector(`.seri-pengganti-input[data-pack="${nPack}"]`);
+                    if (next) { next.focus(); next.select(); }
+                });
             });
 
             // ── Cegah submit via Enter di form ──────────────────
@@ -407,7 +378,7 @@
 
             // ── Smart Submit (JSON Edition): Virtual Form optimization ──
             document.getElementById('khazai-form')?.addEventListener('submit', function (e) {
-                e.preventDefault(); // Stop normal massive DOM submission
+                e.preventDefault();
                 const form = e.target;
                 const btns = document.querySelectorAll('button[type="submit"]');
 
@@ -419,31 +390,24 @@
                     });
                 }
 
-                // GATHER DATA MANUALLY INTO JSON OBJECT
+                // Kumpulkan hanya pack yang seri_pengganti-nya terisi
                 const packsData = {};
                 let hasAnyData = false;
 
                 for (let p = 1; p <= 100; p++) {
                     const index = p - 1;
-                    // Identify if pack has any meaningful input
-                    const packInputs = form.querySelectorAll(`[name^="packs[${index}]["]:not([type="hidden"]), .seri-pengganti-input[name^="packs[${index}]["]`);
+                    const spInput = form.querySelector(`input[name="packs[${index}][seri_pengganti]"]`);
+                    const spValue = spInput?.value?.trim() ?? '';
 
-                    let hasData = false;
-                    packInputs.forEach(inp => {
-                        if (inp.value && inp.value.trim() !== '') hasData = true;
-                    });
-
-                    if (hasData) {
-                        // VALIDATION: Check Seri Pengganti format (XX-XX9)
-                        const spValue = form.querySelector(`input[name="packs[${index}][seri_pengganti]"]`)?.value || '';
-                        if (spValue && !/^[A-Z]{2}-[A-Z]{2}[0-9]$/.test(spValue)) {
+                    if (spValue) {
+                        // Validasi format seri
+                        if (!/^[A-Z]{2}-[A-Z]{2}[0-9]$/.test(spValue)) {
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Format Seri Salah!',
-                                text: `Pack ${p}: Format Seri Pengganti harus XX-XX9 (Contoh: AB-DB6). Maksimal 6 karakter.`,
+                                text: `Pack ${p}: Format Seri Pengganti harus XX-XX9 (Contoh: AB-DB6).`,
                                 confirmButtonColor: '#7c3aed'
                             });
-                            // Re-enable buttons
                             btns.forEach(btn => {
                                 btn.style.pointerEvents = 'auto';
                                 btn.style.opacity = '1';
@@ -453,49 +417,30 @@
                         }
 
                         hasAnyData = true;
-                        const packObj = {
-                            nomor_pack: p,
-                            seri_pengganti: form.querySelector(`input[name="packs[${index}][seri_pengganti]"]`)?.value || null,
-                            slots: {}
+                        packsData[index] = {
+                            nomor_pack:     p,
+                            seri_pengganti: spValue,
                         };
-
-                        for (let s = 0; s <= 3; s++) {
-                            packObj.slots[s] = {
-                                slot: s + 1,
-                                jumlah_rusak_vell: form.querySelector(`input[name="packs[${index}][slots][${s}][jumlah_rusak_vell]"]`)?.value || null,
-                                nomor_pack_pengganti: form.querySelector(`input[name="packs[${index}][slots][${s}][nomor_pack_pengganti]"]`)?.value || null,
-                                nomor_vell_pengganti: form.querySelector(`input[name="packs[${index}][slots][${s}][nomor_vell_pengganti]"]`)?.value || null
-                            };
-                        }
-                        packsData[index] = packObj;
                     }
                 }
 
-                // ── VIRTUAL FORM SUBMISSION to bypass UI freeze ──
+                // Virtual Form Submission
                 const virtualForm = document.createElement('form');
                 virtualForm.method = 'POST';
                 virtualForm.action = form.action;
 
-                const csrfInput = document.createElement('input');
-                csrfInput.type = 'hidden';
-                csrfInput.name = '_token';
-                csrfInput.value = form.querySelector('input[name="_token"]').value;
-                virtualForm.appendChild(csrfInput);
+                const addHidden = (name, val) => {
+                    const inp = document.createElement('input');
+                    inp.type = 'hidden'; inp.name = name; inp.value = val;
+                    virtualForm.appendChild(inp);
+                };
 
-                const seriInput = document.createElement('input');
-                seriInput.type = 'hidden';
-                seriInput.name = 'x_pengganti_seri_id';
-                seriInput.value = form.querySelector('input[name="x_pengganti_seri_id"]').value;
-                virtualForm.appendChild(seriInput);
-
-                const jsonInput = document.createElement('input');
-                jsonInput.type = 'hidden';
-                jsonInput.name = 'packs_json';
-                jsonInput.value = hasAnyData ? JSON.stringify(packsData) : '';
-                virtualForm.appendChild(jsonInput);
+                addHidden('_token', form.querySelector('input[name="_token"]').value);
+                addHidden('x_pengganti_seri_id', form.querySelector('input[name="x_pengganti_seri_id"]').value);
+                addHidden('packs_json', hasAnyData ? JSON.stringify(packsData) : '');
 
                 document.body.appendChild(virtualForm);
-                virtualForm.submit(); // Browser sends immediately without DOM repaint/freeze
+                virtualForm.submit();
             });
         </script>
     @endpush

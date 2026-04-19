@@ -622,5 +622,25 @@
                 } else if (confirm('Hapus mapping ini?')) { form.submit(); }
             });
         });
+
+        // Pencegahan Double Submit (Menghindari PostgreSQL Lock / Waktu Loading Lama)
+        document.querySelectorAll('form').forEach(form => {
+            if(!form.classList.contains('delete-confirm')) {
+                form.addEventListener('submit', function (e) {
+                    const btn = this.querySelector('button[type="submit"]');
+                    if (btn) {
+                        if (btn.classList.contains('processing')) {
+                            e.preventDefault();
+                            return;
+                        }
+                        btn.classList.add('processing');
+                        const originalText = btn.innerHTML;
+                        btn.innerHTML = '<span class="inline-block animate-spin mr-2">↻</span> Menyimpan...';
+                        btn.style.opacity = '0.7';
+                        btn.style.cursor = 'not-allowed';
+                    }
+                });
+            }
+        });
     </script>
 </x-app-layout>

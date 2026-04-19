@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\SerialRangeMapping;
 use App\Models\XPenggantiSeri;
 use App\Rules\SerialPrefixRule;
+use App\Services\MappingAggregatorService;
 use App\Services\ReplacementMappingService;
 use App\Services\SerialPrefixGenerator;
 use Illuminate\Http\Request;
@@ -12,7 +13,8 @@ use Illuminate\Http\Request;
 class SerialMappingController extends Controller
 {
     public function __construct(
-        private ReplacementMappingService $mappingService
+        private ReplacementMappingService $mappingService,
+        private MappingAggregatorService  $aggregatorService
     ) {}
 
     /**
@@ -80,11 +82,17 @@ class SerialMappingController extends Controller
     {
         $validated = $request->validate([
             'x_pengganti_seri_id' => 'required|exists:x_pengganti_seris,id',
-            'pack_number'         => 'required|integer|min:1',
+            'pack_number'         => 'required|numeric|regex:/^\d+$/|min:1',
             'rep_seri1_base'      => ['required', 'string', 'size:2', 'regex:/^[A-Za-z]{2}$/'],
             'rep_seri2_base'      => ['required', 'string', 'size:2', 'regex:/^[A-Za-z]{2}$/'],
-            'rep_pack_number'     => 'required|integer|min:1',
+            'rep_pack_number'     => 'required|numeric|regex:/^\d+$/|min:1',
         ]);
+
+        $seri = XPenggantiSeri::findOrFail($validated['x_pengganti_seri_id']);
+        $parsed = SerialPrefixGenerator::parseSeriLabel($seri->seri);
+        if ($validated['pack_number'] < $parsed['pack_start'] || $validated['pack_number'] > $parsed['pack_end']) {
+            return back()->withInput()->withErrors(['error' => "Nomor pack asal ({$validated['pack_number']}) berada di luar batas seri ini ({$parsed['pack_start']} - {$parsed['pack_end']})."]);
+        }
 
         try {
             $rowsCreated = $this->mappingService->registerPackReplacement(
@@ -95,6 +103,9 @@ class SerialMappingController extends Controller
                 $validated['rep_pack_number'],
                 auth()->id()
             );
+
+            // Recalculate agregat Rikyet secara otomatis
+            $this->aggregatorService->recalculateFromMappings($validated['x_pengganti_seri_id']);
 
             return redirect()
                 ->route('x-pengganti.mapping.create', ['seri_id' => $validated['x_pengganti_seri_id']])
@@ -111,15 +122,21 @@ class SerialMappingController extends Controller
     {
         $validated = $request->validate([
             'x_pengganti_seri_id'  => 'required|exists:x_pengganti_seris,id',
-            'pack_number'          => 'required|integer|min:1',
+            'pack_number'          => 'required|numeric|regex:/^\d+$/|min:1',
             'source_prefix'        => ['required', new SerialPrefixRule],
-            'source_start'         => 'required|integer|min:1',
-            'source_end'           => 'required|integer|min:1|gte:source_start',
+            'source_start'         => 'required|numeric|regex:/^\d+$/|min:1',
+            'source_end'           => 'required|numeric|regex:/^\d+$/|min:1|gte:source_start',
             'replacement_prefix'   => ['required', new SerialPrefixRule],
-            'replacement_start'    => 'required|integer|min:1',
-            'replacement_end'      => 'required|integer|min:1|gte:replacement_start',
+            'replacement_start'    => 'required|numeric|regex:/^\d+$/|min:1',
+            'replacement_end'      => 'required|numeric|regex:/^\d+$/|min:1|gte:replacement_start',
             'source_category'      => 'required|in:seri_1,seri_2,campuran_1,campuran_2',
         ]);
+
+        $seri = XPenggantiSeri::findOrFail($validated['x_pengganti_seri_id']);
+        $parsed = SerialPrefixGenerator::parseSeriLabel($seri->seri);
+        if ($validated['pack_number'] < $parsed['pack_start'] || $validated['pack_number'] > $parsed['pack_end']) {
+            return back()->withInput()->withErrors(['error' => "Nomor pack asal ({$validated['pack_number']}) berada di luar batas seri ini ({$parsed['pack_start']} - {$parsed['pack_end']})."]);
+        }
 
         try {
             $this->mappingService->registerBroodReplacement(
@@ -137,6 +154,9 @@ class SerialMappingController extends Controller
 
             $count = $validated['source_end'] - $validated['source_start'] + 1;
 
+            // Recalculate agregat Rikyet secara otomatis
+            $this->aggregatorService->recalculateFromMappings($validated['x_pengganti_seri_id']);
+
             return redirect()
                 ->route('x-pengganti.mapping.create', ['seri_id' => $validated['x_pengganti_seri_id']])
                 ->with('x_success', "Brood {$validated['source_prefix']} ({$count} bilyet) berhasil dimapping.");
@@ -152,11 +172,20 @@ class SerialMappingController extends Controller
     {
         $validated = $request->validate([
             'x_pengganti_seri_id' => 'required|exists:x_pengganti_seris,id',
-            'source_serial'       => 'required|integer|min:1',
+            'source_serial'       => 'required|numeric|regex:/^\d+$/|min:1',
             'rep_seri1_base'      => ['required', 'string', 'size:2', 'regex:/^[A-Za-z]{2}$/'],
             'rep_seri2_base'      => ['required', 'string', 'size:2', 'regex:/^[A-Za-z]{2}$/'],
-            'replacement_serial'  => 'required|integer|min:1',
+            'replacement_serial'  => 'required|numeric|regex:/^\d+$/|min:1',
         ]);
+
+        $seri = XPenggantiSeri::findOrFail($validated['x_pengganti_seri_id']);
+        $parsed = SerialPrefixGenerator::parseSeriLabel($seri->seri);
+        $minSerial = SerialPrefixGenerator::calculateSerialRange($parsed['pack_start'])['start'];
+        $maxSerial = SerialPrefixGenerator::calculateSerialRange($parsed['pack_end'])['end'];
+        
+        if ($validated['source_serial'] < $minSerial || $validated['source_serial'] > $maxSerial) {
+            return back()->withInput()->withErrors(['error' => "Nomor serial asal ({$validated['source_serial']}) berada di luar batas seri ini ({$minSerial} - {$maxSerial})."]);
+        }
 
         try {
             $rowsCreated = $this->mappingService->registerVellReplacement(
@@ -167,6 +196,9 @@ class SerialMappingController extends Controller
                 $validated['replacement_serial'],
                 auth()->id()
             );
+
+            // Recalculate agregat Khazai secara otomatis
+            $this->aggregatorService->recalculateFromMappings($validated['x_pengganti_seri_id']);
 
             return redirect()
                 ->route('x-pengganti.mapping.create', ['seri_id' => $validated['x_pengganti_seri_id']])
@@ -184,10 +216,19 @@ class SerialMappingController extends Controller
         $validated = $request->validate([
             'x_pengganti_seri_id' => 'required|exists:x_pengganti_seris,id',
             'source_prefix'       => ['required', new SerialPrefixRule],
-            'source_serial'       => 'required|integer|min:1',
+            'source_serial'       => 'required|numeric|regex:/^\d+$/|min:1',
             'replacement_prefix'  => ['required', new SerialPrefixRule],
-            'replacement_serial'  => 'required|integer|min:1',
+            'replacement_serial'  => 'required|numeric|regex:/^\d+$/|min:1',
         ]);
+
+        $seri = XPenggantiSeri::findOrFail($validated['x_pengganti_seri_id']);
+        $parsed = SerialPrefixGenerator::parseSeriLabel($seri->seri);
+        $minSerial = SerialPrefixGenerator::calculateSerialRange($parsed['pack_start'])['start'];
+        $maxSerial = SerialPrefixGenerator::calculateSerialRange($parsed['pack_end'])['end'];
+        
+        if ($validated['source_serial'] < $minSerial || $validated['source_serial'] > $maxSerial) {
+            return back()->withInput()->withErrors(['error' => "Nomor serial asal ({$validated['source_serial']}) berada di luar batas seri ini ({$minSerial} - {$maxSerial})."]);
+        }
 
         try {
             $result = $this->mappingService->registerSingleBilyet(
@@ -202,6 +243,9 @@ class SerialMappingController extends Controller
             $actionMsg = $result['action'] === 'split'
                 ? "Range dipecah menjadi {$result['rows_affected']} bagian."
                 : "Mapping bilyet tunggal dibuat.";
+
+            // Recalculate agregat Cutpack secara otomatis
+            $this->aggregatorService->recalculateFromMappings($validated['x_pengganti_seri_id']);
 
             return redirect()
                 ->route('x-pengganti.mapping.create', ['seri_id' => $validated['x_pengganti_seri_id']])
@@ -252,6 +296,9 @@ class SerialMappingController extends Controller
         $seriId  = $mapping->x_pengganti_seri_id;
 
         $mapping->delete();
+
+        // Recalculate agregat setelah hapus mapping
+        $this->aggregatorService->recalculateFromMappings($seriId);
 
         return redirect()
             ->route('x-pengganti.mapping.create', ['seri_id' => $seriId])

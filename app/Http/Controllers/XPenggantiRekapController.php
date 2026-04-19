@@ -88,10 +88,7 @@ class XPenggantiRekapController extends Controller
 
         // 1. Data Khazai: Agregasi per Pack (KV = Jumlah Rusak Vell)
         $khazaiData = DB::table('x_pengganti_packs')
-            ->leftJoin('x_pengganti_details', 'x_pengganti_packs.id', '=', 'x_pengganti_details.x_pengganti_pack_id')
-            ->select('nomor_pack', DB::raw('SUM(jumlah_rusak_vell) as vell_total'))
             ->where('x_pengganti_seri_id', $seriId)
-            ->groupBy('nomor_pack')
             ->get()
             ->keyBy('nomor_pack');
 
@@ -110,9 +107,8 @@ class XPenggantiRekapController extends Controller
         $grid = [];
         $groupTotals = [];
 
-        // Loop melintasi 100 Pack
         for ($p = 1; $p <= 100; $p++) {
-            $kv = $khazaiData->get($p)->vell_total ?? 0;
+            $kv = $khazaiData->get($p)->jumlah_rusak_vell ?? 0;
             
             $c1 = $cutpackData->get($p)->total_rusak_seri_1 ?? 0;
             $c2 = $cutpackData->get($p)->total_rusak_seri_2 ?? 0;
