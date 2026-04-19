@@ -41,9 +41,10 @@ class MappingAggregatorService
     /**
      * Titik masuk utama — recalculate semua modul untuk satu seri.
      *
-     * @param int $seriId  ID master seri (x_pengganti_seris.id).
+     * @param int $seriId           ID master seri (x_pengganti_seris.id).
+     * @param int|null $specificPackNumber Jika diberikan, hanya hitung ulang pack spesifik ini.
      */
-    public function recalculateFromMappings(int $seriId): void
+    public function recalculateFromMappings(int $seriId, ?int $specificPackNumber = null): void
     {
         $seri = XPenggantiSeri::findOrFail($seriId);
 
@@ -51,10 +52,10 @@ class MappingAggregatorService
         $parsed    = SerialPrefixGenerator::parseSeriLabel($seri->seri);
         $packStart = $parsed['pack_start']; // misal: 701
 
-        DB::transaction(function () use ($seriId, $packStart) {
-            $this->recalculateKhazai($seriId, $packStart);
-            $this->recalculateCutpack($seriId, $packStart);
-            $this->recalculateRikyet($seriId, $packStart);
+        DB::transaction(function () use ($seriId, $packStart, $specificPackNumber) {
+            $this->recalculateKhazai($seriId, $packStart, $specificPackNumber);
+            $this->recalculateCutpack($seriId, $packStart, $specificPackNumber);
+            $this->recalculateRikyet($seriId, $packStart, $specificPackNumber);
         });
     }
 
@@ -73,21 +74,30 @@ class MappingAggregatorService
      *   semua dengan source_start yang SAMA. COUNT(*) akan menghasilkan 45,
      *   padahal hanya 1 vell. DISTINCT mengembalikan nilai yang benar: 1.
      */
-    private function recalculateKhazai(int $seriId, int $packStart): void
+    private function recalculateKhazai(int $seriId, int $packStart, ?int $specificPackNumber = null): void
     {
         $now = now();
 
         // ① Ambil hitungan dari DB — 1 query via covering index srm_aggregator_idx
-        $vellCounts = DB::table('serial_range_mappings')
+        $query = DB::table('serial_range_mappings')
             ->selectRaw('nomor_pack, COUNT(DISTINCT source_start) as jumlah')
             ->where('x_pengganti_seri_id', $seriId)
-            ->where('unit_type', 'vell')
-            ->groupBy('nomor_pack')
+            ->where('unit_type', 'vell');
+
+        if ($specificPackNumber) {
+            $query->where('nomor_pack', $specificPackNumber);
+        }
+
+        $vellCounts = $query->groupBy('nomor_pack')
             ->pluck('jumlah', 'nomor_pack'); // Collection: [abs_pack => count]
 
-        // ② Reset semua pack seri ini ke 0 — 1 query via xpp_seri_id_idx
-        XPenggantiPack::where('x_pengganti_seri_id', $seriId)
-            ->update(['jumlah_rusak_vell' => 0, 'updated_at' => $now]);
+        // ② Reset pack seri ini (atau spesifik pack) ke 0
+        $resetQuery = XPenggantiPack::where('x_pengganti_seri_id', $seriId);
+        if ($specificPackNumber) {
+            $relPack = (int) $specificPackNumber - $packStart + 1;
+            $resetQuery->where('nomor_pack', $relPack);
+        }
+        $resetQuery->update(['jumlah_rusak_vell' => 0, 'updated_at' => $now]);
 
         if ($vellCounts->isEmpty()) {
             return;
@@ -132,12 +142,12 @@ class MappingAggregatorService
      *   - Kategori seri_1/seri_2/campuran_1/campuran_2 sudah tersimpan
      *     di kolom source_category.
      */
-    private function recalculateCutpack(int $seriId, int $packStart): void
+    private function recalculateCutpack(int $seriId, int $packStart, ?int $specificPackNumber = null): void
     {
         $now = now();
 
         // ① Satu query agregasi dengan CASE WHEN — efisien via covering index
-        $bilyetRows = DB::table('serial_range_mappings')
+        $query = DB::table('serial_range_mappings')
             ->selectRaw("
                 nomor_pack,
                 SUM(CASE WHEN source_category = 'seri_1'                         THEN 1 ELSE 0 END) AS seri_1,
@@ -145,14 +155,23 @@ class MappingAggregatorService
                 SUM(CASE WHEN source_category IN ('campuran_1', 'campuran_2', 'manual') THEN 1 ELSE 0 END) AS campuran
             ")
             ->where('x_pengganti_seri_id', $seriId)
-            ->where('unit_type', 'bilyet')
-            ->groupBy('nomor_pack')
+            ->where('unit_type', 'bilyet');
+
+        if ($specificPackNumber) {
+            $query->where('nomor_pack', $specificPackNumber);
+        }
+
+        $bilyetRows = $query->groupBy('nomor_pack')
             ->get()
             ->keyBy('nomor_pack');
 
         // ② Reset — 1 query
-        XPenggantiCutpackPack::where('x_pengganti_seri_id', $seriId)
-            ->update([
+        $resetQuery = XPenggantiCutpackPack::where('x_pengganti_seri_id', $seriId);
+        if ($specificPackNumber) {
+            $relPack = (int) $specificPackNumber - $packStart + 1;
+            $resetQuery->where('nomor_pack', $relPack);
+        }
+        $resetQuery->update([
                 'total_rusak_seri_1'   => 0,
                 'total_rusak_seri_2'   => 0,
                 'total_rusak_campuran' => 0,
@@ -211,12 +230,12 @@ class MappingAggregatorService
      * Contoh: 1 pack → 20 baris seri_1 → total_rusak_seri_1 += 20
      *         1 brood seri_1 → 1 baris seri_1 → total_rusak_seri_1 += 1
      */
-    private function recalculateRikyet(int $seriId, int $packStart): void
+    private function recalculateRikyet(int $seriId, int $packStart, ?int $specificPackNumber = null): void
     {
         $now = now();
 
         // ① Satu query agregasi untuk brood dan pack sekaligus
-        $broodRows = DB::table('serial_range_mappings')
+        $query = DB::table('serial_range_mappings')
             ->selectRaw("
                 nomor_pack,
                 SUM(CASE WHEN source_category = 'seri_1'                         THEN 1 ELSE 0 END) AS seri_1,
@@ -224,14 +243,23 @@ class MappingAggregatorService
                 SUM(CASE WHEN source_category IN ('campuran_1', 'campuran_2', 'manual') THEN 1 ELSE 0 END) AS campuran
             ")
             ->where('x_pengganti_seri_id', $seriId)
-            ->whereIn('unit_type', ['brood', 'pack'])
-            ->groupBy('nomor_pack')
+            ->whereIn('unit_type', ['brood', 'pack']);
+
+        if ($specificPackNumber) {
+            $query->where('nomor_pack', $specificPackNumber);
+        }
+
+        $broodRows = $query->groupBy('nomor_pack')
             ->get()
             ->keyBy('nomor_pack');
 
         // ② Reset — 1 query
-        XPenggantiRikyetPack::where('x_pengganti_seri_id', $seriId)
-            ->update([
+        $resetQuery = XPenggantiRikyetPack::where('x_pengganti_seri_id', $seriId);
+        if ($specificPackNumber) {
+            $relPack = (int) $specificPackNumber - $packStart + 1;
+            $resetQuery->where('nomor_pack', $relPack);
+        }
+        $resetQuery->update([
                 'total_rusak_seri_1'   => 0,
                 'total_rusak_seri_2'   => 0,
                 'total_rusak_campuran' => 0,

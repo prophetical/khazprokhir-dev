@@ -63,15 +63,19 @@ class SerialMappingController extends Controller
         // Existing mappings for this seri
         $mappings = $this->mappingService->getMappingsForSeri($seriId, 50)->withQueryString();
 
-        // Stats
-        $totalMappings = SerialRangeMapping::forSeri($seriId)->count();
-        $totalBilyet   = SerialRangeMapping::forSeri($seriId)->selectRaw('SUM(source_end - source_start + 1) as total')->value('total') ?? 0;
+        // Stats - Optimized with single query
+        $stats = SerialRangeMapping::forSeri($seriId)
+            ->selectRaw('COUNT(*) as total_mappings, SUM(source_end - source_start + 1) as total_bilyet')
+            ->first();
+
+        $totalMappings = $stats->total_mappings ?? 0;
+        $totalBilyet   = $stats->total_bilyet   ?? 0;
 
         return view('x-pengganti.mapping.create', [
             'seri'          => $seri,
             'mappings'      => $mappings,
-            'totalMappings' => $totalMappings,
-            'totalBilyet'   => $totalBilyet,
+            'totalMappings' => (int) $totalMappings,
+            'totalBilyet'   => (int) $totalBilyet,
         ]);
     }
 
@@ -104,8 +108,8 @@ class SerialMappingController extends Controller
                 auth()->id()
             );
 
-            // Recalculate agregat Rikyet secara otomatis
-            $this->aggregatorService->recalculateFromMappings($validated['x_pengganti_seri_id']);
+            // Recalculate agregat Rikyet secara otomatis (Surgical)
+            $this->aggregatorService->recalculateFromMappings($validated['x_pengganti_seri_id'], (int) $validated['pack_number']);
 
             return redirect()
                 ->route('x-pengganti.mapping.create', ['seri_id' => $validated['x_pengganti_seri_id']])
@@ -197,8 +201,9 @@ class SerialMappingController extends Controller
                 auth()->id()
             );
 
-            // Recalculate agregat Khazai secara otomatis
-            $this->aggregatorService->recalculateFromMappings($validated['x_pengganti_seri_id']);
+            // Recalculate agregat Khazai secara otomatis (Surgical)
+            $packNumber = intdiv($validated['source_serial'] - 1, 1000) + 1;
+            $this->aggregatorService->recalculateFromMappings($validated['x_pengganti_seri_id'], $packNumber);
 
             return redirect()
                 ->route('x-pengganti.mapping.create', ['seri_id' => $validated['x_pengganti_seri_id']])
@@ -244,8 +249,9 @@ class SerialMappingController extends Controller
                 ? "Range dipecah menjadi {$result['rows_affected']} bagian."
                 : "Mapping bilyet tunggal dibuat.";
 
-            // Recalculate agregat Cutpack secara otomatis
-            $this->aggregatorService->recalculateFromMappings($validated['x_pengganti_seri_id']);
+            // Recalculate agregat Cutpack secara otomatis (Surgical)
+            $packNumber = intdiv($validated['source_serial'] - 1, 1000) + 1;
+            $this->aggregatorService->recalculateFromMappings($validated['x_pengganti_seri_id'], $packNumber);
 
             return redirect()
                 ->route('x-pengganti.mapping.create', ['seri_id' => $validated['x_pengganti_seri_id']])
