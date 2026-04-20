@@ -89,6 +89,19 @@
             padding: 0 4px;
         }
 
+        .pecahan-badge {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            line-height: 24px;
+            text-align: center;
+            border-radius: 6px;
+            background: {{ $seri->pecahan_color_hex }};
+            color: white;
+            font-weight: 900;
+            font-size: 10pt;
+        }
+
         /* ── Cutpack Grid Table ── */
         .grid-container {
             width: 100%;
@@ -246,7 +259,7 @@
                 <th width="20%">TAHUN EMISI</th>
             </tr>
             <tr>
-                <td style="font-size: 12pt;">{{ $seri->pecahan }}</td>
+                <td style="font-size: 12pt;"><span class="pecahan-badge">{{ $seri->pecahan }}</span></td>
                 <td style="font-size: 12pt;">{{ $seri->seri }}</td>
                 <td style="font-size: 12pt;">{{ $seri->batch }}</td>
                 <td style="font-size: 12pt;">{{ $seri->tahun_anggaran }}</td>

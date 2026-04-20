@@ -95,6 +95,19 @@
             padding: 0 3px;
         }
 
+        .pecahan-badge {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
+            border-radius: 5px;
+            background: {{ $seri->pecahan_color_hex }};
+            color: white;
+            font-weight: 900;
+            font-size: 8pt;
+        }
+
         /* ── Master Columnar Layout ── */
         .column-container {
             width: 100%;
@@ -235,7 +248,7 @@
                 <th class="text-right">TOTAL RUSAK</th>
             </tr>
             <tr>
-                <td>{{ $seri->pecahan }}</td>
+                <td><span class="pecahan-badge">{{ $seri->pecahan }}</span></td>
                 <td>{{ $seri->seri }}</td>
                 <td>{{ $seri->batch }}</td>
                 <td>{{ $seri->tahun_anggaran }}</td>

@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\DB;
  *
  * Strategi: REPLACE (bukan INCREMENT).
  * Setiap recalculate mengambil angka segar dari serial_range_mappings,
- * sehingga operasi hapus mapping pun otomatis mengurangi jumlah.
+ * sehingga operasi hapus inschiet pun otomatis mengurangi jumlah.
  *
  * Konversi Pack Absolut → Relatif (1–100):
  *   Pack absolut tersimpan di serial_range_mappings.nomor_pack (misal: 701).
@@ -49,7 +49,7 @@ class MappingAggregatorService
         $seri = XPenggantiSeri::findOrFail($seriId);
 
         // Parse label seri (misal "AA-BA7") untuk mendapat pack_start absolut.
-        $parsed    = SerialPrefixGenerator::parseSeriLabel($seri->seri);
+        $parsed = SerialPrefixGenerator::parseSeriLabel($seri->seri);
         $packStart = $parsed['pack_start']; // misal: 701
 
         DB::transaction(function () use ($seriId, $packStart, $specificPackNumber) {
@@ -112,10 +112,10 @@ class MappingAggregatorService
             }
             $upsertRows[] = [
                 'x_pengganti_seri_id' => $seriId,
-                'nomor_pack'          => $relPack,
-                'jumlah_rusak_vell'   => (int) $count,
-                'created_at'          => $now,
-                'updated_at'          => $now,
+                'nomor_pack' => $relPack,
+                'jumlah_rusak_vell' => (int) $count,
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
         }
 
@@ -172,11 +172,11 @@ class MappingAggregatorService
             $resetQuery->where('nomor_pack', $relPack);
         }
         $resetQuery->update([
-                'total_rusak_seri_1'   => 0,
-                'total_rusak_seri_2'   => 0,
-                'total_rusak_campuran' => 0,
-                'updated_at'           => $now,
-            ]);
+            'total_rusak_seri_1' => 0,
+            'total_rusak_seri_2' => 0,
+            'total_rusak_campuran' => 0,
+            'updated_at' => $now,
+        ]);
 
         if ($bilyetRows->isEmpty()) {
             return;
@@ -190,13 +190,13 @@ class MappingAggregatorService
                 continue;
             }
             $upsertRows[] = [
-                'x_pengganti_seri_id'  => $seriId,
-                'nomor_pack'           => $relPack,
-                'total_rusak_seri_1'   => (int) $row->seri_1,
-                'total_rusak_seri_2'   => (int) $row->seri_2,
+                'x_pengganti_seri_id' => $seriId,
+                'nomor_pack' => $relPack,
+                'total_rusak_seri_1' => (int) $row->seri_1,
+                'total_rusak_seri_2' => (int) $row->seri_2,
                 'total_rusak_campuran' => (int) $row->campuran,
-                'created_at'           => $now,
-                'updated_at'           => $now,
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
         }
 
@@ -260,11 +260,11 @@ class MappingAggregatorService
             $resetQuery->where('nomor_pack', $relPack);
         }
         $resetQuery->update([
-                'total_rusak_seri_1'   => 0,
-                'total_rusak_seri_2'   => 0,
-                'total_rusak_campuran' => 0,
-                'updated_at'           => $now,
-            ]);
+            'total_rusak_seri_1' => 0,
+            'total_rusak_seri_2' => 0,
+            'total_rusak_campuran' => 0,
+            'updated_at' => $now,
+        ]);
 
         if ($broodRows->isEmpty()) {
             return;
@@ -278,13 +278,13 @@ class MappingAggregatorService
                 continue;
             }
             $upsertRows[] = [
-                'x_pengganti_seri_id'  => $seriId,
-                'nomor_pack'           => $relPack,
-                'total_rusak_seri_1'   => (int) $row->seri_1,
-                'total_rusak_seri_2'   => (int) $row->seri_2,
+                'x_pengganti_seri_id' => $seriId,
+                'nomor_pack' => $relPack,
+                'total_rusak_seri_1' => (int) $row->seri_1,
+                'total_rusak_seri_2' => (int) $row->seri_2,
                 'total_rusak_campuran' => (int) $row->campuran,
-                'created_at'           => $now,
-                'updated_at'           => $now,
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
         }
 

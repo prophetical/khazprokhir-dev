@@ -14,11 +14,8 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg>
                 </a>
-                @php
-                    $pchBadgeColor = ['S' => 'bg-lime-400', 'T' => 'bg-gray-300', 'U' => 'bg-amber-300', 'V' => 'bg-purple-400', 'W' => 'bg-green-400', 'X' => 'bg-blue-400', 'Y' => 'bg-red-400'];
-                @endphp
                 <span
-                    class="inline-flex items-center justify-center w-8 h-8 rounded-xl {{ $pchBadgeColor[$seri->pecahan] ?? 'bg-gray-400' }} font-black text-white text-sm shadow">{{ $seri->pecahan }}</span>
+                    class="inline-flex items-center justify-center w-8 h-8 rounded-xl {{ $seri->pecahan_color_class }} font-black text-white text-sm shadow">{{ $seri->pecahan }}</span>
                 <div class="min-w-0">
                     <div class="flex items-center gap-2 flex-wrap">
                         <span class="text-white font-black text-base tracking-wider">{{ $seri->seri }}</span>

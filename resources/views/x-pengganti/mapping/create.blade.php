@@ -7,8 +7,8 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
             </a>
-            <h2 class="font-black text-xl text-gray-800 dark:text-white leading-tight tracking-tight">Input Mapping
-                Serial</h2>
+            <h2 class="font-black text-xl text-gray-800 dark:text-white leading-tight tracking-tight">Input Inschiet
+                Seri</h2>
         </div>
     </x-slot>
     <style>
@@ -32,7 +32,7 @@
                         <div>
                             <div class="flex items-center gap-3 mb-2">
                                 <span
-                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-violet-600 text-white font-black text-sm shadow-md">{{ $seri->pecahan }}</span>
+                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg {{ $seri->pecahan_color_class }} text-white font-black text-sm shadow-md">{{ $seri->pecahan }}</span>
                                 <h3 class="text-lg font-black text-gray-800 dark:text-white">Seri {{ $seri->seri }}</h3>
                             </div>
                             <div
@@ -48,7 +48,7 @@
                                     {{ number_format($totalMappings) }}
                                 </div>
                                 <div class="text-[8px] font-black text-violet-400 uppercase tracking-widest">Total
-                                    Mapping</div>
+                                    Inschiet</div>
                             </div>
                             <div class="text-center px-4 py-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl">
                                 <div class="text-lg font-black text-emerald-600 dark:text-emerald-400">
@@ -108,6 +108,15 @@
                         </svg>
                         <span class="hidden md:inline">Inschiet Brood</span><span class="md:hidden">Brood</span>
                     </button>
+                    <button @click="activeTab = 'partial'"
+                        :class="activeTab === 'partial' ? 'bg-cyan-600 text-white' : 'text-gray-500 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-700'"
+                        class="flex-1 px-2 md:px-4 py-3 text-[10px] font-black uppercase tracking-widest transition-all duration-200 flex items-center justify-center gap-2 border-r border-gray-100 dark:border-slate-700">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span class="hidden md:inline">Inschiet Parsial</span><span class="md:hidden">Parsial</span>
+                    </button>
                     <button @click="activeTab = 'vell'"
                         :class="activeTab === 'vell' ? 'bg-blue-600 text-white' : 'text-gray-500 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-700'"
                         class="flex-1 px-2 md:px-4 py-3 text-[10px] font-black uppercase tracking-widest transition-all duration-200 flex items-center justify-center gap-2 border-l border-gray-100 dark:border-slate-700">
@@ -130,7 +139,7 @@
 
                 <div class="p-6">
                     {{-- Tab 1: Inschiet Pack --}}
-                    <div x-show="activeTab === 'pack'" x-transition>
+                    <div x-show="activeTab === 'pack'" x-transition style="display: none;">
                         <form action="{{ route('x-pengganti.mapping.store.pack') }}" method="POST">
                             @csrf
                             <input type="hidden" name="x_pengganti_seri_id" value="{{ $seri->id }}">
@@ -207,14 +216,14 @@
                             <div class="mt-6 flex justify-end">
                                 <button type="submit"
                                     class="px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:from-violet-700 hover:to-purple-700 transition-all shadow-lg active:scale-95">
-                                    Simpan Pack Mapping (45 Baris)
+                                    Simpan Inschiet Pack
                                 </button>
                             </div>
                         </form>
                     </div>
 
                     {{-- Tab 2: Per Brood --}}
-                    <div x-show="activeTab === 'brood'" x-transition>
+                    <div x-show="activeTab === 'brood'" x-transition style="display: none;">
                         <form action="{{ route('x-pengganti.mapping.store.brood') }}" method="POST">
                             @csrf
                             <input type="hidden" name="x_pengganti_seri_id" value="{{ $seri->id }}">
@@ -256,38 +265,12 @@
                                             class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold uppercase focus:ring-amber-500 focus:border-amber-500"
                                             placeholder="Contoh: ABA" value="{{ old('source_prefix') }}">
                                     </div>
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <div>
-                                            <label
-                                                class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Seri
-                                                Awal</label>
-                                            <input type="text" name="source_start" required maxlength="6"
-                                                inputmode="numeric"
-                                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                                class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold focus:ring-amber-500 focus:border-amber-500"
-                                                placeholder="Contoh: 701001" value="{{ old('source_start') }}">
-                                        </div>
-                                        <div>
-                                            <label
-                                                class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Seri
-                                                Akhir</label>
-                                            <input type="text" name="source_end" required maxlength="6"
-                                                inputmode="numeric"
-                                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                                class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold focus:ring-amber-500 focus:border-amber-500"
-                                                placeholder="Contoh: 702000" value="{{ old('source_end') }}">
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label
-                                            class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Kategori</label>
-                                        <select name="source_category" required
-                                            class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold focus:ring-amber-500 focus:border-amber-500">
-                                            <option value="seri_1">Seri 1</option>
-                                            <option value="seri_2">Seri 2</option>
-                                            <option value="campuran_1">Campuran Seri 1</option>
-                                            <option value="campuran_2">Campuran Seri 2</option>
-                                        </select>
+                                    <div
+                                        class="p-3 bg-amber-50 dark:bg-amber-900/10 rounded-xl border border-amber-100/50 dark:border-amber-800/20">
+                                        <p
+                                            class="text-[9px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest leading-relaxed">
+                                            Akan dihitung otomatis berdasarkan seri dan nomor pack.
+                                        </p>
                                     </div>
                                 </div>
                                 <div class="space-y-4">
@@ -302,30 +285,17 @@
                                             class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold uppercase focus:ring-emerald-500 focus:border-emerald-500"
                                             placeholder="Contoh: RBC" value="{{ old('replacement_prefix') }}">
                                     </div>
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <div>
-                                            <label
-                                                class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Serial
-                                                Awal</label>
-                                            <input type="text" name="replacement_start" required maxlength="6"
-                                                inputmode="numeric"
-                                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                                class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold focus:ring-emerald-500 focus:border-emerald-500"
-                                                placeholder="Contoh: 000001" value="{{ old('replacement_start') }}">
-                                        </div>
-                                        <div>
-                                            <label
-                                                class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Serial
-                                                Akhir</label>
-                                            <input type="text" name="replacement_end" required maxlength="6"
-                                                inputmode="numeric"
-                                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                                class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold focus:ring-emerald-500 focus:border-emerald-500"
-                                                placeholder="Contoh:001000" value="{{ old('replacement_end') }}">
-                                        </div>
+                                    <div>
+                                        <label
+                                            class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Nomor
+                                            Pack Pengganti</label>
+                                        <input type="number" name="replacement_pack_number" required min="1"
+                                            class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold focus:ring-emerald-500 focus:border-emerald-500"
+                                            placeholder="Contoh: 1" value="{{ old('replacement_pack_number') }}">
                                     </div>
                                 </div>
                             </div>
+
                             <div class="mt-6 flex justify-end">
                                 <button type="submit"
                                     class="px-6 py-3 bg-gradient-to-r from-amber-600 to-orange-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:from-amber-700 hover:to-orange-700 transition-all shadow-lg active:scale-95">
@@ -335,7 +305,146 @@
                         </form>
                     </div>
 
-                    {{-- Tab 3: Per Vell --}}
+                    {{-- Tab 3: Inschiet Parsial --}}
+                    <div x-show="activeTab === 'partial'" x-transition style="display: none;">
+                        <form action="{{ route('x-pengganti.mapping.store.partial') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="x_pengganti_seri_id" value="{{ $seri->id }}">
+                            <div
+                                class="mb-6 p-4 bg-cyan-50/80 dark:bg-cyan-900/10 border border-cyan-100 dark:border-cyan-800/30 rounded-xl flex gap-4">
+                                <div class="shrink-0 text-cyan-500">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h5
+                                        class="text-xs font-black text-cyan-800 dark:text-cyan-300 uppercase tracking-widest mb-1">
+                                        Inschiet Parsial</h5>
+                                    <p
+                                        class="text-[11px] font-medium text-cyan-600/80 dark:text-cyan-400/80 leading-relaxed">
+                                        Input penggantian nomor seri dalam rentang bilyet tertentu (nomor seri awal s/d
+                                        nomor seri akhir).</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                {{-- Sisi Asal --}}
+                                <div class="space-y-6">
+                                    <h4
+                                        class="text-xs font-black text-cyan-600 uppercase tracking-widest flex items-center gap-2">
+                                        <span
+                                            class="w-5 h-5 rounded-full bg-cyan-100 flex items-center justify-center text-[10px]">1</span>
+                                        Seri Diganti
+                                    </h4>
+
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="col-span-1">
+                                            <label
+                                                class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1.5">No
+                                                Pack</label>
+                                            <input type="number" name="pack_number" required min="1"
+                                                class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold focus:ring-cyan-500 focus:border-cyan-500"
+                                                placeholder="701" value="{{ old('pack_number') }}">
+                                        </div>
+                                        <div class="col-span-1">
+                                            <label
+                                                class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1.5">Prefix</label>
+                                            <input type="text" name="source_prefix" required maxlength="3"
+                                                class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold uppercase focus:ring-cyan-500 focus:border-cyan-500"
+                                                placeholder="ABA" value="{{ old('source_prefix') }}">
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="p-5 bg-cyan-50/50 dark:bg-cyan-900/10 rounded-2xl border border-cyan-100 dark:border-cyan-800/20 space-y-4">
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label
+                                                    class="block text-[9px] font-black text-cyan-600 uppercase tracking-widest mb-1.5">Digit
+                                                    Awal</label>
+                                                <input type="text" name="src_start_offset" required maxlength="3"
+                                                    class="w-full py-2.5 px-4 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold focus:ring-cyan-500 focus:border-cyan-500"
+                                                    placeholder="001" value="{{ old('src_start_offset') }}">
+                                            </div>
+                                            <div>
+                                                <label
+                                                    class="block text-[9px] font-black text-cyan-600 uppercase tracking-widest mb-1.5">Digit
+                                                    Akhir</label>
+                                                <input type="text" name="src_end_offset" required maxlength="3"
+                                                    class="w-full py-2.5 px-4 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold focus:ring-cyan-500 focus:border-cyan-500"
+                                                    placeholder="500" value="{{ old('src_end_offset') }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Sisi Pengganti --}}
+                                <div class="space-y-6">
+                                    <h4
+                                        class="text-xs font-black text-emerald-600 uppercase tracking-widest flex items-center gap-2">
+                                        <span
+                                            class="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center text-[10px]">2</span>
+                                        Seri Pengganti
+                                    </h4>
+
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="col-span-1">
+                                            <label
+                                                class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1.5">No
+                                                Pack</label>
+                                            <input type="number" name="replacement_pack_number" required min="1"
+                                                class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold focus:ring-emerald-500 focus:border-emerald-500"
+                                                placeholder="1" value="{{ old('replacement_pack_number') }}">
+                                        </div>
+                                        <div class="col-span-1">
+                                            <label
+                                                class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1.5">Prefix</label>
+                                            <input type="text" name="replacement_prefix" required maxlength="3"
+                                                class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold uppercase focus:ring-emerald-500 focus:border-emerald-500"
+                                                placeholder="RBC" value="{{ old('replacement_prefix') }}">
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="p-5 bg-emerald-50/50 dark:bg-emerald-900/10 rounded-2xl border border-emerald-100 dark:border-emerald-800/20 space-y-4">
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label
+                                                    class="block text-[9px] font-black text-emerald-600 uppercase tracking-widest mb-1.5">Digit
+                                                    Awal</label>
+                                                <input type="text" name="rep_start_offset" required maxlength="3"
+                                                    class="w-full py-2.5 px-4 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold focus:ring-emerald-500 focus:border-emerald-500"
+                                                    placeholder="001" value="{{ old('rep_start_offset') }}">
+                                            </div>
+                                            <div>
+                                                <label
+                                                    class="block text-[9px] font-black text-emerald-600 uppercase tracking-widest mb-1.5">Digit
+                                                    Akhir</label>
+                                                <input type="text" name="rep_end_offset" required maxlength="3"
+                                                    class="w-full py-2.5 px-4 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold focus:ring-emerald-500 focus:border-emerald-500"
+                                                    placeholder="500" value="{{ old('rep_end_offset') }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div
+                                class="mt-8 pt-6 border-t border-gray-100 dark:border-slate-700 flex justify-between items-center">
+                                <p class="text-[10px] font-medium text-red-400 italic">* Gunakan 000 untuk seri akhir
+                                    1.000.
+                                    Jumlah bilyet seri asal dan seri pengganti harus sama.</p>
+                                <button type="submit"
+                                    class="px-8 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:from-cyan-700 hover:to-blue-700 transition-all shadow-lg active:scale-95">
+                                    Simpan Inschiet Parsial
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    {{-- Tab 4: Inschiet Vell --}}
                     <div x-show="activeTab === 'vell'" x-transition style="display: none;">
                         <form action="{{ route('x-pengganti.mapping.store.vell') }}" method="POST">
                             @csrf
@@ -384,7 +493,7 @@
                                     <div class="grid grid-cols-2 gap-3">
                                         <div>
                                             <label
-                                                class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Base
+                                                class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">
                                                 Seri 1 (2 huruf)</label>
                                             <input type="text" name="rep_seri1_base" required maxlength="2"
                                                 pattern="[A-Za-z]{2}" oninput="this.value = this.value.toUpperCase()"
@@ -393,7 +502,7 @@
                                         </div>
                                         <div>
                                             <label
-                                                class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Base
+                                                class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">
                                                 Seri 2 (2 huruf)</label>
                                             <input type="text" name="rep_seri2_base" required maxlength="2"
                                                 pattern="[A-Za-z]{2}" oninput="this.value = this.value.toUpperCase()"
@@ -404,7 +513,7 @@
                                     <div>
                                         <label
                                             class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Nomor
-                                            Serial Pengganti (Vell)</label>
+                                            Seri Pengganti (Vell)</label>
                                         <input type="text" name="replacement_serial" required maxlength="6"
                                             inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                             class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold focus:ring-emerald-500 focus:border-emerald-500"
@@ -415,14 +524,14 @@
                             <div class="mt-6 flex justify-end">
                                 <button type="submit"
                                     class="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg active:scale-95">
-                                    Simpan Inschiet Vell (45 Baris)
+                                    Simpan Inschiet Vell
                                 </button>
                             </div>
                         </form>
                     </div>
 
-                    {{-- Tab 4: Per Bilyet --}}
-                    <div x-show="activeTab === 'single'" x-transition>
+                    {{-- Tab 5: Per Bilyet --}}
+                    <div x-show="activeTab === 'single'" x-transition style="display: none;">
                         <form action="{{ route('x-pengganti.mapping.store.single') }}" method="POST">
                             @csrf
                             <input type="hidden" name="x_pengganti_seri_id" value="{{ $seri->id }}">
@@ -515,7 +624,7 @@
             <div
                 class="bg-white dark:bg-slate-800 overflow-hidden shadow-sm sm:rounded-2xl border border-gray-100 dark:border-slate-700">
                 <div class="px-6 py-4 border-b border-gray-100 dark:border-slate-700">
-                    <h3 class="text-sm font-black text-gray-700 dark:text-white uppercase tracking-widest">Data Mapping
+                    <h3 class="text-sm font-black text-gray-700 dark:text-white uppercase tracking-widest">Data Inschiet
                         ({{ number_format($totalMappings) }} Entri)</h3>
                 </div>
                 <div class="overflow-x-auto">
@@ -544,10 +653,10 @@
                                         'manual' => 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400',
                                     ];
                                     $typeIcons = [
-                                        'pack' => '📦',
-                                        'brood' => '📋',
-                                        'vell' => '📑',
-                                        'bilyet' => '📄',
+                                        'pack' => 'pack',
+                                        'brood' => 'brood',
+                                        'vell' => 'vell',
+                                        'bilyet' => 'bilyet',
                                     ];
                                 @endphp
                                 <tr class="hover:bg-gray-50/50 dark:hover:bg-slate-700/50 transition-colors text-[11px]">
@@ -591,7 +700,7 @@
                                     <td colspan="8" class="px-6 py-10 text-center">
                                         <p
                                             class="text-xs font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest italic">
-                                            Belum ada mapping untuk seri ini</p>
+                                            Belum ada inschiet untuk seri ini</p>
                                     </td>
                                 </tr>
                             @endforelse
@@ -625,7 +734,7 @@
 
         // Pencegahan Double Submit (Menghindari PostgreSQL Lock / Waktu Loading Lama)
         document.querySelectorAll('form').forEach(form => {
-            if(!form.classList.contains('delete-confirm')) {
+            if (!form.classList.contains('delete-confirm')) {
                 form.addEventListener('submit', function (e) {
                     const btn = this.querySelector('button[type="submit"]');
                     if (btn) {

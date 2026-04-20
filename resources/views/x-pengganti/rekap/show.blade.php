@@ -29,12 +29,9 @@
                 </div>
                 <div class="flex flex-col">
                     <span class="text-[8px] font-black text-indigo-200 uppercase tracking-widest mb-0.5">Pecahan</span>
-                    @php
-                        $pchBadge = ['S' => 'bg-lime-400', 'T' => 'bg-gray-300', 'U' => 'bg-amber-300', 'V' => 'bg-purple-400', 'W' => 'bg-green-400', 'X' => 'bg-blue-400', 'Y' => 'bg-red-400'];
-                    @endphp
                     <div class="flex items-center gap-2">
                         <span
-                            class="inline-flex items-center justify-center w-7 h-7 rounded-lg {{ $pchBadge[$seri->pecahan] ?? 'bg-gray-400' }} text-white text-[10px] font-black shadow-lg border border-white/20">{{ $seri->pecahan }}</span>
+                            class="inline-flex items-center justify-center w-7 h-7 rounded-lg {{ $seri->pecahan_color_class }} text-white text-[10px] font-black shadow-lg border border-white/20">{{ $seri->pecahan }}</span>
                     </div>
                 </div>
                 <div class="flex flex-col">

@@ -69,7 +69,7 @@
             width: 22px;
             height: 22px;
             border-radius: 5px;
-            background: #0d9488;
+            background: {{ $seri->pecahan_color_hex }};
             color: white;
             font-weight: 900;
             font-size: 9pt;

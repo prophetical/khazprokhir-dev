@@ -120,9 +120,6 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-slate-700">
-                            @php
-                                $pchClasses = ['S' => 'bg-lime-500', 'T' => 'bg-gray-400', 'U' => 'bg-amber-400', 'V' => 'bg-purple-500', 'W' => 'bg-green-500', 'X' => 'bg-blue-500', 'Y' => 'bg-red-500'];
-                            @endphp
                             @forelse($masters as $seri)
                                 <tr class="hover:bg-gray-50/50 dark:hover:bg-slate-700/50 transition-colors text-[12px]">
                                     <td class="px-4 py-3 text-center text-gray-400 dark:text-slate-500 font-bold">
@@ -130,7 +127,7 @@
                                     </td>
                                     <td class="px-4 py-3 text-center">
                                         <span
-                                            class="inline-flex items-center justify-center w-7 h-7 rounded-lg {{ $pchClasses[$seri->pecahan] ?? 'bg-gray-500' }} text-white font-black text-[11px] shadow-sm">{{ $seri->pecahan }}</span>
+                                            class="inline-flex items-center justify-center w-7 h-7 rounded-lg {{ $seri->pecahan_color_class }} text-white font-black text-[11px] shadow-sm">{{ $seri->pecahan }}</span>
                                     </td>
                                     <td class="px-4 py-3 font-bold text-gray-700 dark:text-gray-200">{{ $seri->seri }}</td>
                                     <td
@@ -161,7 +158,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                                             </svg>
-                                            Mapping
+                                            Inschiet
                                         </a>
                                     </td>
                                 </tr>

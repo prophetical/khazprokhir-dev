@@ -132,7 +132,7 @@ class XPenggantiCutpackController extends Controller
             }
         });
 
-        $seri = \App\Models\XPenggantiSeri::find($validated['x_pengganti_seri_id']);
+        $seri = XPenggantiSeri::find($validated['x_pengganti_seri_id']);
         $msg  = "Data Cutpack Seri {$seri->seri} Batch {$seri->batch} berhasil disimpan.";
 
         return redirect()

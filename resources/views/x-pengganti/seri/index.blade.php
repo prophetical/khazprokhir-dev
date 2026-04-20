@@ -125,17 +125,6 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-slate-700">
-                            @php
-                                $pchClasses = [
-                                    'S' => 'bg-lime-500',
-                                    'T' => 'bg-gray-400',
-                                    'U' => 'bg-amber-400',
-                                    'V' => 'bg-purple-500',
-                                    'W' => 'bg-green-500',
-                                    'X' => 'bg-blue-500',
-                                    'Y' => 'bg-red-500',
-                                ];
-                            @endphp
                             @forelse($seris as $seri)
                                 <tr class="hover:bg-gray-50/50 dark:hover:bg-slate-700/50 transition-colors text-[12px]">
                                     <td class="px-4 py-3 text-center text-gray-400 dark:text-slate-500 font-bold">
@@ -143,7 +132,7 @@
                                     </td>
                                     <td class="px-4 py-3 text-center">
                                         <span
-                                            class="inline-flex items-center justify-center w-7 h-7 rounded-lg {{ $pchClasses[$seri->pecahan] ?? 'bg-gray-500' }} text-white font-black text-[11px] shadow-sm">
+                                            class="inline-flex items-center justify-center w-7 h-7 rounded-lg {{ $seri->pecahan_color_class }} text-white font-black text-[11px] shadow-sm">
                                             {{ $seri->pecahan }}
                                         </span>
                                     </td>

@@ -78,7 +78,7 @@
                     </div>
                     <div class="bg-indigo-50 border border-indigo-100 px-5 py-3 rounded-2xl flex flex-col items-center">
                         <span class="text-[9px] font-black text-indigo-400 uppercase tracking-widest mb-1">Pecahan</span>
-                        <span class="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-black text-sm shadow-sm">{{ $seri->pecahan }}</span>
+                        <span class="w-8 h-8 rounded-xl {{ $seri->pecahan_color_class }} text-white flex items-center justify-center font-black text-sm shadow-sm">{{ $seri->pecahan }}</span>
                     </div>
                     <div class="bg-slate-50 border border-slate-100 px-5 py-3 rounded-2xl flex flex-col min-w-[100px]">
                         <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">TA / TE</span>

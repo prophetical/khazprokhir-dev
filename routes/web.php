@@ -36,7 +36,7 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\RoleMiddleware::clas
     Route::get('/rekomendasi-penerimaan/export', [\App\Http\Controllers\RekomendasiPenerimaanController::class, 'export'])->name('rekomendasi-penerimaan.export');
     Route::get('/rekomendasi-penerimaan/show', [\App\Http\Controllers\RekomendasiPenerimaanController::class, 'show'])->name('rekomendasi-penerimaan.show');
 
-    // HCS Sorting Routes
+    // Penyortiran HCS
     Route::get('/hcs-sorting/create', [\App\Http\Controllers\HcsSortingController::class, 'create'])->name('hcs-sorting.create');
     Route::post('/hcs-sorting', [\App\Http\Controllers\HcsSortingController::class, 'store'])->name('hcs-sorting.store');
     Route::get('/hcs-sorting', [\App\Http\Controllers\HcsSortingController::class, 'index'])->name('hcs-sorting.index');
@@ -48,10 +48,10 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\RoleMiddleware::clas
     Route::put('/hcs-sorting-reports/{hcs_sorting_report}', [\App\Http\Controllers\HcsSortingReportController::class, 'update'])->name('hcs-sorting-reports.update');
     Route::delete('/hcs-sorting-reports/{hcs_sorting_report}/destroy', [\App\Http\Controllers\HcsSortingReportController::class, 'destroy'])->name('hcs-sorting-reports.destroy');
 
-    // API to get used packs (requires auth)
+    // API untuk mendapatkan pack yang sudah digunakan (memerlukan auth)
     Route::get('/api/packs/used', [\App\Http\Controllers\PackController::class, 'used'])->name('packs.used');
 
-    // Notifications API
+    // API Notifikasi
     Route::get('/notifications/hcs-ready', [\App\Http\Controllers\PengemasanController::class, 'getReadyToPackNotifications'])->name('notifications.hcs-ready');
 
     // Pengemasan Routes
@@ -62,7 +62,7 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\RoleMiddleware::clas
     Route::get('/data-pengemasan', [\App\Http\Controllers\PengemasanController::class, 'data'])->name('pengemasan.data');
     Route::get('/data-pengemasan/export', [\App\Http\Controllers\PengemasanController::class, 'export'])->name('pengemasan.export');
     Route::get('/data-pengemasan/print', [\App\Http\Controllers\PengemasanController::class, 'print'])->name('pengemasan.print');
-    
+
     // Laporan Pengemasan HCS
     Route::get('/pengemasan-report', [\App\Http\Controllers\PengemasanReportController::class, 'index'])->name('pengemasan.report.index');
     Route::get('/pengemasan-report/print', [\App\Http\Controllers\PengemasanReportController::class, 'print'])->name('pengemasan.report.print');
@@ -95,7 +95,7 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\RoleMiddleware::clas
     Route::put('/targets/{id}', [\App\Http\Controllers\TargetController::class, 'update'])->name('targets.update');
     Route::get('/targets/{id}/destroy', [\App\Http\Controllers\TargetController::class, 'destroy'])->name('targets.destroy');
 
-    // HCTS Receiving Routes
+    // Penerimaan HCTS Routes
     Route::get('/hcts-receiving/create', [\App\Http\Controllers\HctsReceivingController::class, 'create'])->name('hcts-receiving.create');
     Route::post('/hcts-receiving', [\App\Http\Controllers\HctsReceivingController::class, 'store'])->name('hcts-receiving.store');
     Route::get('/hcts-receiving/get-hcs-total', [\App\Http\Controllers\HctsReceivingController::class, 'getHcsTotal'])->name('hcts-receiving.get-hcs-total');
@@ -147,17 +147,17 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\RoleMiddleware::clas
     });
     Route::resource('bahan-penolong', \App\Http\Controllers\BahanPenolongController::class)->only(['store', 'update', 'destroy']);
 
-    // Penyablonan (Screen Printing)
+    // Penyablonan Routes
     Route::prefix('penyablonan')->name('penyablonan.')->group(function () {
         Route::get('/penerimaan', [\App\Http\Controllers\PenyablonanController::class, 'penerimaan'])->name('penerimaan');
         Route::post('/penerimaan', [\App\Http\Controllers\PenyablonanController::class, 'storePenerimaan'])->name('penerimaan.store');
-        
+
         Route::get('/dus', [\App\Http\Controllers\PenyablonanController::class, 'dus'])->name('dus');
         Route::post('/dus', [\App\Http\Controllers\PenyablonanController::class, 'storeDus'])->name('dus.store');
-        
+
         Route::get('/kerusakan', [\App\Http\Controllers\PenyablonanController::class, 'kerusakan'])->name('kerusakan');
         Route::post('/kerusakan', [\App\Http\Controllers\PenyablonanController::class, 'storeKerusakan'])->name('kerusakan.store');
-        
+
         Route::get('/laporan', [\App\Http\Controllers\PenyablonanController::class, 'laporan'])->name('laporan');
         Route::get('/laporan/print', [\App\Http\Controllers\PenyablonanController::class, 'print'])->name('laporan.print');
     });
@@ -199,6 +199,7 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\RoleMiddleware::clas
             Route::get('/create', [\App\Http\Controllers\SerialMappingController::class, 'create'])->name('create');
             Route::post('/pack', [\App\Http\Controllers\SerialMappingController::class, 'storePack'])->name('store.pack');
             Route::post('/brood', [\App\Http\Controllers\SerialMappingController::class, 'storeBrood'])->name('store.brood');
+            Route::post('/partial', [\App\Http\Controllers\SerialMappingController::class, 'storePartial'])->name('store.partial');
             Route::post('/vell', [\App\Http\Controllers\SerialMappingController::class, 'storeVell'])->name('store.vell');
             Route::post('/single', [\App\Http\Controllers\SerialMappingController::class, 'storeSingle'])->name('store.single');
             Route::get('/lookup', [\App\Http\Controllers\SerialMappingController::class, 'lookup'])->name('lookup');
