@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Models\AuditLog;
+use App\Models\HcsKhazaiRegistration;
 use App\Models\HcsReceiving;
+use App\Models\HcsReceivingHistory;
 use App\Models\Pack;
 use App\Models\StockLedger;
 use Exception;
@@ -36,6 +38,7 @@ class HcsReceivingService
                 'emisi' => $data['emisi'],
                 'tahun_anggaran' => $data['tahun_anggaran'],
                 'repass' => $data['repass'] ?? null,
+                'barcode_token' => $data['barcode_token'] ?? null,
                 'created_by' => $userId,
             ]);
 
@@ -94,6 +97,65 @@ class HcsReceivingService
     }
 
     /**
+     * Membuat penerimaan HCS dari data registrasi Khazai (Hasil Scan Barcode)
+     */
+    public function createFromRegistration(string $barcode, int $userId): HcsReceiving
+    {
+        $reg = HcsKhazaiRegistration::where('barcode_token', $barcode)->first();
+
+        if (!$reg) {
+            throw new Exception("Data registrasi dengan barcode $barcode tidak ditemukan.");
+        }
+
+        if ($reg->status === 'diterima') {
+            throw new Exception("Data dengan barcode $barcode sudah pernah diterima sebelumnya.");
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // Gunakan logika createReceiving yang sudah ada dengan data dari registrasi
+            $data = [
+                'nomor_bon' => $reg->nomor_bon,
+                'tanggal_penerimaan' => now()->format('Y-m-d'),
+                'pecahan' => $reg->pecahan,
+                'jumlah' => $reg->jumlah,
+                'gilir' => $reg->gilir,
+                'mesin' => $reg->mesin,
+                'supplier' => $reg->supplier,
+                'batch' => $reg->batch,
+                'seri' => $reg->seri,
+                'emisi' => $reg->emisi,
+                'tahun_anggaran' => $reg->tahun_anggaran,
+                'packs' => $reg->packs_data,
+                'is_manual' => ($reg->jumlah < 45000 || $reg->jumlah % 45000 !== 0),
+                'barcode_token' => $barcode,
+            ];
+
+            $hcs = $this->createReceiving($data, $userId);
+
+            // Update status registrasi
+            $reg->update(['status' => 'diterima']);
+
+            // Catat history awal (pemindahan dari registrasi ke penerimaan)
+            HcsReceivingHistory::create([
+                'hcs_receiving_id' => $hcs->id,
+                'barcode_token' => $barcode,
+                'user_id' => $userId,
+                'field_name' => 'status',
+                'old_value' => 'registrasi_khazai',
+                'new_value' => 'diterima_khazprokhir',
+            ]);
+
+            DB::commit();
+            return $hcs;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    /**
      * Memperbarui data penerimaan HCS yang sudah ada, mengembalikan posisi stok lama, dan menghitung ulang.
      */
     public function updateReceiving(HcsReceiving $hcs, array $data, int $userId): HcsReceiving
@@ -125,6 +187,7 @@ class HcsReceivingService
             $hcs->packs()->whereNull('hcs_sorting_id')->delete();
 
             // 3. Memperbarui informasi data penerimaan HCS
+            $oldData = $hcs->getOriginal();
             $hcs->update([
                 'nomor_bon' => $data['nomor_bon'],
                 'tanggal_penerimaan' => $data['tanggal_penerimaan'],
@@ -140,6 +203,20 @@ class HcsReceivingService
                 'repass' => $data['repass'] ?? null,
                 'updated_by' => $userId,
             ]);
+
+            // 3a. Catat log audit detail jika ada perubahan field
+            foreach ($data as $key => $value) {
+                if (isset($oldData[$key]) && $oldData[$key] != $value && !in_array($key, ['packs', 'is_manual'])) {
+                    HcsReceivingHistory::create([
+                        'hcs_receiving_id' => $hcs->id,
+                        'barcode_token' => $this->getBarcodeFor($hcs),
+                        'user_id' => $userId,
+                        'field_name' => $key,
+                        'old_value' => $oldData[$key],
+                        'new_value' => $value,
+                    ]);
+                }
+            }
 
             // 4. Membuat data pack baru (tanpa membuat ulang pack yang sudah disortir)
             $selectedPacksCount = count($data['packs']);
@@ -232,6 +309,13 @@ class HcsReceivingService
             // Menghapus data utama penerimaan HCS
             $hcs->delete();
 
+            // SINKRONISASI: Kembalikan status registrasi khazai menjadi 'pending'
+            // agar petugas bisa memperbaiki data barcode jika salah input.
+            HcsKhazaiRegistration::where('nomor_bon', $hcs->nomor_bon)
+                ->where('batch', $hcs->batch)
+                ->where('seri', $hcs->seri)
+                ->update(['status' => 'pending']);
+
             // Catat di log audit
             AuditLog::create([
                 'user_id' => $userId,
@@ -276,8 +360,19 @@ class HcsReceivingService
 
         $sortedPacks = $hcs->packs()->whereNotNull('hcs_sorting_id')->pluck('pack_number')->toArray();
         if (!empty($sortedPacks)) {
-            if (count($data['packs']) < count($sortedPacks)) throw new Exception('Jumlah pack tidak boleh kurang dari pack yang sudah disortir ('.count($sortedPacks).' pack).');
-            if (!empty(array_diff($sortedPacks, $data['packs']))) throw new Exception('Pack yang sudah disortir tidak boleh dibuang.');
+            if (count($data['packs']) < count($sortedPacks)) throw new Exception('Jumlah pack tidak boleh kurang dari pack yang sudah disortir ('.count($sortedPacks).' pack). Hapus data sortir terlebih dahulu jika ingin mengurangi jumlah pack.');
+            if (!empty(array_diff($sortedPacks, $data['packs']))) throw new Exception('Pack yang sudah disortir tidak boleh dibuang. Hapus data sortirnya terlebih dahulu.');
         }
+    }
+
+    private function getBarcodeFor(HcsReceiving $hcs)
+    {
+        $reg = HcsKhazaiRegistration::where('nomor_bon', $hcs->nomor_bon)
+            ->where('batch', $hcs->batch)
+            ->where('seri', $hcs->seri)
+            ->latest()
+            ->first();
+        
+        return $reg ? $reg->barcode_token : 'N/A';
     }
 }

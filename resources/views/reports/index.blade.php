@@ -324,6 +324,9 @@
                                     <th scope="col"
                                         class="px-3 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">
                                         Operator</th>
+                                    <th scope="col"
+                                        class="px-3 py-3 text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                        Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white dark:bg-slate-900 divide-y divide-gray-200 dark:divide-slate-800">
@@ -376,6 +379,19 @@
                                             <td
                                                 class="px-3 py-3 whitespace-nowrap text-[10px] text-gray-500 dark:text-gray-400 font-bold uppercase">
                                                 {{ $row->user->name ?? '-' }}</td>
+                                            <td class="px-3 py-3 whitespace-nowrap text-center">
+                                                @php $barcodeData = $row->barcode(); @endphp
+                                                @if($barcodeData)
+                                                    <a href="{{ route('hcs-receiving.history', $barcodeData->barcode_token) }}" 
+                                                        class="inline-flex items-center px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg font-black text-[9px] uppercase tracking-tighter hover:bg-indigo-600 hover:text-white transition-all shadow-sm border border-indigo-100"
+                                                        title="Lihat Riwayat Audit">
+                                                        <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                        History
+                                                    </a>
+                                                @else
+                                                    <span class="text-[9px] font-bold text-gray-300 uppercase tracking-widest italic">Manual</span>
+                                                @endif
+                                            </td>
                                         </tr>
                                     @endforeach
                                 @empty

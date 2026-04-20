@@ -40,7 +40,20 @@ class RoleMiddleware
             abort(403, 'Anda login dengan role SUPERVISOR. Anda tidak memiliki hak akses untuk melakukan perubahan data.');
         }
 
-        // 4. Logika role khazverutas: CRUD penuh pada X Pengganti, read-only halaman lain
+        // 4. Logika role khazai: CRUD penuh pada Registrasi HCS, read-only halaman lain
+        if ($userRole === 'khazai') {
+            // Boleh semua method pada route registrasi hcs
+            if ($request->is('hcs-khazai-registration*')) {
+                return $next($request);
+            }
+            // Halaman lain: hanya boleh GET
+            if ($request->isMethod('GET')) {
+                return $next($request);
+            }
+            abort(403, 'Role KHAZAI hanya dapat melakukan perubahan pada modul Registrasi Penerimaan HCS.');
+        }
+
+        // 5. Logika role khazverutas: CRUD penuh pada X Pengganti, read-only halaman lain
         if ($userRole === 'khazverutas') {
             // Boleh semua method pada route x-pengganti
             if ($request->is('x-pengganti*')) {
@@ -53,8 +66,9 @@ class RoleMiddleware
             abort(403, 'Role KHAZVERUTAS hanya dapat melakukan perubahan pada modul X Pengganti.');
         }
 
-        // 5. Sortir & Kemas logic: akses ke semua halaman kecuali manajemen target
+        // 6. Sortir & Kemas logic: akses ke semua halaman kecuali manajemen target dan akun
         if (in_array($userRole, ['sortir', 'kemas'])) {
+            // Sudah diproteksi di bagian admin (cek nomor 2)
             return $next($request);
         }
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\HcsReceivingController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -29,6 +30,16 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\RoleMiddleware::clas
     Route::put('/hcs-receiving/{hcs_receiving}', [\App\Http\Controllers\HcsReceivingController::class, 'update'])->name('hcs-receiving.update');
     Route::delete('/hcs-receiving/{hcs_receiving}', [\App\Http\Controllers\HcsReceivingController::class, 'destroy'])->name('hcs-receiving.destroy');
     Route::get('/hcs-receiving', [\App\Http\Controllers\HcsReceivingController::class, 'index'])->name('hcs-receiving.index');
+    Route::get('/hcs-receiving/scan', [HcsReceivingController::class, 'scan'])->name('hcs-receiving.scan');
+    Route::post('/hcs-receiving/scan-process', [HcsReceivingController::class, 'storeScan'])->name('hcs-receiving.scan-process');
+    Route::get('/hcs-receiving/scan-status', [HcsReceivingController::class, 'scanStatus'])->name('hcs-receiving.scan-status');
+    Route::post('/hcs-receiving/manual-confirm/{registration}', [HcsReceivingController::class, 'manualConfirm'])->name('hcs-receiving.manual-confirm');
+    Route::get('/hcs-receiving/{barcode_token}/history', [HcsReceivingController::class, 'history'])->name('hcs-receiving.history');
+
+    // HCS Khazai Registration Routes (New Module for Khazai)
+    Route::get('/hcs-khazai-registration/get-pack-status', [\App\Http\Controllers\HcsKhazaiRegistrationController::class, 'getPackStatus'])->name('hcs-khazai-registration.get-pack-status');
+    Route::resource('hcs-khazai-registration', \App\Http\Controllers\HcsKhazaiRegistrationController::class);
+    Route::get('/hcs-khazai-registration/{id}/barcode', [\App\Http\Controllers\HcsKhazaiRegistrationController::class, 'barcode'])->name('hcs-khazai-registration.barcode');
 
     // Rekomendasi Penerimaan
     Route::get('/rekomendasi-penerimaan', [\App\Http\Controllers\RekomendasiPenerimaanController::class, 'index'])->name('rekomendasi-penerimaan.index');
