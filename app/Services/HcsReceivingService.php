@@ -164,6 +164,8 @@ class HcsReceivingService
         try {
             DB::beginTransaction();
 
+            // Capture old packs list for history tracking
+            $oldPacksList = $hcs->packs()->pluck('pack_number')->sort()->values()->toArray();
             $sortedPacks = $hcs->packs()->whereNotNull('hcs_sorting_id')->get()->keyBy('pack_number');
 
             // 1. Mengembalikan saldo data buku stok yang lama
@@ -216,6 +218,30 @@ class HcsReceivingService
                         'new_value' => $value,
                     ]);
                 }
+            }
+
+            // Catat log audit khusus untuk perubahan packs
+            $newPacksList = collect($data['packs'])->sort()->values()->toArray();
+            if ($oldPacksList != $newPacksList) {
+                HcsReceivingHistory::create([
+                    'hcs_receiving_id' => $hcs->id,
+                    'barcode_token' => $this->getBarcodeFor($hcs),
+                    'user_id' => $userId,
+                    'field_name' => 'packs',
+                    'old_value' => implode(', ', $oldPacksList),
+                    'new_value' => implode(', ', $newPacksList),
+                ]);
+            }
+
+            // 3b. Sinkronisasi perubahan ke data Registrasi Khazai agar data tetap identik
+            if ($hcs->barcode_token) {
+                HcsKhazaiRegistration::where('barcode_token', $hcs->barcode_token)->update([
+                    'nomor_bon' => $data['nomor_bon'],
+                    'gilir' => $data['gilir'],
+                    'mesin' => $data['mesin'],
+                    'supplier' => $data['supplier'],
+                    'packs_data' => $data['packs'],
+                ]);
             }
 
             // 4. Membuat data pack baru (tanpa membuat ulang pack yang sudah disortir)

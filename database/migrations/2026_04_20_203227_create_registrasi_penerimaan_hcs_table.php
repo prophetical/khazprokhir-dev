@@ -19,8 +19,7 @@ return new class extends Migration
             $blueprint->integer('jumlah');
             $blueprint->string('batch');
             $blueprint->string('seri');
-            $blueprint->string('emisi');
-            $blueprint->string('tahun_anggaran');
+            $blueprint->string('tahun_emisi_anggaran')->nullable();
             $blueprint->string('gilir');
             $blueprint->string('mesin');
             $blueprint->string('supplier');

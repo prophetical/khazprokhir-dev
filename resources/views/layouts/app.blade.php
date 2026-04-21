@@ -547,20 +547,20 @@
                         <!-- Realtime Jam & Tanggal -->
                         <div class="hidden lg:flex items-center ml-auto mr-4 text-white/80 bg-white/5 dark:bg-slate-800/40 border border-white/10 dark:border-white/5 shadow-inner rounded-2xl px-4 py-1.5 hover:bg-white/10 transition-colors duration-300 group"
                             x-data="{ 
-                                time: '', 
-                                date: '',
-                                init() {
-                                    this.updateClock();
-                                    setInterval(() => this.updateClock(), 1000);
-                                },
-                                updateClock() {
-                                    const now = new Date();
-                                    const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Jakarta' };
-                                    const optionsTime = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'Asia/Jakarta' };
-                                    this.date = now.toLocaleDateString('id-ID', optionsDate);
-                                    this.time = now.toLocaleTimeString('id-ID', optionsTime).replace(/[\.]/g, ':');
-                                }
-                            }">
+                                                    time: '', 
+                                                    date: '',
+                                                    init() {
+                                                        this.updateClock();
+                                                        setInterval(() => this.updateClock(), 1000);
+                                                    },
+                                                    updateClock() {
+                                                        const now = new Date();
+                                                        const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Jakarta' };
+                                                        const optionsTime = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'Asia/Jakarta' };
+                                                        this.date = now.toLocaleDateString('id-ID', optionsDate);
+                                                        this.time = now.toLocaleTimeString('id-ID', optionsTime).replace(/[\.]/g, ':');
+                                                    }
+                                                }">
                             <div
                                 class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-500">
                                 <svg class="w-4 h-4 text-pink-300 drop-shadow-[0_0_8px_rgba(244,114,182,0.5)]" fill="none"
@@ -584,21 +584,22 @@
                     @if(!$fullScreen)
                         <!-- Tombol buat ganti tema -->
                         <div class="flex items-center mr-4" x-data="{ 
-                                darkMode: false,
-                                toggleTheme() {
-                                    this.darkMode = !this.darkMode;
-                                    const theme = this.darkMode ? 'dark-mode' : 'light-mode';
-                                    const oldTheme = this.darkMode ? 'light-mode' : 'dark-mode';
+                                                    darkMode: false,
+                                                    toggleTheme() {
+                                                        this.darkMode = !this.darkMode;
+                                                        const theme = this.darkMode ? 'dark-mode' : 'light-mode';
+                                                        const oldTheme = this.darkMode ? 'light-mode' : 'dark-mode';
 
-                                    document.documentElement.classList.remove(oldTheme);
-                                    document.documentElement.classList.add(theme);
-                                    document.body.classList.remove(oldTheme);
-                                    document.body.classList.add(theme);
+                                                        document.documentElement.classList.remove(oldTheme);
+                                                        document.documentElement.classList.add(theme);
+                                                        document.body.classList.remove(oldTheme);
+                                                        document.body.classList.add(theme);
 
-                                    localStorage.setItem('theme', theme);
-                                    window.dispatchEvent(new CustomEvent('theme-changed', { detail: { theme } }));
-                                }
-                            }" x-init="darkMode = document.documentElement.classList.contains('dark-mode')">
+                                                        localStorage.setItem('theme', theme);
+                                                        window.dispatchEvent(new CustomEvent('theme-changed', { detail: { theme } }));
+                                                    }
+                                                }"
+                            x-init="darkMode = document.documentElement.classList.contains('dark-mode')">
                             <button @click="toggleTheme()"
                                 class="p-2 border border-white/20 text-white/90 bg-white/10 hover:bg-white/20 focus:outline-none transition rounded-lg"
                                 title="Toggle Theme">
@@ -705,7 +706,7 @@
                                                     class="flex items-center justify-between bg-gray-50 dark:bg-gray-900/50 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/80 p-2 rounded-lg border border-gray-100 dark:border-gray-700 transition-colors">
                                                     <div
                                                         class="text-[11px] font-black text-gray-600 dark:text-gray-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300">
-                                                        Range: <span
+                                                        Pack: <span
                                                             class="bg-white dark:bg-gray-800 px-2 py-0.5 rounded border border-gray-200 dark:border-gray-600 ml-1"
                                                             x-text="`${item.pack_awal} - ${item.pack_akhir}`"></span>
                                                     </div>
@@ -839,68 +840,65 @@
             }
         }
 
-        // ── GLOBAL NOTIFICATION HANDLER (Premium Style) ──
-    // ── GLOBAL NOTIFICATION HANDLER (Ultra-Resilient) ──
-    {{-- Unified Resilient Notification System (One Brain for all Alerts) --}}
-    (function() {
-        let attempts = 0;
-        const maxAttempts = 100; // 5 seconds max
-        const checkSwal = setInterval(() => {
-            attempts++;
-            if (typeof Swal !== 'undefined') {
-                clearInterval(checkSwal);
-                const isDark = document.documentElement.classList.contains('dark-mode');
-                const swalBase = {
-                    background: isDark ? '#1e293b' : '#fff',
-                    color: isDark ? '#f8fafc' : '#111827',
-                    borderRadius: '1.5rem',
-                    customClass: { popup: 'rounded-[1.5rem] border-0 shadow-2xl' }
-                };
+        (function () {
+            let attempts = 0;
+            const maxAttempts = 100; // 5 seconds max
+            const checkSwal = setInterval(() => {
+                attempts++;
+                if (typeof Swal !== 'undefined') {
+                    clearInterval(checkSwal);
+                    const isDark = document.documentElement.classList.contains('dark-mode');
+                    const swalBase = {
+                        background: isDark ? '#1e293b' : '#fff',
+                        color: isDark ? '#f8fafc' : '#111827',
+                        borderRadius: '1.5rem',
+                        customClass: { popup: 'rounded-[1.5rem] border-0 shadow-2xl' }
+                    };
 
-                {{-- 1. Handler Sukses KHUSUS X-PENGGANTI (Universal Fail-Safe) --}}
-                let hasAlerted = false;
-                const xTrigger = document.getElementById('x-notif-trigger');
-                const urlParams = new URLSearchParams(window.location.search);
-                const savedInUrl = urlParams.get('saved');
+                    {{-- 1. Handler Sukses KHUSUS X - PENGGANTI (Universal Fail-Safe) --}}
+                    let hasAlerted = false;
+                    const xTrigger = document.getElementById('x-notif-trigger');
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const savedInUrl = urlParams.get('saved');
 
-                if ((xTrigger || savedInUrl) && !hasAlerted) {
-                    hasAlerted = true;
-                    const msg = xTrigger ? xTrigger.getAttribute('data-message') : 'Data berhasil disimpan.';
-                    
-                    Swal.fire(Object.assign({}, swalBase, {
-                        title: 'Berhasil!',
-                        text: msg,
-                        icon: 'success',
-                        timer: 4500,
-                        showConfirmButton: false,
-                        iconColor: '#10b981'
-                    }));
-
-                    if (xTrigger) xTrigger.remove();
-                    
-                    {{-- Silent URL Cleanup --}}
-                    if (savedInUrl) {
-                        const newUrl = window.location.pathname + window.location.search.replace(/[\?&]saved=1/, '').replace(/^&/, '?');
-                        window.history.replaceState({}, document.title, newUrl);
-                    }
-                }
-
-                {{-- 2. Handler Sukses Standar (JANGAN UBAH SESUAI PERMINTAAN USER) --}}
-                @if(session('success'))
-                    if (!hasAlerted) {
+                    if ((xTrigger || savedInUrl) && !hasAlerted) {
                         hasAlerted = true;
+                        const msg = xTrigger ? xTrigger.getAttribute('data-message') : 'Data berhasil disimpan.';
+
                         Swal.fire(Object.assign({}, swalBase, {
                             title: 'Berhasil!',
-                            text: {!! json_encode(session('success')) !!},
+                            text: msg,
                             icon: 'success',
-                            timer: 3000,
+                            timer: 4500,
                             showConfirmButton: false,
                             iconColor: '#10b981'
                         }));
-                    }
-                @endif
 
-                {{-- 3. Handler Error (error) --}}
+                        if (xTrigger) xTrigger.remove();
+
+                        {{-- Silent URL Cleanup --}}
+                        if (savedInUrl) {
+                            const newUrl = window.location.pathname + window.location.search.replace(/[\?&]saved=1/, '').replace(/^&/, '?');
+                            window.history.replaceState({}, document.title, newUrl);
+                        }
+                    }
+
+                    {{-- 2. Handler Sukses Standar (JANGAN UBAH SESUAI PERMINTAAN USER) --}}
+                    @if(session('success'))
+                        if (!hasAlerted) {
+                            hasAlerted = true;
+                            Swal.fire(Object.assign({}, swalBase, {
+                                title: 'Berhasil!',
+                                text: {!! json_encode(session('success')) !!},
+                                icon: 'success',
+                                timer: 3000,
+                                showConfirmButton: false,
+                                iconColor: '#10b981'
+                            }));
+                        }
+                    @endif
+
+                    {{-- 3. Handler Error (error) --}}
                 @if(session('error'))
                     Swal.fire(Object.assign({}, swalBase, {
                         title: 'Terjadi Kesalahan',
@@ -912,26 +910,26 @@
 
                 {{-- 4. Handler Validasi ($errors) --}}
                 @if($errors->any())
-                    Swal.fire(Object.assign({}, swalBase, {
+                                                            Swal.fire(Object.assign({}, swalBase, {
                         title: 'Validasi Gagal',
                         html: `<ul style="text-align:left; font-size:13px; list-style:disc; padding-left:20px;">
-                                @foreach($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                               </ul>`,
+                                                                        @foreach($errors->all() as $error)
+                                                                            <li>{{ $error }}</li>
+                                                                        @endforeach
+                                                                       </ul>`,
                         icon: 'warning',
                         confirmButtonColor: '#f59e0b'
                     }));
                 @endif
             } else if (attempts >= maxAttempts) {
-                clearInterval(checkSwal);
-                console.error('SweetAlert2 library failing to initialize.');
-            }
+            clearInterval(checkSwal);
+            console.error('SweetAlert2 library failing to initialize.');
+        }
         }, 50);
-    })();
+    }) ();
 
-    document.addEventListener('DOMContentLoaded', () => {
-                const scrollContainer = document.getElementById('main-scroll-container');
+        document.addEventListener('DOMContentLoaded', () => {
+            const scrollContainer = document.getElementById('main-scroll-container');
             const header = document.getElementById('top-header');
 
             if (scrollContainer && header) {

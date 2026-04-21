@@ -18,12 +18,22 @@ class HcsKhazaiRegistrationController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('nomor_bon', 'like', "%{$search}%")
                   ->orWhere('barcode_token', 'like', "%{$search}%")
-                  ->orWhere('batch', 'like', "%{$search}%");
+                  ->orWhere('batch', 'like', "%{$search}%")
+                  ->orWhere('seri', 'like', "%{$search}%");
             });
         }
 
-        $registrations = $query->latest()->simplePaginate(20);
-        return view('hcs-khazai.index', compact('registrations'));
+        // Sorting Logic
+        $allowedSorts = ['tanggal_pembuatan', 'nomor_bon', 'barcode_token', 'pecahan', 'batch', 'seri', 'tahun_anggaran', 'status'];
+        $sort = in_array($request->sort, $allowedSorts) ? $request->sort : 'tanggal_pembuatan';
+        $direction = in_array($request->direction, ['asc', 'desc']) ? $request->direction : 'desc';
+
+        $registrations = $query->orderBy($sort, $direction)
+                               ->orderBy('created_at', $direction)
+                               ->simplePaginate(20)
+                               ->withQueryString();
+
+        return view('hcs-khazai.index', compact('registrations', 'sort', 'direction'));
     }
 
     public function create()

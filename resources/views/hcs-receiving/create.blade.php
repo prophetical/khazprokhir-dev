@@ -6,10 +6,10 @@
         </h2>
     </x-slot>
 
-    <div class="py-3 bg-gray-50/30 min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-1 bg-gray-50/30 h-[calc(100vh-65px)] overflow-hidden">
+        <div class="max-w-full mx-auto px-4 lg:px-4 h-full">
             <div
-                class="bg-white/70 backdrop-blur-xl overflow-hidden shadow-[0_10px_30px_-12px_rgba(0,0,0,0.1)] sm:rounded-2xl border border-white">
+                class="bg-white/70 backdrop-blur-xl h-full overflow-hidden shadow-xl sm:rounded-2xl border border-white flex flex-col">
                 @php
                     $selectedPecahan = old('pecahan', request('pecahan', ''));
                     // Kunci jika menambahkan ke batch yang ada (dari tombol tambah di index)
@@ -31,62 +31,88 @@
                         inputType: 'registration',
                         get currentTheme() { return this.themes[this.selectedPecahan] || null }
                     }" class="border-t-8 transition-all duration-700"
+                    }" class="border-t-8 transition-all duration-700 h-full overflow-hidden"
                     :class="currentTheme ? currentTheme.border : 'border-indigo-500'">
-                    <form id="hcs-form" action="{{ route('hcs-receiving.store') }}" method="POST">
+                    <form id="hcs-form" action="{{ route('hcs-receiving.store') }}" method="POST" class="h-full overflow-hidden">
                         @csrf
 
-                        <div class="flex flex-col lg:flex-row gap-0">
+                        <div class="flex flex-col lg:flex-row h-full overflow-hidden">
 
                             <!-- Kiri: Field Form -->
-                            <div class="w-full lg:w-[42%] p-4 lg:p-5 border-r border-gray-100 bg-white/40">
-                                <div class="mb-4 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800">
-                                    <h4 class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3 text-center">Tipe Input Data</h4>
+                            <div class="w-full lg:w-[40%] p-3 lg:p-4 border-r border-gray-100 bg-white/40 h-full overflow-y-auto custom-scrollbar">
+                                <div
+                                    class="mb-3 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800">
+
+                                    <div class="mb-3 flex items-center justify-between">
+                                        <h3 class="text-base font-black text-gray-900 tracking-tight flex items-center">
+                                            <span class="w-1.5 h-5 mr-3 rounded-full transition-all duration-700"
+                                                :class="currentTheme ? currentTheme.bg : 'bg-indigo-500'"></span>
+                                            Detail Penerimaan
+                                            <span
+                                                class="ml-2 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider transition-all duration-700"
+                                                :class="currentTheme ? (currentTheme.soft + ' ' + currentTheme.icon + ' border ' + currentTheme.border) : 'bg-gray-100 text-gray-500 border border-gray-200'"
+                                                x-text="selectedPecahan ? (selectedPecahan) : ''"></span>
+                                        </h3>
+                                        <div class="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border transition-all duration-700"
+                                            :class="currentTheme ? (currentTheme.border + ' ' + currentTheme.icon + ' ' + currentTheme.soft) : 'border-indigo-200 text-indigo-600 bg-indigo-50'">
+                                            HCS
+                                        </div>
+                                    </div>
+                                    <h4
+                                        class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3 text-center">
+                                        Tipe Input Data</h4>
                                     <div class="grid grid-cols-2 gap-4">
+
                                         <!-- Opsi Registrasi -->
-                                        <label class="relative flex flex-col p-3 bg-white dark:bg-slate-800 rounded-xl border-2 cursor-pointer transition-all duration-300 hover:scale-[1.02]"
+                                        <label
+                                            class="relative flex flex-col p-3 bg-white dark:bg-slate-800 rounded-xl border-2 cursor-pointer transition-all duration-300 hover:scale-[1.02]"
                                             :class="inputType === 'registration' ? (currentTheme ? currentTheme.border : 'border-indigo-500') : 'border-transparent opacity-60'">
-                                            <input type="radio" name="input_type" value="registration" x-model="inputType" class="sr-only">
+                                            <input type="radio" name="input_type" value="registration"
+                                                x-model="inputType" class="sr-only">
                                             <div class="flex items-center gap-2 mb-1.5">
                                                 <div class="w-6 h-6 rounded flex items-center justify-center transition-colors"
                                                     :class="inputType === 'registration' ? (currentTheme ? currentTheme.bg : 'bg-indigo-500') : 'bg-slate-100'">
-                                                    <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01"></path></svg>
+                                                    <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2.5"
+                                                            d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01">
+                                                        </path>
+                                                    </svg>
                                                 </div>
-                                                <span class="text-[10px] font-black uppercase tracking-widest" :class="inputType === 'registration' ? 'text-slate-900 dark:text-white' : 'text-slate-400'">Registrasi</span>
+                                                <span class="text-[10px] font-black uppercase tracking-widest"
+                                                    :class="inputType === 'registration' ? 'text-slate-900 dark:text-white' : 'text-slate-400'">Registrasi</span>
                                             </div>
-                                            <p class="text-[8px] font-bold text-slate-400 leading-tight uppercase tracking-tighter">Antrean & Barcode</p>
+                                            <p
+                                                class="text-[8px] font-bold text-slate-400 leading-tight uppercase tracking-tighter">
+                                                Antrean & Barcode</p>
                                         </label>
 
                                         <!-- Opsi Manual -->
-                                        <label class="relative flex flex-col p-3 bg-white dark:bg-slate-800 rounded-xl border-2 cursor-pointer transition-all duration-300 hover:scale-[1.02]"
+                                        <label
+                                            class="relative flex flex-col p-3 bg-white dark:bg-slate-800 rounded-xl border-2 cursor-pointer transition-all duration-300 hover:scale-[1.02]"
                                             :class="inputType === 'direct' ? (currentTheme ? currentTheme.border : 'border-indigo-500') : 'border-transparent opacity-60'">
-                                            <input type="radio" name="input_type" value="direct" x-model="inputType" class="sr-only">
+                                            <input type="radio" name="input_type" value="direct" x-model="inputType"
+                                                class="sr-only">
                                             <div class="flex items-center gap-2 mb-1.5">
                                                 <div class="w-6 h-6 rounded flex items-center justify-center transition-colors"
                                                     :class="inputType === 'direct' ? (currentTheme ? currentTheme.bg : 'bg-indigo-500') : 'bg-slate-100'">
-                                                    <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                                                    <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                                    </svg>
                                                 </div>
-                                                <span class="text-[10px] font-black uppercase tracking-widest" :class="inputType === 'direct' ? 'text-slate-900 dark:text-white' : 'text-slate-400'">Manual</span>
+                                                <span class="text-[10px] font-black uppercase tracking-widest"
+                                                    :class="inputType === 'direct' ? 'text-slate-900 dark:text-white' : 'text-slate-400'">Manual</span>
                                             </div>
-                                            <p class="text-[8px] font-bold text-slate-400 leading-tight uppercase tracking-tighter">Langsung Persediaan</p>
+                                            <p
+                                                class="text-[8px] font-bold text-slate-400 leading-tight uppercase tracking-tighter">
+                                                Langsung Persediaan</p>
                                         </label>
                                     </div>
                                 </div>
 
-                                <div class="mb-5 flex items-center justify-between">
-                                    <h3 class="text-lg font-black text-gray-900 tracking-tight flex items-center">
-                                        <span class="w-1.5 h-6 mr-3 rounded-full transition-all duration-700"
-                                            :class="currentTheme ? currentTheme.bg : 'bg-indigo-500'"></span>
-                                        Detail Penerimaan
-                                        <span
-                                            class="ml-2 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider transition-all duration-700"
-                                            :class="currentTheme ? (currentTheme.soft + ' ' + currentTheme.icon + ' border ' + currentTheme.border) : 'bg-gray-100 text-gray-500 border border-gray-200'"
-                                            x-text="selectedPecahan ? (selectedPecahan) : ''"></span>
-                                    </h3>
-                                    <div class="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border transition-all duration-700"
-                                        :class="currentTheme ? (currentTheme.border + ' ' + currentTheme.icon + ' ' + currentTheme.soft) : 'border-indigo-200 text-indigo-600 bg-indigo-50'">
-                                        HCS
-                                    </div>
-                                </div>
 
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3">
                                     <div class="space-y-1">
@@ -287,11 +313,13 @@
                                                 <div
                                                     class="flex items-center justify-between bg-white/50 border border-gray-200 p-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 min-w-[250px]">
                                                     <div class="flex items-center mr-3">
-                                                        <span class="text-[9px] font-black transition-colors duration-300"
+                                                        <span
+                                                            class="text-[9px] font-black transition-colors duration-300"
                                                             :class="isManual ? 'text-red-600' : 'text-gray-500'">
                                                             Pack Tidak Full ( < 45.000 ) </span>
                                                     </div>
-                                                    <label class="relative inline-flex items-center cursor-pointer scale-90">
+                                                    <label
+                                                        class="relative inline-flex items-center cursor-pointer scale-90">
                                                         <input type="checkbox" id="is_manual" name="is_manual" value="1"
                                                             x-model="isManual" @change="handleToggleManual()"
                                                             class="sr-only peer" {{ old('is_manual') ? 'checked' : '' }}>
@@ -336,78 +364,72 @@
                                 </div>
                             </div>
 
-                            <!-- Kanan: Grid Pack -->
-                            <div class="w-full lg:w-[58%] p-4 lg:p-5 bg-gray-50/20 backdrop-blur-sm flex flex-col">
-                                <div class="mb-3">
-                                    <h3 class="text-lg font-black text-gray-900 tracking-tight flex items-center">
-                                        <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor"
+                             <!-- Kanan: Grid Pack -->
+                            <div class="w-full lg:w-[60%] p-3 lg:p-4 bg-gray-50/20 backdrop-blur-sm h-full overflow-y-auto custom-scrollbar flex flex-col">
+                                <div class="mb-2">
+                                    <h3 class="text-base font-black text-gray-900 tracking-tight flex items-center">
+                                        <svg class="w-4 h-4 mr-2 text-indigo-500" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                                 d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                                         </svg>
                                         Tabel Penerimaan HCS
                                     </h3>
                                 </div>
 
-                                <!-- Kartu Ringkasan -->
-                                <div class="grid grid-cols-2 gap-2 mb-4">
+                                 <!-- Kartu Ringkasan -->
+                                <div class="grid grid-cols-2 gap-2 mb-3">
                                     <div
-                                        class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm transition-all duration-500 hover:shadow-md">
+                                        class="bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm transition-all duration-500 hover:shadow-md">
                                         <span
-                                            class="text-[8px] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Pack
+                                            class="text-[7px] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Pack
                                             Dipilih</span>
                                         <div class="flex items-end gap-1">
                                             <span id="selected_packs_length"
-                                                class="text-lg font-black leading-none transition-colors duration-500"
+                                                class="text-base font-black leading-none transition-colors duration-500"
                                                 :class="currentTheme ? currentTheme.icon : 'text-indigo-600'">0</span>
                                             <span
-                                                class="text-[9px] font-bold text-gray-300 mb-0.5 uppercase tracking-tight">Pack</span>
+                                                class="text-[8px] font-bold text-gray-300 mb-0.5 uppercase tracking-tight">Pack</span>
                                         </div>
                                     </div>
-                                    <div class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
+                                    <div class="bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm">
                                         <span
-                                            class="text-[8px] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Dibutuhkan</span>
+                                            class="text-[7px] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Dibutuhkan</span>
                                         <div class="flex items-end gap-1">
                                             <span id="packs_needed_length"
-                                                class="text-lg font-black leading-none text-gray-900">0</span>
+                                                class="text-base font-black leading-none text-gray-900">0</span>
                                             <span
-                                                class="text-[9px] font-bold text-gray-300 mb-0.5 uppercase tracking-tight">Pack</span>
+                                                class="text-[8px] font-bold text-gray-300 mb-0.5 uppercase tracking-tight">Pack</span>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Keterangan -->
-                                <div class="bg-white/40 p-2 rounded-xl border border-white mb-0.5">
-                                    <h4
-                                        class="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">
-                                        Legend</h4>
-                                    <div class="flex flex-wrap gap-x-4 gap-y-1.5">
+                                 <!-- Keterangan -->
+                                <div class="bg-white/40 p-1.5 rounded-xl border border-white mb-0.5">
+                                    <div class="flex flex-wrap gap-x-3 gap-y-1">
                                         <div class="flex items-center gap-1">
-                                            <div class="w-3 h-3 bg-white border border-gray-200 rounded shadow-sm">
-                                            </div> <span class="text-[9px] font-bold text-gray-500">Kosong</span>
+                                            <div class="w-2.5 h-2.5 bg-white border border-gray-200 rounded shadow-sm">
+                                            </div> <span class="text-[8px] font-bold text-gray-500">Kosong</span>
                                         </div>
                                         <div class="flex items-center gap-1">
                                             <div class="flex -space-x-0.5">
-                                                <div class="w-3 h-3 bg-blue-700 rounded shadow-sm"></div>
-                                                <div class="w-3 h-3 bg-green-700 rounded shadow-sm"></div>
+                                                <div class="w-2.5 h-2.5 bg-blue-700 rounded shadow-sm"></div>
+                                                <div class="w-2.5 h-2.5 bg-green-700 rounded shadow-sm"></div>
                                             </div>
-                                            <span class="text-[9px] font-bold text-gray-500 ml-1">Terisi</span>
+                                            <span class="text-[8px] font-bold text-gray-500 ml-0.5">Terisi</span>
                                         </div>
                                         <div class="flex items-center gap-1">
-                                            <div
-                                                class="w-3 h-3 bg-red-600 border border-red-700 rounded shadow-sm">
-                                            </div> <span class="text-[9px] font-bold text-gray-500">Sorted</span>
+                                            <div class="w-2.5 h-2.5 bg-red-600 border border-red-700 rounded shadow-sm">
+                                            </div> <span class="text-[8px] font-bold text-gray-500">Sorted</span>
                                         </div>
                                         <div class="flex items-center gap-1">
                                             <div class="flex -space-x-0.5">
-                                                <div
-                                                    class="w-3 h-3 bg-blue-400 rounded">
+                                                <div class="w-2.5 h-2.5 bg-blue-400 rounded">
                                                 </div>
-                                                <div
-                                                    class="w-3 h-3 bg-green-400 rounded">
+                                                <div class="w-2.5 h-2.5 bg-green-400 rounded">
                                                 </div>
                                             </div>
-                                            <span class="text-[9px] font-bold text-gray-500 ml-1">Sesi Ini</span>
+                                            <span class="text-[8px] font-bold text-gray-500 ml-0.5">Sesi Ini</span>
                                         </div>
                                     </div>
                                 </div>
@@ -417,8 +439,7 @@
 
                                 <!-- Kontainer Grid dengan Tooltip Kaya -->
                                 <div class="relative group/grid flex-grow mt-3">
-                                    <div class="grid grid-rows-10 grid-flow-col gap-1 sm:gap-1 relative"
-                                        id="pack_grid">
+                                    <div class="grid grid-rows-10 grid-flow-col gap-1 sm:gap-1 relative" id="pack_grid">
                                         @for ($i = 1; $i <= 100; $i++)
                                             @php
                                                 $row = ($i - 1) % 10;

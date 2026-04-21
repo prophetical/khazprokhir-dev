@@ -37,7 +37,7 @@
                                         <span class="text-[10px] font-black text-slate-600 dark:text-slate-300">{{ $reg->nomor_bon }}</span>
                                         <div class="flex items-center gap-2 mt-0.5">
                                             <span class="text-[9px] font-bold text-slate-400 uppercase">{{ $reg->pecahan }}</span>
-                                            <span class="text-[9px] font-black text-slate-500">{{ $reg->jumlah }} PACK</span>
+                                            <span class="text-[9px] font-black text-slate-500">{{ $reg->jumlah }} bilyet</span>
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-2">
