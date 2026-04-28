@@ -15,24 +15,26 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $roles = ['admin', 'sortir', 'supervisor', 'kemas', 'khazverutas'];
+        $password = \Illuminate\Support\Facades\Hash::make('Peruri4321');
 
-        User::factory()->create([
-            'name' => 'Admin User',
-            'email' => 'admin@khazprokhir.com',
-            'role' => 'admin',
-        ]);
+        foreach ($roles as $role) {
+            User::factory()->create([
+                'name' => ucfirst($role) . ' User',
+                'username' => $role,
+                'email' => $role . '@khazprokhir.com',
+                'password' => $password,
+                'role' => $role,
+            ]);
+        }
 
+        // User tanpa role (tamu)
         User::factory()->create([
-            'name' => 'Sortir User',
-            'email' => 'sortir@khazprokhir.com',
-            'role' => 'sortir',
-        ]);
-
-        User::factory()->create([
-            'name' => 'Supervisor User',
-            'email' => 'supervisor@khazprokhir.com',
-            'role' => 'supervisor',
+            'name' => 'Tamu User',
+            'username' => 'tamu',
+            'email' => 'tamu@khazprokhir.com',
+            'password' => $password,
+            'role' => null,
         ]);
     }
 }

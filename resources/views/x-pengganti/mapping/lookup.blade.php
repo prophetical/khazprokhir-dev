@@ -17,7 +17,7 @@
         }
     </style>
     <div class="py-8">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             {{-- Search Card --}}
             <div class="bg-white dark:bg-slate-800 overflow-hidden shadow-sm sm:rounded-2xl border border-gray-100 dark:border-slate-700">
@@ -25,18 +25,33 @@
                     <h3 class="text-sm font-black text-gray-700 dark:text-white uppercase tracking-widest mb-4">Lacak Seri Pengganti</h3>
 
                     <form action="{{ route('x-pengganti.mapping.lookup') }}" method="GET">
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 items-end">
                             <div>
-                                <label class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Prefix (3 Huruf)</label>
+                                <label class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Prefix</label>
                                 <input type="text" name="prefix" value="{{ $prefix }}" required maxlength="3" pattern="[A-Za-z]{3}" oninput="this.value = this.value.toUpperCase()"
                                     class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold uppercase focus:ring-emerald-500 focus:border-emerald-500"
-                                    placeholder="Contoh: ABA">
+                                    placeholder="AAA">
                             </div>
                             <div>
                                 <label class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Nomor Seri</label>
                                 <input type="number" name="serial" value="{{ $serial }}" required min="1"
                                     class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold focus:ring-emerald-500 focus:border-emerald-500"
-                                    placeholder="Contoh: 701500">
+                                    placeholder="123456">
+                            </div>
+                            <div>
+                                <label class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Pecahan</label>
+                                <select name="pecahan" required class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold focus:ring-emerald-500 focus:border-emerald-500">
+                                    <option value="" disabled {{ !$pecahan ? 'selected' : '' }}>Pilih</option>
+                                    @foreach(['S' => 'S', 'T' => 'T', 'U' => 'U', 'V' => 'V', 'W' => 'W', 'X' => 'X', 'Y' => 'Y'] as $val => $label)
+                                        <option value="{{ $val }}" {{ $pecahan === $val ? 'selected' : '' }}>{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Tahun Anggaran <br>(Opsional)</label>
+                                <input type="number" name="tahun_anggaran" value="{{ $tahun }}" min="2000" max="2100"
+                                    class="w-full py-2.5 px-4 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold focus:ring-emerald-500 focus:border-emerald-500"
+                                    placeholder="2024">
                             </div>
                             <div>
                                 <label class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Mode</label>
@@ -114,7 +129,7 @@
                                     <div><span class="text-gray-400">Range Pengganti:</span> <span class="font-mono text-emerald-700 dark:text-emerald-400">{{ $result['range_replacement'] }}</span></div>
                                     @if($result['seri'])
                                         <div><span class="text-gray-400">Batch:</span> <span class="font-black text-gray-700 dark:text-gray-300">{{ $result['seri']->batch }}</span></div>
-                                        <div><span class="text-gray-400">Seri/Pecahan:</span> <span class="font-black text-gray-700 dark:text-gray-300">{{ $result['seri']->seri }} / {{ $result['seri']->pecahan }}</span></div>
+                                        <div><span class="text-gray-400">Tahun/Pecahan:</span> <span class="font-black text-gray-700 dark:text-gray-300">{{ $result['seri']->tahun_anggaran }} / {{ $result['seri']->pecahan }}</span></div>
                                     @endif
                                 </div>
                             </div>
@@ -189,7 +204,7 @@
                                     <div><span class="text-gray-400">Range Pengganti:</span> <span class="font-mono text-blue-700 dark:text-blue-400">{{ $reverseResult['range_replacement'] }}</span></div>
                                     @if($reverseResult['seri'])
                                         <div><span class="text-gray-400">Batch:</span> <span class="font-black text-gray-700 dark:text-gray-300">{{ $reverseResult['seri']->batch }}</span></div>
-                                        <div><span class="text-gray-400">Seri/Pecahan:</span> <span class="font-black text-gray-700 dark:text-gray-300">{{ $reverseResult['seri']->seri }} / {{ $reverseResult['seri']->pecahan }}</span></div>
+                                        <div><span class="text-gray-400">Tahun/Pecahan:</span> <span class="font-black text-gray-700 dark:text-gray-300">{{ $reverseResult['seri']->tahun_anggaran }} / {{ $reverseResult['seri']->pecahan }}</span></div>
                                     @endif
                                 </div>
                             </div>

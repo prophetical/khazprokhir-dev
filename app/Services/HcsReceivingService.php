@@ -337,10 +337,17 @@ class HcsReceivingService
 
             // SINKRONISASI: Kembalikan status registrasi khazai menjadi 'pending'
             // agar petugas bisa memperbaiki data barcode jika salah input.
-            HcsKhazaiRegistration::where('nomor_bon', $hcs->nomor_bon)
-                ->where('batch', $hcs->batch)
-                ->where('seri', $hcs->seri)
-                ->update(['status' => 'pending']);
+            // Menggunakan barcode_token (unik) untuk presisi — menghindari update massal jika ada data serupa.
+            if ($hcs->barcode_token) {
+                HcsKhazaiRegistration::where('barcode_token', $hcs->barcode_token)
+                    ->update(['status' => 'pending']);
+            } else {
+                // Fallback untuk data lama yang belum memiliki barcode_token
+                HcsKhazaiRegistration::where('nomor_bon', $hcs->nomor_bon)
+                    ->where('batch', $hcs->batch)
+                    ->where('seri', $hcs->seri)
+                    ->update(['status' => 'pending']);
+            }
 
             // Catat di log audit
             AuditLog::create([
@@ -373,6 +380,18 @@ class HcsReceivingService
 
         if (count($data['packs']) !== (int)$packsNeeded) {
             throw new Exception("Jumlah packs yang dipilih (".count($data['packs']).") tidak sesuai kebutuhan ($packsNeeded).");
+        }
+
+        // Cek apakah ada pack yang sudah terdaftar sebelumnya untuk mencegah Unique Violation
+        $existingPacks = Pack::where('batch', $data['batch'])
+            ->where('seri', $data['seri'])
+            ->whereIn('pack_number', $data['packs'])
+            ->pluck('pack_number')
+            ->toArray();
+
+        if (!empty($existingPacks)) {
+            $duplicateList = implode(', ', $existingPacks);
+            throw new Exception("Beberapa nomor pack sudah terdaftar di sistem untuk Batch {$data['batch']} dan Seri {$data['seri']}: Pack ($duplicateList).");
         }
     }
 

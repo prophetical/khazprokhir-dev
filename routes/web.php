@@ -104,7 +104,7 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\RoleMiddleware::clas
     Route::post('/targets', [\App\Http\Controllers\TargetController::class, 'store'])->name('targets.store');
     Route::get('/targets/{id}/edit', [\App\Http\Controllers\TargetController::class, 'edit'])->name('targets.edit');
     Route::put('/targets/{id}', [\App\Http\Controllers\TargetController::class, 'update'])->name('targets.update');
-    Route::get('/targets/{id}/destroy', [\App\Http\Controllers\TargetController::class, 'destroy'])->name('targets.destroy');
+    Route::delete('/targets/{id}', [\App\Http\Controllers\TargetController::class, 'destroy'])->name('targets.destroy');
 
     // Penerimaan HCTS Routes
     Route::get('/hcts-receiving/create', [\App\Http\Controllers\HctsReceivingController::class, 'create'])->name('hcts-receiving.create');
@@ -215,6 +215,8 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\RoleMiddleware::clas
             Route::post('/single', [\App\Http\Controllers\SerialMappingController::class, 'storeSingle'])->name('store.single');
             Route::get('/lookup', [\App\Http\Controllers\SerialMappingController::class, 'lookup'])->name('lookup');
             Route::delete('/{id}', [\App\Http\Controllers\SerialMappingController::class, 'destroy'])->name('destroy');
+            Route::delete('/pack/{seri_id}/{pack_number}', [\App\Http\Controllers\SerialMappingController::class, 'destroyByPack'])->name('destroy.pack');
+            Route::delete('/session/{seri_id}/{timestamp}', [\App\Http\Controllers\SerialMappingController::class, 'destroyBySession'])->name('destroy.session');
         });
 
         // API: list masters untuk dropdown

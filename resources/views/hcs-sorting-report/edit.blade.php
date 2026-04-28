@@ -512,6 +512,11 @@
                         {{ $pack->pack_number }}: {{ $pack->jumlah }},
                     @endforeach
                 },
+                packStatuses: {
+                    @foreach ($packsData as $pack)
+                        {{ $pack->pack_number }}: {{ (!is_null($pack->hcs_sorting_id) && $pack->hcs_sorting_id !== $hcs_sorting_report->id) ? 'true' : 'false' }},
+                    @endforeach
+                },
 
             get totalBilyet() {
             let total = 0;
@@ -541,7 +546,27 @@
             if (allSelected) {
                 block.forEach(p => this.selectedPacks.delete(p));
             } else {
-                block.forEach(p => this.selectedPacks.add(p));
+                // Tambah satu blok, tapi hanya yang tersedia (di-input dan belum disortir sesi lain)
+                let availableInBlock = block.filter(p => this.packQuantities[p] && !this.packStatuses[p]);
+                
+                if (availableInBlock.length < 4) {
+                    let missingInBlock = block.filter(p => !this.packQuantities[p]);
+                    let sortedInBlock = block.filter(p => this.packStatuses[p]);
+                    
+                    let errorMsg = '';
+                    if (missingInBlock.length > 0) errorMsg += `Pack ${missingInBlock.join(', ')} belum di-input. `;
+                    if (sortedInBlock.length > 0) errorMsg += `Pack ${sortedInBlock.join(', ')} sudah disortir di sesi lain. `;
+                    
+                    Swal.fire({
+                        title: 'Grup Tidak Lengkap',
+                        text: errorMsg + 'Grup kelipatan 4 harus lengkap untuk dipilih dalam mode ini. Gunakan "Mode Sisa Pack" jika ingin memilih secara manual.',
+                        icon: 'warning',
+                        confirmButtonColor: '#4f46e5'
+                    });
+                    return;
+                }
+                
+                availableInBlock.forEach(p => this.selectedPacks.add(p));
             }
         } else {
             // Logic Manual (Satu per satu)

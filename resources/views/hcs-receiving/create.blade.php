@@ -30,16 +30,18 @@
                         themes: {{ json_encode($themeClasses) }},
                         inputType: 'registration',
                         get currentTheme() { return this.themes[this.selectedPecahan] || null }
-                    }" class="border-t-8 transition-all duration-700"
-                    }" class="border-t-8 transition-all duration-700 h-full overflow-hidden"
+                    }" class="border-t-8 transition-all duration-700" }"
+                    class="border-t-8 transition-all duration-700 h-full overflow-hidden"
                     :class="currentTheme ? currentTheme.border : 'border-indigo-500'">
-                    <form id="hcs-form" action="{{ route('hcs-receiving.store') }}" method="POST" class="h-full overflow-hidden">
+                    <form id="hcs-form" action="{{ route('hcs-receiving.store') }}" method="POST"
+                        class="h-full overflow-hidden">
                         @csrf
 
                         <div class="flex flex-col lg:flex-row h-full overflow-hidden">
 
                             <!-- Kiri: Field Form -->
-                            <div class="w-full lg:w-[40%] p-3 lg:p-4 border-r border-gray-100 bg-white/40 h-full overflow-y-auto custom-scrollbar">
+                            <div
+                                class="w-full lg:w-[40%] p-3 lg:p-4 border-r border-gray-100 bg-white/40 h-full overflow-y-auto custom-scrollbar">
                                 <div
                                     class="mb-3 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800">
 
@@ -117,27 +119,27 @@
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3">
                                     <div class="space-y-1">
                                         <label for="nomor_bon"
-                                            class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest ml-1">Nomor
+                                            class="block text-[8px] font-bold text-gray-400 uppercase tracking-widest ml-1">Nomor
                                             Bon</label>
                                         <input id="nomor_bon" name="nomor_bon" type="text"
-                                            class="block w-full py-2 px-3 border-gray-200 rounded-lg bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 placeholder-gray-300 font-bold text-xs"
+                                            class="block w-full py-1.5 px-3 border-gray-200 rounded-lg bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 placeholder-gray-300 font-bold text-[10px]"
                                             :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('ring-', 'ring-').replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
                                             value="{{ old('nomor_bon') }}" placeholder="Nomor Bon" required />
                                     </div>
 
                                     <div class="space-y-1">
                                         <label for="tanggal_penerimaan"
-                                            class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest ml-1">Tanggal
+                                            class="block text-[8px] font-bold text-gray-400 uppercase tracking-widest ml-1">Tanggal
                                             Penerimaan</label>
                                         <input id="tanggal_penerimaan" name="tanggal_penerimaan" type="date"
-                                            class="block w-full py-2 px-3 border-gray-200 rounded-lg bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 font-bold text-xs"
+                                            class="block w-full py-1.5 px-3 border-gray-200 rounded-lg bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 font-bold text-[10px]"
                                             :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
                                             value="{{ old('tanggal_penerimaan', date('Y-m-d')) }}" required />
                                     </div>
 
                                     <div class="space-y-1 relative">
                                         <label for="pecahan"
-                                            class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-1">
+                                            class="block text-[8px] font-bold text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-1">
                                             Pecahan
                                             @if($isLocked)
                                                 <svg class="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 20 20">
@@ -148,7 +150,7 @@
                                             @endif
                                         </label>
                                         <select id="pecahan" name="pecahan" x-model="selectedPecahan"
-                                            class="block w-full py-2 px-3 border-gray-200 rounded-lg bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 font-black text-xs {{ $isLocked ? 'bg-gray-100/80 pointer-events-none opacity-60' : '' }}"
+                                            class="block w-full py-1.5 px-3 border-gray-200 rounded-lg bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 font-black text-[10px] {{ $isLocked ? 'bg-gray-100/80 pointer-events-none opacity-60' : '' }}"
                                             :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20 text-indigo-600'"
                                             {{ $isLocked ? 'tabindex="-1"' : '' }} required>
                                             <option value="">Pilih Pecahan</option>
@@ -164,11 +166,11 @@
 
                                     <div class="space-y-1">
                                         <label for="jumlah_display"
-                                            class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest ml-1">Jumlah
+                                            class="block text-[8px] font-bold text-gray-400 uppercase tracking-widest ml-1">Jumlah
                                             Bilyet</label>
                                         <div class="relative">
                                             <input id="jumlah_display" type="tel"
-                                                class="block w-full py-1.5 px-3 text-right font-black text-lg pr-12 border-gray-200 rounded-lg bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 placeholder-gray-300"
+                                                class="block w-full py-1.5 px-3 text-right font-black text-sm pr-12 border-gray-200 rounded-lg bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 placeholder-gray-300"
                                                 :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
                                                 value="{{ old('jumlahDisplay') }}" placeholder="0" required />
                                             <div
@@ -181,9 +183,9 @@
 
                                     <div class="space-y-1">
                                         <label for="gilir"
-                                            class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest ml-1">Gilir</label>
+                                            class="block text-[8px] font-bold text-gray-400 uppercase tracking-widest ml-1">Gilir</label>
                                         <select id="gilir" name="gilir"
-                                            class="block w-full py-2 px-3 border-gray-200 rounded-lg bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 font-bold text-xs"
+                                            class="block w-full py-1.5 px-3 border-gray-200 rounded-lg bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 font-bold text-[10px]"
                                             :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
                                             required>
                                             <option value="">Pilih Gilir</option>
@@ -198,18 +200,18 @@
 
                                     <div class="space-y-1">
                                         <label for="mesin"
-                                            class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest ml-1">Mesin</label>
+                                            class="block text-[8px] font-bold text-gray-400 uppercase tracking-widest ml-1">Mesin</label>
                                         <input id="mesin" name="mesin" type="text"
-                                            class="block w-full py-2 px-3 border-gray-200 rounded-lg bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 placeholder-gray-300 font-bold text-xs"
+                                            class="block w-full py-1.5 px-3 border-gray-200 rounded-lg bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 placeholder-gray-300 font-bold text-[10px]"
                                             :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
                                             value="{{ old('mesin') }}" placeholder="Mesin" required />
                                     </div>
 
                                     <div class="space-y-1">
                                         <label for="supplier"
-                                            class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest ml-1">Supplier</label>
+                                            class="block text-[8px] font-bold text-gray-400 uppercase tracking-widest ml-1">Supplier</label>
                                         <select id="supplier" name="supplier"
-                                            class="block w-full py-2 px-3 border-gray-200 rounded-lg bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 font-bold text-xs"
+                                            class="block w-full py-1.5 px-3 border-gray-200 rounded-lg bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 font-bold text-[10px]"
                                             :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
                                             required>
                                             <option value="">Pilih Supplier</option>
@@ -222,7 +224,7 @@
 
                                     <div class="space-y-1 relative">
                                         <label for="batch"
-                                            class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-1">
+                                            class="block text-[8px] font-bold text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-1">
                                             Batch
                                             @if($isLocked)
                                                 <svg class="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 20 20">
@@ -233,14 +235,14 @@
                                             @endif
                                         </label>
                                         <input id="batch" name="batch" type="text" maxlength="7"
-                                            class="block w-full py-2 px-3 font-mono uppercase border-gray-200 rounded-lg bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 tracking-tighter placeholder-gray-300 font-bold text-xs {{ $isLocked ? 'bg-gray-100/80 opacity-60 cursor-not-allowed' : '' }}"
+                                            class="block w-full py-1.5 px-3 font-mono uppercase border-gray-200 rounded-lg bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 tracking-tighter placeholder-gray-300 font-bold text-[10px] {{ $isLocked ? 'bg-gray-100/80 opacity-60 cursor-not-allowed' : '' }}"
                                             :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
                                             value="{{ old('batch', request('batch')) }}" placeholder="0000000" {{ $isLocked ? 'readonly' : '' }} required />
                                     </div>
 
                                     <div class="space-y-1 relative">
                                         <label for="seri"
-                                            class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-1">
+                                            class="block text-[8px] font-bold text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-1">
                                             Seri
                                             @if($isLocked)
                                                 <svg class="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 20 20">
@@ -251,14 +253,14 @@
                                             @endif
                                         </label>
                                         <input id="seri" name="seri" type="text"
-                                            class="block w-full py-2 px-3 font-mono uppercase border-gray-200 rounded-lg bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 tracking-widest placeholder-gray-300 font-bold text-xs {{ $isLocked ? 'bg-gray-100/80 opacity-60 cursor-not-allowed' : '' }}"
+                                            class="block w-full py-1.5 px-3 font-mono uppercase border-gray-200 rounded-lg bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 tracking-widest placeholder-gray-300 font-bold text-[10px] {{ $isLocked ? 'bg-gray-100/80 opacity-60 cursor-not-allowed' : '' }}"
                                             :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
                                             placeholder="Seri" value="{{ old('seri', request('seri')) }}" {{ $isLocked ? 'readonly' : '' }} required />
                                     </div>
 
                                     <div class="space-y-1 relative">
                                         <label for="emisi"
-                                            class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-1">
+                                            class="block text-[8px] font-bold text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-1">
                                             Emisi (Tahun)
                                             @if($isLocked)
                                                 <svg class="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 20 20">
@@ -269,7 +271,7 @@
                                             @endif
                                         </label>
                                         <input id="emisi" name="emisi" type="number" min="2000" max="2100"
-                                            class="block w-full py-2 px-3 border-gray-200 rounded-lg bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 placeholder-gray-300 font-bold text-xs {{ $isLocked ? 'bg-gray-100/80 opacity-60 cursor-not-allowed' : '' }}"
+                                            class="block w-full py-1.5 px-3 border-gray-200 rounded-lg bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 placeholder-gray-300 font-bold text-[10px] {{ $isLocked ? 'bg-gray-100/80 opacity-60 cursor-not-allowed' : '' }}"
                                             :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
                                             value="{{ old('emisi', request('emisi', $lastReceiving->emisi ?? '2022')) }}"
                                             {{ $isLocked ? 'readonly' : '' }} required />
@@ -277,7 +279,7 @@
 
                                     <div class="space-y-1 relative">
                                         <label for="tahun_anggaran"
-                                            class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-1">
+                                            class="block text-[8px] font-bold text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-1">
                                             Tahun Anggaran
                                             @if($isLocked)
                                                 <svg class="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 20 20">
@@ -288,7 +290,7 @@
                                             @endif
                                         </label>
                                         <select id="tahun_anggaran" name="tahun_anggaran"
-                                            class="block w-full py-2 px-3 border-gray-200 rounded-lg bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 font-bold text-xs {{ $isLocked ? 'bg-gray-100/80 pointer-events-none opacity-60' : '' }}"
+                                            class="block w-full py-1.5 px-3 border-gray-200 rounded-lg bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 font-bold text-[10px] {{ $isLocked ? 'bg-gray-100/80 pointer-events-none opacity-60' : '' }}"
                                             :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
                                             {{ $isLocked ? 'tabindex="-1"' : '' }} required>
                                             @foreach(['2024', '2025', '2026', '2027'] as $year)
@@ -364,8 +366,9 @@
                                 </div>
                             </div>
 
-                             <!-- Kanan: Grid Pack -->
-                            <div class="w-full lg:w-[60%] p-3 lg:p-4 bg-gray-50/20 backdrop-blur-sm h-full overflow-y-auto custom-scrollbar flex flex-col">
+                            <!-- Kanan: Grid Pack -->
+                            <div
+                                class="w-full lg:w-[60%] p-3 lg:p-4 bg-gray-50/20 backdrop-blur-sm h-full overflow-y-auto custom-scrollbar flex flex-col">
                                 <div class="mb-2">
                                     <h3 class="text-base font-black text-gray-900 tracking-tight flex items-center">
                                         <svg class="w-4 h-4 mr-2 text-indigo-500" fill="none" stroke="currentColor"
@@ -377,59 +380,65 @@
                                     </h3>
                                 </div>
 
-                                 <!-- Kartu Ringkasan -->
-                                <div class="grid grid-cols-2 gap-2 mb-3">
+                                <!-- Kartu Ringkasan -->
+                                <div class="grid grid-cols-2 gap-3 mb-4">
                                     <div
-                                        class="bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm transition-all duration-500 hover:shadow-md">
+                                        class="bg-white p-3 rounded-2xl border border-gray-100 shadow-sm transition-all duration-500 hover:shadow-md flex flex-col items-center justify-center">
                                         <span
-                                            class="text-[7px] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Pack
+                                            class="text-[9px] font-black text-gray-400 uppercase tracking-widest block mb-1">Pack
                                             Dipilih</span>
-                                        <div class="flex items-end gap-1">
+                                        <div class="flex items-baseline gap-1">
                                             <span id="selected_packs_length"
-                                                class="text-base font-black leading-none transition-colors duration-500"
+                                                class="text-xl font-black leading-none transition-colors duration-500"
                                                 :class="currentTheme ? currentTheme.icon : 'text-indigo-600'">0</span>
                                             <span
-                                                class="text-[8px] font-bold text-gray-300 mb-0.5 uppercase tracking-tight">Pack</span>
+                                                class="text-[10px] font-bold text-gray-300 uppercase tracking-tight">Pack</span>
                                         </div>
                                     </div>
-                                    <div class="bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm">
+                                    <div
+                                        class="bg-white p-3 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center">
                                         <span
-                                            class="text-[7px] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Dibutuhkan</span>
-                                        <div class="flex items-end gap-1">
+                                            class="text-[9px] font-black text-gray-400 uppercase tracking-widest block mb-1">Dibutuhkan</span>
+                                        <div class="flex items-baseline gap-1">
                                             <span id="packs_needed_length"
-                                                class="text-base font-black leading-none text-gray-900">0</span>
+                                                class="text-xl font-black leading-none text-gray-900">0</span>
                                             <span
-                                                class="text-[8px] font-bold text-gray-300 mb-0.5 uppercase tracking-tight">Pack</span>
+                                                class="text-[10px] font-bold text-gray-300 uppercase tracking-tight">Pack</span>
                                         </div>
                                     </div>
                                 </div>
 
-                                 <!-- Keterangan -->
-                                <div class="bg-white/40 p-1.5 rounded-xl border border-white mb-0.5">
-                                    <div class="flex flex-wrap gap-x-3 gap-y-1">
-                                        <div class="flex items-center gap-1">
-                                            <div class="w-2.5 h-2.5 bg-white border border-gray-200 rounded shadow-sm">
-                                            </div> <span class="text-[8px] font-bold text-gray-500">Kosong</span>
+                                <!-- Keterangan -->
+                                <div class="bg-white/40 p-2 rounded-2xl border border-white mb-2">
+                                    <div class="flex flex-wrap justify-center gap-x-5 gap-y-2">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-3 h-3 bg-white border border-gray-200 rounded shadow-sm">
+                                            </div> <span
+                                                class="text-[9px] font-bold text-gray-500 uppercase tracking-tighter">Kosong</span>
                                         </div>
-                                        <div class="flex items-center gap-1">
-                                            <div class="flex -space-x-0.5">
-                                                <div class="w-2.5 h-2.5 bg-blue-700 rounded shadow-sm"></div>
-                                                <div class="w-2.5 h-2.5 bg-green-700 rounded shadow-sm"></div>
+                                        <div class="flex items-center gap-2">
+                                            <div class="flex -space-x-1">
+                                                <div class="w-3 h-3 bg-blue-700 rounded shadow-sm"></div>
+                                                <div class="w-3 h-3 bg-green-700 rounded shadow-sm"></div>
                                             </div>
-                                            <span class="text-[8px] font-bold text-gray-500 ml-0.5">Terisi</span>
+                                            <span
+                                                class="text-[9px] font-bold text-gray-500 uppercase tracking-tighter ml-0.5">Terisi</span>
                                         </div>
-                                        <div class="flex items-center gap-1">
-                                            <div class="w-2.5 h-2.5 bg-red-600 border border-red-700 rounded shadow-sm">
-                                            </div> <span class="text-[8px] font-bold text-gray-500">Sorted</span>
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-3 h-3 bg-red-600 border border-red-700 rounded shadow-sm">
+                                            </div> <span
+                                                class="text-[9px] font-bold text-gray-500 uppercase tracking-tighter">Sorted</span>
                                         </div>
-                                        <div class="flex items-center gap-1">
-                                            <div class="flex -space-x-0.5">
-                                                <div class="w-2.5 h-2.5 bg-blue-400 rounded">
+                                        <div class="flex items-center gap-2">
+                                            <div class="flex -space-x-1">
+                                                <div class="w-3 h-3 bg-blue-400 rounded">
                                                 </div>
-                                                <div class="w-2.5 h-2.5 bg-green-400 rounded">
+                                                <div class="w-3 h-3 bg-green-400 rounded">
                                                 </div>
                                             </div>
-                                            <span class="text-[8px] font-bold text-gray-500 ml-0.5">Sesi Ini</span>
+                                            <span
+                                                class="text-[9px] font-bold text-gray-500 uppercase tracking-tighter ml-0.5">Sesi
+                                                Ini</span>
                                         </div>
                                     </div>
                                 </div>
@@ -438,8 +447,9 @@
                                 <div id="hidden_packs_container"></div>
 
                                 <!-- Kontainer Grid dengan Tooltip Kaya -->
-                                <div class="relative group/grid flex-grow mt-3">
-                                    <div class="grid grid-rows-10 grid-flow-col gap-1 sm:gap-1 relative" id="pack_grid">
+                                <div class="relative group/grid flex-grow mt-2 flex flex-col">
+                                    <div class="grid grid-rows-10 grid-flow-col gap-x-1 gap-y-0.5 relative content-start max-w-2xl mx-auto w-full"
+                                        id="pack_grid">
                                         @for ($i = 1; $i <= 100; $i++)
                                             @php
                                                 $row = ($i - 1) % 10;
@@ -462,7 +472,7 @@
                                             @endphp
                                             <div class="relative group">
                                                 <button type="button" data-pack="{{ $i }}"
-                                                    class="pack-btn w-full aspect-square flex items-center justify-center text-[9px] font-black rounded-lg transition-all duration-300 hover:scale-110 hover:z-10 focus:outline-none focus:ring-2"
+                                                    class="pack-btn w-full h-8 sm:h-9 flex items-center justify-center text-[10px] font-black rounded-xl transition-all duration-300 hover:scale-110 hover:z-10 focus:outline-none focus:ring-4"
                                                     :class="currentTheme ? (currentTheme.ring.replace('focus:', '')) : 'focus:ring-indigo-500/20'">
                                                     <span>{{ $i }}</span>
                                                 </button>
@@ -657,7 +667,7 @@
                             if (packsNeeded > 0) {
                                 Swal.fire({
                                     title: 'Batas Terlampaui',
-                                    text: `Anda hanya dapat memilih ${packsNeeded} packs sesuai dengan jumlah bilyet.`,
+                                    text: `Anda hanya dapat memilih ${packsNeeded} pack sesuai dengan jumlah bilyet.`,
                                     icon: 'warning',
                                     confirmButtonColor: '#4f46e5'
                                 });
@@ -708,7 +718,7 @@
                             statusEl.textContent = 'Bisa Dipilih';
 
                             // Reset ke style dasar tanpa warna latar atau teks
-                            const baseClasses = 'pack-btn w-full aspect-square flex items-center justify-center text-[10px] sm:text-xs font-black rounded-lg transition-all duration-300 focus:outline-none focus:ring-4';
+                            const baseClasses = 'pack-btn w-full h-8 sm:h-9 flex items-center justify-center text-[10px] font-black rounded-xl transition-all duration-300 focus:outline-none focus:ring-4';
                             btn.className = baseClasses;
 
                             const usedPack = usedPacks.find(p => p.pack_number === num);

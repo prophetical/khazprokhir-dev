@@ -623,9 +623,11 @@
             {{-- Existing Mappings Table --}}
             <div
                 class="bg-white dark:bg-slate-800 overflow-hidden shadow-sm sm:rounded-2xl border border-gray-100 dark:border-slate-700">
-                <div class="px-6 py-4 border-b border-gray-100 dark:border-slate-700">
+                <div class="px-6 py-4 border-b border-gray-100 dark:border-slate-700 flex items-center justify-between">
                     <h3 class="text-sm font-black text-gray-700 dark:text-white uppercase tracking-widest">Data Inschiet
                         ({{ number_format($totalMappings) }} Entri)</h3>
+                    <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest italic">Data terbaru
+                        ditampilkan di paling atas</span>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
@@ -642,24 +644,86 @@
                                 <th class="px-3 py-2.5 text-center">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100 dark:divide-slate-700">
-                            @forelse($mappings as $m)
-                                @php
-                                    $catColors = [
-                                        'seri_1' => 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
-                                        'seri_2' => 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
-                                        'campuran_1' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
-                                        'campuran_2' => 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
-                                        'manual' => 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400',
-                                    ];
-                                    $typeIcons = [
-                                        'pack' => 'pack',
-                                        'brood' => 'brood',
-                                        'vell' => 'vell',
-                                        'bilyet' => 'bilyet',
-                                    ];
-                                @endphp
-                                <tr class="hover:bg-gray-50/50 dark:hover:bg-slate-700/50 transition-colors text-[11px]">
+                        @forelse($mappings as $m)
+                            @php
+                                $catColors = [
+                                    'seri_1' => 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+                                    'seri_2' => 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
+                                    'campuran_1' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+                                    'campuran_2' => 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
+                                    'manual' => 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400',
+                                ];
+                                $typeIcons = [
+                                    'pack' => 'pack',
+                                    'brood' => 'brood',
+                                    'vell' => 'vell',
+                                    'bilyet' => 'bilyet',
+                                ];
+                                // Group by exact creation timestamp (Session)
+                                $currentSession = $m->created_at->format('Y-m-d H:i:s');
+                                $isNewSession = !isset($lastSession) || $lastSession !== $currentSession;
+                                $lastSession = $currentSession;
+                            @endphp
+
+                            @if($isNewSession)
+                                @if(!$loop->first) </tbody> @endif
+                                <tbody x-data="{ open: true }" class="border-t-4 border-gray-100 dark:border-slate-700">
+                                    {{-- Session Group Header Row --}}
+                                    <tr class="bg-gray-100/80 dark:bg-slate-700/80 sticky top-0 z-10">
+                                        <td colspan="6" class="px-3 py-2">
+                                            <div class="flex items-center gap-3">
+                                                {{-- Collapse Toggle Button --}}
+                                                <button @click="open = !open"
+                                                    class="p-1 hover:bg-white dark:hover:bg-slate-600 rounded-md transition-all shadow-sm border border-gray-200 dark:border-slate-500 text-gray-500 dark:text-slate-300"
+                                                    type="button">
+                                                    <svg class="w-4 h-4 transition-transform duration-200"
+                                                        :class="{'rotate-180': !open}" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M19 9l-7 7-7-7" />
+                                                    </svg>
+                                                </button>
+
+                                                <div
+                                                    class="flex items-center gap-1.5 px-3 py-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 rounded-lg text-[10px] font-black uppercase tracking-widest shadow-sm">
+                                                    <svg class="w-3 h-3 text-violet-500" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                    </svg>
+                                                    {{ $m->created_at->translatedFormat('H:i:s') }}
+                                                </div>
+                                                <span
+                                                    class="text-[9px] font-black text-gray-500 dark:text-slate-400 uppercase tracking-widest">
+                                                    Pack {{ $m->nomor_pack }} • {{ $m->unit_type }} •
+                                                    {{ $mappings->where('created_at', $m->created_at)->count() }} Baris
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td colspan="2" class="px-3 py-2 text-right">
+                                            {{-- Bulk Delete Session Button --}}
+                                            <form
+                                                action="{{ route('x-pengganti.mapping.destroy.session', [$seri->id, $m->created_at->format('Y-m-d H:i:s')]) }}"
+                                                method="POST" class="inline bulk-delete-session">
+                                                @csrf @method('DELETE')
+                                                <button type="submit"
+                                                    class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-rose-600 text-white hover:bg-rose-700 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all shadow-md active:scale-95"
+                                                    title="Batalkan seluruh input pada sesi ini">
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
+                                                    Hapus Sesi
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                            @endif
+
+                                <tr x-show="open" x-transition:enter="transition ease-out duration-100"
+                                    x-transition:enter-start="opacity-0 transform -translate-y-2"
+                                    x-transition:enter-end="opacity-100 transform translate-y-0"
+                                    class="hover:bg-gray-50/50 dark:hover:bg-slate-700/50 transition-colors text-[11px]">
                                     <td class="px-3 py-2 text-center font-black text-gray-600 dark:text-gray-300">
                                         {{ $m->nomor_pack }}
                                     </td>
@@ -678,14 +742,14 @@
                                     <td class="px-3 py-2 text-center font-bold text-gray-600 dark:text-gray-300">
                                         {{ number_format($m->bilyet_count) }}
                                     </td>
-                                    <td class="px-3 py-2 text-center">{{ $typeIcons[$m->unit_type] ?? '❓' }}</td>
+                                    <td class="px-3 py-2 text-center text-base">{{ $typeIcons[$m->unit_type] ?? '❓' }}</td>
                                     <td class="px-3 py-2 text-center">
                                         <form action="{{ route('x-pengganti.mapping.destroy', $m->id) }}" method="POST"
                                             class="inline delete-confirm">
                                             @csrf @method('DELETE')
                                             <button type="submit"
                                                 class="p-1 text-rose-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-all"
-                                                title="Hapus">
+                                                title="Hapus baris ini saja">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -695,7 +759,11 @@
                                         </form>
                                     </td>
                                 </tr>
-                            @empty
+
+                                @if($loop->last)
+                                </tbody> @endif
+                        @empty
+                            <tbody class="divide-y divide-gray-100 dark:divide-slate-700">
                                 <tr>
                                     <td colspan="8" class="px-6 py-10 text-center">
                                         <p
@@ -703,8 +771,9 @@
                                             Belum ada inschiet untuk seri ini</p>
                                     </td>
                                 </tr>
-                            @endforelse
-                        </tbody>
+                            </tbody>
+                        @endforelse
+
                     </table>
                 </div>
                 @if($mappings->hasPages())
@@ -714,6 +783,7 @@
                     </div>
                 @endif
             </div>
+
 
         </div>
     </div>
@@ -732,9 +802,27 @@
             });
         });
 
+        document.querySelectorAll('.bulk-delete-session').forEach(form => {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: 'Hapus Sesi Input?',
+                        html: 'Seluruh baris data dalam sesi input ini akan dihapus sekaligus.<br><span class="text-sm text-gray-500 italic">Berguna untuk membatalkan input massal (seperti Pack/Vell).</span>',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#e11d48',
+                        cancelButtonColor: '#64748b',
+                        confirmButtonText: 'Ya, Hapus Sesi',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => { if (result.isConfirmed) form.submit(); });
+                } else if (confirm('Hapus seluruh sesi input ini?')) { form.submit(); }
+            });
+        });
+
         // Pencegahan Double Submit (Menghindari PostgreSQL Lock / Waktu Loading Lama)
         document.querySelectorAll('form').forEach(form => {
-            if (!form.classList.contains('delete-confirm')) {
+            if (!form.classList.contains('delete-confirm') && !form.classList.contains('bulk-delete-session')) {
                 form.addEventListener('submit', function (e) {
                     const btn = this.querySelector('button[type="submit"]');
                     if (btn) {

@@ -41,8 +41,12 @@
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-2">
+                                        <button onclick='window.openBarcodeGlobal(@json($reg))' 
+                                            class="p-1.5 bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-all" title="Lihat Barcode">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m-3 3h2m3 3h-2m3 3h-2m3 3h-2M4 4h16a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2z"></path></svg>
+                                        </button>
                                         <button onclick="manualConfirm({{ $reg->id }})" 
-                                            class="px-2 py-1 bg-amber-500 hover:bg-amber-600 text-white rounded-md text-[8px] font-black uppercase tracking-widest transition-all">
+                                            class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-[8px] font-black uppercase tracking-widest transition-all">
                                             TERIMA MANUAL
                                         </button>
                                         <div class="flex items-center gap-1 border-l border-slate-200 dark:border-slate-700 pl-2">

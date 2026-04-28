@@ -11,8 +11,8 @@ class HctsReceivingService
 {
     public function getSummaryQuery(array $filters)
     {
-        $hcsSub = DB::table('hcs_receivings')->select('pecahan', 'batch', 'seri', 'emisi', 'tahun_anggaran', 'jumlah', 'tanggal_penerimaan', DB::raw("'HCS' as type"));
-        $hctsSub = DB::table('hcts_receivings')->select('pecahan', 'batch', 'seri', 'emisi', 'tahun_anggaran', 'jumlah', 'tanggal_penerimaan', DB::raw("'HCTS' as type"));
+        $hcsSub = DB::table('hcs_receivings')->select('pecahan', 'batch', 'seri', 'emisi', DB::raw("CAST(tahun_anggaran AS VARCHAR) as tahun_anggaran"), 'jumlah', 'tanggal_penerimaan', DB::raw("'HCS' as type"));
+        $hctsSub = DB::table('hcts_receivings')->select('pecahan', 'batch', 'seri', 'emisi', DB::raw("CAST(tahun_anggaran AS VARCHAR) as tahun_anggaran"), 'jumlah', 'tanggal_penerimaan', DB::raw("'HCTS' as type"));
 
         if (!empty($filters['start_date']) && !empty($filters['end_date'])) {
             $hcsSub->whereBetween('tanggal_penerimaan', [$filters['start_date'], $filters['end_date']]);

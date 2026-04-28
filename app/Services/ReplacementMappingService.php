@@ -198,7 +198,7 @@ class ReplacementMappingService
                 $seriObj = XPenggantiSeri::find($seriId);
                 $parsed = SerialPrefixGenerator::parseSeriLabel($seriObj->seri);
                 $inferredCategory = SerialPrefixGenerator::categorizePrefix($sourcePrefix, $parsed['seri1_base'], $parsed['seri2_base']);
-                
+
                 if ($inferredCategory === 'unknown') {
                     $inferredCategory = 'manual';
                 }
@@ -348,21 +348,31 @@ class ReplacementMappingService
     }
 
     /**
-     * Pencarian (Lookup): Mencari data pengganti berdasarkan nomor seri sumber.
+     * Mencari data pengganti berdasarkan nomor seri asal dengan teknologi GiST.
      *
-     * Menggunakan query pencarian rentang dengan indeks GIST untuk performa O(log n).
-     *
-     * @param string $prefix Prefix sumber (contoh: ABA).
-     * @param int    $serial Nomor seri sumber (contoh: 701500).
-     * @return array|null   Informasi penggantian atau null jika tidak ditemukan.
+     * @param string $prefix Prefix asal (contoh: ABC).
+     * @param int    $serial Nomor seri asal (contoh: 701500).
+     * @param string|null $pecahan Filter pecahan (S, T, U, dll).
+     * @param int|null    $tahun Filter tahun anggaran.
+     * @return array|null
      */
-    public function lookupBySourceSerial(string $prefix, int $serial): ?array
+    public function lookupBySourceSerial(string $prefix, int $serial, ?string $pecahan = null, ?int $tahun = null): ?array
     {
         $prefix = strtoupper($prefix);
 
-        $mapping = SerialRangeMapping::containingSourceSerial($prefix, $serial)
-            ->with('seri')
-            ->first();
+        $query = SerialRangeMapping::containingSourceSerial($prefix, $serial)
+            ->with('seri');
+
+        if ($pecahan || $tahun) {
+            $query->whereHas('seri', function ($q) use ($pecahan, $tahun) {
+                if ($pecahan)
+                    $q->where('pecahan', $pecahan);
+                if ($tahun)
+                    $q->where('tahun_anggaran', $tahun);
+            });
+        }
+
+        $mapping = $query->first();
 
         if (!$mapping) {
             return null;
@@ -392,15 +402,27 @@ class ReplacementMappingService
      *
      * @param string $repPrefix Prefix pengganti (contoh: ZJA).
      * @param int    $repSerial Nomor seri pengganti (contoh: 000500).
+     * @param string|null $pecahan Filter pecahan (S, T, U, dll).
+     * @param int|null    $tahun Filter tahun anggaran.
      * @return array|null
      */
-    public function reverseLookup(string $repPrefix, int $repSerial): ?array
+    public function reverseLookup(string $repPrefix, int $repSerial, ?string $pecahan = null, ?int $tahun = null): ?array
     {
         $repPrefix = strtoupper($repPrefix);
 
-        $mapping = SerialRangeMapping::containingReplacementSerial($repPrefix, $repSerial)
-            ->with('seri')
-            ->first();
+        $query = SerialRangeMapping::containingReplacementSerial($repPrefix, $repSerial)
+            ->with('seri');
+
+        if ($pecahan || $tahun) {
+            $query->whereHas('seri', function ($q) use ($pecahan, $tahun) {
+                if ($pecahan)
+                    $q->where('pecahan', $pecahan);
+                if ($tahun)
+                    $q->where('tahun_anggaran', $tahun);
+            });
+        }
+
+        $mapping = $query->first();
 
         if (!$mapping) {
             return null;
@@ -446,7 +468,7 @@ class ReplacementMappingService
     public function getMappingsForSeri(int $seriId, int $perPage = 20)
     {
         return SerialRangeMapping::forSeri($seriId)
-            ->orderBy('nomor_pack')
+            ->latest()
             ->orderBy('source_prefix')
             ->orderBy('source_start')
             ->simplePaginate($perPage);

@@ -1,6 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-black text-xl leading-tight transition-colors" :class="darkMode ? 'text-white' : 'text-slate-800'">
+        <h2 class="font-black text-xl leading-tight transition-colors"
+            :class="darkMode ? 'text-white' : 'text-slate-800'">
             {{ __('Edit Data Penerimaan HCS ') . $hcsReceiving->batch }}
         </h2>
     </x-slot>
@@ -91,7 +92,8 @@
                                             <option value="">Pilih Pecahan</option>
                                             @foreach(['S' => '1.000', 'T' => '2.000', 'U' => '5.000', 'V' => '10.000', 'W' => '20.000', 'X' => '50.000', 'Y' => '100.000'] as $key => $label)
                                                 <option value="{{ $key }}" {{ $selectedPecahan == $key ? 'selected' : '' }}>
-                                                    {{ $key }} - {{ $label }}</option>
+                                                    {{ $key }} - {{ $label }}
+                                                </option>
                                             @endforeach
                                         </select>
                                         <input type="hidden" name="pecahan" value="{{ $selectedPecahan }}">
@@ -216,7 +218,8 @@
                                             tabindex="-1" required>
                                             @foreach(['2024', '2025', '2026', '2027'] as $year)
                                                 <option value="{{ $year }}" {{ old('tahun_anggaran', $hcsReceiving->tahun_anggaran ?? '2025') == $year ? 'selected' : '' }}>
-                                                    {{ $year }}</option>
+                                                    {{ $year }}
+                                                </option>
                                             @endforeach
                                         </select>
                                         <input type="hidden" name="tahun_anggaran"
@@ -584,7 +587,7 @@
                             if (packsNeeded > 0) {
                                 Swal.fire({
                                     title: 'Batas Terlampaui',
-                                    text: `Anda hanya dapat memilih ${packsNeeded} packs sesuai dengan jumlah bilyet.`,
+                                    text: `Anda hanya dapat memilih ${packsNeeded} pack sesuai dengan jumlah bilyet.`,
                                     icon: 'warning',
                                     confirmButtonColor: '#4f46e5'
                                 });
@@ -778,22 +781,37 @@
 
     @push('css')
         <style>
-            [x-cloak] { display: none !important; }
+            [x-cloak] {
+                display: none !important;
+            }
 
             /* Mengembalikan Estetika Mode Gelap High-Fidelity untuk Halaman Edit */
-            body.dark-mode [class*="bg-gray-50/30"] { background-color: var(--theme-bg-main) !important; }
-            body.dark-mode [class*="bg-white/70"] { background-color: rgba(30, 41, 59, 0.7) !important; border-color: var(--theme-border-main) !important; backdrop-blur: 40px !important; }
-            
-            body.dark-mode .lg\:w-\[45\%\] { background-color: rgba(15, 23, 42, 0.4) !important; border-right-color: var(--theme-border-main) !important; }
-            body.dark-mode .lg\:w-\[55\%\] { background-color: rgba(15, 23, 42, 0.2) !important; }
-            
+            body.dark-mode [class*="bg-gray-50/30"] {
+                background-color: var(--theme-bg-main) !important;
+            }
+
+            body.dark-mode [class*="bg-white/70"] {
+                background-color: rgba(30, 41, 59, 0.7) !important;
+                border-color: var(--theme-border-main) !important;
+                backdrop-blur: 40px !important;
+            }
+
+            body.dark-mode .lg\:w-\[45\%\] {
+                background-color: rgba(15, 23, 42, 0.4) !important;
+                border-right-color: var(--theme-border-main) !important;
+            }
+
+            body.dark-mode .lg\:w-\[55\%\] {
+                background-color: rgba(15, 23, 42, 0.2) !important;
+            }
+
             /* Elemen Bersarang & Kartu Dalam - Restorasi Kedalaman */
-            body.dark-mode .bg-white\/80, 
-            body.dark-mode .bg-white\/40, 
+            body.dark-mode .bg-white\/80,
+            body.dark-mode .bg-white\/40,
             body.dark-mode .bg-white\/50,
-            body.dark-mode .bg-white\/20:not(nav *) { 
-                background-color: rgba(30, 41, 59, 0.5) !important; 
-                border-color: var(--theme-border-main) !important; 
+            body.dark-mode .bg-white\/20:not(nav *) {
+                background-color: rgba(30, 41, 59, 0.5) !important;
+                border-color: var(--theme-border-main) !important;
                 backdrop-blur: 10px !important;
             }
 
@@ -805,14 +823,21 @@
                 color: #f8fafc !important;
             }
 
-            body.dark-mode .text-gray-900, body.dark-mode .text-gray-800 { color: var(--theme-text-main) !important; }
-            body.dark-mode .text-gray-600, body.dark-mode .text-gray-700 { color: var(--theme-text-muted) !important; }
-            
+            body.dark-mode .text-gray-900,
+            body.dark-mode .text-gray-800 {
+                color: var(--theme-text-main) !important;
+            }
+
+            body.dark-mode .text-gray-600,
+            body.dark-mode .text-gray-700 {
+                color: var(--theme-text-muted) !important;
+            }
+
             /* Border & Utilitas */
-            body.dark-mode .border-white, 
-            body.dark-mode .border-gray-100, 
-            body.dark-mode .border-gray-200 { 
-                border-color: var(--theme-border-main) !important; 
+            body.dark-mode .border-white,
+            body.dark-mode .border-gray-100,
+            body.dark-mode .border-gray-200 {
+                border-color: var(--theme-border-main) !important;
             }
 
             /* Tooltip Grid Pack & Elemen Grid */
@@ -821,6 +846,7 @@
                 color: #64748b !important;
                 border: 1px solid #334155 !important;
             }
+
             body.dark-mode .pack-btn-available:hover {
                 background-color: #243047 !important;
                 color: #94a3b8 !important;
@@ -832,6 +858,7 @@
                 border: 1px solid #f1f5f9 !important;
                 box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
             }
+
             body.light-mode .pack-btn-available:hover {
                 background-color: #f8fafc !important;
                 color: #475569 !important;
@@ -839,16 +866,41 @@
             }
 
             /* Pemurnian Mode Terang untuk Halaman Edit */
-            body.light-mode .bg-white\/70.backdrop-blur-xl { background-color: #ffffff !important; border-color: #e5e7eb !important; }
-            body.light-mode .lg\:w-\[45\%\]\.bg-white\/40 { background-color: #f8fafc !important; border-right-color: #e5e7eb !important; }
-            body.light-mode .lg\:w-\[55\%\]\.bg-gray-50\/20 { background-color: #ffffff !important; }
-            body.light-mode input, body.light-mode select, body.light-mode textarea {
+            body.light-mode .bg-white\/70.backdrop-blur-xl {
+                background-color: #ffffff !important;
+                border-color: #e5e7eb !important;
+            }
+
+            body.light-mode .lg\:w-\[45\%\]\.bg-white\/40 {
+                background-color: #f8fafc !important;
+                border-right-color: #e5e7eb !important;
+            }
+
+            body.light-mode .lg\:w-\[55\%\]\.bg-gray-50\/20 {
+                background-color: #ffffff !important;
+            }
+
+            body.light-mode input,
+            body.light-mode select,
+            body.light-mode textarea {
                 background-color: #ffffff !important;
                 border-color: #d1d5db !important;
             }
-            body.light-mode .bg-white\/50 { background-color: #ffffff !important; border-color: #d1d5db !important; }
-            body.light-mode .bg-white\/80 { background-color: #ffffff !important; border-color: #e5e7eb !important; }
-            body.light-mode .bg-white\/40 { background-color: #f1f5f9 !important; border-color: #e5e7eb !important; }
+
+            body.light-mode .bg-white\/50 {
+                background-color: #ffffff !important;
+                border-color: #d1d5db !important;
+            }
+
+            body.light-mode .bg-white\/80 {
+                background-color: #ffffff !important;
+                border-color: #e5e7eb !important;
+            }
+
+            body.light-mode .bg-white\/40 {
+                background-color: #f1f5f9 !important;
+                border-color: #e5e7eb !important;
+            }
         </style>
     @endpush
 </x-app-layout>

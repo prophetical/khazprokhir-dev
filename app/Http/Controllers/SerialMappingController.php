@@ -362,16 +362,21 @@ class SerialMappingController extends Controller
         $reverseResult = null;
         $searched      = false;
 
-        if ($request->filled('prefix') && $request->filled('serial')) {
+        $prefix  = $request->input('prefix');
+        $serial  = $request->input('serial');
+        $pecahan = $request->input('pecahan');
+        $tahun   = $request->input('tahun_anggaran');
+        $mode    = $request->input('mode', 'forward');
+
+        if ($request->filled('prefix') && $request->filled('serial') && $request->filled('pecahan')) {
             $searched = true;
-            $prefix   = strtoupper($request->input('prefix'));
-            $serial   = (int) $request->input('serial');
-            $mode     = $request->input('mode', 'forward');
+            $prefix   = strtoupper($prefix);
+            $serial   = (int) $serial;
 
             if ($mode === 'reverse') {
-                $reverseResult = $this->mappingService->reverseLookup($prefix, $serial);
+                $reverseResult = $this->mappingService->reverseLookup($prefix, $serial, $pecahan, $tahun);
             } else {
-                $result = $this->mappingService->lookupBySourceSerial($prefix, $serial);
+                $result = $this->mappingService->lookupBySourceSerial($prefix, $serial, $pecahan, $tahun);
             }
         }
 
@@ -379,9 +384,11 @@ class SerialMappingController extends Controller
             'result'        => $result,
             'reverseResult' => $reverseResult,
             'searched'      => $searched,
-            'prefix'        => $request->input('prefix', ''),
-            'serial'        => $request->input('serial', ''),
-            'mode'          => $request->input('mode', 'forward'),
+            'prefix'        => $prefix,
+            'serial'        => $serial,
+            'pecahan'       => $pecahan,
+            'tahun'         => $tahun,
+            'mode'          => $mode,
         ]);
     }
 
@@ -401,5 +408,40 @@ class SerialMappingController extends Controller
         return redirect()
             ->route('x-pengganti.mapping.create', ['seri_id' => $seriId])
             ->with('x_success', 'Mapping berhasil dihapus.');
+    }
+
+    /**
+     * Hapus semua baris mapping untuk nomor pack tertentu sekaligus.
+     */
+    public function destroyByPack(int $seri_id, int $pack_number)
+    {
+        $deleted = SerialRangeMapping::where('x_pengganti_seri_id', $seri_id)
+            ->where('nomor_pack', $pack_number)
+            ->delete();
+
+        // Recalculate agregat setelah hapus massal
+        $this->aggregatorService->recalculateFromMappings($seri_id);
+
+        return redirect()
+            ->route('x-pengganti.mapping.create', ['seri_id' => $seri_id])
+            ->with('x_success', "Semua {$deleted} baris inschiet untuk Pack {$pack_number} berhasil dihapus.");
+    }
+
+    /**
+     * Hapus semua baris dalam satu "Sesi Input" yang sama (berdasarkan timestamp).
+     */
+    public function destroyBySession(int $seri_id, string $timestamp)
+    {
+        // Decode timestamp jika diperlukan, tapi Laravel Route akan menangani string standar
+        $deleted = SerialRangeMapping::where('x_pengganti_seri_id', $seri_id)
+            ->where('created_at', $timestamp)
+            ->delete();
+
+        // Recalculate agregat
+        $this->aggregatorService->recalculateFromMappings($seri_id);
+
+        return redirect()
+            ->route('x-pengganti.mapping.create', ['seri_id' => $seri_id])
+            ->with('x_success', "Sesi input ({$deleted} baris) berhasil dibatalkan.");
     }
 }

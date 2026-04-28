@@ -161,7 +161,7 @@ class BahanPenolongController extends Controller
             'keterangan' => 'nullable|string'
         ]);
 
-        BahanPenolong::create($request->all());
+        BahanPenolong::create($request->only(['nama_bahan', 'kode_material', 'satuan', 'min_stok', 'keterangan']));
 
         return back()->with('success', 'Bahan Penolong berhasil ditambahkan.');
     }
@@ -177,7 +177,7 @@ class BahanPenolongController extends Controller
             'min_stok' => 'required|integer|min:0',
         ]);
 
-        $bahanPenolong->update($request->all());
+        $bahanPenolong->update($request->only(['nama_bahan', 'kode_material', 'satuan', 'min_stok', 'keterangan']));
 
         return back()->with('success', 'Data bahan berhasil diperbarui.');
     }

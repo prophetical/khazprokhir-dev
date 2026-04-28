@@ -105,13 +105,17 @@ class HcsReceivingController extends Controller
                 return redirect()->route('hcs-khazai-registration.barcode', $registration->id)
                     ->with('success', 'Registrasi HCS berhasil disimpan. Silakan cetak barcode.');
             } else {
-                // Jalur 2: Penerimaan Langsung (Seksi Penerimaan / Bypass Scan)
+                // Jalur 2: Penerimaan Langsung (Bypass Scan)
                 $this->service->createReceiving($validated, auth()->id());
                 return redirect()->route('hcs-receiving.index')->with('success', 'Data Penerimaan HCS (Manual Langsung) berhasil disimpan.');
             }
         } catch (\Exception $e) {
-            \Log::error('HCS Receiving Store Error: ' . $e->getMessage());
-            return back()->withInput()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()]);
+            \Log::error('HCS Receiving Store Error', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            // Jika error berasal dari validasi bisnis (manual throw), tampilkan pesan aslinya
+            $message = $e instanceof \Illuminate\Database\QueryException
+                ? 'Terjadi kesalahan database. Silakan hubungi administrator.'
+                : $e->getMessage();
+            return back()->withInput()->withErrors(['error' => $message]);
         }
     }
 
@@ -136,8 +140,11 @@ class HcsReceivingController extends Controller
 
             return redirect()->route('hcs-receiving.index')->with('success', 'Data Penerimaan HCS berhasil diperbarui.');
         } catch (\Exception $e) {
-            \Log::error('HCS Receiving Update Error: ' . $e->getMessage());
-            return back()->withInput()->withErrors(['error' => $e->getMessage()]);
+            \Log::error('HCS Receiving Update Error', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            $message = $e instanceof \Illuminate\Database\QueryException
+                ? 'Terjadi kesalahan database. Silakan hubungi administrator.'
+                : $e->getMessage();
+            return back()->withInput()->withErrors(['error' => $message]);
         }
     }
 
@@ -145,26 +152,27 @@ class HcsReceivingController extends Controller
     {
         try {
             $this->service->deleteReceiving($hcsReceiving, auth()->id());
-            
+
             if (request()->wantsJson()) {
                 return response()->json(['success' => true, 'message' => 'Penerimaan HCS berhasil dibatalkan. Status registrasi kembali ke PENDING.']);
             }
 
             return redirect()->route('hcs-receiving.index')->with('success', 'Data Penerimaan HCS berhasil dihapus.');
         } catch (\Exception $e) {
-            \Log::error('HCS Receiving Delete Error: ' . $e->getMessage());
+            \Log::error('HCS Receiving Delete Error', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
 
             if (request()->wantsJson()) {
-                return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
+                return response()->json(['success' => false, 'message' => 'Terjadi kesalahan sistem saat menghapus data.'], 422);
             }
 
-            return back()->withErrors(['error' => $e->getMessage()]);
+            return back()->withErrors(['error' => 'Terjadi kesalahan sistem saat menghapus data. Silakan coba lagi atau hubungi administrator.']);
         }
     }
 
     public function scan()
     {
-        $registrations = HcsKhazaiRegistration::whereDate('tanggal_pembuatan', today())
+        $registrations = HcsKhazaiRegistration::where('status', 'pending')
+            ->orWhereDate('tanggal_pembuatan', today())
             ->orderBy('status', 'asc')
             ->orderBy('updated_at', 'desc')
             ->get();
@@ -172,7 +180,7 @@ class HcsReceivingController extends Controller
         // Ambil data input manual juga untuk dashboard scan
         $manualReceivings = HcsReceiving::whereDate('created_at', today())
             ->get()
-            ->filter(function($item) {
+            ->filter(function ($item) {
                 return !HcsKhazaiRegistration::where('nomor_bon', $item->nomor_bon)
                     ->where('batch', $item->batch)
                     ->where('seri', $item->seri)
@@ -184,7 +192,8 @@ class HcsReceivingController extends Controller
 
     public function scanStatus()
     {
-        $registrations = HcsKhazaiRegistration::whereDate('tanggal_pembuatan', today())
+        $registrations = HcsKhazaiRegistration::where('status', 'pending')
+            ->orWhereDate('tanggal_pembuatan', today())
             ->orderBy('status', 'asc')
             ->orderBy('updated_at', 'desc')
             ->get();
@@ -192,7 +201,7 @@ class HcsReceivingController extends Controller
         // Ambil data input manual juga untuk tabel status
         $manualReceivings = HcsReceiving::whereDate('created_at', today())
             ->get()
-            ->filter(function($item) {
+            ->filter(function ($item) {
                 // Hanya ambil yang tidak punya registrasi (berarti manual direct entry)
                 return !HcsKhazaiRegistration::where('nomor_bon', $item->nomor_bon)
                     ->where('batch', $item->batch)

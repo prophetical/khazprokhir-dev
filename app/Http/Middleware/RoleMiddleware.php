@@ -28,7 +28,8 @@ class RoleMiddleware
         }
 
         // 2. Jangan beri akses Manajemen Target dan Akun untuk role non admin
-        if ($request->is('targets*') || $request->is('users*')) {
+        // Menggunakan route name agar tidak bergantung pada pola URL yang bisa berubah
+        if ($request->routeIs('targets.*') || $request->routeIs('users.*')) {
             abort(403, 'Hanya Administrator yang dapat mengakses halaman ini.');
         }
 
@@ -43,7 +44,7 @@ class RoleMiddleware
         // 4. Logika role khazai: CRUD penuh pada Registrasi HCS, read-only halaman lain
         if ($userRole === 'khazai') {
             // Boleh semua method pada route registrasi hcs
-            if ($request->is('hcs-khazai-registration*')) {
+            if ($request->routeIs('hcs-khazai-registration.*')) {
                 return $next($request);
             }
             // Halaman lain: hanya boleh GET
@@ -56,7 +57,7 @@ class RoleMiddleware
         // 5. Logika role khazverutas: CRUD penuh pada X Pengganti, read-only halaman lain
         if ($userRole === 'khazverutas') {
             // Boleh semua method pada route x-pengganti
-            if ($request->is('x-pengganti*')) {
+            if ($request->routeIs('x-pengganti.*')) {
                 return $next($request);
             }
             // Halaman lain: hanya boleh GET
@@ -72,18 +73,22 @@ class RoleMiddleware
             return $next($request);
         }
 
-        // 6. Role Unassigned (User Baru): Terbatas pada Dashboard & Laporan Harian
+        // 7. Role Unassigned (User Baru): Terbatas pada Dashboard & Laporan Harian
         $allowedRoutes = [
             'dashboard',
-            'laporan-harian*',
-            'profile*',
-            'logout'
+            'laporan-harian.*',
+            'profile.*',
         ];
 
         foreach ($allowedRoutes as $pattern) {
-            if ($request->is($pattern)) {
+            if ($request->routeIs($pattern)) {
                 return $next($request);
             }
+        }
+
+        // Izinkan juga route logout (tidak punya nama prefix khusus)
+        if ($request->routeIs('logout')) {
+            return $next($request);
         }
 
         abort(403, 'Akun Anda belum memiliki peran (role). Silakan hubungi Administrator untuk aktivasi.');

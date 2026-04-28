@@ -79,10 +79,17 @@ class HcsSortingService
             $this->validateContiguousBlocks($selected);
         }
 
-        $already = Pack::where('batch', $data['batch'])->where('seri', $data['seri'])->whereIn('pack_number', $selected)->whereNotNull('hcs_sorting_id')->exists();
-        if ($already) throw ValidationException::withMessages(['selected_packs' => 'Salah satu pack sudah disortir sebelumnya.']);
+        $existingPacks = Pack::where('batch', $data['batch'])->where('seri', $data['seri'])->whereIn('pack_number', $selected)->get();
+        if ($existingPacks->count() !== count($selected)) {
+            $foundNumbers = $existingPacks->pluck('pack_number')->toArray();
+            $missingNumbers = array_diff($selected, $foundNumbers);
+            throw ValidationException::withMessages(['selected_packs' => 'Beberapa pack belum di-input: ' . implode(', ', $missingNumbers)]);
+        }
 
-        $jumlahBilyet = Pack::where('batch', $data['batch'])->where('seri', $data['seri'])->whereIn('pack_number', $selected)->sum('jumlah');
+        $already = $existingPacks->whereNotNull('hcs_sorting_id')->first();
+        if ($already) throw ValidationException::withMessages(['selected_packs' => 'Pack nomor ' . $already->pack_number . ' sudah disortir sebelumnya.']);
+
+        $jumlahBilyet = $existingPacks->sum('jumlah');
 
         return DB::transaction(function() use ($data, $selected, $jumlahBilyet, $userId) {
             $sorting = HcsSorting::create([
@@ -108,11 +115,17 @@ class HcsSortingService
             $this->validateContiguousBlocks($selected);
         }
 
-        $already = Pack::where('batch', $model->batch)->where('seri', $model->seri)->whereIn('pack_number', $selected)
-            ->whereNotNull('hcs_sorting_id')->where('hcs_sorting_id', '!=', $model->id)->exists();
-        if ($already) throw ValidationException::withMessages(['selected_packs' => 'Salah satu pack sudah disortir oleh sesi lain.']);
+        $existingPacks = Pack::where('batch', $model->batch)->where('seri', $model->seri)->whereIn('pack_number', $selected)->get();
+        if ($existingPacks->count() !== count($selected)) {
+            $foundNumbers = $existingPacks->pluck('pack_number')->toArray();
+            $missingNumbers = array_diff($selected, $foundNumbers);
+            throw ValidationException::withMessages(['selected_packs' => 'Beberapa pack belum di-input: ' . implode(', ', $missingNumbers)]);
+        }
 
-        $jumlahBilyet = Pack::where('batch', $model->batch)->where('seri', $model->seri)->whereIn('pack_number', $selected)->sum('jumlah');
+        $already = $existingPacks->whereNotNull('hcs_sorting_id')->where('hcs_sorting_id', '!=', $model->id)->first();
+        if ($already) throw ValidationException::withMessages(['selected_packs' => 'Pack nomor ' . $already->pack_number . ' sudah disortir oleh sesi lain.']);
+
+        $jumlahBilyet = $existingPacks->sum('jumlah');
 
         return DB::transaction(function() use ($model, $data, $selected, $jumlahBilyet) {
             Pack::where('hcs_sorting_id', $model->id)->update(['hcs_sorting_id' => null]);

@@ -18,7 +18,7 @@
                                 dari Seksi Khazai</p>
                         </div>
                         <a href="{{ route('hcs-khazai-registration.create') }}"
-                            class="inline-flex items-center px-4 py-2.5 bg-indigo-600 border border-transparent rounded-xl font-black text-[9px] text-white uppercase tracking-[0.2em] hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 transition-all duration-300 shadow-lg shadow-indigo-100 active:scale-95">
+                            class="inline-flex items-center px-4 py-2.5 bg-indigo-600 border border-transparent rounded-xl font-black text-[9px] text-white uppercase tracking-[0.2em] hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 transition-all duration-300 active:scale-95">
                             <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
                                     d="M12 4v16m8-8H4"></path>

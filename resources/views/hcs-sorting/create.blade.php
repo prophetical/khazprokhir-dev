@@ -385,6 +385,11 @@
                         {{ $pack->pack_number }}: '{{ $pack->pack_supplier }}',
                     @endforeach
                 },
+                packStatuses: {
+                    @foreach ($packsData as $pack)
+                        {{ $pack->pack_number }}: {{ $pack->hcs_sorting_id ? 'true' : 'false' }},
+                    @endforeach
+                },
                 
                 get totalBilyet() {
                     let total = 0;
@@ -415,8 +420,27 @@
                             // Hapus satu blok
                             block.forEach(p => this.selectedPacks.delete(p));
                         } else {
-                            // Tambah satu blok
-                            block.forEach(p => this.selectedPacks.add(p));
+                            // Tambah satu blok, tapi hanya yang tersedia (di-input dan belum disortir)
+                            let availableInBlock = block.filter(p => this.packQuantities[p] && !this.packStatuses[p]);
+                            
+                            if (availableInBlock.length < 4) {
+                                let missingInBlock = block.filter(p => !this.packQuantities[p]);
+                                let sortedInBlock = block.filter(p => this.packStatuses[p]);
+                                
+                                let errorMsg = '';
+                                if (missingInBlock.length > 0) errorMsg += `Pack ${missingInBlock.join(', ')} belum di-input. `;
+                                if (sortedInBlock.length > 0) errorMsg += `Pack ${sortedInBlock.join(', ')} sudah disortir. `;
+                                
+                                Swal.fire({
+                                    title: 'Grup Tidak Lengkap',
+                                    text: errorMsg + 'Grup kelipatan 4 harus lengkap untuk dipilih dalam mode ini. Gunakan "Mode Sisa Pack" jika ingin memilih secara manual.',
+                                    icon: 'warning',
+                                    confirmButtonColor: '#4f46e5'
+                                });
+                                return;
+                            }
+                            
+                            availableInBlock.forEach(p => this.selectedPacks.add(p));
                         }
                     } else {
                         // Logic Manual (Satu per satu)

@@ -44,18 +44,19 @@ class HcsKhazaiRegistrationController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nomor_bon' => 'required|string',
-            'pecahan' => 'required|string',
-            'jumlah' => 'required|integer',
-            'batch' => 'required|string',
-            'seri' => 'required|string',
-            'emisi' => 'required|string',
-            'tahun_anggaran' => 'required|string',
-            'gilir' => 'required|string',
-            'mesin' => 'required|string',
-            'supplier' => 'required|string',
+            'nomor_bon' => 'required|string|max:50',
+            'pecahan' => 'required|in:S,T,U,V,W,X,Y',
+            'jumlah' => 'required|integer|min:1',
+            'batch' => 'required|string|size:7',
+            'seri' => 'required|string|max:20',
+            'emisi' => 'required|digits:4',
+            'tahun_anggaran' => 'required|digits:4',
+            'gilir' => 'required|in:Gilir 1,Gilir 2,Gilir 3',
+            'mesin' => 'required|string|max:50',
+            'supplier' => 'required|in:Rikyet,Cutpack',
             'tanggal_pembuatan' => 'required|date',
-            'packs' => 'required|array',
+            'packs' => 'required|array|min:1',
+            'packs.*' => 'integer|min:1|max:100',
         ]);
 
         $barcode = date('Ymd', strtotime($request->tanggal_pembuatan)) . strtoupper(Str::random(4));
@@ -85,18 +86,19 @@ class HcsKhazaiRegistrationController extends Controller
         }
 
         $validated = $request->validate([
-            'nomor_bon' => 'required|string',
-            'pecahan' => 'required|string',
-            'jumlah' => 'required|integer',
-            'batch' => 'required|string',
-            'seri' => 'required|string',
-            'emisi' => 'required|string',
-            'tahun_anggaran' => 'required|string',
-            'gilir' => 'required|string',
-            'mesin' => 'required|string',
-            'supplier' => 'required|string',
+            'nomor_bon' => 'required|string|max:50',
+            'pecahan' => 'required|in:S,T,U,V,W,X,Y',
+            'jumlah' => 'required|integer|min:1',
+            'batch' => 'required|string|size:7',
+            'seri' => 'required|string|max:20',
+            'emisi' => 'required|digits:4',
+            'tahun_anggaran' => 'required|digits:4',
+            'gilir' => 'required|in:Gilir 1,Gilir 2,Gilir 3',
+            'mesin' => 'required|string|max:50',
+            'supplier' => 'required|in:Rikyet,Cutpack',
             'tanggal_pembuatan' => 'required|date',
-            'packs' => 'required|array',
+            'packs' => 'required|array|min:1',
+            'packs.*' => 'integer|min:1|max:100',
         ]);
 
         $hcsKhazaiRegistration->update(array_merge($validated, [
@@ -132,16 +134,21 @@ class HcsKhazaiRegistrationController extends Controller
 
     public function getPackStatus(Request $request)
     {
+        $request->validate([
+            'batch' => 'required|string|size:7',
+            'seri' => 'required|string|max:20',
+            'pecahan' => 'nullable|in:S,T,U,V,W,X,Y',
+            'emisi' => 'nullable|digits:4',
+            'tahun_anggaran' => 'nullable|digits:4',
+            'exclude_id' => 'nullable|integer',
+        ]);
+
         $batch = $request->batch;
         $seri = $request->seri;
         $pecahan = $request->pecahan;
         $emisi = $request->emisi;
         $tahun_anggaran = $request->tahun_anggaran;
         $exclude_id = $request->exclude_id;
-
-        if (!$batch || !$seri) {
-            return response()->json([]);
-        }
 
         // 1. Ambil Registrasi Pending dari sisi Khazai
         $pendingRegs = HcsKhazaiRegistration::where('batch', $batch)
