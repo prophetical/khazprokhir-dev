@@ -1,102 +1,101 @@
-# Khazprokhir - Premium Operational & Reporting Ecosystem
+# Khazprokhir – Premium Operational & Reporting System
 
-Khazprokhir is a high-performance, enterprise-grade web application designed to streamline industrial operational workflows. It specializes in the management of receiving, sorting, and packaging processes (**HCS & HCTS**), providing real-time analytics, automated bilyet calculations, and robust inventory tracking.
-
-Built with a focus on visual excellence and data integrity, Khazprokhir transforms complex operational data into actionable insights through a modern, premium interface.
+## 📖 Overview
+Khazprokhir is an **enterprise‑grade** Laravel application that streamlines **industrial operational workflows** for the **HCS** (Receiving, Sorting, Packaging) and **HCTS** (Receiving, Inventory, Submission) processes. It provides real‑time analytics, automated bilyet calculations, role‑based access control, and premium‑look UI with dark‑mode support.
 
 ---
 
 ## ✨ Key Features
-
-- **📊 Advanced Analytics Dashboard**: Real-time overview of production metrics, denomination-based trends, and automated bilyet summaries.
-- **📱 Fully Mobile-Ready**: A completely responsive interface optimized for all devices (mobile, tablet, desktop) without compromising density or aesthetics.
-- **📦 Workflow Modules**: Standardized end-to-end management for:
-  - **HCS** (Receiving, Sorting, Packaging)
-  - **HCTS** (Receiving, Inventory, Submission)
-- **📈 Inschiet Analytical Module**: Specialized tracking for production discrepancies with dynamic chart visualizations and detailed modal breakdowns.
-- **📋 Real-time Operational Reports**: Live-polling reports with advanced multi-criteria filtering (TA/TE, Denomination, and specific date ranges).
-- **🎨 Premium UI/UX**: Modern glassmorphism aesthetic with specialized dark mode support, fluid typography, and micro-animations.
-- **📄 Pro Export & Printing**: High-fidelity PDF and Excel exports with dedicated print-optimized layouts for all operational modules.
+- **📊 Laporan Harian** – interactive daily reports with filtering by TA/TE, denomination, and date range.
+- **🔁 Rekonsiliasi** – detailed reconciliation view with printable PDF layout (print‑rekonsiliasi.blade.php) and export to Excel.
+- **🖨️ Print‑Ready PDFs** – custom Tailwind‑styled print pages that match the main UI.
+- **🔐 Role‑Based Middleware** – granular permissions for `admin`, `supervisor`, `khazai`, `khazverutas`, `sortir`, `kemas`, and unassigned users (see `app/Http/Middleware/RoleMiddleware.php`).
+- **📝 Audit Log** – model `AuditLog` tracks user actions for accountability.
+- **🎨 Premium UI/UX** – glass‑morphism style, fluid typography, micro‑animations, and full dark‑mode support.
+- **📈 Charts & Visualisations** – Chart.js integration for trend analysis.
+- **💾 Export** – high‑fidelity PDF and XLSX exports for all reports.
+- **📱 Responsive & Mobile‑First** – built with Tailwind CSS and Alpine.js.
 
 ---
 
 ## 🛠 Tech Stack
-
-- **Backend**: [Laravel 11](https://laravel.com/) (PHP 8.2+)
-- **Frontend**: [Tailwind CSS 3.4](https://tailwindcss.com/) + [Alpine.js 3](https://alpinejs.dev/)
-- **Build Tool**: [Vite](https://vitejs.dev/)
-- **Charts**: [Chart.js](https://www.chartjs.org/)
-- **Popups**: [SweetAlert2](https://sweetalert2.github.io/)
-- **Icons**: [Heroicons](https://heroicons.com/)
+- **Backend**: Laravel 11 (PHP 8.2+)
+- **Frontend**: Tailwind CSS 3.4, Alpine.js 3
+- **Build Tool**: Vite
+- **Charts**: Chart.js
+- **Modals & Alerts**: SweetAlert2
+- **Icons**: Heroicons
+- **Database**: SQLite (default) / MySQL / PostgreSQL
 
 ---
 
 ## 🚀 Getting Started
-
 ### Prerequisites
-
-- **PHP** >= 8.2 (with JSON & PDO extensions)
-- **Composer** (PHP Package Manager)
-- **Node.js** >= 18 & **NPM**
-- **Database**: SQLite (Default) or MySQL/PostgreSQL
+- PHP ≥ 8.2 (with JSON & PDO extensions)
+- Composer
+- Node.js ≥ 18 & NPM
+- A supported database (SQLite works out‑of‑the‑box)
 
 ### Installation
-
-1. **Clone the repository**
-
-   ```bash
-   git clone https://github.com/prophetical/khazprokhir.git
-   cd khazprokhir
-   ```
-
-2. **Install Dependencies**
-
-   ```bash
-   composer install
-   npm install
-   ```
-
-3. **Environment Setup**
-
-   ```bash
-   cp .env.example .env
-   php artisan key:generate
-   ```
-
-   *Configure your database and app settings in the `.env` file.*
-
-4. **Database Initialization**
-
-   ```bash
-   php artisan migrate --seed
-   ```
-
-5. **Build Production Assets**
-
-   ```bash
-   npm run build
-   ```
-
-6. **Final Launch**
-
-   ```bash
-   php artisan serve
-   ```
-
-Visit `http://localhost:8000` to access the application.
+```bash
+git clone https://github.com/prophetical/khazprokhir.git
+cd khazprokhir
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate --seed
+npm run build   # compile assets for production
+php artisan serve
+```
+Open `http://localhost:8000` in your browser.
 
 ---
 
-## 🏗 Deployment Note
-
-For production deployment to a VM, follow the detailed instructions in [deployment_guide.md](deployment_guide.md) to properly compile assets and configure environment variables.
+## 📂 Project Structure (high‑level)
+- `app/Http/Controllers` – Controllers for daily reports and reconciliation.
+- `app/Http/Middleware/RoleMiddleware.php` – Centralised role‑based access control.
+- `app/Services/ReportService.php` – Business logic for generating reports.
+- `resources/views/laporan-harian` – Blade templates, including the printable `print-rekonsiliasi.blade.php`.
+- `routes/web.php` – Main web routes; authentication routes are defined in `routes/auth.php`.
 
 ---
 
-## 🔐 Internal Repository
+## 🛠 Core Components
+- **ReportService** (`app/Services/ReportService.php`): Central service that aggregates data for daily reports and reconciliation, exposing methods `generateDailyReport()` and `generateReconciliationData()`.
+- **LaporanHarianController** (`app/Http/Controllers/LaporanHarianController.php`): Handles HTTP requests for `/laporan-harian` endpoints, leverages `ReportService` and applies `RoleMiddleware`.
+- **Print‑Rekonsiliasi Blade View** (`resources/views/laporan-harian/print-rekonsiliasi.blade.php`): Dedicated print layout with Tailwind styling, displaying reconciliation tables with zero values as dashes.
+- **RoleMiddleware** (`app/Http/Middleware/RoleMiddleware.php`): Role‑based access control enforcing granular permissions for various user roles.
+- **AuditLog Model** (`app/Models/AuditLog.php`): Records user actions for compliance and debugging.
+- **Export Features**: Excel export via `Maatwebsite\Excel` package and PDF generation using `barryvdh/laravel-dompdf`.
 
-This is a **private repository** managed by **[prophetical](https://github.com/prophetical)**. Access is restricted to authorized personnel only.
+---
 
-For technical support or feature requests, please contact the repository owner directly.
+# Updated README with recent enhancements
+## 📈 Recent Enhancements
+- Updated `/laporan-harian/rekonsiliasi.blade.php` table header styling to match `/laporan-harian` using Tailwind classes (indigo/gray backgrounds, consistent fonts).
+- Implemented zero-value display as “-” across reconciliation tables for clearer data presentation.
+- Added dedicated printable view `print-rekonsiliasi.blade.php` with Tailwind‑styled layout and print‑optimized CSS.
+- Refactored reconciliation logic into its own service file for better separation of concerns.
+- Enhanced role‑based access control in `RoleMiddleware` and documented permissions in README.
+
+## 🤝 Contributing
+1. Fork the repository.
+2. Create a feature branch (`git checkout -b feature/your‑feature`).
+3. Ensure code follows the existing coding style (Tailwind classes, Blade conventions).
+4. Submit a Pull Request.
+
+---
+
+## 🔐 Private Repository
+1. Fork the repository.
+2. Create a feature branch (`git checkout -b feature/your‑feature`).
+3. Ensure code follows the existing coding style (Tailwind classes, Blade conventions).
+4. Submit a Pull Request.
+
+---
+
+## 🔐 Private Repository
+This repository is **private** and managed by **[prophetical](https://github.com/prophetical)**. Access is limited to authorized personnel. For support or feature requests, contact the repository owner directly.
 
 ---
