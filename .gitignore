@@ -1,3 +1,4 @@
+# Laravel .gitignore – ignore generated and sensitive files
 /node_modules
 /public/build
 /public/hot
