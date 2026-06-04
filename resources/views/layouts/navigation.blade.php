@@ -157,6 +157,10 @@
                     class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('laporan-harian.index') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
                     Laporan Harian
                 </a>
+                <a href="{{ route('laporan-harian.rekonsiliasi') }}"
+                    class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('laporan-harian.rekonsiliasi') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                    Rekonsiliasi Data
+                </a>
                 <a href="{{ route('laporan-harian.realtime') }}"
                     class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('laporan-harian.realtime') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
                     Laporan Harian Realtime

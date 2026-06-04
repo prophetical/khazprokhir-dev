@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\HcsReceiving;
 use App\Models\Pengemasan;
 use App\Models\PenyerahanBi;
+use App\Models\TargetBulanan;
 use App\Models\TargetBulananPengemasan;
 use App\Models\TargetTahunan;
 use App\Models\HctsReceiving;
@@ -36,8 +37,10 @@ class ReportService
                 ->values()
                 ->toArray();
 
-            if (empty($ta)) $ta = [date('Y')];
-            if (empty($te)) $te = ['2022', '2016'];
+            if (empty($ta))
+                $ta = [date('Y')];
+            if (empty($te))
+                $te = ['2022', '2016'];
 
             return [
                 'tahun_anggaran' => $ta,
@@ -53,9 +56,9 @@ class ReportService
         $tahunEmisi = $filters['tahun_emisi'];
 
         $pecahanList = ['S', 'T', 'U', 'V', 'W', 'X', 'Y'];
-        
-        // --- High Performance Aggregated Queries ---
-        
+
+        // --- Aggregated Queries ---
+
         $receivings = HcsReceiving::whereIn('pecahan', $pecahanList)
             ->whereDate('tanggal_penerimaan', '<=', $tanggalLaporan)
             ->where('tahun_anggaran', $tahunAnggaran)
@@ -97,9 +100,14 @@ class ReportService
 
         $reportData = [];
         $totals = [
-            'siap_kemas_bilyet' => 0, 'siap_kirim_bilyet' => 0, 'total_persediaan_bilyet' => 0,
-            'penyerahan_hari_ini_bilyet' => 0, 'akumulasi_penyerahan_bilyet' => 0,
-            'target' => 0, 'sisa_target' => 0, 'akumulasi_penerimaan_hcs' => 0,
+            'siap_kemas_bilyet' => 0,
+            'siap_kirim_bilyet' => 0,
+            'total_persediaan_bilyet' => 0,
+            'penyerahan_hari_ini_bilyet' => 0,
+            'akumulasi_penyerahan_bilyet' => 0,
+            'target' => 0,
+            'sisa_target' => 0,
+            'akumulasi_penerimaan_hcs' => 0,
         ];
 
         foreach ($pecahanList as $pecahan) {
@@ -145,10 +153,10 @@ class ReportService
         $secondaryData = $this->getSecondaryReportData($filters);
 
         return [
-            'reportData' => $reportData, 
-            'totals' => $totals, 
-            'secondaryData' => $secondaryData['data'], 
-            'secondaryTotals' => $secondaryData['totals'], 
+            'reportData' => $reportData,
+            'totals' => $totals,
+            'secondaryData' => $secondaryData['data'],
+            'secondaryTotals' => $secondaryData['totals'],
             'sisaHariKerja' => $secondaryData['sisaHariKerja']
         ];
     }
@@ -161,7 +169,7 @@ class ReportService
         $sisaHariKerja = $this->calculateSisaHariKerja($tanggalLaporan);
 
         $rawData = $this->fetchSecondaryRawData($filters);
-        
+
         return $this->calculateSecondaryMetrics($rawData, $sisaHariKerja, $targetColumn);
     }
 
@@ -217,10 +225,18 @@ class ReportService
         $pecahanList = ['S', 'T', 'U', 'V', 'W', 'X', 'Y'];
         $data = [];
         $totals = [
-            'target_penyerahan_bulan' => 0, 'penyerahan_bulan' => 0, 'sisa_target_bilyet' => 0,
-            'sisa_target_doos' => 0, 'target_produksi_harian' => 0, 'kemas_g1' => 0,
-            'kemas_g2' => 0, 'kemas_g3' => 0, 'total_kemas' => 0, 'hcs_rikyet' => 0,
-            'hcs_cutpack' => 0, 'total_hcs' => 0,
+            'target_penyerahan_bulan' => 0,
+            'penyerahan_bulan' => 0,
+            'sisa_target_bilyet' => 0,
+            'sisa_target_doos' => 0,
+            'target_produksi_harian' => 0,
+            'kemas_g1' => 0,
+            'kemas_g2' => 0,
+            'kemas_g3' => 0,
+            'total_kemas' => 0,
+            'hcs_rikyet' => 0,
+            'hcs_cutpack' => 0,
+            'total_hcs' => 0,
         ];
 
         foreach ($pecahanList as $pecahan) {
@@ -244,12 +260,19 @@ class ReportService
             $totalHcs = $hcsRikyet + $hcsCutpack;
 
             $data[] = [
-                'pecahan' => $pecahan, 'target_penyerahan_bulan' => $targetBulan,
-                'penyerahan_bulan' => $pengemasanBulanBilyet, 'sisa_target_bilyet' => $sisaTargetBilyet,
-                'sisa_target_doos' => $sisaTargetDoos, 'target_produksi_harian' => $targetProduksiHarian,
-                'kemas_g1' => $kemasG1, 'kemas_g2' => $kemasG2, 'kemas_g3' => $kemasG3,
-                'total_kemas' => $totalKemas, 'hcs_rikyet' => $hcsRikyet,
-                'hcs_cutpack' => $hcsCutpack, 'total_hcs' => $totalHcs,
+                'pecahan' => $pecahan,
+                'target_penyerahan_bulan' => $targetBulan,
+                'penyerahan_bulan' => $pengemasanBulanBilyet,
+                'sisa_target_bilyet' => $sisaTargetBilyet,
+                'sisa_target_doos' => $sisaTargetDoos,
+                'target_produksi_harian' => $targetProduksiHarian,
+                'kemas_g1' => $kemasG1,
+                'kemas_g2' => $kemasG2,
+                'kemas_g3' => $kemasG3,
+                'total_kemas' => $totalKemas,
+                'hcs_rikyet' => $hcsRikyet,
+                'hcs_cutpack' => $hcsCutpack,
+                'total_hcs' => $totalHcs,
             ];
 
             $totals['target_penyerahan_bulan'] += $targetBulan;
@@ -278,10 +301,10 @@ class ReportService
         $pecahanList = ['S', 'T', 'U', 'V', 'W', 'X', 'Y'];
 
         // --- Aggregated Queries ---
-        
+
         $penerimaanH1Map = HctsReceiving::whereIn('pecahan', $pecahanList)
             ->where('tahun_anggaran', $tahunAnggaran)
-            ->when($tahunEmisi, fn ($q) => $q->where('emisi', $tahunEmisi))
+            ->when($tahunEmisi, fn($q) => $q->where('emisi', $tahunEmisi))
             ->whereDate('tanggal_penerimaan', $previousDay)
             ->selectRaw('pecahan, SUM(jumlah) as total')
             ->groupBy('pecahan')
@@ -289,7 +312,7 @@ class ReportService
 
         $penyerahanHariIniMap = HctsSubmission::whereIn('pecahan', $pecahanList)
             ->where('tahun_anggaran', $tahunAnggaran)
-            ->when($tahunEmisi, fn ($q) => $q->where('tahun_emisi', $tahunEmisi))
+            ->when($tahunEmisi, fn($q) => $q->where('tahun_emisi', $tahunEmisi))
             ->whereDate('tanggal_penyerahan', $tanggalLaporan)
             ->selectRaw('pecahan, SUM(jumlah_bilyet) as total')
             ->groupBy('pecahan')
@@ -297,7 +320,7 @@ class ReportService
 
         $akumulasiTerimaMap = HctsReceiving::whereIn('pecahan', $pecahanList)
             ->where('tahun_anggaran', $tahunAnggaran)
-            ->when($tahunEmisi, fn ($q) => $q->where('emisi', $tahunEmisi))
+            ->when($tahunEmisi, fn($q) => $q->where('emisi', $tahunEmisi))
             ->whereDate('tanggal_penerimaan', '<=', $tanggalLaporan)
             ->selectRaw('pecahan, SUM(jumlah) as total')
             ->groupBy('pecahan')
@@ -305,7 +328,7 @@ class ReportService
 
         $akumulasiSerahMap = HctsSubmission::whereIn('pecahan', $pecahanList)
             ->where('tahun_anggaran', $tahunAnggaran)
-            ->when($tahunEmisi, fn ($q) => $q->where('tahun_emisi', $tahunEmisi))
+            ->when($tahunEmisi, fn($q) => $q->where('tahun_emisi', $tahunEmisi))
             ->whereDate('tanggal_penyerahan', '<=', $tanggalLaporan)
             ->selectRaw('pecahan, SUM(jumlah_bilyet) as total')
             ->groupBy('pecahan')
@@ -340,7 +363,7 @@ class ReportService
         $pecahanList = ['S', 'T', 'U', 'V', 'W', 'X', 'Y'];
 
         // --- Aggregated Queries ---
-        
+
         $targetMap = TargetTahunan::whereIn('pecahan', $pecahanList)
             ->where('tahun_anggaran', $tahunAnggaran)
             ->where('tahun_emisi', $tahunEmisi)
@@ -365,18 +388,25 @@ class ReportService
             $pengRow = $pengemasanMap->get($pecahan);
             $akumulasiBilyet = $pengRow ? $pengRow->total_bilyet : 0;
             $akumulasiDus = $pengRow ? (int) $pengRow->total_dus : 0;
-            
+
             $sisaBilyet = $target - $akumulasiBilyet;
             $data[] = [
-                'pecahan' => $pecahan, 'target_bilyet' => $target, 'target_dus' => ceil($target / 20000),
-                'akumulasi_bilyet' => $akumulasiBilyet, 'akumulasi_dus' => $akumulasiDus,
-                'sisa_bilyet' => $sisaBilyet, 'sisa_dus' => $sisaBilyet / 20000,
+                'pecahan' => $pecahan,
+                'target_bilyet' => $target,
+                'target_dus' => ceil($target / 20000),
+                'akumulasi_bilyet' => $akumulasiBilyet,
+                'akumulasi_dus' => $akumulasiDus,
+                'sisa_bilyet' => $sisaBilyet,
+                'sisa_dus' => $sisaBilyet / 20000,
                 'persen' => $target > 0 ? ($akumulasiBilyet / $target) * 100 : 0,
             ];
 
-            $totals['target_bilyet'] += $target; $totals['target_dus'] += ceil($target / 20000);
-            $totals['akumulasi_bilyet'] += $akumulasiBilyet; $totals['akumulasi_dus'] += $akumulasiDus;
-            $totals['sisa_bilyet'] += $sisaBilyet; $totals['sisa_dus'] += $sisaBilyet / 20000;
+            $totals['target_bilyet'] += $target;
+            $totals['target_dus'] += ceil($target / 20000);
+            $totals['akumulasi_bilyet'] += $akumulasiBilyet;
+            $totals['akumulasi_dus'] += $akumulasiDus;
+            $totals['sisa_bilyet'] += $sisaBilyet;
+            $totals['sisa_dus'] += $sisaBilyet / 20000;
         }
 
         return ['data' => $data, 'totals' => $totals];
@@ -387,11 +417,11 @@ class ReportService
         $tanggalLaporan = Carbon::parse($filters['tanggal_laporan']);
         $startOfMonth = $tanggalLaporan->copy()->startOfMonth()->toDateString();
         $currentDate = $tanggalLaporan->toDateString();
-        $targetColumn = 'bulan_'.$tanggalLaporan->month;
+        $targetColumn = 'bulan_' . $tanggalLaporan->month;
         $pecahanList = ['S', 'T', 'U', 'V', 'W', 'X', 'Y'];
 
         // --- Aggregated Queries ---
-        
+
         $targets = TargetBulananPengemasan::whereIn('pecahan', $pecahanList)
             ->where('tahun_anggaran', $filters['tahun_anggaran'])
             ->where('tahun_emisi', $filters['tahun_emisi'])
@@ -414,22 +444,29 @@ class ReportService
         foreach ($pecahanList as $pecahan) {
             $targetRow = $targets->get($pecahan);
             $targetBilyet = $targetRow ? ($targetRow->{$targetColumn} ?? 0) : 0;
-            
+
             $pengRow = $pengemasanMap->get($pecahan);
             $akumulasiBilyet = $pengRow ? $pengRow->total_bilyet : 0;
             $akumulasiDus = $pengRow ? (int) $pengRow->total_dus : 0;
-            
+
             $sisaBilyet = $targetBilyet - $akumulasiBilyet;
             $data[] = [
-                'pecahan' => $pecahan, 'target_bilyet' => $targetBilyet, 'target_dus' => ceil($targetBilyet / 20000),
-                'akumulasi_bilyet' => $akumulasiBilyet, 'akumulasi_dus' => $akumulasiDus,
-                'sisa_bilyet' => $sisaBilyet, 'sisa_dus' => $sisaBilyet / 20000,
+                'pecahan' => $pecahan,
+                'target_bilyet' => $targetBilyet,
+                'target_dus' => ceil($targetBilyet / 20000),
+                'akumulasi_bilyet' => $akumulasiBilyet,
+                'akumulasi_dus' => $akumulasiDus,
+                'sisa_bilyet' => $sisaBilyet,
+                'sisa_dus' => $sisaBilyet / 20000,
                 'persen' => $targetBilyet > 0 ? ($akumulasiBilyet / $targetBilyet) * 100 : 0,
             ];
 
-            $totals['target_bilyet'] += $targetBilyet; $totals['target_dus'] += ceil($targetBilyet / 20000);
-            $totals['akumulasi_bilyet'] += $akumulasiBilyet; $totals['akumulasi_dus'] += $akumulasiDus;
-            $totals['sisa_bilyet'] += $sisaBilyet; $totals['sisa_dus'] += $sisaBilyet / 20000;
+            $totals['target_bilyet'] += $targetBilyet;
+            $totals['target_dus'] += ceil($targetBilyet / 20000);
+            $totals['akumulasi_bilyet'] += $akumulasiBilyet;
+            $totals['akumulasi_dus'] += $akumulasiDus;
+            $totals['sisa_bilyet'] += $sisaBilyet;
+            $totals['sisa_dus'] += $sisaBilyet / 20000;
         }
 
         return ['data' => $data, 'totals' => $totals];
@@ -438,9 +475,11 @@ class ReportService
     private function calculateSisaHariKerja(Carbon $date): int
     {
         $endOfMonth = $date->copy()->endOfMonth();
-        $count = 0; $current = $date->copy();
+        $count = 0;
+        $current = $date->copy();
         while ($current <= $endOfMonth) {
-            if ($current->isWeekday()) $count++;
+            if ($current->isWeekday())
+                $count++;
             $current->addDay();
         }
         return $count;
@@ -449,14 +488,137 @@ class ReportService
     private function getKemasJumlah($pecahan, $ta, $te, $start, $end, $gilir)
     {
         $query = Pengemasan::where('pecahan', $pecahan)->where('tahun_anggaran', $ta)->whereDate('tanggal_pengemasan', '>=', $start)->whereDate('tanggal_pengemasan', '<=', $end)->where('gilir', $gilir);
-        if ($te) $query->where('tahun_emisi', $te);
+        if ($te)
+            $query->where('tahun_emisi', $te);
         return $query->sum(DB::raw('jumlah_dus * 20000'));
     }
 
     private function getHcsJumlah($pecahan, $ta, $te, $start, $end, $supplier)
     {
         $query = HcsReceiving::where('pecahan', $pecahan)->where('tahun_anggaran', $ta)->whereDate('tanggal_penerimaan', '>=', $start)->whereDate('tanggal_penerimaan', '<=', $end)->where('supplier', $supplier);
-        if ($te) $query->where('emisi', $te);
+        if ($te)
+            $query->where('emisi', $te);
         return $query->sum('jumlah');
+    }
+
+    public function getRekonsiliasiData(array $filters): array
+    {
+        $startDate = Carbon::parse($filters['start_date']);
+        $endDate = Carbon::parse($filters['end_date']);
+        $tahunAnggaran = $filters['tahun_anggaran'];
+
+        $pecahanList = ['S', 'T', 'U', 'V', 'W', 'X', 'Y'];
+
+        // Menentukan bulan yang tercakup
+        $months = [];
+        $current = $startDate->copy()->startOfMonth();
+        while ($current <= $endDate) {
+            $months[] = $current->month;
+            $current->addMonth();
+        }
+
+        // --- Aggregated Queries ---
+
+        $receivingsMap = HcsReceiving::whereIn('pecahan', $pecahanList)
+            ->where('tahun_anggaran', $tahunAnggaran)
+            ->whereDate('tanggal_penerimaan', '>=', $startDate->toDateString())
+            ->whereDate('tanggal_penerimaan', '<=', $endDate->toDateString())
+            ->selectRaw('pecahan, SUM(jumlah) as total')
+            ->groupBy('pecahan')
+            ->pluck('total', 'pecahan');
+
+        $pengemasansMap = Pengemasan::whereIn('pecahan', $pecahanList)
+            ->where('tahun_anggaran', $tahunAnggaran)
+            ->whereDate('tanggal_pengemasan', '>=', $startDate->toDateString())
+            ->whereDate('tanggal_pengemasan', '<=', $endDate->toDateString())
+            ->selectRaw('pecahan, SUM(total_bilyet) as total_bilyet, MIN(dus_awal) as min_dus, MAX(dus_akhir) as max_dus')
+            ->groupBy('pecahan')
+            ->get()
+            ->keyBy('pecahan');
+
+        $penyerahanMap = PenyerahanBi::whereIn('pecahan', $pecahanList)
+            ->where('tahun_anggaran', $tahunAnggaran)
+            ->whereDate('tanggal_penyerahan', '>=', $startDate->toDateString())
+            ->whereDate('tanggal_penyerahan', '<=', $endDate->toDateString())
+            ->selectRaw('pecahan, SUM(jumlah_bilyet) as total_bilyet, MIN(nomor_dus_awal) as min_dus, MAX(nomor_dus_akhir) as max_dus')
+            ->groupBy('pecahan')
+            ->get()
+            ->keyBy('pecahan');
+
+        // Targets Summation Query
+        $targetPengemasanQuery = TargetBulananPengemasan::whereIn('pecahan', $pecahanList)
+            ->where('tahun_anggaran', $tahunAnggaran);
+
+        $targetPenyerahanQuery = TargetBulanan::whereIn('pecahan', $pecahanList)
+            ->where('tahun_anggaran', $tahunAnggaran);
+
+        // Menjumlahkan nilai untuk seluruh bulan yang tercakup
+        $sumColumns = [];
+        foreach ($months as $m) {
+            $sumColumns[] = "COALESCE(bulan_{$m}, 0)";
+        }
+        $sumExpression = empty($sumColumns) ? "0" : implode(" + ", $sumColumns);
+
+        $targetPengemasanMap = $targetPengemasanQuery
+            ->selectRaw("pecahan, SUM($sumExpression) as total_target")
+            ->groupBy('pecahan')
+            ->pluck('total_target', 'pecahan');
+
+        $targetPenyerahanMap = $targetPenyerahanQuery
+            ->selectRaw("pecahan, SUM($sumExpression) as total_target")
+            ->groupBy('pecahan')
+            ->pluck('total_target', 'pecahan');
+
+        $data = [];
+        $totals = [
+            'penerimaan_hcs' => 0,
+            'pengemasan_hcs' => 0,
+            'penyerahan_hcs' => 0,
+            'target_pengemasan' => 0,
+            'target_penyerahan' => 0,
+        ];
+
+        foreach ($pecahanList as $pecahan) {
+            $penerimaan = $receivingsMap->get($pecahan, 0);
+
+            $pengemasanRow = $pengemasansMap->get($pecahan);
+            $pengemasan = $pengemasanRow ? (int) $pengemasanRow->total_bilyet : 0;
+            $minDus = $pengemasanRow ? $pengemasanRow->min_dus : null;
+            $maxDus = $pengemasanRow ? $pengemasanRow->max_dus : null;
+
+            $penyerahanRow = $penyerahanMap->get($pecahan);
+            $penyerahan = $penyerahanRow ? (int) $penyerahanRow->total_bilyet : 0;
+            $minDusPenyerahan = $penyerahanRow ? $penyerahanRow->min_dus : null;
+            $maxDusPenyerahan = $penyerahanRow ? $penyerahanRow->max_dus : null;
+
+            $minDusKemasVal = ($minDus > 0) ? (int) $minDus : '-';
+            $maxDusKemasVal = ($maxDus > 0) ? (int) $maxDus : '-';
+            $minDusSerahVal = ($minDusPenyerahan > 0) ? (int) $minDusPenyerahan : '-';
+            $maxDusSerahVal = ($maxDusPenyerahan > 0) ? (int) $maxDusPenyerahan : '-';
+
+            $targetPengemasan = $targetPengemasanMap->get($pecahan, 0);
+            $targetPenyerahan = $targetPenyerahanMap->get($pecahan, 0);
+
+            $data[] = [
+                'pecahan' => $pecahan,
+                'penerimaan_hcs' => $penerimaan,
+                'pengemasan_hcs' => $pengemasan,
+                'min_dus_kemas' => $minDusKemasVal,
+                'max_dus_kemas' => $maxDusKemasVal,
+                'penyerahan_hcs' => $penyerahan,
+                'min_dus_serah' => $minDusSerahVal,
+                'max_dus_serah' => $maxDusSerahVal,
+                'target_pengemasan' => $targetPengemasan,
+                'target_penyerahan' => $targetPenyerahan,
+            ];
+
+            $totals['penerimaan_hcs'] += $penerimaan;
+            $totals['pengemasan_hcs'] += $pengemasan;
+            $totals['penyerahan_hcs'] += $penyerahan;
+            $totals['target_pengemasan'] += $targetPengemasan;
+            $totals['target_penyerahan'] += $targetPenyerahan;
+        }
+
+        return ['data' => $data, 'totals' => $totals];
     }
 }

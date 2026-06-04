@@ -140,6 +140,113 @@ class LaporanHarianController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
+    public function rekonsiliasi(Request $request)
+    {
+        $options = $this->reportService->getYearOptions();
+        $tahunAnggaranOptions = $options['tahun_anggaran'];
+        
+        // Default to current month if not provided
+        $startDate = $request->get('start_date', Carbon::today()->startOfMonth()->toDateString());
+        $endDate = $request->get('end_date', Carbon::today()->toDateString());
+        $tahunAnggaran = $request->get('tahun_anggaran', date('Y'));
+
+        $filters = [
+            'start_date' => $startDate,
+            'end_date' => $endDate,
+            'tahun_anggaran' => $tahunAnggaran,
+        ];
+
+        $data = $this->reportService->getRekonsiliasiData($filters);
+
+        return view('laporan-harian.rekonsiliasi', array_merge($filters, [
+            'rekonsiliasiData' => $data['data'],
+            'totals' => $data['totals'],
+            'tahunAnggaranOptions' => $tahunAnggaranOptions,
+        ]));
+    }
+
+    public function exportRekonsiliasi(Request $request)
+    {
+        $startDate = $request->get('start_date', Carbon::today()->startOfMonth()->toDateString());
+        $endDate = $request->get('end_date', Carbon::today()->toDateString());
+        $tahunAnggaran = $request->get('tahun_anggaran', date('Y'));
+
+        $filters = [
+            'start_date' => $startDate,
+            'end_date' => $endDate,
+            'tahun_anggaran' => $tahunAnggaran,
+        ];
+
+        $data = $this->reportService->getRekonsiliasiData($filters);
+        $rekonsiliasiData = $data['data'];
+        $totals = $data['totals'];
+
+        $filename = 'rekonsiliasi_data_' . $startDate . '_to_' . $endDate . '.csv';
+        $headers = [
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
+        ];
+
+        $callback = function () use ($rekonsiliasiData, $totals) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, ['Pecahan', 'Penerimaan HCS', 'Pengemasan HCS', 'No Awal Dus Pengemasan', 'No Akhir Dus Pengemasan', 'Penyerahan HCS', 'No Awal Dus Penyerahan', 'No Akhir Dus Penyerahan', 'Akumulasi Target Pengemasan', 'Akumulasi Target Penyerahan']);
+
+            foreach ($rekonsiliasiData as $row) {
+                fputcsv($file, array_map([$this, 'sanitizeCsvField'], [
+                    $row['pecahan'], 
+                    $row['penerimaan_hcs'], 
+                    $row['pengemasan_hcs'], 
+                    $row['min_dus_kemas'], 
+                    $row['max_dus_kemas'], 
+                    $row['penyerahan_hcs'], 
+                    $row['min_dus_serah'], 
+                    $row['max_dus_serah'], 
+                    $row['target_pengemasan'], 
+                    $row['target_penyerahan']
+                ]));
+            }
+
+            fputcsv($file, array_map([$this, 'sanitizeCsvField'], [
+                'TOTAL', 
+                $totals['penerimaan_hcs'], 
+                $totals['pengemasan_hcs'], 
+                '-', 
+                '-', 
+                $totals['penyerahan_hcs'], 
+                '-', 
+                '-', 
+                $totals['target_pengemasan'], 
+                $totals['target_penyerahan']
+            ]));
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function printRekonsiliasi(Request $request)
+    {
+        $startDate = $request->get('start_date', Carbon::today()->startOfMonth()->toDateString());
+        $endDate = $request->get('end_date', Carbon::today()->toDateString());
+        $tahunAnggaran = $request->get('tahun_anggaran', date('Y'));
+
+        $filters = [
+            'start_date' => $startDate,
+            'end_date' => $endDate,
+            'tahun_anggaran' => $tahunAnggaran,
+        ];
+
+        $data = $this->reportService->getRekonsiliasiData($filters);
+
+        return view('laporan-harian.print-rekonsiliasi', array_merge($filters, [
+            'rekonsiliasiData' => $data['data'],
+            'totals' => $data['totals'],
+        ]));
+    }
+
     public function print(Request $request)
     {
         $options = $this->reportService->getYearOptions();

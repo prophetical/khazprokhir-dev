@@ -18,7 +18,7 @@ use InvalidArgumentException;
  * 4. Penggantian bilyet --> Memecah rentang yang ada atau membuat baris tunggal baru
  *
  * Seluruh operasi dibungkus dalam transaksi database untuk menjamin atomitas.
- * Pencegahan overlap dimanage oleh constraint EXCLUDE PostgreSQL (GIST).
+ * Pencegahan overlap dimanage oleh constraint EXCLUDE PostgreSQL (GiST).
  */
 class ReplacementMappingService
 {
