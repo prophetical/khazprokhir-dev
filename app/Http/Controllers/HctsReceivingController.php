@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\HctsReceiving;
 use App\Services\HctsReceivingService;
+use App\Traits\SanitizesCsv;
 use Illuminate\Http\Request;
 
 class HctsReceivingController extends Controller
 {
+    use SanitizesCsv;
+
     protected $service;
 
     public function __construct(HctsReceivingService $service)
@@ -189,15 +192,5 @@ class HctsReceivingController extends Controller
             'gilir' => 'required|in:Gilir 1,Gilir 2,Gilir 3', 'jumlah' => 'required|integer|min:0', 'batch' => 'required|string|max:10',
             'seri' => 'required|string|regex:/^[A-Z]{2}-[A-Z]{2}[0-9]$/', 'emisi' => 'required|integer', 'tahun_anggaran' => 'required|integer', 'nomor_segel' => 'required|string',
         ]);
-    }
-
-    private function sanitizeCsvField($field)
-    {
-        $field = (string) $field;
-        $triggers = ['=', '+', '-', '@'];
-        if (in_array(substr($field, 0, 1), $triggers)) {
-            return "'" . $field;
-        }
-        return $field;
     }
 }

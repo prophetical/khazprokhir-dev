@@ -143,8 +143,8 @@ class HcsReceivingService
                 'barcode_token' => $barcode,
                 'user_id' => $userId,
                 'field_name' => 'status',
-                'old_value' => 'registrasi_khazai',
-                'new_value' => 'diterima_khazprokhir',
+                'old_value' => 'Registrasi Khazai',
+                'new_value' => 'Diterima Khazprokhir',
             ]);
 
             DB::commit();
@@ -251,7 +251,7 @@ class HcsReceivingService
             $packsToInsert = [];
 
             foreach ($data['packs'] as $packNumber) {
-                if (! $sortedPacks->has($packNumber)) {
+                if (!$sortedPacks->has($packNumber)) {
                     $packsToInsert[] = [
                         'hcs_receiving_id' => $hcs->id,
                         'batch' => $data['batch'],
@@ -371,15 +371,17 @@ class HcsReceivingService
         $isManual = $data['is_manual'] ?? false;
         $jumlah = $data['jumlah'];
         if ($isManual) {
-            if ($jumlah > 45000) throw new Exception('Jumlah bilyet tidak boleh melebihi 45.000 untuk pack tidak full.');
+            if ($jumlah > 45000)
+                throw new Exception('Jumlah bilyet tidak boleh melebihi 45.000 untuk pack tidak full.');
             $packsNeeded = 1;
         } else {
-            if ($jumlah % 45000 !== 0) throw new Exception('Jumlah bilyet harus kelipatan 45.000.');
+            if ($jumlah % 45000 !== 0)
+                throw new Exception('Jumlah bilyet harus kelipatan 45.000.');
             $packsNeeded = $jumlah / 45000;
         }
 
-        if (count($data['packs']) !== (int)$packsNeeded) {
-            throw new Exception("Jumlah packs yang dipilih (".count($data['packs']).") tidak sesuai kebutuhan ($packsNeeded).");
+        if (count($data['packs']) !== (int) $packsNeeded) {
+            throw new Exception("Jumlah packs yang dipilih (" . count($data['packs']) . ") tidak sesuai kebutuhan ($packsNeeded).");
         }
 
         // Cek apakah ada pack yang sudah terdaftar sebelumnya untuk mencegah Unique Violation
@@ -405,8 +407,10 @@ class HcsReceivingService
 
         $sortedPacks = $hcs->packs()->whereNotNull('hcs_sorting_id')->pluck('pack_number')->toArray();
         if (!empty($sortedPacks)) {
-            if (count($data['packs']) < count($sortedPacks)) throw new Exception('Jumlah pack tidak boleh kurang dari pack yang sudah disortir ('.count($sortedPacks).' pack). Hapus data sortir terlebih dahulu jika ingin mengurangi jumlah pack.');
-            if (!empty(array_diff($sortedPacks, $data['packs']))) throw new Exception('Pack yang sudah disortir tidak boleh dibuang. Hapus data sortirnya terlebih dahulu.');
+            if (count($data['packs']) < count($sortedPacks))
+                throw new Exception('Jumlah pack tidak boleh kurang dari pack yang sudah disortir (' . count($sortedPacks) . ' pack). Hapus data sortir terlebih dahulu jika ingin mengurangi jumlah pack.');
+            if (!empty(array_diff($sortedPacks, $data['packs'])))
+                throw new Exception('Pack yang sudah disortir tidak boleh dibuang. Hapus data sortirnya terlebih dahulu.');
         }
     }
 
@@ -417,7 +421,7 @@ class HcsReceivingService
             ->where('seri', $hcs->seri)
             ->latest()
             ->first();
-        
+
         return $reg ? $reg->barcode_token : 'N/A';
     }
 }

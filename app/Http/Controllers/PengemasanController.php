@@ -6,12 +6,15 @@ use App\Models\DetailPengemasan;
 use App\Models\Pack;
 use App\Models\Pengemasan;
 use App\Services\PengemasanService;
+use App\Traits\SanitizesCsv;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class PengemasanController extends Controller
 {
+    use SanitizesCsv;
+
     protected $service;
 
     public function __construct(PengemasanService $service)
@@ -223,15 +226,6 @@ class PengemasanController extends Controller
             \Log::error('Pengemasan Destroy Error: ' . $e->getMessage());
             return back()->with('error', 'Terjadi kesalahan sistem saat menghapus data. Silakan coba lagi.');
         }
-    }
-    private function sanitizeCsvField($field)
-    {
-        $field = (string) $field;
-        $triggers = ['=', '+', '-', '@'];
-        if (in_array(substr($field, 0, 1), $triggers)) {
-            return "'" . $field;
-        }
-        return $field;
     }
 
     public function getReadyToPackNotifications()

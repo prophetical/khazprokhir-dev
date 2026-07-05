@@ -8,6 +8,15 @@
         'X' => 'bg-blue-500 border-blue-600 text-white',
         'Y' => 'bg-red-500 border-red-600 text-white',
     ];
+
+    $hariIndonesia = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+    $bulanIndonesia = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+    $startDateCarbon = \Carbon\Carbon::parse($start_date);
+    $endDateCarbon = \Carbon\Carbon::parse($end_date);
+
+    $startDateRange = $hariIndonesia[$startDateCarbon->dayOfWeek] . ', ' . $startDateCarbon->day . ' ' . $bulanIndonesia[$startDateCarbon->month - 1] . ' ' . $startDateCarbon->year;
+    $endDateRange = $hariIndonesia[$endDateCarbon->dayOfWeek] . ', ' . $endDateCarbon->day . ' ' . $bulanIndonesia[$endDateCarbon->month - 1] . ' ' . $endDateCarbon->year;
 @endphp
 
 <x-app-layout>
@@ -27,7 +36,7 @@
                     <div class="flex flex-col md:flex-row justify-between items-end gap-8">
                         <form action="{{ route('laporan-harian.rekonsiliasi') }}" method="GET"
                             class="w-full xl:w-auto flex-grow">
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                                 <!-- Start Date -->
                                 <div class="relative">
                                     <label for="start_date"
@@ -35,7 +44,7 @@
                                         Tanggal Mulai
                                     </label>
                                     <input type="date" name="start_date" id="start_date" value="{{ $start_date }}"
-                                        class="w-full rounded-xl border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 py-3 text-center font-black text-gray-700 bg-white">
+                                        class="w-full rounded-xl border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 py-2 text-center font-black text-gray-700 bg-white">
                                 </div>
 
                                 <!-- End Date -->
@@ -45,7 +54,7 @@
                                         Tanggal Akhir
                                     </label>
                                     <input type="date" name="end_date" id="end_date" value="{{ $end_date }}"
-                                        class="w-full rounded-xl border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 py-3 text-center font-black text-gray-700 bg-white">
+                                        class="w-full rounded-xl border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 py-2 text-center font-black text-gray-700 bg-white">
                                 </div>
 
                                 <!-- Tahun Anggaran -->
@@ -56,7 +65,7 @@
                                     </label>
                                     <div class="flex gap-3">
                                         <select name="tahun_anggaran" id="tahun_anggaran"
-                                            class="flex-grow rounded-xl border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 py-3 text-center font-black text-gray-700 bg-white">
+                                            class="flex-grow rounded-xl border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 py-2 text-center font-black text-gray-700 bg-white">
                                             @foreach($tahunAnggaranOptions as $year)
                                                 <option value="{{ $year }}" {{ $tahun_anggaran == $year ? 'selected' : '' }}>
                                                     {{ $year }}
@@ -76,7 +85,7 @@
                         </form>
 
                         <!-- Action Buttons -->
-                        <div class="flex flex-col gap-2 w-full 2xl:w-auto">
+                        <div class="flex flex-col gap-2 w-full md:w-auto">
                             <span
                                 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-0 sm:mb-2 px-1 hidden 2xl:block">&nbsp;</span>
                             <div
@@ -112,7 +121,7 @@
                 <div
                     class="bg-white overflow-hidden shadow-2xl sm:rounded-2xl border border-gray-100 transition-all duration-300">
                     <div
-                        class="border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white px-6 py-5 flex justify-between items-center">
+                        class="border-b border-gray-100 from-gray-50 to-white px-6 py-5 flex justify-between items-center">
                         <div class="flex items-center gap-3">
                             <div class="p-2 bg-indigo-100 rounded-lg text-indigo-600">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -122,8 +131,7 @@
                             </div>
                             <div>
                                 <h3 class="text-base font-bold text-gray-800 tracking-tight">Data Rekonsiliasi HCS</h3>
-                                <p class="text-[11px] font-medium text-gray-500 mt-0.5">Ringkasan total HCS berdasarkan
-                                    rentang waktu</p>
+                                <p class="text-[11px] font-medium text-gray-500 mt-0.5">{{ $startDateRange }} s/d {{ $endDateRange }}</p>
                             </div>
                         </div>
                     </div>

@@ -19,22 +19,22 @@ Khazprokhir is an **enterprise‑grade** Laravel application that streamlines **
 ---
 
 ## 🛠 Tech Stack
-- **Backend**: Laravel 11 (PHP 8.2+)
-- **Frontend**: Tailwind CSS 3.4, Alpine.js 3
+- **Backend**: Laravel 12 (PHP 8.2+)
+- **Frontend**: Tailwind CSS 3.4, Alpine.js 3
 - **Build Tool**: Vite
 - **Charts**: Chart.js
 - **Modals & Alerts**: SweetAlert2
 - **Icons**: Heroicons
-- **Database**: SQLite (default) / MySQL / PostgreSQL
+- **Database**: PostgreSQL (default, required — uses `TO_CHAR`, window functions & `CAST AS VARCHAR`)
 
 ---
 
 ## 🚀 Getting Started
 ### Prerequisites
-- PHP ≥ 8.2 (with JSON & PDO extensions)
+- PHP ≥ 8.2 (with JSON, PDO & pdo_pgsql extensions)
 - Composer
-- Node.js ≥ 18 & NPM
-- A supported database (SQLite works out‑of‑the‑box)
+- Node.js ≥ 18 & NPM
+- A PostgreSQL database (required — the app uses TO_CHAR, window functions and CAST AS VARCHAR that are not SQLite-compatible)
 
 ### Installation
 ```bash
@@ -67,7 +67,7 @@ Open `http://localhost:8000` in your browser.
 - **Print‑Rekonsiliasi Blade View** (`resources/views/laporan-harian/print-rekonsiliasi.blade.php`): Dedicated print layout with Tailwind styling, displaying reconciliation tables with zero values as dashes.
 - **RoleMiddleware** (`app/Http/Middleware/RoleMiddleware.php`): Role‑based access control enforcing granular permissions for various user roles.
 - **AuditLog Model** (`app/Models/AuditLog.php`): Records user actions for compliance and debugging.
-- **Export Features**: Excel export via `Maatwebsite\Excel` package and PDF generation using `barryvdh/laravel-dompdf`.
+- **Export Features**: CSV export via native `fputcsv` with CSV-injection sanitization (`sanitizeCsvField`) and print-optimized Blade layouts for PDF generation through the browser's print-to-PDF.
 
 ---
 

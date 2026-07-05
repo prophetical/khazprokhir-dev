@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\HcsSorting;
 use App\Services\HcsSortingService;
+use App\Traits\SanitizesCsv;
 use Illuminate\Http\Request;
 
 class HcsSortingReportController extends Controller
 {
+    use SanitizesCsv;
+
     protected $service;
 
     public function __construct(HcsSortingService $service)

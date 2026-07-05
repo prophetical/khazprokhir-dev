@@ -14,13 +14,16 @@ class UserService
 
     public function createUser(array $data): User
     {
-        return User::create([
+        $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'username' => $data['username'],
             'password' => Hash::make($data['password']),
-            'role' => $data['role'],
         ]);
+        $user->role = $data['role'];
+        $user->save();
+
+        return $user;
     }
 
     public function updateUser(User $user, array $data): bool

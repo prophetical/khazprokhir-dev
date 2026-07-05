@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Services\ReportService;
+use App\Traits\SanitizesCsv;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class LaporanHarianController extends Controller
 {
+    use SanitizesCsv;
+
     protected $reportService;
 
     public function __construct(ReportService $reportService)
@@ -23,8 +26,8 @@ class LaporanHarianController extends Controller
 
         $filters = [
             'tanggal_laporan' => Carbon::today()->toDateString(),
-            'tahun_anggaran' => $request->get('tahun_anggaran', reset($tahunAnggaranOptions) ?: date('Y')),
-            'tahun_emisi' => $request->get('tahun_emisi', reset($tahunEmisiOptions) ?: date('Y')),
+            'tahun_anggaran' => $request->input('tahun_anggaran', reset($tahunAnggaranOptions) ?: date('Y')),
+            'tahun_emisi' => $request->input('tahun_emisi', reset($tahunEmisiOptions) ?: date('Y')),
         ];
 
         $data = $this->reportService->getReportData($filters);
@@ -52,8 +55,8 @@ class LaporanHarianController extends Controller
 
         $filters = [
             'tanggal_laporan' => Carbon::today()->toDateString(),
-            'tahun_anggaran' => $request->get('tahun_anggaran', reset($tahunAnggaranOptions) ?: date('Y')),
-            'tahun_emisi' => $request->get('tahun_emisi', reset($tahunEmisiOptions) ?: date('Y')),
+            'tahun_anggaran' => $request->input('tahun_anggaran', reset($tahunAnggaranOptions) ?: date('Y')),
+            'tahun_emisi' => $request->input('tahun_emisi', reset($tahunEmisiOptions) ?: date('Y')),
         ];
 
         $data = $this->reportService->getReportData($filters);
@@ -144,17 +147,8 @@ class LaporanHarianController extends Controller
     {
         $options = $this->reportService->getYearOptions();
         $tahunAnggaranOptions = $options['tahun_anggaran'];
-        
-        // Default to current month if not provided
-        $startDate = $request->get('start_date', Carbon::today()->startOfMonth()->toDateString());
-        $endDate = $request->get('end_date', Carbon::today()->toDateString());
-        $tahunAnggaran = $request->get('tahun_anggaran', date('Y'));
 
-        $filters = [
-            'start_date' => $startDate,
-            'end_date' => $endDate,
-            'tahun_anggaran' => $tahunAnggaran,
-        ];
+        $filters = $this->getRekonsiliasiFilters($request);
 
         $data = $this->reportService->getRekonsiliasiData($filters);
 
@@ -167,21 +161,17 @@ class LaporanHarianController extends Controller
 
     public function exportRekonsiliasi(Request $request)
     {
-        $startDate = $request->get('start_date', Carbon::today()->startOfMonth()->toDateString());
-        $endDate = $request->get('end_date', Carbon::today()->toDateString());
-        $tahunAnggaran = $request->get('tahun_anggaran', date('Y'));
-
-        $filters = [
-            'start_date' => $startDate,
-            'end_date' => $endDate,
-            'tahun_anggaran' => $tahunAnggaran,
-        ];
+        $filters = $this->getRekonsiliasiFilters($request);
+        $startDate = $filters['start_date'];
+        $endDate = $filters['end_date'];
 
         $data = $this->reportService->getRekonsiliasiData($filters);
         $rekonsiliasiData = $data['data'];
         $totals = $data['totals'];
 
-        $filename = 'rekonsiliasi_data_' . $startDate . '_to_' . $endDate . '.csv';
+        $safeStart = preg_replace('/[^0-9A-Za-z_-]/', '', $startDate);
+        $safeEnd = preg_replace('/[^0-9A-Za-z_-]/', '', $endDate);
+        $filename = 'rekonsiliasi_data_' . $safeStart . '_to_' . $safeEnd . '.csv';
         $headers = [
             'Content-type' => 'text/csv',
             'Content-Disposition' => "attachment; filename=$filename",
@@ -229,15 +219,7 @@ class LaporanHarianController extends Controller
 
     public function printRekonsiliasi(Request $request)
     {
-        $startDate = $request->get('start_date', Carbon::today()->startOfMonth()->toDateString());
-        $endDate = $request->get('end_date', Carbon::today()->toDateString());
-        $tahunAnggaran = $request->get('tahun_anggaran', date('Y'));
-
-        $filters = [
-            'start_date' => $startDate,
-            'end_date' => $endDate,
-            'tahun_anggaran' => $tahunAnggaran,
-        ];
+        $filters = $this->getRekonsiliasiFilters($request);
 
         $data = $this->reportService->getRekonsiliasiData($filters);
 
@@ -269,18 +251,32 @@ class LaporanHarianController extends Controller
     {
         $defaultEmisi = ! empty($tahunEmisiOptions) ? $tahunEmisiOptions[0] : '2022';
         return [
-            'tanggal_laporan' => $request->get('tanggal_laporan', Carbon::today()->toDateString()),
-            'tahun_anggaran' => $request->get('tahun_anggaran', date('Y')),
-            'tahun_emisi' => $request->get('tahun_emisi', $defaultEmisi),
+            'tanggal_laporan' => $request->input('tanggal_laporan', Carbon::today()->toDateString()),
+            'tahun_anggaran' => $request->input('tahun_anggaran', date('Y')),
+            'tahun_emisi' => $request->input('tahun_emisi', $defaultEmisi),
         ];
     }
-    private function sanitizeCsvField($field)
+
+    private function getRekonsiliasiFilters(Request $request): array
     {
-        $field = (string) $field;
-        $triggers = ['=', '+', '-', '@'];
-        if (in_array(substr($field, 0, 1), $triggers)) {
-            return "'" . $field;
+        $validated = $request->validate([
+            'start_date' => ['nullable', 'date'],
+            'end_date' => ['nullable', 'date'],
+            'tahun_anggaran' => ['nullable', 'integer', 'min:2000', 'max:2100'],
+        ]);
+
+        $startDate = $validated['start_date'] ?? Carbon::today()->startOfMonth()->toDateString();
+        $endDate = $validated['end_date'] ?? Carbon::today()->toDateString();
+        $tahunAnggaran = $validated['tahun_anggaran'] ?? date('Y');
+
+        if (Carbon::parse($startDate)->gt(Carbon::parse($endDate))) {
+            [$startDate, $endDate] = [$endDate, $startDate];
         }
-        return $field;
+
+        return [
+            'start_date' => $startDate,
+            'end_date' => $endDate,
+            'tahun_anggaran' => $tahunAnggaran,
+        ];
     }
 }

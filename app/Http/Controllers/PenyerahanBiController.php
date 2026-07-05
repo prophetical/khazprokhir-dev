@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\PenyerahanBi;
 use App\Services\PenyerahanBiService;
+use App\Traits\SanitizesCsv;
 use Illuminate\Http\Request;
 
 class PenyerahanBiController extends Controller
 {
+    use SanitizesCsv;
+
     protected $service;
 
     public function __construct(PenyerahanBiService $service)
@@ -164,16 +167,5 @@ class PenyerahanBiController extends Controller
         }
         if ($request->filled('tanggal_awal')) $query->where('tanggal_penyerahan', '>=', $request->tanggal_awal);
         if ($request->filled('tanggal_akhir')) $query->where('tanggal_penyerahan', '<=', $request->tanggal_akhir);
-    }
-
-
-    private function sanitizeCsvField($field)
-    {
-        $field = (string) $field;
-        $triggers = ['=', '+', '-', '@'];
-        if (in_array(substr($field, 0, 1), $triggers)) {
-            return "'" . $field;
-        }
-        return $field;
     }
 }

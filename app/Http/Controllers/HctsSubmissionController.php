@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\HctsSubmission;
 use App\Services\HctsSubmissionService;
+use App\Traits\SanitizesCsv;
 use Illuminate\Http\Request;
 
 class HctsSubmissionController extends Controller
 {
+    use SanitizesCsv;
+
     protected $service;
 
     public function __construct(HctsSubmissionService $service)
@@ -145,14 +148,5 @@ class HctsSubmissionController extends Controller
             'jumlah_bilyet' => 'required|integer|min:1', 'pemasok1' => 'required|string', 'pemasok2' => 'nullable|string', 'nomor_ba' => 'required|string',
             'batches' => 'required|array|min:1', 'batches.*.batch' => 'required|string', 'batches.*.jumlah' => 'required|integer|min:1',
         ]);
-    }
-    private function sanitizeCsvField($field)
-    {
-        $field = (string) $field;
-        $triggers = ['=', '+', '-', '@'];
-        if (in_array(substr($field, 0, 1), $triggers)) {
-            return "'" . $field;
-        }
-        return $field;
     }
 }

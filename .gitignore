@@ -49,5 +49,8 @@ _ide_helper_models.php
 Thumbs.db
 check_db.php
 test_query.php
+scratch*.php
+# Windows "Copy" backups (e.g. "database - Copy (2).sqlite")
+*Copy*
 *.bak
 *.tmp
