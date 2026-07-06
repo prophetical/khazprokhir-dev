@@ -10,6 +10,7 @@
 .env.production
 .phpactor.json
 .gemini/
+.kilo/
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml

@@ -74,6 +74,75 @@ class LaporanHarianController extends Controller
         ]))->render();
     }
 
+    public function persediaanDetail(Request $request)
+    {
+        $params = $this->getPersediaanDetailParams($request);
+
+        $breakdown = $this->reportService->getPersediaanBreakdown($params['pecahan'], [
+            'tanggal_laporan' => $params['tanggal_laporan'],
+            'tahun_anggaran' => $params['tahun_anggaran'],
+            'tahun_emisi' => $params['tahun_emisi'],
+        ], $params['jenis']);
+
+        $isRealtime = $params['tanggal_laporan'] === Carbon::today()->toDateString();
+
+        $jenisLabel = [
+            'kemas' => 'Siap Kemas',
+            'kirim' => 'Siap Kirim',
+            'total' => 'Total Persediaan',
+        ][$params['jenis']];
+
+        return view('laporan-harian.persediaan-detail', [
+            'pecahan' => $params['pecahan'],
+            'tanggalLaporan' => $params['tanggal_laporan'],
+            'tahunAnggaran' => $params['tahun_anggaran'],
+            'tahunEmisi' => $params['tahun_emisi'],
+            'jenis' => $params['jenis'],
+            'jenisLabel' => $jenisLabel,
+            'isRealtime' => $isRealtime,
+            'breakdown' => $breakdown,
+        ]);
+    }
+
+    public function persediaanDetailData(Request $request)
+    {
+        $params = $this->getPersediaanDetailParams($request);
+
+        $breakdown = $this->reportService->getPersediaanBreakdown($params['pecahan'], [
+            'tanggal_laporan' => $params['tanggal_laporan'],
+            'tahun_anggaran' => $params['tahun_anggaran'],
+            'tahun_emisi' => $params['tahun_emisi'],
+        ], $params['jenis']);
+
+        return view('laporan-harian.partials.persediaan-detail-table', [
+            'pecahan' => $params['pecahan'],
+            'tanggalLaporan' => $params['tanggal_laporan'],
+            'tahunAnggaran' => $params['tahun_anggaran'],
+            'tahunEmisi' => $params['tahun_emisi'],
+            'jenis' => $params['jenis'],
+            'breakdown' => $breakdown,
+        ])->render();
+    }
+
+    private function getPersediaanDetailParams(Request $request): array
+    {
+        $validated = $request->validate([
+            'pecahan' => ['required', 'in:S,T,U,V,W,X,Y'],
+            'tanggal_laporan' => ['required', 'date'],
+            'tahun_anggaran' => ['required', 'integer', 'min:2000', 'max:2100'],
+            'tahun_emisi' => ['nullable', 'string'],
+            'jenis' => ['required', 'in:kemas,kirim,total'],
+        ]);
+
+        return [
+            'pecahan' => $validated['pecahan'],
+            'tanggal_laporan' => $validated['tanggal_laporan'],
+            'tahun_anggaran' => (string) $validated['tahun_anggaran'],
+            'tahun_emisi' => $validated['tahun_emisi'] ?? '',
+            'jenis' => $validated['jenis'],
+        ];
+    }
+
     public function index(Request $request)
     {
         $options = $this->reportService->getYearOptions();
@@ -171,7 +240,7 @@ class LaporanHarianController extends Controller
 
         $safeStart = preg_replace('/[^0-9A-Za-z_-]/', '', $startDate);
         $safeEnd = preg_replace('/[^0-9A-Za-z_-]/', '', $endDate);
-        $filename = 'rekonsiliasi_data_' . $safeStart . '_to_' . $safeEnd . '.csv';
+        $filename = 'rekonsiliasi_data_'.$safeStart.'_to_'.$safeEnd.'.csv';
         $headers = [
             'Content-type' => 'text/csv',
             'Content-Disposition' => "attachment; filename=$filename",
@@ -186,30 +255,30 @@ class LaporanHarianController extends Controller
 
             foreach ($rekonsiliasiData as $row) {
                 fputcsv($file, array_map([$this, 'sanitizeCsvField'], [
-                    $row['pecahan'], 
-                    $row['penerimaan_hcs'], 
-                    $row['pengemasan_hcs'], 
-                    $row['min_dus_kemas'], 
-                    $row['max_dus_kemas'], 
-                    $row['penyerahan_hcs'], 
-                    $row['min_dus_serah'], 
-                    $row['max_dus_serah'], 
-                    $row['target_pengemasan'], 
-                    $row['target_penyerahan']
+                    $row['pecahan'],
+                    $row['penerimaan_hcs'],
+                    $row['pengemasan_hcs'],
+                    $row['min_dus_kemas'],
+                    $row['max_dus_kemas'],
+                    $row['penyerahan_hcs'],
+                    $row['min_dus_serah'],
+                    $row['max_dus_serah'],
+                    $row['target_pengemasan'],
+                    $row['target_penyerahan'],
                 ]));
             }
 
             fputcsv($file, array_map([$this, 'sanitizeCsvField'], [
-                'TOTAL', 
-                $totals['penerimaan_hcs'], 
-                $totals['pengemasan_hcs'], 
-                '-', 
-                '-', 
-                $totals['penyerahan_hcs'], 
-                '-', 
-                '-', 
-                $totals['target_pengemasan'], 
-                $totals['target_penyerahan']
+                'TOTAL',
+                $totals['penerimaan_hcs'],
+                $totals['pengemasan_hcs'],
+                '-',
+                '-',
+                $totals['penyerahan_hcs'],
+                '-',
+                '-',
+                $totals['target_pengemasan'],
+                $totals['target_penyerahan'],
             ]));
             fclose($file);
         };
@@ -234,7 +303,7 @@ class LaporanHarianController extends Controller
         $options = $this->reportService->getYearOptions();
         $filters = $this->getFilters($request, $options['tahun_emisi']);
         $data = $this->reportService->getReportData($filters);
-        
+
         $hctsInventoryData = $this->reportService->getHctsInventoryData($filters);
         $targetAchievementData = $this->reportService->getTargetAchievementData($filters);
         $monthlyTargetAchievementData = $this->reportService->getMonthlyTargetAchievementData($filters);
@@ -250,6 +319,7 @@ class LaporanHarianController extends Controller
     private function getFilters(Request $request, $tahunEmisiOptions = [])
     {
         $defaultEmisi = ! empty($tahunEmisiOptions) ? $tahunEmisiOptions[0] : '2022';
+
         return [
             'tanggal_laporan' => $request->input('tanggal_laporan', Carbon::today()->toDateString()),
             'tahun_anggaran' => $request->input('tahun_anggaran', date('Y')),

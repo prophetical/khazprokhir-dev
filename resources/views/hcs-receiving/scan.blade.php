@@ -136,7 +136,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
                 <!-- Sisi Kiri: Scanner Terminal -->
-                <div class="lg:col-span-4 xl:col-span-3">
+                <div class="lg:col-span-4 xl:col-span-4">
                     <div
                         class="bg-white dark:bg-slate-900 shadow-sm rounded-2xl border border-slate-200 dark:border-slate-800 p-6 sticky top-6">
 
@@ -200,7 +200,7 @@
                 </div>
 
                 <!-- Sisi Kanan: Monitoring -->
-                <div class="lg:col-span-8 xl:col-span-9">
+                <div class="lg:col-span-8 xl:col-span-8">
 
                     <div id="scan-status-container" class="space-y-6">
                         @include('hcs-receiving.scan-status-table', ['registrations' => $registrations])

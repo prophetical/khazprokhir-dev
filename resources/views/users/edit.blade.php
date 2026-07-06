@@ -96,6 +96,21 @@
                             <label
                                 class="block text-[10px] font-bold text-indigo-400 uppercase tracking-[0.2em] mb-4">Ubah
                                 Role</label>
+                            @if (empty($user->role))
+                                <div
+                                    class="mb-4 p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg border border-amber-200 dark:border-amber-900/50 flex items-start gap-3">
+                                    <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span
+                                        class="text-[10px] text-amber-700 dark:text-amber-500 font-bold uppercase tracking-tight leading-relaxed">
+                                        User ini belum memiliki role (akses terbatas: Dashboard &amp; Laporan Harian).
+                                        Anda dapat menyimpan tanpa memilih role, atau pilih role di bawah untuk memberikan
+                                        akses.</span>
+                                </div>
+                            @endif
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 @foreach(['admin' => 'Administrator', 'supervisor' => 'Supervisor', 'sortir' => 'Staff Sortir', 'kemas' => 'Staff Pengemasan', 'khazverutas' => 'Staff Khazverutas'] as $val => $label)
                                     <label

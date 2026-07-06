@@ -52,7 +52,7 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,'.$user->id],
             'username' => ['required', 'string', 'max:255', 'unique:users,username,'.$user->id],
-            'role' => ['required', 'string', 'in:admin,sortir,supervisor,kemas,khazai,khazverutas'],
+            'role' => ['nullable', 'string', 'in:admin,sortir,supervisor,kemas,khazai,khazverutas'],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
         ]);
 

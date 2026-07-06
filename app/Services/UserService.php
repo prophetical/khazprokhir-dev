@@ -35,7 +35,7 @@ class UserService
         $user->name = $data['name'];
         $user->email = $data['email'];
         $user->username = $data['username'];
-        $user->role = $data['role'];
+        $user->role = $data['role'] ?? null;
         
         return $user->save();
     }

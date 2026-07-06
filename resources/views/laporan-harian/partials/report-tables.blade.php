@@ -8,6 +8,17 @@
         'X' => 'bg-blue-500 border-blue-600 text-white',
         'Y' => 'bg-red-500 border-red-600 text-white',
     ];
+
+    // Aksen pill lembut untuk tombol drill-down persediaan (warna mengikuti pecahan).
+    $tintMap = [
+        'S' => 'bg-lime-100 dark:bg-lime-900/30 text-lime-800 dark:text-lime-300 border-lime-300 dark:border-lime-700',
+        'T' => 'bg-gray-200 dark:bg-gray-700/40 text-gray-700 dark:text-gray-200 border-gray-400 dark:border-gray-600',
+        'U' => 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-700',
+        'V' => 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 border-purple-300 dark:border-purple-700',
+        'W' => 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border-green-300 dark:border-green-700',
+        'X' => 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border-blue-300 dark:border-blue-700',
+        'Y' => 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 border-red-300 dark:border-red-700',
+    ];
 @endphp
 
 <!-- Table Section: HCS -->
@@ -101,20 +112,44 @@
                                     </span>
                                 </td>
                                 <td
-                                    class="px-2 py-4 sm:px-4 text-right text-[10px] sm:text-xs font-bold text-gray-600 dark:text-gray-300 border-r border-gray-100 dark:border-slate-800">
-                                    {{ $row['siap_kemas_bilyet'] == 0 ? '-' : number_format($row['siap_kemas_bilyet'], 0, ',', '.') }}
+                                    class="px-2 py-4 sm:px-4 text-right text-[10px] sm:text-xs border-r border-gray-100 dark:border-slate-800">
+                                    @if ($row['siap_kemas_bilyet'] == 0)
+                                        <span class="font-bold text-gray-300 dark:text-gray-600">-</span>
+                                    @else
+                                        <a href="{{ route('laporan-harian.persediaan-detail', ['pecahan' => $row['pecahan'], 'tanggal_laporan' => $tanggalLaporan, 'tahun_anggaran' => $tahunAnggaran, 'tahun_emisi' => $tahunEmisi, 'jenis' => 'kemas']) }}"
+                                            target="_blank" rel="noopener" title="Lihat rincian per batch/seri"
+                                            class="inline-flex items-center justify-end px-2 py-0.5 rounded-md border whitespace-nowrap tabular-nums font-bold hover:brightness-95 dark:hover:brightness-110 active:scale-95 transition-all {{ $tintMap[$row['pecahan']] ?? 'bg-gray-100 text-gray-700 border-gray-300' }}">
+                                            {{ number_format($row['siap_kemas_bilyet'], 0, ',', '.') }}
+                                        </a>
+                                    @endif
                                 </td>
                                 <td
-                                    class="px-2 py-4 sm:px-4 text-right text-[10px] sm:text-xs font-bold text-gray-600 dark:text-gray-300 border-r border-gray-100 dark:border-slate-800">
-                                    {{ $row['siap_kirim_bilyet'] == 0 ? '-' : number_format($row['siap_kirim_bilyet'], 0, ',', '.') }}
+                                    class="px-2 py-4 sm:px-4 text-right text-[10px] sm:text-xs border-r border-gray-100 dark:border-slate-800">
+                                    @if ($row['siap_kirim_bilyet'] == 0)
+                                        <span class="font-bold text-gray-300 dark:text-gray-600">-</span>
+                                    @else
+                                        <a href="{{ route('laporan-harian.persediaan-detail', ['pecahan' => $row['pecahan'], 'tanggal_laporan' => $tanggalLaporan, 'tahun_anggaran' => $tahunAnggaran, 'tahun_emisi' => $tahunEmisi, 'jenis' => 'kirim']) }}"
+                                            target="_blank" rel="noopener" title="Lihat rincian per batch/seri"
+                                            class="inline-flex items-center justify-end px-2 py-0.5 rounded-md border whitespace-nowrap tabular-nums font-bold hover:brightness-95 dark:hover:brightness-110 active:scale-95 transition-all {{ $tintMap[$row['pecahan']] ?? 'bg-gray-100 text-gray-700 border-gray-300' }}">
+                                            {{ number_format($row['siap_kirim_bilyet'], 0, ',', '.') }}
+                                        </a>
+                                    @endif
                                 </td>
                                 <td
                                     class="px-2 py-4 sm:px-4 text-right text-[9px] sm:text-[10px] font-black text-gray-400 dark:text-gray-500 border-r border-gray-100 dark:border-slate-800 italic">
                                     {{ $row['siap_kirim_dus'] == 0 ? '-' : number_format($row['siap_kirim_dus'], 0, ',', '.')}}
                                 </td>
                                 <td
-                                    class="px-2 py-4 sm:px-4 text-right text-[10px] sm:text-xs font-black text-indigo-700 dark:text-indigo-400 bg-indigo-50/10 dark:bg-indigo-900/10 border-r border-gray-100 dark:border-slate-800">
-                                    {{ $row['total_persediaan_bilyet'] == 0 ? '-' : number_format($row['total_persediaan_bilyet'], 0, ',', '.') }}
+                                    class="px-2 py-4 sm:px-4 text-right text-[10px] sm:text-xs border-r border-gray-100 dark:border-slate-800">
+                                    @if ($row['total_persediaan_bilyet'] == 0)
+                                        <span class="font-black text-gray-300 dark:text-gray-600">-</span>
+                                    @else
+                                        <a href="{{ route('laporan-harian.persediaan-detail', ['pecahan' => $row['pecahan'], 'tanggal_laporan' => $tanggalLaporan, 'tahun_anggaran' => $tahunAnggaran, 'tahun_emisi' => $tahunEmisi, 'jenis' => 'total']) }}"
+                                            target="_blank" rel="noopener" title="Lihat rincian per batch/seri"
+                                            class="inline-flex items-center justify-end px-2.5 py-0.5 rounded-md border whitespace-nowrap tabular-nums font-black hover:brightness-95 dark:hover:brightness-110 active:scale-95 transition-all {{ $tintMap[$row['pecahan']] ?? 'bg-gray-100 text-gray-700 border-gray-300' }}">
+                                            {{ number_format($row['total_persediaan_bilyet'], 0, ',', '.') }}
+                                        </a>
+                                    @endif
                                 </td>
                                 <td
                                     class="px-2 py-4 sm:px-4 text-right text-[10px] sm:text-xs font-bold text-gray-600 dark:text-gray-300 border-r border-gray-100 dark:border-slate-800">

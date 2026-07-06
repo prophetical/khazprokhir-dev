@@ -1,35 +1,35 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\HcsReceivingController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\BahanPenolongController;
 use App\Http\Controllers\BatchTrackingController;
-use App\Http\Controllers\ReportController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HcsKhazaiRegistrationController;
-use App\Http\Controllers\RekomendasiPenerimaanController;
+use App\Http\Controllers\HcsReceivingController;
 use App\Http\Controllers\HcsSortingController;
-use App\Http\Controllers\RekomendasiPenyortiranController;
 use App\Http\Controllers\HcsSortingReportController;
+use App\Http\Controllers\HctsInventoryController;
+use App\Http\Controllers\HctsReceivingController;
+use App\Http\Controllers\HctsSubmissionController;
+use App\Http\Controllers\LaporanHarianController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PackController;
 use App\Http\Controllers\PengemasanController;
 use App\Http\Controllers\PengemasanReportController;
-use App\Http\Controllers\PenyerahanBiController;
-use App\Http\Controllers\LaporanHarianController;
-use App\Http\Controllers\TargetController;
-use App\Http\Controllers\HctsReceivingController;
-use App\Http\Controllers\HctsSubmissionController;
-use App\Http\Controllers\TrackingController;
-use App\Http\Controllers\HctsInventoryController;
-use App\Http\Controllers\MessageController;
-use App\Http\Controllers\BahanPenolongController;
 use App\Http\Controllers\PenyablonanController;
-use App\Http\Controllers\XPenggantiSeriController;
-use App\Http\Controllers\XPenggantiKhazaiController;
-use App\Http\Controllers\XPenggantiCutpackController;
-use App\Http\Controllers\XPenggantiRikyetController;
-use App\Http\Controllers\XPenggantiRekapController;
+use App\Http\Controllers\PenyerahanBiController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RekomendasiPenerimaanController;
+use App\Http\Controllers\RekomendasiPenyortiranController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SerialMappingController;
+use App\Http\Controllers\TargetController;
+use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\XPenggantiCutpackController;
+use App\Http\Controllers\XPenggantiKhazaiController;
+use App\Http\Controllers\XPenggantiRekapController;
+use App\Http\Controllers\XPenggantiRikyetController;
+use App\Http\Controllers\XPenggantiSeriController;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -129,6 +129,8 @@ Route::middleware(['auth', 'verified', RoleMiddleware::class])->group(function (
     Route::get('/laporan-harian/realtime-partial', [LaporanHarianController::class, 'getRealtimePartial'])->name('laporan-harian.realtime-partial');
     Route::get('/laporan-harian/print', [LaporanHarianController::class, 'print'])->name('laporan-harian.print');
     Route::get('/laporan-harian/export', [LaporanHarianController::class, 'export'])->name('laporan-harian.export');
+    Route::get('/laporan-harian/persediaan-detail', [LaporanHarianController::class, 'persediaanDetail'])->name('laporan-harian.persediaan-detail');
+    Route::get('/laporan-harian/persediaan-detail-data', [LaporanHarianController::class, 'persediaanDetailData'])->name('laporan-harian.persediaan-detail-data');
 
     // Manajemen Target
     Route::get('/targets', [TargetController::class, 'index'])->name('targets.index');
@@ -259,4 +261,4 @@ Route::middleware(['auth', 'verified', RoleMiddleware::class])->group(function (
     Route::resource('users', UserController::class);
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
