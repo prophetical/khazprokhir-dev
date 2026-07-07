@@ -320,10 +320,33 @@ class LaporanHarianController extends Controller
     {
         $defaultEmisi = ! empty($tahunEmisiOptions) ? $tahunEmisiOptions[0] : '2022';
 
+        // ConvertEmptyStringsToNull mengubah input tanggal yang dikosongkan menjadi null,
+        // sehingga $request->input(..., $default) tidak memakai default. Sanitasi manual
+        // agar null/empty/tanggal invalid selalu kembali ke nilai default yang valid
+        // (mencegah "Illegal operator and value combination" pada whereDate dengan NULL).
+        $tanggalLaporan = $request->input('tanggal_laporan');
+        try {
+            $tanggalLaporan = $tanggalLaporan
+                ? Carbon::parse($tanggalLaporan)->toDateString()
+                : Carbon::today()->toDateString();
+        } catch (\Throwable $e) {
+            $tanggalLaporan = Carbon::today()->toDateString();
+        }
+
+        $tahunAnggaran = $request->input('tahun_anggaran');
+        if (! $tahunAnggaran || ! ctype_digit((string) $tahunAnggaran)) {
+            $tahunAnggaran = date('Y');
+        }
+
+        $tahunEmisi = $request->input('tahun_emisi');
+        if ($tahunEmisi === null || $tahunEmisi === '') {
+            $tahunEmisi = $defaultEmisi;
+        }
+
         return [
-            'tanggal_laporan' => $request->input('tanggal_laporan', Carbon::today()->toDateString()),
-            'tahun_anggaran' => $request->input('tahun_anggaran', date('Y')),
-            'tahun_emisi' => $request->input('tahun_emisi', $defaultEmisi),
+            'tanggal_laporan' => $tanggalLaporan,
+            'tahun_anggaran' => (string) $tahunAnggaran,
+            'tahun_emisi' => (string) $tahunEmisi,
         ];
     }
 
