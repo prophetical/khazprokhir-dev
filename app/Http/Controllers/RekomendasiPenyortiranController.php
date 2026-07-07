@@ -36,6 +36,7 @@ class RekomendasiPenyortiranController extends Controller
             $totalAllBilyet += $r['total_bilyet'];
         }
 
+
         $page = $request->get('page', 1);
         $perPage = 20;
         $paginator = new Paginator(
