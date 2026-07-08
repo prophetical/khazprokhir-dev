@@ -85,8 +85,9 @@
                                     <label
                                         class="relative flex items-center p-4 cursor-pointer rounded-lg border-2 transition-all"
                                         :class="role === '{{ $val }}' ? 'bg-white border-indigo-500 shadow-md ring-2 ring-indigo-500/10' : 'bg-transparent border-gray-100 hover:border-indigo-200'">
-                                        <input type="radio" name="role" value="{{ $val }}" @click="role = '{{ $val }}'"
-                                            class="sr-only" {{ old('role', 'sortir') === $val ? 'checked' : '' }}>
+                                        <input type="radio" name="role" value="{{ $val }}"
+                                            @click="role = (role === '{{ $val }}' ? '' : '{{ $val }}')"
+                                            :checked="role === '{{ $val }}'" class="sr-only">
                                         <div class="flex flex-col">
                                             <span class="text-sm font-black uppercase tracking-widest"
                                                 :class="role === '{{ $val }}' ? 'text-indigo-700' : 'text-gray-400'">{{ $val }}</span>
@@ -104,6 +105,9 @@
                                     </label>
                                 @endforeach
                             </div>
+                            <p class="mt-3 text-[10px] text-gray-500 italic">
+                Klik role yang sudah terpilih untuk mengosongkan (user tanpa role hanya dapat mengakses Dashboard &amp; Laporan Harian).
+            </p>
                             <div x-show="role === 'admin'"
                                 class="mt-4 p-3 bg-amber-50 rounded-lg border border-amber-200 flex items-center gap-3">
                                 <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor"

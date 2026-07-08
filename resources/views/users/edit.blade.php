@@ -116,8 +116,9 @@
                                     <label
                                         class="relative flex items-center p-4 cursor-pointer rounded-lg border-2 transition-all"
                                         :class="role === '{{ $val }}' ? 'bg-white dark:bg-slate-800 border-indigo-500 dark:border-indigo-600 shadow-md ring-2 ring-indigo-500/10' : 'bg-transparent border-gray-100 dark:border-slate-800 hover:border-indigo-200 dark:hover:border-indigo-900'">
-                                        <input type="radio" name="role" value="{{ $val }}" @click="role = '{{ $val }}'"
-                                            class="sr-only" {{ old('role', $user->role) === $val ? 'checked' : '' }}>
+                                        <input type="radio" name="role" value="{{ $val }}"
+                                            @click="role = (role === '{{ $val }}' ? '' : '{{ $val }}')"
+                                            :checked="role === '{{ $val }}'" class="sr-only">
                                         <div class="flex flex-col">
                                             <span
                                                 class="text-sm font-black uppercase tracking-widest transition-colors duration-300"
@@ -137,6 +138,10 @@
                                     </label>
                                 @endforeach
                             </div>
+                            <p class="mt-3 text-[10px] text-gray-400 dark:text-gray-500 italic">
+                                Klik role yang sudah terpilih untuk mengosongkan (user tanpa role hanya dapat
+                                mengakses Dashboard &amp; Laporan Harian).
+                            </p>
                             <div x-show="role === 'admin'"
                                 class="mt-4 p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg border border-amber-200 dark:border-amber-900/50 flex items-center gap-3">
                                 <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor"

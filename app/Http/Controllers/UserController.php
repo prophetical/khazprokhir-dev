@@ -33,7 +33,7 @@ class UserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'username' => ['required', 'string', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['required', 'string', 'in:admin,sortir,supervisor,kemas,khazai,khazverutas'],
+            'role' => ['nullable', 'string', 'in:admin,sortir,supervisor,kemas,khazai,khazverutas'],
         ]);
 
         $this->service->createUser($data);

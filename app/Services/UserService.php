@@ -20,7 +20,7 @@ class UserService
             'username' => $data['username'],
             'password' => Hash::make($data['password']),
         ]);
-        $user->role = $data['role'];
+        $user->role = $data['role'] ?? null;
         $user->save();
 
         return $user;
