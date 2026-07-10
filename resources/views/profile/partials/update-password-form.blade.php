@@ -20,7 +20,7 @@
             </x-input-label>
             <div class="relative group">
                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 dark:text-gray-500 group-focus-within:text-indigo-500 transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 00-2-2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                 </div>
                 <x-text-input id="current_password" name="current_password" type="password" class="block w-full pl-11 border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 focus:bg-white dark:focus:bg-gray-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 font-bold text-gray-700 dark:text-gray-300 transition-all duration-300" autocomplete="current-password" />
             </div>
@@ -37,6 +37,7 @@
                 </div>
                 <x-text-input id="password" name="password" type="password" class="block w-full pl-11 border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 focus:bg-white dark:focus:bg-gray-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 font-bold text-gray-700 dark:text-gray-300 transition-all duration-300" autocomplete="new-password" />
             </div>
+            <p class="px-1 text-[10px] text-gray-400 dark:text-gray-500 italic">{{ __('Min. 8 karakter: kombinasi huruf besar, huruf kecil, angka, dan simbol (mis. !@#$&).') }}</p>
             <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2" />
         </div>
 

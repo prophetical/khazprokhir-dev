@@ -34,6 +34,21 @@
         </div>
 
         <div class="space-y-2">
+            <x-input-label for="np" class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest px-1">
+                {{ __('NP (Nomor Pokok)') }}
+            </x-input-label>
+            <div class="relative group">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 dark:text-gray-600 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                </div>
+                <x-text-input id="np" name="np" type="text" class="block w-full pl-11 border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 font-bold text-gray-400 dark:text-gray-600 cursor-not-allowed rounded-2xl" :value="$user->np" disabled />
+            </div>
+            <p class="px-1 text-[10px] font-bold text-gray-400 dark:text-gray-600 italic">
+                {{ __('NP (Nomor Pokok) tidak dapat diubah.') }}
+            </p>
+        </div>
+
+        <div class="space-y-2">
             <x-input-label for="name" class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest px-1">
                 {{ __('Nama Lengkap') }}
             </x-input-label>

@@ -67,6 +67,14 @@
                                     required
                                     class="block w-full border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg shadow-sm text-sm py-2.5 px-3 focus:border-indigo-500 focus:ring-indigo-500 dark:text-gray-300 transition-all font-bold font-mono">
                             </div>
+                            <div class="md:col-span-1">
+                                <label
+                                    class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">NP
+                                    (Nomor Pokok)</label>
+                                <input type="text" name="np" value="{{ old('np', $user->np) }}"
+                                    placeholder="Hanya huruf & angka"
+                                    class="block w-full border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg shadow-sm text-sm py-2.5 px-3 focus:border-indigo-500 focus:ring-indigo-500 dark:text-gray-300 transition-all font-bold font-mono">
+                            </div>
                             <div
                                 class="md:col-span-1 border-l-4 border-amber-200 dark:border-amber-800 pl-4 bg-amber-50/30 dark:bg-amber-900/10 py-2 rounded-r-lg">
                                 <label
@@ -80,6 +88,7 @@
                                 </label>
                                 <input type="password" name="password" placeholder="Kosongkan jika tidak diubah"
                                     class="block w-full border-transparent bg-white/50 dark:bg-slate-800/50 rounded shadow-sm text-xs py-2 px-3 focus:border-amber-400 focus:ring-amber-400 dark:text-gray-300 transition-all font-bold">
+                                <p class="mt-1 text-[10px] text-amber-500/80 dark:text-amber-400/70 italic">Min. 8 karakter: kombinasi huruf besar, huruf kecil, angka, dan simbol (mis. !@#$&).</p>
                             </div>
                             <div class="md:col-span-1 pt-6">
                                 <label

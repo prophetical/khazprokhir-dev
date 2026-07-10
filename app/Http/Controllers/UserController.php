@@ -32,8 +32,12 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'username' => ['required', 'string', 'max:255', 'unique:'.User::class],
+            'np' => ['required', 'string', 'max:50', 'unique:'.User::class, 'regex:/^[a-zA-Z0-9]+$/'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => ['nullable', 'string', 'in:admin,sortir,supervisor,kemas,khazai,khazverutas'],
+        ], [
+            'np.regex' => 'NP hanya boleh berisi huruf dan angka.',
+            'np.unique' => 'NP sudah digunakan oleh akun lain.',
         ]);
 
         $this->service->createUser($data);
@@ -52,8 +56,12 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,'.$user->id],
             'username' => ['required', 'string', 'max:255', 'unique:users,username,'.$user->id],
+            'np' => ['nullable', 'string', 'max:50', 'unique:users,np,'.$user->id, 'regex:/^[a-zA-Z0-9]+$/'],
             'role' => ['nullable', 'string', 'in:admin,sortir,supervisor,kemas,khazai,khazverutas'],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
+        ], [
+            'np.regex' => 'NP hanya boleh berisi huruf dan angka.',
+            'np.unique' => 'NP sudah digunakan oleh akun lain.',
         ]);
 
         $this->service->updateUser($user, $data);
@@ -63,7 +71,7 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        if (!$this->service->deleteUser($user)) {
+        if (! $this->service->deleteUser($user)) {
             return back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
         }
 

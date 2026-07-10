@@ -44,6 +44,7 @@
                                 <tr class="bg-gray-50 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-200">
                                     <th class="px-4 py-3 text-left w-12 text-center text-[8px]">#</th>
                                     <th class="px-4 py-3 text-left">Nama & Email</th>
+                                    <th class="px-4 py-3 text-center">NP</th>
                                     <th class="px-4 py-3 text-center">Role</th>
                                     <th class="px-4 py-3 text-center">Aksi</th>
                                 </tr>
@@ -57,6 +58,9 @@
                                                 <span class="text-sm font-bold text-gray-800">{{ $user->name }}</span>
                                                 <span class="text-[10px] text-gray-400 font-mono">{{ $user->email }}</span>
                                             </div>
+                                        </td>
+                                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                                            <span class="text-[11px] font-bold font-mono {{ $user->np ? 'text-indigo-600' : 'text-gray-300' }}">{{ $user->np ?? '-' }}</span>
                                         </td>
                                         <td class="px-4 py-4 whitespace-nowrap text-center">
                                             @php

@@ -18,6 +18,7 @@ class UserService
             'name' => $data['name'],
             'email' => $data['email'],
             'username' => $data['username'],
+            'np' => $data['np'] ?? null,
             'password' => Hash::make($data['password']),
         ]);
         $user->role = $data['role'] ?? null;
@@ -35,6 +36,7 @@ class UserService
         $user->name = $data['name'];
         $user->email = $data['email'];
         $user->username = $data['username'];
+        $user->np = $data['np'] ?? null;
         $user->role = $data['role'] ?? null;
         
         return $user->save();

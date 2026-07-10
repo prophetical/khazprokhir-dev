@@ -33,13 +33,18 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'username' => ['required', 'string', 'lowercase', 'max:255', 'unique:'.User::class],
+            'np' => ['required', 'string', 'max:50', 'unique:'.User::class, 'regex:/^[a-zA-Z0-9]+$/'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ], [
+            'np.regex' => 'NP hanya boleh berisi huruf dan angka.',
+            'np.unique' => 'NP sudah digunakan oleh akun lain.',
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'username' => $request->username,
+            'np' => $request->np,
             'password' => Hash::make($request->password),
             'role' => null,
         ]);

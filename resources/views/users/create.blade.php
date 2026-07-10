@@ -61,9 +61,18 @@
                             </div>
                             <div class="md:col-span-1">
                                 <label
+                                    class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">NP
+                                    (Nomor Pokok)</label>
+                                <input type="text" name="np" value="{{ old('np') }}" required
+                                    placeholder="Hanya huruf & angka"
+                                    class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-2.5 px-3 focus:border-indigo-500 focus:ring-indigo-500 transition-all font-bold font-mono">
+                            </div>
+                            <div class="md:col-span-1">
+                                <label
                                     class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Password</label>
                                 <input type="password" name="password" required
                                     class="block w-full border-gray-200 rounded-lg shadow-sm text-sm py-2.5 px-3 focus:border-indigo-500 focus:ring-indigo-500 transition-all font-bold">
+                                <p class="mt-1 text-[10px] text-gray-400 italic">Min. 8 karakter: kombinasi huruf besar, huruf kecil, angka, dan simbol (mis. !@#$&).</p>
                             </div>
                             <div class="md:col-span-1">
                                 <label

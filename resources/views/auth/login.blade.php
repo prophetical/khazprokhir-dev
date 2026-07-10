@@ -14,10 +14,10 @@
     <form method="POST" action="{{ route('login') }}" class="space-y-5">
         @csrf
 
-        {{-- Username / Email --}}
+        {{-- Username / NP --}}
         <div class="space-y-1.5">
             <label for="username" class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest">
-                Username
+                Username / NP
             </label>
             <div class="relative group">
                 <div
@@ -29,7 +29,7 @@
                 </div>
                 <input id="username" name="username" type="text" value="{{ old('username') }}" required autofocus
                     class="block w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400 transition-all"
-                    placeholder="Masukkan username Anda" />
+                    placeholder="Masukkan username atau NP Anda" />
             </div>
             <x-input-error :messages="$errors->get('username')" class="mt-1 text-red-500 text-xs font-medium" />
         </div>
@@ -69,6 +69,33 @@
                     Lupa kata sandi?
                 </a>
             @endif
+        </div>
+
+        {{-- CAPTCHA Penjumlahan --}}
+        <div class="space-y-1.5">
+            <div class="flex items-center justify-between">
+                <label for="captcha"
+                    class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest">
+                    Pertanyaan Keamanan
+                </label>
+                <a href="{{ route('login') }}"
+                    class="inline-flex items-center gap-1 text-[10px] font-bold text-indigo-400 hover:text-indigo-600 transition-colors">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Ganti Soal
+                </a>
+            </div>
+            <div
+                class="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 flex items-center gap-3 focus-within:ring-2 focus-within:ring-indigo-500/30 focus-within:border-indigo-400 transition-all">
+                <span class="text-xs text-gray-500 font-medium whitespace-nowrap">Berapa hasil dari</span>
+                <span class="text-sm font-black text-gray-800 tabular-nums whitespace-nowrap">{{ $captchaQuestion }} =</span>
+                <input id="captcha" name="captcha" type="number" inputmode="numeric" min="2" max="40" step="1" required
+                    class="flex-1 w-full bg-transparent border-0 outline-none text-sm font-bold text-gray-800 tabular-nums placeholder-gray-300"
+                    placeholder="?" autocomplete="off" />
+            </div>
+            <x-input-error :messages="$errors->get('captcha')" class="mt-1 text-red-500 text-xs font-medium" />
         </div>
 
         {{-- Submit Button --}}

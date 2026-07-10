@@ -72,6 +72,27 @@
             <x-input-error :messages="$errors->get('username')" class="mt-1" />
         </div>
 
+        <!-- NP (Nomor Pokok) -->
+        <div class="space-y-1.5">
+            <x-input-label for="np" class="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">
+                {{ __('NP (Nomor Pokok)') }}
+            </x-input-label>
+            <div class="relative group">
+                <div
+                    class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-600 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                </div>
+                <x-text-input id="np"
+                    class="block w-full pl-11 border-gray-100 bg-gray-50/50 focus:bg-white rounded-2xl focus:ring-4 focus:ring-indigo-500/10 font-bold text-gray-700 transition-all duration-300"
+                    type="text" name="np" :value="old('np')" required />
+            </div>
+            <p class="px-1 text-[10px] text-gray-400 italic">{{ __('Hanya huruf dan angka, contoh: A12345 atau 12345') }}</p>
+            <x-input-error :messages="$errors->get('np')" class="mt-1" />
+        </div>
+
         <!-- Password -->
         <div class="space-y-1.5">
             <x-input-label for="password" class="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">
@@ -82,13 +103,14 @@
                     class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-600 transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 00-2-2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
                 </div>
                 <x-text-input id="password"
                     class="block w-full pl-11 border-gray-100 bg-gray-50/50 focus:bg-white rounded-2xl focus:ring-4 focus:ring-indigo-500/10 font-bold text-gray-700 transition-all duration-300"
                     type="password" name="password" required autocomplete="new-password" />
             </div>
+            <p class="px-1 text-[10px] text-gray-400 italic">{{ __('Min. 8 karakter: kombinasi huruf besar, huruf kecil, angka, dan simbol (mis. !@#$&).') }}</p>
             <x-input-error :messages="$errors->get('password')" class="mt-1" />
         </div>
 
@@ -137,7 +159,7 @@
                     href="{{ route('login') }}">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 11-6 0v-1m6 0H9" />
+                            d="M11 7l-5 5m0 0l5 5m-5-5h12" />
                     </svg>
                     {{ __('Sudah punya akun?') }}
                 </a>

@@ -2,9 +2,10 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Gate;
 use App\Models\User;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Validation\Rules\Password;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +24,8 @@ class AppServiceProvider extends ServiceProvider
     {
         $router = $this->app->make(\Illuminate\Routing\Router::class);
         $router->aliasMiddleware('role', \App\Http\Middleware\RoleMiddleware::class);
+
+        Password::defaults(fn () => Password::min(8)->mixedCase()->numbers()->symbols());
 
         // Otorisasi Laravel Pulse
         Gate::define('viewPulse', function (User $user) {
