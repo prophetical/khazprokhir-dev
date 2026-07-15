@@ -481,26 +481,26 @@
                             class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('x-pengganti.mapping.lookup') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
                             Cari Seri Pengganti
                         </a>
-                        <div class="h-1 w-full bg-white/30 my-1"></div>
                         <a href="{{ route('x-pengganti.seri.index') }}"
                             class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('x-pengganti.seri.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
                             Form Input Master Seri
                         </a>
+                        <div class="h-1 w-full bg-white/30 my-1"></div>
                         <a href="{{ route('x-pengganti.khazai.index') }}"
                             class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('x-pengganti.khazai.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
-                            Form Input Khazai
+                            Hasil Rekap Vell
                         </a>
                         <a href="{{ route('x-pengganti.cutpack.index') }}"
                             class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('x-pengganti.cutpack.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
-                            Form Input Cutpack
+                            Hasil Rekap Bilyet
                         </a>
                         <a href="{{ route('x-pengganti.rikyet.index') }}"
                             class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('x-pengganti.rikyet.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
-                            Form Input Rikyet
+                            Hasil Rekap Brood
                         </a>
                         <a href="{{ route('x-pengganti.rekap.index') }}"
                             class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('x-pengganti.rekap.*') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
-                            Hasil Rekap Khazprokhir
+                            Hasil Rekap Total
                         </a>
                     </div>
                 </div>

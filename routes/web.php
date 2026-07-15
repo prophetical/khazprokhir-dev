@@ -119,6 +119,7 @@ Route::middleware(['auth', 'verified', RoleMiddleware::class])->group(function (
     Route::get('/penyerahan-bi/export', [PenyerahanBiController::class, 'export'])->name('penyerahan-bi.export');
     Route::get('/penyerahan-bi/print', [PenyerahanBiController::class, 'print'])->name('penyerahan-bi.print');
     Route::get('/api/penyerahan-bi/check-duplicate', [PenyerahanBiController::class, 'checkDuplicate'])->name('penyerahan-bi.check-duplicate');
+    Route::get('/api/penyerahan-bi/last-dus', [PenyerahanBiController::class, 'getLastDus'])->name('penyerahan-bi.last-dus');
 
     // Laporan Harian
     Route::get('/laporan-harian', [LaporanHarianController::class, 'index'])->name('laporan-harian.index');

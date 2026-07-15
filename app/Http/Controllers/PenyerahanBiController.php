@@ -74,6 +74,22 @@ class PenyerahanBiController extends Controller
         return response()->json(['duplicate' => false]);
     }
 
+    public function getLastDus(Request $request)
+    {
+        $validated = $request->validate([
+            'pecahan' => 'required|string|max:10',
+            'tahun_anggaran' => 'required|string|max:10',
+            'tahun_emisi' => 'required|string|max:10',
+        ]);
+
+        $last = PenyerahanBi::where('pecahan', $validated['pecahan'])
+            ->where('tahun_anggaran', $validated['tahun_anggaran'])
+            ->where('tahun_emisi', $validated['tahun_emisi'])
+            ->max('nomor_dus_akhir');
+
+        return response()->json(['last_dus_akhir' => (int) ($last ?? 0)]);
+    }
+
     public function store(Request $request)
     {
         $data = $request->validate([

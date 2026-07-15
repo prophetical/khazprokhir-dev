@@ -41,7 +41,7 @@
                         <div>
                             <p class="text-sm font-black text-gray-700 dark:text-gray-200">Pilih Data Master Seri</p>
                             <p class="text-[10px] text-gray-400 dark:text-slate-500 font-bold">Pilih seri untuk melihat
-                                rekapan dashboard gabungan 3 divisi</p>
+                                rekapan gabungan dan digunakan untuk input ke SAP</p>
                         </div>
                     </div>
                 </div>

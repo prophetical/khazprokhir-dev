@@ -114,6 +114,9 @@
                 dupWarning: null,
                 isChecking: false,
                 checkTimeout: null,
+                autoDus: true,
+                lastDusAkhir: 0,
+                fetchingLast: false,
 
                 get currentTheme() { return this.themes[this.selectedPecahan] || null },
                 get jumlahDus() {
@@ -121,17 +124,28 @@
                     let b = parseInt(this.noAkhir) || 0;
                     return (b >= a && a > 0) ? (b - a + 1) : 0;
                 },
+                get dusFromBilyet() {
+                    return this.bilyetRaw > 0 ? Math.ceil(this.bilyetRaw / 20000) : 0;
+                },
                 init() {
                     // Inisialisasi format ribuan
                     if (this.bilyetRaw > 0) this.bilyetFormatted = this.formatRibuan(this.bilyetRaw);
                     this.$watch('bilyetFormatted', (val) => {
                         let numeric = val.replace(/\./g, '');
                         this.bilyetRaw = parseInt(numeric) || 0;
+                        if (this.autoDus) this.applyAutoDus();
                     });
                     // Watch trigger cek duplikasi
                     ['selectedPecahan','tahunEmisi','tahunAnggaran','noAwal','noAkhir'].forEach(f => {
                         this.$watch(f, () => this.scheduleDupCheck());
                     });
+                    // Auto-fill range dus dari penyerahan terakhir saat filter berubah
+                    ['selectedPecahan','tahunAnggaran','tahunEmisi'].forEach(f => {
+                        this.$watch(f, () => this.fetchLastDus());
+                    });
+                    this.$watch('autoDus', (val) => { if (val) this.fetchLastDus(); });
+                    // Ambil dus terakhir saat load (jika filter sudah terisi)
+                    this.fetchLastDus();
                 },
                 formatRibuan(n) {
                     if (!n) return '';
@@ -167,6 +181,38 @@
                         this.dupWarning = data.duplicate ? data : null;
                     } catch(e) {}
                     this.isChecking = false;
+                },
+                applyAutoDus() {
+                    if (!this.autoDus) return;
+                    const jumlahDus = this.dusFromBilyet;
+                    if (jumlahDus <= 0) return;
+                    const awal = (parseInt(this.lastDusAkhir) || 0) + 1;
+                    this.noAwal = awal;
+                    this.noAkhir = awal + jumlahDus - 1;
+                },
+                async fetchLastDus() {
+                    if (!this.selectedPecahan || !this.tahunAnggaran || !this.tahunEmisi) {
+                        this.lastDusAkhir = 0;
+                        this.applyAutoDus();
+                        return;
+                    }
+                    this.fetchingLast = true;
+                    try {
+                        const params = new URLSearchParams({
+                            pecahan: this.selectedPecahan,
+                            tahun_anggaran: this.tahunAnggaran,
+                            tahun_emisi: this.tahunEmisi,
+                        });
+                        const res = await fetch('/api/penyerahan-bi/last-dus?' + params.toString(), {
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                        });
+                        const data = await res.json();
+                        this.lastDusAkhir = (data.last_dus_akhir || 0);
+                    } catch(e) {
+                        this.lastDusAkhir = 0;
+                    }
+                    this.fetchingLast = false;
+                    this.applyAutoDus();
                 }
             }" class="bg-white overflow-hidden shadow-sm rounded-xl border-t-4 transition-all duration-500"
                 :class="currentTheme ? currentTheme.border : 'border-indigo-500'">
@@ -310,30 +356,46 @@
                                     :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
                                     required>
                                 <div class="text-[10px] text-gray-400 mt-1 text-right font-mono" x-show="bilyetRaw > 0"
-                                    x-text="bilyetRaw.toLocaleString('id-ID') + ' lembar'"></div>
+                                    x-text="dusFromBilyet.toLocaleString('id-ID') + ' dus'"></div>
                             </div>
                         </div>
 
                         {{-- Baris 3: Range Nomor Dus --}}
                         <div class="bg-indigo-50/70 border border-indigo-100 rounded-xl p-4 mb-5">
-                            <label
-                                class="block text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-3">Range
-                                Nomor Dus</label>
+                            <div class="flex items-center justify-between mb-3 gap-3 flex-wrap">
+                                <label
+                                    class="block text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Range
+                                    Nomor Dus</label>
+                                <label class="flex items-center gap-2 cursor-pointer select-none">
+                                    <span class="text-[10px] font-semibold"
+                                        :class="autoDus ? 'text-indigo-600' : 'text-gray-400'">Otomatis dari penyerahan
+                                        terakhir</span>
+                                    <input type="checkbox" x-model="autoDus" class="sr-only">
+                                    <span class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors"
+                                        :class="autoDus ? 'bg-indigo-500' : 'bg-gray-300'">
+                                        <span
+                                            class="inline-block h-4 w-4 rounded-full bg-white shadow transition-all duration-200"
+                                            :class="autoDus ? 'ml-4' : 'ml-0.5'"></span>
+                                    </span>
+                                </label>
+                            </div>
                             <div class="grid grid-cols-3 gap-4 items-center">
                                 <div>
                                     <label class="block text-[10px] text-gray-400 mb-1">Nomor Dus Awal</label>
                                     <input type="number" name="nomor_dus_awal" x-model.number="noAwal"
                                         value="{{ old('nomor_dus_awal') }}" min="1" placeholder="1"
+                                        :readonly="autoDus"
                                         class="block w-full border-indigo-200 bg-white rounded-lg shadow-sm text-sm py-2.5 px-3 font-bold transition-all focus:ring-opacity-50"
-                                        :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
+                                        :class="[currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500', autoDus ? 'bg-indigo-50/60 text-indigo-400' : '']"
                                         required>
                                 </div>
                                 <div>
                                     <label class="block text-[10px] text-gray-400 mb-1">Nomor Dus Akhir</label>
                                     <input type="number" name="nomor_dus_akhir" x-model.number="noAkhir"
                                         value="{{ old('nomor_dus_akhir') }}" min="1" placeholder="100"
+                                        :readonly="autoDus"
                                         class="block w-full border-indigo-200 bg-white rounded-lg shadow-sm text-sm py-2.5 px-3 font-bold transition-all focus:ring-opacity-50"
-                                        :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500'"
+                                        :class="[currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring) : 'focus:border-indigo-500 focus:ring-indigo-500', autoDus ? 'bg-indigo-50/60 text-indigo-400' : '']"
                                         required>
                                 </div>
                                 <div class="text-center">
@@ -343,8 +405,14 @@
                                     <div class="text-[10px] text-indigo-400" x-show="isChecking">
                                         <span class="animate-pulse">Memeriksa duplikasi...</span>
                                     </div>
+                                    <div class="text-[10px] text-indigo-400" x-show="fetchingLast && autoDus">
+                                        <span class="animate-pulse">Mengambil dus terakhir...</span>
+                                    </div>
                                 </div>
                             </div>
+                            <p class="text-[10px] text-indigo-400/80 mt-2" x-show="autoDus">
+                                Range diisi otomatis dari penyerahan terakhir (pecahan, TA, TE) + jumlah dus = ceil(bilyet / 20.000). Nonaktifkan toggle untuk input manual.
+                            </p>
                         </div>
 
                         {{-- Tombol Simpan --}}

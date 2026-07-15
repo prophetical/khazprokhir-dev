@@ -58,3 +58,9 @@ scratch*.php
 *Copy*
 *.bak
 *.tmp
+_analyze_dus.php
+_analyze_dus2.php
+database/seeders/HcsPengemasanMigrationSeeder.php
+database/seeders/HcsSapMigrationSeeder.php
+database/seeders/HcsSortingMigrationSeeder.php
+backup_khazprokhir_20260715_135312.dump
