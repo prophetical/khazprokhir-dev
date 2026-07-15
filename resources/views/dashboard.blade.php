@@ -154,12 +154,16 @@
                         chartInstance.update();
                     },
                     heatmapData: @json($heatmapData),
+                    heatmapMax: Math.max(1, ...Object.values(@json($heatmapData))),
+                    heatmapPalette: [
+                        '#dcfce7', '#bbf7d0', '#86efac', '#4ade80', '#fde047',
+                        '#facc15', '#fb923c', '#f97316', '#ef4444', '#b91c1c'
+                    ],
                     getHeatmapColor(count) {
-                        if (count === 0) return 'bg-gray-100/50';
-                        if (count < 500000) return 'bg-emerald-200';
-                        if (count < 2000000) return 'bg-emerald-400';
-                        if (count < 5000000) return 'bg-emerald-600';
-                        return 'bg-emerald-800';
+                        if (count === 0) return '#e5e7eb';
+                        const step = this.heatmapMax / this.heatmapPalette.length;
+                        const idx = Math.min(this.heatmapPalette.length - 1, Math.floor(count / step));
+                        return this.heatmapPalette[idx];
                     },
                     formatBilyet(num) {
                         return new Intl.NumberFormat('id-ID').format(num);
@@ -692,11 +696,17 @@
                             class="flex items-center gap-3 px-3 py-1.5 bg-gray-50 rounded-xl border border-gray-100 scale-90 origin-right">
                             <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest">Less</span>
                             <div class="flex gap-0.5">
-                                <div class="w-2.5 h-2.5 rounded-sm bg-gray-100"></div>
-                                <div class="w-2.5 h-2.5 rounded-sm bg-emerald-200"></div>
-                                <div class="w-2.5 h-2.5 rounded-sm bg-emerald-400"></div>
-                                <div class="w-2.5 h-2.5 rounded-sm bg-emerald-600"></div>
-                                <div class="w-2.5 h-2.5 rounded-sm bg-emerald-800"></div>
+                                <div class="w-2.5 h-2.5 rounded-sm" style="background-color: #e5e7eb"></div>
+                                <div class="w-2.5 h-2.5 rounded-sm" style="background-color: #dcfce7"></div>
+                                <div class="w-2.5 h-2.5 rounded-sm" style="background-color: #bbf7d0"></div>
+                                <div class="w-2.5 h-2.5 rounded-sm" style="background-color: #86efac"></div>
+                                <div class="w-2.5 h-2.5 rounded-sm" style="background-color: #4ade80"></div>
+                                <div class="w-2.5 h-2.5 rounded-sm" style="background-color: #fde047"></div>
+                                <div class="w-2.5 h-2.5 rounded-sm" style="background-color: #facc15"></div>
+                                <div class="w-2.5 h-2.5 rounded-sm" style="background-color: #fb923c"></div>
+                                <div class="w-2.5 h-2.5 rounded-sm" style="background-color: #f97316"></div>
+                                <div class="w-2.5 h-2.5 rounded-sm" style="background-color: #ef4444"></div>
+                                <div class="w-2.5 h-2.5 rounded-sm" style="background-color: #b91c1c"></div>
                             </div>
                             <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest">More</span>
                         </div>
@@ -734,7 +744,7 @@
                                             @endphp
                                             <div x-data="{ count: {{ $count }} }"
                                                 class="w-3 h-3 rounded-sm transition-all duration-300 hover:scale-150 hover:z-10 cursor-pointer relative group"
-                                                :class="getHeatmapColor(count)">
+                                                :style="'background-color: ' + getHeatmapColor(count)">
                                                 {{-- Tooltip --}}
                                                 <div
                                                     class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-50">
