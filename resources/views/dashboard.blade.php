@@ -13,6 +13,9 @@
                 return {
                     selectedPecahan: 'TOTAL',
                     activeInschietTab: 'produksi',
+                    trendsModal: false,
+                    heatmapModal: false,
+                    modalChart: null,
                     chartData: @json($chartData),
                     months: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
                     colorThemes: {
@@ -26,6 +29,15 @@
                         'Y': { bg: 'bg-red-500/15', button: 'bg-red-500', shadow: 'shadow-red-100' }
                     },
                     init() {
+                        this.$watch('selectedPecahan', () => {
+                            if (this.trendsModal && this.modalChart) {
+                                const data = this.chartData[this.selectedPecahan] || this.chartData['TOTAL'];
+                                this.modalChart.data.datasets[0].data = [...data.pengemasan];
+                                this.modalChart.data.datasets[1].data = [...data.penyerahan];
+                                this.modalChart.data.datasets[2].data = [...data.target];
+                                this.modalChart.update();
+                            }
+                        });
                         this.$nextTick(() => {
                             const canvas = document.getElementById('unified-chart');
                             if (!canvas) return;
@@ -152,6 +164,147 @@
                         chartInstance.data.datasets[2].data = [...data.target];
 
                         chartInstance.update();
+                    },
+                    syncModalChart() {
+                        const canvas = document.getElementById('unified-chart-modal');
+                        if (!canvas) return;
+                        const ctx = canvas.getContext('2d');
+
+                        const kemasGradient = ctx.createLinearGradient(0, 0, 0, 400);
+                        kemasGradient.addColorStop(0, 'rgba(16, 185, 129, 0.25)');
+                        kemasGradient.addColorStop(1, 'rgba(16, 185, 129, 0)');
+
+                        const serahGradient = ctx.createLinearGradient(0, 0, 0, 400);
+                        serahGradient.addColorStop(0, 'rgba(219, 39, 119, 0.25)');
+                        serahGradient.addColorStop(1, 'rgba(219, 39, 119, 0)');
+
+                        const targetGradient = ctx.createLinearGradient(0, 0, 0, 400);
+                        targetGradient.addColorStop(0, 'rgba(245, 158, 11, 0.15)');
+                        targetGradient.addColorStop(1, 'rgba(245, 158, 11, 0)');
+
+                        const data = this.chartData[this.selectedPecahan] || this.chartData['TOTAL'];
+
+                        if (this.modalChart) this.modalChart.destroy();
+
+                        this.modalChart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: this.months,
+                                datasets: [
+                                    {
+                                        label: 'Pengemasan',
+                                        data: [...data.pengemasan],
+                                        borderColor: '#10b981',
+                                        backgroundColor: kemasGradient,
+                                        fill: true,
+                                        tension: 0.4,
+                                        borderWidth: 4,
+                                        pointRadius: 4,
+                                        pointHoverRadius: 8,
+                                        pointBackgroundColor: '#fff',
+                                        pointBorderColor: '#10b981',
+                                        pointBorderWidth: 3
+                                    },
+                                    {
+                                        label: 'Penyerahan',
+                                        data: [...data.penyerahan],
+                                        borderColor: '#db2777',
+                                        backgroundColor: serahGradient,
+                                        fill: true,
+                                        tension: 0.4,
+                                        borderWidth: 4,
+                                        pointRadius: 4,
+                                        pointHoverRadius: 8,
+                                        pointBackgroundColor: '#fff',
+                                        pointBorderColor: '#db2777',
+                                        pointBorderWidth: 3
+                                    },
+                                    {
+                                        label: 'Target',
+                                        data: [...data.target],
+                                        borderColor: '#f59e0b',
+                                        backgroundColor: targetGradient,
+                                        fill: true,
+                                        tension: 0.4,
+                                        borderWidth: 3,
+                                        pointRadius: 4,
+                                        pointBackgroundColor: '#f59e0b',
+                                        pointBorderColor: '#fff',
+                                        pointBorderWidth: 2
+                                    }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        display: true,
+                                        position: 'bottom',
+                                        labels: {
+                                            usePointStyle: true,
+                                            pointStyle: 'line',
+                                            boxWidth: 40,
+                                            padding: 18,
+                                            font: { size: 12, weight: '900' },
+                                            color: '#6b7280'
+                                        }
+                                    },
+                                    tooltip: {
+                                        backgroundColor: '#111827',
+                                        padding: 16,
+                                        titleFont: { size: 14, weight: '900' },
+                                        bodyFont: { size: 14, weight: 'bold' },
+                                        usePointStyle: true,
+                                        boxPadding: 8,
+                                        callbacks: {
+                                            label: function (context) {
+                                                let label = context.dataset.label || '';
+                                                if (label) label += ': ';
+                                                if (context.parsed.y !== null) {
+                                                    label += new Intl.NumberFormat('id-ID').format(context.parsed.y);
+                                                }
+                                                return label;
+                                            }
+                                        }
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        grid: { color: '#f3f4f6', drawBorder: false },
+                                        ticks: {
+                                            font: { size: 12, weight: '900' },
+                                            color: '#9ca3af',
+                                            padding: 10,
+                                            callback: value => {
+                                                if (value >= 1000000) return (value / 1000000) + 'M';
+                                                if (value >= 1000) return (value / 1000) + 'k';
+                                                return value;
+                                            }
+                                        }
+                                    },
+                                    x: {
+                                        grid: { display: false },
+                                        ticks: { font: { size: 12, weight: '900' }, color: '#9ca3af', padding: 10 }
+                                    }
+                                }
+                            }
+                        });
+                        this.$nextTick(() => { if (this.modalChart) this.modalChart.resize(); });
+                    },
+                    setModalPecahan(p) {
+                        this.selectedPecahan = p;
+                        if (this.trendsModal && this.modalChart) {
+                            const data = this.chartData[p] || this.chartData['TOTAL'];
+                            if (data) {
+                                this.modalChart.data.datasets[0].data = [...data.pengemasan];
+                                this.modalChart.data.datasets[1].data = [...data.penyerahan];
+                                this.modalChart.data.datasets[2].data = [...data.target];
+                                this.modalChart.resize();
+                                this.modalChart.update();
+                            }
+                        }
                     },
                     heatmapData: @json($heatmapData),
                     heatmapMax: Math.max(1, ...Object.values(@json($heatmapData))),
@@ -646,6 +799,17 @@
                                     class="text-[8px] font-black text-gray-500 uppercase tracking-widest whitespace-nowrap">Target</span>
                             </div>
                         </div>
+
+                        {{-- Tombol perlebar --}}
+                        <button type="button" @click="trendsModal = true; setTimeout(() => syncModalChart(), 60)"
+                            class="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gray-50 hover:bg-gray-100 border border-gray-100 text-gray-500 hover:text-indigo-600 transition-all active:scale-95"
+                            title="Perlebar visualisasi">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M4 9V5a1 1 0 011-1h4M20 9V5a1 1 0 00-1-1h-4M4 15v4a1 1 0 001 1h4M20 15v4a1 1 0 01-1 1h-4" />
+                            </svg>
+                            <span class="text-[8px] font-black uppercase tracking-widest">Perlebar</span>
+                        </button>
                     </div>
 
                     {{-- Pecahan Selector Buttons --}}
@@ -692,6 +856,15 @@
                                     Intensitas Produksi Harian</p>
                             </div>
                         </div>
+                        <button type="button" @click="heatmapModal = true"
+                            class="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gray-50 hover:bg-gray-100 border border-gray-100 text-gray-500 hover:text-emerald-600 transition-all active:scale-95"
+                            title="Perlebar visualisasi">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M4 9V5a1 1 0 011-1h4M20 9V5a1 1 0 00-1-1h-4M4 15v4a1 1 0 001 1h4M20 15v4a1 1 0 01-1 1h-4" />
+                            </svg>
+                            <span class="text-[8px] font-black uppercase tracking-widest">Perlebar</span>
+                        </button>
                         <div
                             class="flex items-center gap-3 px-3 py-1.5 bg-gray-50 rounded-xl border border-gray-100 scale-90 origin-right">
                             <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest">Less</span>
@@ -1076,6 +1249,154 @@
                                 <span class="text-[9px] font-black text-gray-400 uppercase">Bilyet</span>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Modal Fullscreen: Visualisasi Trends --}}
+            <div x-show="trendsModal" x-cloak
+                class="fixed inset-0 z-50 bg-white flex flex-col"
+                x-transition.opacity>
+                <div class="flex items-center justify-between px-6 sm:px-10 py-5 border-b border-gray-100">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-1.5 h-12 bg-gradient-to-b from-indigo-600 via-pink-500 to-amber-500 rounded-full">
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-black text-gray-900 tracking-tighter uppercase leading-none">
+                                Visualisasi Trends</h3>
+                            <p class="text-[9px] text-gray-400 font-black uppercase tracking-[0.2em] mt-1">
+                                Target Penyerahan Bulanan</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        {{-- Selector pecahan di dalam modal --}}
+                        <div
+                            class="flex flex-wrap items-center gap-1 bg-gray-50/80 p-1 rounded-2xl border border-gray-100">
+                            <button @click="setModalPecahan('TOTAL')"
+                                :class="selectedPecahan === 'TOTAL' ? 'bg-indigo-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-100'"
+                                class="px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-[0.1em] transition-all duration-500">
+                                OVERVIEW
+                            </button>
+                            @foreach(['S', 'T', 'U', 'V', 'W', 'X', 'Y'] as $pec)
+                                <button @click="setModalPecahan('{{ $pec }}')"
+                                    :class="selectedPecahan === '{{ $pec }}' ? 'bg-indigo-600 text-white shadow-md scale-105' : 'text-gray-500 hover:bg-gray-100'"
+                                    class="w-8 h-8 rounded-lg text-[10px] font-black transition-all duration-500 flex items-center justify-center">
+                                    {{ $pec }}
+                                </button>
+                            @endforeach
+                        </div>
+                        <button type="button" @click="trendsModal = false"
+                            class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-100 transition-all active:scale-95">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            <span class="text-[9px] font-black uppercase tracking-widest">Tutup</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex-1 px-6 sm:px-10 py-8">
+                    <div class="h-full w-full relative">
+                        <canvas id="unified-chart-modal"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Modal Fullscreen: Heatmap Pengemasan --}}
+            <div x-show="heatmapModal" x-cloak
+                class="fixed inset-0 z-50 bg-white flex flex-col overflow-y-auto"
+                x-transition.opacity>
+                <div class="flex items-center justify-between px-6 sm:px-10 py-5 border-b border-gray-100 sticky top-0 bg-white z-10">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-8 h-8 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 shadow-inner">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-black text-gray-900 uppercase tracking-wider leading-none">
+                                Heatmap Pengemasan TA {{ $currentYear }} / TE {{ $currentTE ?: 'SEMUA' }}</h3>
+                            <p class="text-[9px] text-gray-400 font-black uppercase tracking-widest mt-1">
+                                Visualisasi Intensitas Produksi Harian</p>
+                        </div>
+                    </div>
+                    <button type="button" @click="heatmapModal = false"
+                        class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-100 transition-all active:scale-95 shrink-0">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        <span class="text-[9px] font-black uppercase tracking-widest">Tutup</span>
+                    </button>
+                </div>
+                <div class="px-6 sm:px-10 py-8">
+                    <div class="flex items-center gap-3 px-3 py-1.5 bg-gray-50 rounded-xl border border-gray-100 w-fit mb-6 scale-95 origin-left">
+                        <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest">Less</span>
+                        <div class="flex gap-0.5">
+                            <div class="w-3 h-3 rounded-sm" style="background-color: #e5e7eb"></div>
+                            <div class="w-3 h-3 rounded-sm" style="background-color: #dcfce7"></div>
+                            <div class="w-3 h-3 rounded-sm" style="background-color: #bbf7d0"></div>
+                            <div class="w-3 h-3 rounded-sm" style="background-color: #86efac"></div>
+                            <div class="w-3 h-3 rounded-sm" style="background-color: #4ade80"></div>
+                            <div class="w-3 h-3 rounded-sm" style="background-color: #fde047"></div>
+                            <div class="w-3 h-3 rounded-sm" style="background-color: #facc15"></div>
+                            <div class="w-3 h-3 rounded-sm" style="background-color: #fb923c"></div>
+                            <div class="w-3 h-3 rounded-sm" style="background-color: #f97316"></div>
+                            <div class="w-3 h-3 rounded-sm" style="background-color: #ef4444"></div>
+                            <div class="w-3 h-3 rounded-sm" style="background-color: #b91c1c"></div>
+                        </div>
+                        <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest">More</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-8">
+                        @foreach($months as $mIdx)
+                            @php
+                                $monthObj = \Carbon\Carbon::create($heatmapYear, $mIdx, 1);
+                                $monthName = $monthObj->translatedFormat('F');
+                                $daysInMonth = $monthObj->daysInMonth;
+                                $firstDayOfMonth = $monthObj->dayOfWeekIso;
+                            @endphp
+                            <div class="space-y-4">
+                                <div class="flex flex-col items-center">
+                                    <span
+                                        class="text-xs font-black text-gray-600 uppercase tracking-[0.1em] mb-2">{{ $monthName }}</span>
+                                    <div class="grid grid-cols-7 gap-1.5 w-full text-center px-1 mb-1">
+                                        @foreach(['S', 'S', 'R', 'K', 'J', 'S', 'M'] as $day)
+                                            <span class="text-[8px] font-black text-gray-300">{{ $day }}</span>
+                                        @endforeach
+                                    </div>
+                                    <div class="grid grid-cols-7 gap-1.5 w-full justify-items-center">
+                                        @for($i = 1; $i < $firstDayOfMonth; $i++)
+                                            <div class="w-5 h-5"></div>
+                                        @endfor
+                                        @for($d = 1; $d <= $daysInMonth; $d++)
+                                            @php
+                                                $dateStr = sprintf('%s-%02d-%02d', $heatmapYear, $mIdx, $d);
+                                                $count = $heatmapData[$dateStr] ?? 0;
+                                            @endphp
+                                            <div x-data="{ count: {{ $count }} }"
+                                                class="w-5 h-5 rounded-sm transition-all duration-300 hover:scale-150 hover:z-10 cursor-pointer relative group"
+                                                :style="'background-color: ' + getHeatmapColor(count)">
+                                                <div
+                                                    class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-50">
+                                                    <div
+                                                        class="bg-gray-900 text-white text-[9px] font-bold py-1.5 px-2 rounded-lg shadow-xl whitespace-nowrap">
+                                                        <p class="mb-0.5 text-gray-400">
+                                                            {{ \Carbon\Carbon::parse($dateStr)->translatedFormat('d M Y') }}
+                                                        </p>
+                                                        <p class="text-emerald-400 leading-none"
+                                                            x-text="formatBilyet(count) + ' Bilyet'"></p>
+                                                    </div>
+                                                    <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 mx-auto -mt-1"></div>
+                                                </div>
+                                            </div>
+                                        @endfor
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
