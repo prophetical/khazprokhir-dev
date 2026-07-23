@@ -22,7 +22,7 @@
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row sm:items-center justify-start gap-4 sm:gap-6">
             <h2 class="font-semibold text-xl text-white leading-tight">
-                Rincian Persediaan {{ $jenisLabel }}
+                Rincian {{ $jenisLabel }}
             </h2>
             @if ($isRealtime)
                 <div

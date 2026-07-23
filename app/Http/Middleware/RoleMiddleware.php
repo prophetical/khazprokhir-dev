@@ -41,6 +41,18 @@ class RoleMiddleware
             abort(403, 'Anda login dengan role SUPERVISOR. Anda tidak memiliki hak akses untuk melakukan perubahan data.');
         }
 
+        // 3b. Logika role tasil: mirip supervisor (read-only), tapi boleh POST verifikasi laporan
+        if ($userRole === 'tasil') {
+            if ($request->isMethod('GET')) {
+                return $next($request);
+            }
+            // Izinkan POST pada route verifikasi laporan
+            if ($request->isMethod('POST') && $request->routeIs('laporan-harian.verifikasi', 'laporan-harian.rekonsiliasi-verifikasi')) {
+                return $next($request);
+            }
+            abort(403, 'Anda login dengan role TASIL. Anda hanya dapat melihat data dan memverifikasi laporan harian.');
+        }
+
         // 4. Logika role khazai: CRUD penuh pada Registrasi HCS, read-only halaman lain
         if ($userRole === 'khazai') {
             // Boleh semua method pada route registrasi hcs

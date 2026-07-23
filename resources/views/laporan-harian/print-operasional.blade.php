@@ -73,6 +73,10 @@
             </div>
         </header>
 
+        @if(isset($verifikasi) && $verifikasi && in_array(auth()->user()->role, ['tasil', 'admin']))
+            @include('laporan-harian.partials.verifikasi-status')
+        @endif
+
         @if(request('showHcs', 'true') === 'true')
         <div class="mb-10">
             <h3 class="text-lg font-black text-indigo-900 mb-4 flex items-center">

@@ -64,3 +64,5 @@ database/seeders/HcsPengemasanMigrationSeeder.php
 database/seeders/HcsSapMigrationSeeder.php
 database/seeders/HcsSortingMigrationSeeder.php
 backup_khazprokhir_20260715_135312.dump
+test_auth.php
+test_auth2.php

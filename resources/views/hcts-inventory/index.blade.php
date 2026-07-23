@@ -121,7 +121,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-2xl border border-gray-100">
                 <div class="p-4 border-b border-gray-50 flex items-center justify-between">
                     <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest px-2">
-                        {{ __('Rincian Persediaan Unit Terkalkulasi') }}
+                        {{ __('Rincian Persediaan HCTS Per Batch') }}
                     </h3>
                     @if($ta || $te)
                         <div

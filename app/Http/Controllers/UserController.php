@@ -34,7 +34,7 @@ class UserController extends Controller
             'username' => ['required', 'string', 'max:255', 'unique:'.User::class],
             'np' => ['required', 'string', 'max:50', 'unique:'.User::class, 'regex:/^[a-zA-Z0-9]+$/'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['nullable', 'string', 'in:admin,sortir,supervisor,kemas,khazai,khazverutas'],
+            'role' => ['nullable', 'string', 'in:admin,sortir,supervisor,kemas,khazai,khazverutas,tasil'],
         ], [
             'np.regex' => 'NP hanya boleh berisi huruf dan angka.',
             'np.unique' => 'NP sudah digunakan oleh akun lain.',
@@ -57,7 +57,7 @@ class UserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,'.$user->id],
             'username' => ['required', 'string', 'max:255', 'unique:users,username,'.$user->id],
             'np' => ['nullable', 'string', 'max:50', 'unique:users,np,'.$user->id, 'regex:/^[a-zA-Z0-9]+$/'],
-            'role' => ['nullable', 'string', 'in:admin,sortir,supervisor,kemas,khazai,khazverutas'],
+            'role' => ['nullable', 'string', 'in:admin,sortir,supervisor,kemas,khazai,khazverutas,tasil'],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
         ], [
             'np.regex' => 'NP hanya boleh berisi huruf dan angka.',

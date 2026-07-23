@@ -132,6 +132,9 @@ Route::middleware(['auth', 'verified', RoleMiddleware::class])->group(function (
     Route::get('/laporan-harian/export', [LaporanHarianController::class, 'export'])->name('laporan-harian.export');
     Route::get('/laporan-harian/persediaan-detail', [LaporanHarianController::class, 'persediaanDetail'])->name('laporan-harian.persediaan-detail');
     Route::get('/laporan-harian/persediaan-detail-data', [LaporanHarianController::class, 'persediaanDetailData'])->name('laporan-harian.persediaan-detail-data');
+    Route::post('/laporan-harian/verifikasi', [LaporanHarianController::class, 'verifikasiHarian'])->name('laporan-harian.verifikasi');
+    Route::post('/laporan-harian/rekonsiliasi/verifikasi', [LaporanHarianController::class, 'verifikasiRekonsiliasi'])->name('laporan-harian.rekonsiliasi-verifikasi');
+    Route::post('/laporan-harian/verifikasi/destroy', [LaporanHarianController::class, 'destroyVerifikasi'])->name('laporan-harian.verifikasi-destroy');
 
     // Manajemen Target
     Route::get('/targets', [TargetController::class, 'index'])->name('targets.index');

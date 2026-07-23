@@ -121,7 +121,7 @@
                                 </div>
                             @endif
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                @foreach(['admin' => 'Administrator', 'supervisor' => 'Supervisor', 'sortir' => 'Staff Sortir', 'kemas' => 'Staff Pengemasan', 'khazverutas' => 'Staff Khazverutas'] as $val => $label)
+                                @foreach(['admin' => 'Administrator', 'supervisor' => 'Supervisor', 'tasil' => 'Tasil (Verifikator)', 'sortir' => 'Staff Sortir', 'kemas' => 'Staff Pengemasan', 'khazverutas' => 'Staff Khazverutas'] as $val => $label)
                                     <label
                                         class="relative flex items-center p-4 cursor-pointer rounded-lg border-2 transition-all"
                                         :class="role === '{{ $val }}' ? 'bg-white dark:bg-slate-800 border-indigo-500 dark:border-indigo-600 shadow-md ring-2 ring-indigo-500/10' : 'bg-transparent border-gray-100 dark:border-slate-800 hover:border-indigo-200 dark:hover:border-indigo-900'">
