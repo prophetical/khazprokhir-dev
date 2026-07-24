@@ -214,9 +214,6 @@
                 @endif
             </div>
 
-            {{-- Hidden iframe for JSON download --}}
-            <iframe id="jsonDownloadFrame" name="jsonDownloadFrame" style="display:none;" aria-hidden="true"></iframe>
-
             <script>
                 (function() {
                     const form = document.getElementById('verifikasiForm');
@@ -237,16 +234,6 @@
                         baseUrl.searchParams.set('tanggal_laporan', tanggalLaporan);
                         baseUrl.searchParams.set('tahun_anggaran', tahunAnggaran);
                         baseUrl.searchParams.set('tahun_emisi', tahunEmisi);
-                        const jsonUrl = baseUrl.toString();
-
-                        const downloadForm = document.createElement('form');
-                        downloadForm.method = 'GET';
-                        downloadForm.action = jsonUrl;
-                        downloadForm.target = 'jsonDownloadFrame';
-                        downloadForm.style.display = 'none';
-                        document.body.appendChild(downloadForm);
-                        downloadForm.submit();
-                        document.body.removeChild(downloadForm);
 
                         fetch(form.action, {
                             method: 'POST',
@@ -273,6 +260,7 @@
                                 if (data.print_url) {
                                     window.open(data.print_url, '_blank');
                                 }
+                                window.open(baseUrl.toString(), '_blank');
                             } else {
                                 alert('Gagal memverifikasi laporan.');
                                 btn.disabled = false;
