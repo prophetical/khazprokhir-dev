@@ -232,13 +232,25 @@
                             headers: {
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
                                 'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest',
                             },
                         })
-                        .then(response => response.json())
+                        .then(async response => {
+                            const contentType = response.headers.get('content-type') || '';
+                            if (!response.ok || !contentType.includes('application/json')) {
+                                const text = await response.text();
+                                throw new Error(text || 'HTTP ' + response.status);
+                            }
+                            return response.json();
+                        })
                         .then(data => {
-                            if (data.success) {
-                                document.getElementById('verifikasiContainer').outerHTML = data.verified_html;
-                                window.open(data.print_url, '_blank');
+                            if (data && data.success) {
+                                if (data.verified_html) {
+                                    document.getElementById('verifikasiContainer').outerHTML = data.verified_html;
+                                }
+                                if (data.print_url) {
+                                    window.open(data.print_url, '_blank');
+                                }
                                 if (data.json_url) {
                                     const a = document.createElement('a');
                                     a.href = data.json_url;
@@ -254,8 +266,8 @@
                             }
                         })
                         .catch(error => {
-                            console.error('Error:', error);
-                            alert('Terjadi kesalahan.');
+                            console.error('Verifikasi error:', error);
+                            alert('Terjadi kesalahan: ' + (error.message || 'Silakan coba lagi.'));
                             btn.disabled = false;
                             btn.innerHTML = originalText;
                         });
