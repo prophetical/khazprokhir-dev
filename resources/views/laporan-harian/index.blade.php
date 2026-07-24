@@ -233,7 +233,11 @@
                         const tahunAnggaran = formData.get('tahun_anggaran');
                         const tahunEmisi = formData.get('tahun_emisi') || '';
 
-                        const jsonUrl = '{{ route('laporan-harian.export-json') }}?tanggal_laporan=' + encodeURIComponent(tanggalLaporan) + '&tahun_anggaran=' + encodeURIComponent(tahunAnggaran) + '&tahun_emisi=' + encodeURIComponent(tahunEmisi);
+                        const baseUrl = new URL('/laporan-harian/export-json', window.location.origin);
+                        baseUrl.searchParams.set('tanggal_laporan', tanggalLaporan);
+                        baseUrl.searchParams.set('tahun_anggaran', tahunAnggaran);
+                        baseUrl.searchParams.set('tahun_emisi', tahunEmisi);
+                        const jsonUrl = baseUrl.toString();
 
                         const downloadForm = document.createElement('form');
                         downloadForm.method = 'GET';
