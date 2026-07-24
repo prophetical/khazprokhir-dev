@@ -214,6 +214,9 @@
                 @endif
             </div>
 
+            {{-- Hidden iframe for JSON download --}}
+            <iframe id="jsonDownloadFrame" name="jsonDownloadFrame" style="display:none;" aria-hidden="true"></iframe>
+
             <script>
                 (function() {
                     const form = document.getElementById('verifikasiForm');
@@ -225,6 +228,21 @@
                         const originalText = btn.innerHTML;
                         btn.disabled = true;
                         btn.innerHTML = 'Memproses...';
+
+                        const tanggalLaporan = formData.get('tanggal_laporan');
+                        const tahunAnggaran = formData.get('tahun_anggaran');
+                        const tahunEmisi = formData.get('tahun_emisi') || '';
+
+                        const jsonUrl = '{{ route('laporan-harian.export-json') }}?tanggal_laporan=' + encodeURIComponent(tanggalLaporan) + '&tahun_anggaran=' + encodeURIComponent(tahunAnggaran) + '&tahun_emisi=' + encodeURIComponent(tahunEmisi);
+
+                        const downloadForm = document.createElement('form');
+                        downloadForm.method = 'GET';
+                        downloadForm.action = jsonUrl;
+                        downloadForm.target = 'jsonDownloadFrame';
+                        downloadForm.style.display = 'none';
+                        document.body.appendChild(downloadForm);
+                        downloadForm.submit();
+                        document.body.removeChild(downloadForm);
 
                         fetch(form.action, {
                             method: 'POST',
@@ -250,14 +268,6 @@
                                 }
                                 if (data.print_url) {
                                     window.open(data.print_url, '_blank');
-                                }
-                                if (data.json_url) {
-                                    const a = document.createElement('a');
-                                    a.href = data.json_url;
-                                    a.download = '';
-                                    document.body.appendChild(a);
-                                    a.click();
-                                    document.body.removeChild(a);
                                 }
                             } else {
                                 alert('Gagal memverifikasi laporan.');

@@ -560,21 +560,9 @@ class LaporanHarianController extends Controller
             'tahun_emisi' => $validated['tahun_emisi'] ?? '',
         ]);
 
-        $jsonUrl = null;
-        try {
-            $jsonUrl = route('laporan-harian.export-json', [
-                'tanggal_laporan' => $validated['tanggal_laporan'],
-                'tahun_anggaran' => $validated['tahun_anggaran'],
-                'tahun_emisi' => $validated['tahun_emisi'] ?? '',
-            ]);
-        } catch (\Throwable $e) {
-            \Log::warning('Gagal generate json_url untuk verifikasi harian: ' . $e->getMessage());
-        }
-
         return response()->json([
             'success' => true,
             'print_url' => $printUrl,
-            'json_url' => $jsonUrl,
             'verified_html' => $verifiedHtml,
         ]);
     }
