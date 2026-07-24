@@ -267,6 +267,15 @@ class ReportService
         $footer = ['diterima' => 0, 'dikemas' => 0, 'diserahkan' => 0, 'siap_kemas' => 0, 'siap_kirim' => 0, 'total' => 0];
 
         foreach ($basis as $b) {
+            $relevant = match ($jenis) {
+                'kemas' => (int) $b['siap_kemas'] > 0,
+                'kirim' => (int) $b['siap_kirim'] > 0,
+                'total' => (int) $b['total'] > 0,
+            };
+            if (! $relevant) {
+                continue;
+            }
+
             $key = $b['batch'].'|'.$b['seri'];
             $pack = match ($jenis) {
                 'kemas' => $ranges['kemas'][$key] ?? '-',

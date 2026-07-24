@@ -12,7 +12,7 @@
             {{-- Header --}}
             <div class="flex justify-between items-start border-b-2 border-gray-900 pb-4 mb-6">
                 <div>
-                    <h1 class="text-3xl font-black uppercase tracking-tighter text-gray-900">LAPORAN HARIAN TERINTEGRASI
+                    <h1 class="text-3xl font-black uppercase tracking-tighter text-gray-900">LAPORAN HARIAN
                     </h1>
                     <p class="text-sm font-bold text-gray-500 mt-1 uppercase tracking-widest">Sistem Pengelolaan HCS —
                         Khazprokhir</p>

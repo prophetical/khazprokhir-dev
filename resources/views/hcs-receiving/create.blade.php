@@ -331,15 +331,20 @@
                                                     </label>
                                                 </div>
 
-                                                <div class="flex items-center relative gap-3 ml-1">
-                                                    <div class="relative inline-flex items-center cursor-pointer group">
-                                                        <input id="repass" name="repass" value="repass" type="checkbox"
-                                                            class="w-4 h-4 rounded-md border-gray-300 shadow-sm transition-all duration-300 text-indigo-600 focus:ring-indigo-500"
-                                                            {{ old('repass') ? 'checked' : '' }}>
-                                                        <label for="repass"
-                                                            class="ml-2 text-[10px] font-bold text-gray-600 cursor-pointer">Repass</label>
-                                                    </div>
-                                                    <div class="h-6 w-[1px] bg-gray-100 hidden sm:block"></div>
+                                                    <div class="flex items-center relative gap-3 ml-1">
+                                                        <div class="relative inline-flex items-center cursor-pointer group">
+                                                            <input id="repass" name="repass" value="repass" type="checkbox"
+                                                                class="w-4 h-4 rounded-md border-gray-300 shadow-sm transition-all duration-300 text-indigo-600 focus:ring-indigo-500"
+                                                                {{ old('repass') ? 'checked' : '' }}>
+                                                            <label for="repass"
+                                                                class="ml-2 text-[10px] font-bold text-gray-600 cursor-pointer">Repass</label>
+                                                        </div>
+                                                        <div class="h-6 w-[1px] bg-gray-100 hidden sm:block"></div>
+                                                        <div class="relative inline-flex items-center cursor-pointer group">
+                                                            <input type="checkbox" id="bulk_select_toggle" class="sr-only peer">
+                                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                                                            <span class="ml-3 text-[9px] font-black text-gray-400 uppercase tracking-widest">Pilih 10</span>
+                                                        </div>
                                                     <div
                                                         class="text-[9px] font-black uppercase tracking-widest text-gray-400 leading-tight">
                                                         Total Pack: <span id="packs_needed_display"
@@ -538,6 +543,7 @@
                 let packsNeeded = 0;
                 let selectedPacks = {!! json_encode(array_map('intval', old('packs', []))) !!} || [];
                 let usedPacks = []; // array dari { pack_number, supplier, hcs_sorting_id, nomor_bon }
+                let bulkSelectEnabled = false;
 
                 // Fungsi pembantu untuk membatasi eksekusi fungsi (debounce)
                 function debounce(func, wait) {
@@ -657,6 +663,10 @@
                 function togglePack(number) {
                     if (usedPacks.some(p => p.pack_number === number)) return;
 
+                    if (bulkSelectEnabled) {
+                        return toggleBlock(number);
+                    }
+
                     let index = selectedPacks.indexOf(number);
                     if (index > -1) {
                         selectedPacks.splice(index, 1);
@@ -680,6 +690,57 @@
                                 });
                             }
                         }
+                    }
+                    renderGrid();
+                }
+
+                function toggleBlock(n) {
+                    if (selectedPacks.includes(n)) {
+                        selectedPacks = selectedPacks.filter(p => p !== n);
+                        renderGrid();
+                        return;
+                    }
+
+                    const blockStart = Math.floor((n - 1) / 10) * 10 + 1;
+                    const blockEnd = blockStart + 9;
+
+                    const available = [];
+                    for (let i = blockStart; i <= blockEnd; i++) {
+                        if (usedPacks.some(p => p.pack_number === i)) continue;
+                        if (selectedPacks.includes(i)) continue;
+                        available.push(i);
+                    }
+
+                    const remaining = packsNeeded - selectedPacks.length;
+                    if (remaining <= 0) {
+                        Swal.fire({
+                            title: 'Batas Terlampaui',
+                            text: `Anda sudah memilih ${packsNeeded} pack.`,
+                            icon: 'warning',
+                            confirmButtonColor: '#4f46e5'
+                        });
+                        renderGrid();
+                        return;
+                    }
+
+                    const toSelect = available.slice(0, remaining);
+                    if (toSelect.length === 0) {
+                        Swal.fire({
+                            title: 'Pack Tidak Tersedia',
+                            text: 'Semua pack dalam blok ini sudah terisi atau sudah dipilih.',
+                            icon: 'info',
+                            confirmButtonColor: '#4f46e5'
+                        });
+                        renderGrid();
+                        return;
+                    }
+
+                    const blockAlreadySelected = selectedPacks.some(p => p >= blockStart && p <= blockEnd);
+                    if (blockAlreadySelected) {
+                        selectedPacks = selectedPacks.filter(p => p < blockStart || p > blockEnd);
+                    } else {
+                        selectedPacks.push(...toSelect);
+                        selectedPacks.sort((a, b) => a - b);
                     }
                     renderGrid();
                 }
@@ -804,6 +865,11 @@
                 });
 
                 selectSupplier.addEventListener('change', renderGrid);
+
+                const bulkSelectToggle = document.getElementById('bulk_select_toggle');
+                bulkSelectToggle?.addEventListener('change', (e) => {
+                    bulkSelectEnabled = e.target.checked;
+                });
 
                 gridContainer.addEventListener('click', (e) => {
                     const btn = e.target.closest('.pack-btn');

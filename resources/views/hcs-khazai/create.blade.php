@@ -184,18 +184,27 @@
                                         <p class="text-lg font-black text-indigo-700 leading-none"
                                             x-text="selectedPacks.length"></p>
                                     </div>
-                                                                <div class="flex items-center justify-between mb-1">
-                                <div
-                                    class="flex items-center gap-3 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
-                                    <span class="font-black text-gray-400 uppercase text-[9px]">Pack buntut:</span>
-                                    <label class="relative inline-flex items-center cursor-pointer scale-75">
-                                        <input type="checkbox" x-model="formData.isManual" class="sr-only peer">
-                                        <div
-                                            class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500">
-                                        </div>
-                                    </label>
-                                </div>
-                            </div>
+                                                                    <div class="flex items-center justify-between mb-1">
+                                                                <div
+                                                                    class="flex items-center gap-3 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
+                                                                    <span class="font-black text-gray-400 uppercase text-[9px]">Pack buntut:</span>
+                                                                    <label class="relative inline-flex items-center cursor-pointer scale-75">
+                                                                        <input type="checkbox" x-model="formData.isManual" class="sr-only peer">
+                                                                        <div
+                                                                            class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500">
+                                                                        </div>
+                                                                    </label>
+                                                                </div>
+                                                                <div class="flex items-center gap-3 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
+                                                                    <span class="font-black text-gray-400 uppercase text-[9px]">Pilih 10 Pack:</span>
+                                                                    <label class="relative inline-flex items-center cursor-pointer scale-75">
+                                                                        <input type="checkbox" x-model="isBulkSelect" class="sr-only peer">
+                                                                        <div
+                                                                            class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600">
+                                                                        </div>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
                                 </div>
                             </div>
 
@@ -311,6 +320,7 @@
                 packsNeeded: 0,
                 isLoading: false,
                 excludeId: '{{ isset($hcsKhazaiRegistration) ? $hcsKhazaiRegistration->id : "" }}',
+                isBulkSelect: false,
 
                 calculatePacks() {
                     if (this.formData.isManual) {
@@ -469,9 +479,63 @@
                 },
 
                 togglePack(n) {
-                    // Prevent selecting if occupied
                     if (this.packStatuses[n]) return;
 
+                    if (this.isBulkSelect) {
+                        this.toggleBlock(n);
+                    } else {
+                        this.toggleSingle(n);
+                    }
+                },
+
+                toggleBlock(n) {
+                    if (this.selectedPacks.includes(n)) {
+                        this.selectedPacks = this.selectedPacks.filter(i => i !== n);
+                        return;
+                    }
+
+                    const blockStart = Math.floor((n - 1) / 10) * 10 + 1;
+                    const blockEnd = blockStart + 9;
+
+                    const available = [];
+                    for (let i = blockStart; i <= blockEnd; i++) {
+                        if (this.packStatuses[i]) continue;
+                        if (this.selectedPacks.includes(i)) continue;
+                        available.push(i);
+                    }
+
+                    const remaining = this.packsNeeded - this.selectedPacks.length;
+                    if (remaining <= 0) {
+                        Swal.fire({
+                            title: 'Batas Terlampaui',
+                            text: `Anda sudah memilih ${this.packsNeeded} pack.`,
+                            icon: 'warning',
+                            confirmButtonColor: '#4f46e5'
+                        });
+                        return;
+                    }
+
+                    const toSelect = available.slice(0, remaining);
+                    if (toSelect.length === 0) {
+                        Swal.fire({
+                            title: 'Pack Tidak Tersedia',
+                            text: 'Semua pack dalam blok ini sudah terisi atau sudah dipilih.',
+                            icon: 'info',
+                            confirmButtonColor: '#4f46e5'
+                        });
+                        return;
+                    }
+
+                    const blockAlreadySelected = this.selectedPacks.some(p => p >= blockStart && p <= blockEnd);
+                    if (blockAlreadySelected) {
+                        this.selectedPacks = this.selectedPacks.filter(p => p < blockStart || p > blockEnd);
+                    } else {
+                        this.selectedPacks.push(...toSelect);
+                    }
+                    this.selectedPacks.sort((a, b) => a - b);
+                },
+
+                toggleSingle(n) {
                     if (this.selectedPacks.includes(n)) {
                         this.selectedPacks = this.selectedPacks.filter(i => i !== n);
                     } else {
