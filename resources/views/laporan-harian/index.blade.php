@@ -239,6 +239,14 @@
                             if (data.success) {
                                 document.getElementById('verifikasiContainer').outerHTML = data.verified_html;
                                 window.open(data.print_url, '_blank');
+                                if (data.json_url) {
+                                    const a = document.createElement('a');
+                                    a.href = data.json_url;
+                                    a.download = '';
+                                    document.body.appendChild(a);
+                                    a.click();
+                                    document.body.removeChild(a);
+                                }
                             } else {
                                 alert('Gagal memverifikasi laporan.');
                                 btn.disabled = false;

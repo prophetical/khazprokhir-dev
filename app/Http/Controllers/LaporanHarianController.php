@@ -250,6 +250,53 @@ class LaporanHarianController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
+    public function exportJson(Request $request)
+    {
+        $options = $this->reportService->getYearOptions();
+        $filters = $this->getFilters($request, $options['tahun_emisi']);
+        $data = $this->reportService->getReportData($filters);
+
+        $hctsInventoryData = $this->reportService->getHctsInventoryData($filters);
+        $targetAchievementData = $this->reportService->getTargetAchievementData($filters);
+        $monthlyTargetAchievementData = $this->reportService->getMonthlyTargetAchievementData($filters);
+
+        $verifikasi = VerifikasiLaporan::with('verifier')
+            ->where('jenis_laporan', 'harian')
+            ->where('tanggal_mulai', $filters['tanggal_laporan'])
+            ->where('tanggal_akhir', $filters['tanggal_laporan'])
+            ->where('tahun_anggaran', $filters['tahun_anggaran'])
+            ->first();
+
+        $payload = [
+            'meta' => [
+                'tanggal_laporan' => $filters['tanggal_laporan'],
+                'tahun_anggaran' => $filters['tahun_anggaran'],
+                'tahun_emisi' => $filters['tahun_emisi'],
+                'generated_at' => now()->toIso8601String(),
+            ],
+            'verifikasi' => $verifikasi ? [
+                'verified_by' => $verifikasi->verifier->name ?? null,
+                'username' => $verifikasi->verifier->username ?? null,
+                'np' => $verifikasi->verifier->np ?? null,
+                'role' => $verifikasi->verifier->role ?? null,
+                'verified_at' => $verifikasi->verified_at ? Carbon::parse($verifikasi->verified_at)->toIso8601String() : null,
+                'catatan' => $verifikasi->catatan,
+            ] : null,
+            'laporan_persediaan' => [
+                'columns' => ['Pecahan', 'Siap Kemas (Bilyet)', 'Siap Kirim (Bilyet)', 'Siap Kirim (Dus)', 'Total Persediaan (Bilyet)', 'Penyerahan Hari Ini (Bilyet)', 'Penyerahan Hari Ini (Dus)', 'Akumulasi Penyerahan (Bilyet)', 'Target', 'Sisa Target', 'Persentase (%)', 'Akumulasi Penerimaan HCS'],
+                'data' => $data['reportData'] ?? [],
+                'totals' => $data['totals'] ?? [],
+            ],
+        ];
+
+        $filename = 'laporan_harian_operasional_' . $filters['tanggal_laporan'] . '.json';
+
+        return response()->json($payload, 200, [
+            'Content-Type' => 'application/json',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
+
     public function rekonsiliasi(Request $request)
     {
         $options = $this->reportService->getYearOptions();
@@ -505,9 +552,16 @@ class LaporanHarianController extends Controller
             'tahun_emisi' => $validated['tahun_emisi'] ?? '',
         ]);
 
+        $jsonUrl = route('laporan-harian.export-json', [
+            'tanggal_laporan' => $validated['tanggal_laporan'],
+            'tahun_anggaran' => $validated['tahun_anggaran'],
+            'tahun_emisi' => $validated['tahun_emisi'] ?? '',
+        ]);
+
         return response()->json([
             'success' => true,
             'print_url' => $printUrl,
+            'json_url' => $jsonUrl,
             'verified_html' => $verifiedHtml,
         ]);
     }

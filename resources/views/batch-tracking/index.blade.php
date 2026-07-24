@@ -289,7 +289,7 @@
                                                 <div>
                                                     <h4
                                                         class="text-xl font-black text-gray-900 uppercase tracking-tighter leading-none">
-                                                        Rekap Grid Pack</h4>
+                                                        Rekap Pack</h4>
                                                     <div
                                                         class="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-400 font-bold uppercase tracking-widest">
                                                         <span class="flex items-center gap-1.5">Batch: <span

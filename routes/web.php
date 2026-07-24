@@ -130,6 +130,7 @@ Route::middleware(['auth', 'verified', RoleMiddleware::class])->group(function (
     Route::get('/laporan-harian/realtime-partial', [LaporanHarianController::class, 'getRealtimePartial'])->name('laporan-harian.realtime-partial');
     Route::get('/laporan-harian/print', [LaporanHarianController::class, 'print'])->name('laporan-harian.print');
     Route::get('/laporan-harian/export', [LaporanHarianController::class, 'export'])->name('laporan-harian.export');
+    Route::get('/laporan-harian/export-json', [LaporanHarianController::class, 'exportJson'])->name('laporan-harian.export-json');
     Route::get('/laporan-harian/persediaan-detail', [LaporanHarianController::class, 'persediaanDetail'])->name('laporan-harian.persediaan-detail');
     Route::get('/laporan-harian/persediaan-detail-data', [LaporanHarianController::class, 'persediaanDetailData'])->name('laporan-harian.persediaan-detail-data');
     Route::post('/laporan-harian/verifikasi', [LaporanHarianController::class, 'verifikasiHarian'])->name('laporan-harian.verifikasi');
