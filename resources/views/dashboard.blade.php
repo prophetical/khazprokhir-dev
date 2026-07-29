@@ -28,14 +28,13 @@
                         'X': { bg: 'bg-blue-500/15', button: 'bg-blue-500', shadow: 'shadow-blue-100' },
                         'Y': { bg: 'bg-red-500/15', button: 'bg-red-500', shadow: 'shadow-red-100' }
                     },
+                    trendChartResizeTimer: null,
                     init() {
-                        this.$watch('selectedPecahan', () => {
-                            if (this.trendsModal && this.modalChart) {
-                                const data = this.chartData[this.selectedPecahan] || this.chartData['TOTAL'];
-                                this.modalChart.data.datasets[0].data = [...data.pengemasan];
-                                this.modalChart.data.datasets[1].data = [...data.penyerahan];
-                                this.modalChart.data.datasets[2].data = [...data.target];
-                                this.modalChart.update();
+                        this.$watch('trendsModal', (value) => {
+                            if (value) {
+                                this.$nextTick(() => {
+                                    setTimeout(() => this.syncModalChart(), 150);
+                                });
                             }
                         });
                         this.$nextTick(() => {
@@ -168,19 +167,28 @@
                     syncModalChart() {
                         const canvas = document.getElementById('unified-chart-modal');
                         if (!canvas) return;
-                        const ctx = canvas.getContext('2d');
 
-                        const kemasGradient = ctx.createLinearGradient(0, 0, 0, 400);
-                        kemasGradient.addColorStop(0, 'rgba(16, 185, 129, 0.25)');
-                        kemasGradient.addColorStop(1, 'rgba(16, 185, 129, 0)');
+                        const tryCreate = (attempts = 0) => {
+                            const rect = canvas.getBoundingClientRect();
+                            if ((rect.width === 0 || rect.height === 0) && attempts < 20) {
+                                setTimeout(() => tryCreate(attempts + 1), 50);
+                                return;
+                            }
 
-                        const serahGradient = ctx.createLinearGradient(0, 0, 0, 400);
-                        serahGradient.addColorStop(0, 'rgba(219, 39, 119, 0.25)');
-                        serahGradient.addColorStop(1, 'rgba(219, 39, 119, 0)');
+                            const ctx = canvas.getContext('2d');
 
-                        const targetGradient = ctx.createLinearGradient(0, 0, 0, 400);
-                        targetGradient.addColorStop(0, 'rgba(245, 158, 11, 0.15)');
-                        targetGradient.addColorStop(1, 'rgba(245, 158, 11, 0)');
+                            try {
+                                const kemasGradient = ctx.createLinearGradient(0, 0, 0, 400);
+                                kemasGradient.addColorStop(0, 'rgba(16, 185, 129, 0.25)');
+                                kemasGradient.addColorStop(1, 'rgba(16, 185, 129, 0)');
+
+                                const serahGradient = ctx.createLinearGradient(0, 0, 0, 400);
+                                serahGradient.addColorStop(0, 'rgba(219, 39, 119, 0.25)');
+                                serahGradient.addColorStop(1, 'rgba(219, 39, 119, 0)');
+
+                                const targetGradient = ctx.createLinearGradient(0, 0, 0, 400);
+                                targetGradient.addColorStop(0, 'rgba(245, 158, 11, 0.15)');
+                                targetGradient.addColorStop(1, 'rgba(245, 158, 11, 0)');
 
                         const data = this.chartData[this.selectedPecahan] || this.chartData['TOTAL'];
 
@@ -193,7 +201,7 @@
                                 datasets: [
                                     {
                                         label: 'Pengemasan',
-                                        data: [...data.pengemasan],
+                                        data: [...(data.pengemasan || [])],
                                         borderColor: '#10b981',
                                         backgroundColor: kemasGradient,
                                         fill: true,
@@ -207,7 +215,7 @@
                                     },
                                     {
                                         label: 'Penyerahan',
-                                        data: [...data.penyerahan],
+                                        data: [...(data.penyerahan || [])],
                                         borderColor: '#db2777',
                                         backgroundColor: serahGradient,
                                         fill: true,
@@ -221,7 +229,7 @@
                                     },
                                     {
                                         label: 'Target',
-                                        data: [...data.target],
+                                        data: [...(data.target || [])],
                                         borderColor: '#f59e0b',
                                         backgroundColor: targetGradient,
                                         fill: true,
@@ -234,77 +242,74 @@
                                     }
                                 ]
                             },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: {
-                                    legend: {
-                                        display: true,
-                                        position: 'bottom',
-                                        labels: {
-                                            usePointStyle: true,
-                                            pointStyle: 'line',
-                                            boxWidth: 40,
-                                            padding: 18,
-                                            font: { size: 12, weight: '900' },
-                                            color: '#6b7280'
-                                        }
-                                    },
-                                    tooltip: {
-                                        backgroundColor: '#111827',
-                                        padding: 16,
-                                        titleFont: { size: 14, weight: '900' },
-                                        bodyFont: { size: 14, weight: 'bold' },
-                                        usePointStyle: true,
-                                        boxPadding: 8,
-                                        callbacks: {
-                                            label: function (context) {
-                                                let label = context.dataset.label || '';
-                                                if (label) label += ': ';
-                                                if (context.parsed.y !== null) {
-                                                    label += new Intl.NumberFormat('id-ID').format(context.parsed.y);
+                                    options: {
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                        plugins: {
+                                            legend: {
+                                                display: true,
+                                                position: 'bottom',
+                                                labels: {
+                                                    usePointStyle: true,
+                                                    pointStyle: 'line',
+                                                    boxWidth: 40,
+                                                    padding: 18,
+                                                    font: { size: 12, weight: '900' },
+                                                    color: '#6b7280'
                                                 }
-                                                return label;
+                                            },
+                                            tooltip: {
+                                                backgroundColor: '#111827',
+                                                padding: 16,
+                                                titleFont: { size: 14, weight: '900' },
+                                                bodyFont: { size: 14, weight: 'bold' },
+                                                usePointStyle: true,
+                                                boxPadding: 8,
+                                                callbacks: {
+                                                    label: function (context) {
+                                                        let label = context.dataset.label || '';
+                                                        if (label) label += ': ';
+                                                        if (context.parsed.y !== null) {
+                                                            label += new Intl.NumberFormat('id-ID').format(context.parsed.y);
+                                                        }
+                                                        return label;
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        scales: {
+                                            y: {
+                                                beginAtZero: true,
+                                                grid: { color: '#f3f4f6', drawBorder: false },
+                                                ticks: {
+                                                    font: { size: 12, weight: '900' },
+                                                    color: '#9ca3af',
+                                                    padding: 10,
+                                                    callback: value => {
+                                                        if (value >= 1000000) return (value / 1000000) + 'M';
+                                                        if (value >= 1000) return (value / 1000) + 'k';
+                                                        return value;
+                                                    }
+                                                }
+                                            },
+                                            x: {
+                                                grid: { display: false },
+                                                ticks: { font: { size: 12, weight: '900' }, color: '#9ca3af', padding: 10 }
                                             }
                                         }
                                     }
-                                },
-                                scales: {
-                                    y: {
-                                        beginAtZero: true,
-                                        grid: { color: '#f3f4f6', drawBorder: false },
-                                        ticks: {
-                                            font: { size: 12, weight: '900' },
-                                            color: '#9ca3af',
-                                            padding: 10,
-                                            callback: value => {
-                                                if (value >= 1000000) return (value / 1000000) + 'M';
-                                                if (value >= 1000) return (value / 1000) + 'k';
-                                                return value;
-                                            }
-                                        }
-                                    },
-                                    x: {
-                                        grid: { display: false },
-                                        ticks: { font: { size: 12, weight: '900' }, color: '#9ca3af', padding: 10 }
-                                    }
-                                }
+                                });
+                                this.$nextTick(() => { if (this.modalChart) this.modalChart.resize(); });
+                            } catch (e) {
+                                console.error('Dashboard modal chart init failed:', e && e.message || e);
                             }
-                        });
-                        this.$nextTick(() => { if (this.modalChart) this.modalChart.resize(); });
+                        };
+
+                        tryCreate();
                     },
                     setModalPecahan(p) {
                         this.selectedPecahan = p;
-                        if (this.trendsModal && this.modalChart) {
-                            const data = this.chartData[p] || this.chartData['TOTAL'];
-                            if (data) {
-                                this.modalChart.data.datasets[0].data = [...data.pengemasan];
-                                this.modalChart.data.datasets[1].data = [...data.penyerahan];
-                                this.modalChart.data.datasets[2].data = [...data.target];
-                                this.modalChart.resize();
-                                this.modalChart.update();
-                            }
-                        }
+                        this.syncModalChart();
                     },
                     heatmapData: @json($heatmapData),
                     heatmapMax: Math.max(1, ...Object.values(@json($heatmapData))),
@@ -797,7 +802,7 @@
             </div>
             
             {{-- Tombol perlebar --}}
-            <button type="button" @click="trendsModal = true; setTimeout(() => syncModalChart(), 60)"
+            <button type="button" @click="trendsModal = true"
                 class="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gray-50 hover:bg-gray-100 border border-gray-100 text-gray-500 hover:text-indigo-600 transition-all active:scale-95"
                 title="Perlebar visualisasi">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

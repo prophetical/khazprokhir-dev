@@ -74,13 +74,7 @@
                                             <div class="flex items-center gap-2 mb-1.5">
                                                 <div class="w-6 h-6 rounded flex items-center justify-center transition-colors"
                                                     :class="inputType === 'registration' ? (currentTheme ? currentTheme.bg : 'bg-indigo-500') : 'bg-slate-100'">
-                                                    <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor"
-                                                        viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2.5"
-                                                            d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01">
-                                                        </path>
-                                                    </svg>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-qrcode"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M4 5a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1l0 -4" /><path d="M7 17l0 .01" /><path d="M14 5a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1l0 -4" /><path d="M7 7l0 .01" /><path d="M4 15a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1l0 -4" /><path d="M17 7l0 .01" /><path d="M14 14l3 0" /><path d="M20 14l0 .01" /><path d="M14 14l0 3" /><path d="M14 20l3 0" /><path d="M17 17l3 0" /><path d="M20 17l0 3" /></svg>
                                                 </div>
                                                 <span class="text-[10px] font-black uppercase tracking-widest"
                                                     :class="inputType === 'registration' ? 'text-slate-900 dark:text-white' : 'text-slate-400'">Registrasi</span>
@@ -99,11 +93,7 @@
                                             <div class="flex items-center gap-2 mb-1.5">
                                                 <div class="w-6 h-6 rounded flex items-center justify-center transition-colors"
                                                     :class="inputType === 'direct' ? (currentTheme ? currentTheme.bg : 'bg-indigo-500') : 'bg-slate-100'">
-                                                    <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor"
-                                                        viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                                                    </svg>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-autofit-down"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 20h-6a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h8" /><path d="M18 4v17" /><path d="M15 18l3 3l3 -3" /></svg>
                                                 </div>
                                                 <span class="text-[10px] font-black uppercase tracking-widest"
                                                     :class="inputType === 'direct' ? 'text-slate-900 dark:text-white' : 'text-slate-400'">Manual</span>
@@ -309,49 +299,45 @@
                                                 class="absolute -right-4 -top-4 w-20 h-20 bg-gray-50 rounded-full blur-2xl transition-all duration-700 group-hover:bg-indigo-50">
                                             </div>
 
-                                            <div class="flex flex-col gap-2 relative"
-                                                x-data="{ isManual: {{ old('is_manual') ? 'true' : 'false' }} }">
-                                                <!-- Slider Pengalih untuk Manual -->
-                                                <div
-                                                    class="flex items-center justify-between bg-white/50 border border-gray-200 p-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 min-w-[250px]">
-                                                    <div class="flex items-center mr-3">
-                                                        <span
-                                                            class="text-[9px] font-black transition-colors duration-300"
-                                                            :class="isManual ? 'text-red-600' : 'text-gray-500'">
-                                                            Pack Tidak Full ( < 45.000 ) </span>
-                                                    </div>
-                                                    <label
-                                                        class="relative inline-flex items-center cursor-pointer scale-90">
-                                                        <input type="checkbox" id="is_manual" name="is_manual" value="1"
-                                                            x-model="isManual" @change="handleToggleManual()"
-                                                            class="sr-only peer" {{ old('is_manual') ? 'checked' : '' }}>
+                                             <div class="flex flex-col gap-2 relative"
+                                                 x-data="{ isManual: {{ old('is_manual') ? 'true' : 'false' }} }">
+                                                <div class="bg-white/50 border border-gray-200 rounded-xl p-3 shadow-sm">
+                                                <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                                                    <label class="relative inline-flex items-center cursor-pointer gap-2 flex-shrink-0">
+                                                        <input type="checkbox" id="is_manual" name="is_manual"
+                                                            value="1" x-model="isManual"
+                                                            @change="handleToggleManual()" class="sr-only peer"
+                                                            {{ old('is_manual') ? 'checked' : '' }}>
                                                         <div
-                                                            class="w-10 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-amber-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-red-500">
+                                                            class="w-11 h-6 bg-gray-200 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-amber-300/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500 dark:peer-checked:bg-red-400">
                                                         </div>
+                                                        <span
+                                                            class="text-[9px] font-black uppercase tracking-widest text-gray-500 dark:text-gray-300 peer-checked:text-red-600 dark:peer-checked:text-red-400 whitespace-nowrap">
+                                                            Pack Tidak Full
+                                                        </span>
                                                     </label>
-                                                </div>
 
-                                                    <div class="flex items-center relative gap-3 ml-1">
-                                                        <div class="relative inline-flex items-center cursor-pointer group">
-                                                            <input id="repass" name="repass" value="repass" type="checkbox"
-                                                                class="w-4 h-4 rounded-md border-gray-300 shadow-sm transition-all duration-300 text-indigo-600 focus:ring-indigo-500"
-                                                                {{ old('repass') ? 'checked' : '' }}>
-                                                            <label for="repass"
-                                                                class="ml-2 text-[10px] font-bold text-gray-600 cursor-pointer">Repass</label>
-                                                        </div>
-                                                        <div class="h-6 w-[1px] bg-gray-100 hidden sm:block"></div>
-                                                        <div class="relative inline-flex items-center cursor-pointer group">
-                                                            <input type="checkbox" id="bulk_select_toggle" class="sr-only peer">
-                                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
-                                                            <span class="ml-3 text-[9px] font-black text-gray-400 uppercase tracking-widest">Pilih 10</span>
-                                                        </div>
-                                                    <div
-                                                        class="text-[9px] font-black uppercase tracking-widest text-gray-400 leading-tight">
-                                                        Total Pack: <span id="packs_needed_display"
-                                                            class="text-lg transition-colors duration-500 ml-1"
-                                                            :class="currentTheme ? currentTheme.icon : 'text-indigo-600'">0</span>
+                                                    <div class="hidden sm:block w-px h-6 bg-gray-200 dark:bg-gray-700 flex-shrink-0"></div>
+
+                                                    <label class="relative inline-flex items-center cursor-pointer gap-2 flex-shrink-0">
+                                                        <input type="checkbox" id="repass" name="repass" value="repass" class="sr-only peer" {{ old('repass') ? 'checked' : '' }}>
+                                                        <div class="w-11 h-6 bg-gray-200 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500 dark:peer-checked:bg-emerald-400"></div>
+                                                        <span class="text-[9px] font-black uppercase tracking-widest text-gray-500 dark:text-gray-300 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 whitespace-nowrap">Repass</span>
+                                                    </label>
+
+                                                    <div class="hidden sm:block w-px h-6 bg-gray-200 dark:bg-gray-700 flex-shrink-0"></div>
+
+                                                    <label class="relative inline-flex items-center cursor-pointer gap-2 flex-shrink-0">
+                                                        <input type="checkbox" id="bulk_select_toggle" class="sr-only peer">
+                                                        <div class="w-11 h-6 bg-gray-200 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600 dark:peer-checked:bg-indigo-500"></div>
+                                                        <span class="text-[9px] font-black uppercase tracking-widest text-gray-500 dark:text-gray-300 peer-checked:text-indigo-600 dark:peer-checked:text-indigo-400 whitespace-nowrap">Pilih 10</span>
+                                                    </label>
+
+                                                    <div class="text-[9px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-300 leading-tight whitespace-nowrap">
+                                                        Total: <span id="packs_needed_display" class="text-lg transition-colors duration-500 ml-1" :class="currentTheme ? currentTheme.icon : 'text-indigo-600'">0</span>
                                                     </div>
                                                 </div>
+                                            </div>
 
                                                 <div class="pt-1">
                                                     <button type="submit"

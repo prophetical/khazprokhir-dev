@@ -256,10 +256,7 @@ class LaporanHarianController extends Controller
             $options = $this->reportService->getYearOptions();
             $filters = $this->getFilters($request, $options['tahun_emisi']);
             $data = $this->reportService->getReportData($filters);
-
             $hctsInventoryData = $this->reportService->getHctsInventoryData($filters);
-            $targetAchievementData = $this->reportService->getTargetAchievementData($filters);
-            $monthlyTargetAchievementData = $this->reportService->getMonthlyTargetAchievementData($filters);
 
             $verifikasi = VerifikasiLaporan::with('verifier')
                 ->where('jenis_laporan', 'harian')
@@ -267,6 +264,47 @@ class LaporanHarianController extends Controller
                 ->where('tanggal_akhir', $filters['tanggal_laporan'])
                 ->where('tahun_anggaran', $filters['tahun_anggaran'])
                 ->first();
+
+            $pecahanList = ['S', 'T', 'U', 'V', 'W', 'X', 'Y'];
+            $reportDataMap = [];
+            foreach (($data['reportData'] ?? []) as $row) {
+                $reportDataMap[$row['pecahan']] = $row;
+            }
+
+            $jsonData = [];
+            $totals = [
+                'siap_kemas' => 0,
+                'siap_kirim' => 0,
+                'total_persediaan_hcs' => 0,
+                'total_persediaan_hcts' => 0,
+                'container_siap_hitung' => 0,
+            ];
+
+            foreach ($pecahanList as $pec) {
+                $hcs = $reportDataMap[$pec] ?? [];
+                $hcts = $hctsInventoryData[$pec] ?? [];
+
+                $siapKemas = (int) ($hcs['siap_kemas_bilyet'] ?? 0);
+                $siapKirim = (int) ($hcs['siap_kirim_bilyet'] ?? 0);
+                $totalHcs = (int) ($hcs['total_persediaan_bilyet'] ?? 0);
+                $totalHcts = (int) ($hcts['persediaan'] ?? 0);
+                $container = (int) ($hcts['ct_siap_hitung'] ?? 0);
+
+                $jsonData[] = [
+                    'pecahan' => $pec,
+                    'siap_kemas' => $siapKemas,
+                    'siap_kirim' => $siapKirim,
+                    'total_persediaan_hcs' => $totalHcs,
+                    'total_persediaan_hcts' => $totalHcts,
+                    'container_siap_hitung' => $container,
+                ];
+
+                $totals['siap_kemas'] += $siapKemas;
+                $totals['siap_kirim'] += $siapKirim;
+                $totals['total_persediaan_hcs'] += $totalHcs;
+                $totals['total_persediaan_hcts'] += $totalHcts;
+                $totals['container_siap_hitung'] += $container;
+            }
 
             $payload = [
                 'meta' => [
@@ -284,9 +322,9 @@ class LaporanHarianController extends Controller
                     'catatan' => $verifikasi->catatan,
                 ] : null,
                 'laporan_persediaan' => [
-                    'columns' => ['Pecahan', 'Siap Kemas (Bilyet)', 'Siap Kirim (Bilyet)', 'Siap Kirim (Dus)', 'Total Persediaan (Bilyet)', 'Penyerahan Hari Ini (Bilyet)', 'Penyerahan Hari Ini (Dus)', 'Akumulasi Penyerahan (Bilyet)', 'Target', 'Sisa Target', 'Persentase (%)', 'Akumulasi Penerimaan HCS'],
-                    'data' => $data['reportData'] ?? [],
-                    'totals' => $data['totals'] ?? [],
+                    'columns' => ['Pecahan', 'Siap Kemas', 'Siap Kirim', 'Total Persediaan HCS', 'Total Persediaan HCTS', 'Container Siap Hitung'],
+                    'data' => $jsonData,
+                    'totals' => $totals,
                 ],
             ];
 

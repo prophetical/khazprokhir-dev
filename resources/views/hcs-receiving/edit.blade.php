@@ -255,13 +255,12 @@
                                                 </div>
 
                                                 <div class="flex items-center relative gap-4 ml-1">
-                                                    <div class="relative inline-flex items-center cursor-pointer group">
-                                                        <input id="repass" name="repass" value="repass" type="checkbox"
-                                                            class="w-5 h-5 rounded-lg border-gray-300 shadow-sm transition-all duration-300 text-indigo-600 focus:ring-indigo-500"
-                                                            {{ old('repass', $hcsReceiving->repass) ? 'checked' : '' }}>
-                                                        <label for="repass"
-                                                            class="ml-3 text-sm font-bold text-gray-600 cursor-pointer">Tandai
-                                                            sebagai Repass</label>
+                                                    <div class="flex items-center gap-3 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
+                                                        <label class="inline-flex items-center cursor-pointer gap-2">
+                                                            <input type="checkbox" id="repass" name="repass" value="repass" class="sr-only peer" {{ old('repass', $hcsReceiving->repass) ? 'checked' : '' }}>
+                                                            <div class="w-11 h-6 bg-gray-200 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500 dark:peer-checked:bg-emerald-400"></div>
+                                                            <span class="font-black uppercase text-[9px] text-gray-400 dark:text-gray-300 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400">Repass:</span>
+                                                        </label>
                                                     </div>
                                                     <div class="h-8 w-[1px] bg-gray-100 hidden sm:block"></div>
                                                     <div

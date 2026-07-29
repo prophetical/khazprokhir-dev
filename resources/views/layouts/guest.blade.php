@@ -8,6 +8,8 @@
 
     <title>{{ config('app.name', 'Laravel') }}{{ isset($header) ? ' | ' . trim(strip_tags($header)) : '' }}</title>
 
+    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+
     <!-- Font Lokal -->
     <link href="{{ asset('css/fonts.css') }}" rel="stylesheet" />
 
@@ -40,7 +42,7 @@
                 <div class="flex justify-center mb-8">
                     <div
                         class="w-20 h-20 bg-white/15 rounded-3xl flex items-center justify-center border border-white/20 shadow-2xl backdrop-blur-sm">
-                        <x-application-logo class="w-12 h-12 fill-current text-white drop-shadow" />
+                        <x-application-logo class="w-12 h-12 text-white drop-shadow" />
                     </div>
                 </div>
 
@@ -59,7 +61,7 @@
                 <div class="flex justify-center mb-8 lg:hidden">
                     <div class="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg"
                         style="background: linear-gradient(135deg, #1e40af, #7c3aed);">
-                        <x-application-logo class="w-9 h-9 fill-current text-white" />
+                        <x-application-logo class="w-9 h-9 text-white" />
                     </div>
                 </div>
 

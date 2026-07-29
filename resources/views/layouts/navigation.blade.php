@@ -76,7 +76,7 @@
 
             <div class="transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
                 :style="logoClick ? 'transform: scale(0.9) rotate(-5deg)' : (logoHover ? 'transform: scale(1.15) rotate(12deg)' : 'transform: scale(1) rotate(0deg)')">
-                <x-application-logo class="block h-8 w-auto fill-current text-white logo-chroma" />
+                <x-application-logo class="block h-8 w-auto text-white logo-chroma" />
             </div>
 
             <div x-show="!sidebarCollapsed" x-transition:enter="transition ease-out duration-300"
