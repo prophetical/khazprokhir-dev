@@ -233,54 +233,50 @@
                                                 class="absolute -right-4 -top-4 w-24 h-24 bg-gray-50 rounded-full blur-3xl transition-all duration-700 group-hover:bg-indigo-50">
                                             </div>
 
-                                            <div class="flex flex-col gap-3 relative"
+                                            <div class="flex flex-col gap-2 relative"
                                                 x-data="{ isManual: {{ ($hcsReceiving->is_manual || ($hcsReceiving->jumlah % 45000 !== 0)) ? 'true' : 'false' }} }">
-                                                <!-- Slider Pengalih untuk Manual -->
-                                                <div
-                                                    class="flex items-center justify-between bg-white/50 border border-gray-200 p-2 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 min-w-[280px]">
-                                                    <div class="flex items-center mr-4">
-                                                        <span class="text-xs font-black transition-colors duration-300"
-                                                            :class="isManual ? 'text-red-600' : 'text-gray-500'">
-                                                            Input Pack Tidak Full ( < 45.000 ) </span>
-                                                    </div>
-                                                    <label class="relative inline-flex items-center cursor-pointer">
-                                                        <input type="checkbox" id="is_manual" name="is_manual" value="1"
-                                                            x-model="isManual"
-                                                            @change="typeof updateCalculations === 'function' ? updateCalculations(jumlahOriginal, isManual) : null; typeof renderGrid === 'function' ? renderGrid() : null"
-                                                            class="sr-only peer">
-                                                        <div
-                                                            class="w-10 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-amber-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-red-500">
+                                                <div class="bg-white/50 border border-gray-200 rounded-xl p-3 shadow-sm">
+                                                <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                                                    <div class="flex items-center justify-between bg-white/50 border border-gray-200 p-2 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 min-w-[80px]">
+                                                        <div class="flex items-center mr-4">
+                                                            <span class="text-xs font-black transition-colors duration-300"
+                                                                :class="isManual ? 'text-red-600' : 'text-gray-500'">
+                                                                Pack Buntut</span>
                                                         </div>
-                                                    </label>
-                                                </div>
-
-                                                <div class="flex items-center relative gap-4 ml-1">
-                                                    <div class="flex items-center gap-3 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
-                                                        <label class="inline-flex items-center cursor-pointer gap-2">
-                                                            <input type="checkbox" id="repass" name="repass" value="repass" class="sr-only peer" {{ old('repass', $hcsReceiving->repass) ? 'checked' : '' }}>
-                                                            <div class="w-11 h-6 bg-gray-200 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500 dark:peer-checked:bg-emerald-400"></div>
-                                                            <span class="font-black uppercase text-[9px] text-gray-400 dark:text-gray-300 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400">Repass:</span>
+                                                        <label class="relative inline-flex items-center cursor-pointer">
+                                                            <input type="checkbox" id="is_manual" name="is_manual" value="1"
+                                                                x-model="isManual"
+                                                                @change="typeof updateCalculations === 'function' ? updateCalculations(jumlahOriginal, isManual) : null; typeof renderGrid === 'function' ? renderGrid() : null"
+                                                                class="sr-only peer">
+                                                            <div
+                                                                class="w-10 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-amber-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-red-500">
+                                                            </div>
                                                         </label>
                                                     </div>
-                                                    <div class="h-8 w-[1px] bg-gray-100 hidden sm:block"></div>
-                                                    <div
-                                                        class="text-[10px] font-black uppercase tracking-widest text-gray-400 leading-tight">
-                                                        Total Pack:<br>
-                                                        <span id="packs_needed_display"
-                                                            class="text-xl transition-colors duration-500"
-                                                            :class="currentTheme ? currentTheme.icon : 'text-indigo-600'">0</span>
+
+                                                    <div class="hidden sm:block w-px h-6 bg-gray-100 dark:bg-gray-700 flex-shrink-0"></div>
+
+                                                    <div class="flex items-center gap-3 flex-shrink-0">
+                                                        <label class="relative inline-flex items-center cursor-pointer gap-2">
+                                                            <input type="checkbox" id="repass" name="repass" value="repass" class="sr-only peer" {{ old('repass', $hcsReceiving->repass) ? 'checked' : '' }}>
+                                                            <div class="w-11 h-6 bg-gray-200 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500 dark:peer-checked:bg-emerald-400"></div>
+                                                            <span class="text-[9px] font-black uppercase tracking-widest text-gray-500 dark:text-gray-300 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 whitespace-nowrap">Repass</span>
+                                                        </label>
+                                                        <div class="text-[9px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-300 leading-tight whitespace-nowrap">
+                                                            Total Pack:<br>
+                                                            <span id="packs_needed_display" class="text-lg transition-colors duration-500" :class="currentTheme ? currentTheme.icon : 'text-indigo-600'">0</span>
+                                                        </div>
                                                     </div>
                                                 </div>
+                                                </div>
 
-                                                <div class="pt-2">
+                                                <div class="pt-1">
                                                     <button type="submit"
-                                                        class="w-full sm:w-auto flex justify-center items-center py-3.5 px-10 border border-transparent shadow-xl text-xs font-black rounded-xl transition-all duration-300 uppercase tracking-[0.2em] relative overflow-hidden group min-w-[200px] hover:scale-[1.02] active:scale-[0.98] hover:shadow-2xl"
+                                                        class="w-full sm:w-auto flex justify-center items-center py-2.5 px-10 border border-transparent shadow-xl text-[10px] font-black rounded-xl transition-all duration-300 uppercase tracking-[0.2em] relative overflow-hidden group min-w-[200px] hover:scale-[1.02] active:scale-[0.98] hover:shadow-2xl"
                                                         :class="currentTheme ? (currentTheme.btn + ' ' + currentTheme.text) : 'bg-indigo-600 text-white'">
-                                                        <!-- Efek Kilau -->
                                                         <div
                                                             class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shine_1.5s_infinite]">
                                                         </div>
-
                                                         <span class="relative z-10">Update Penerimaan</span>
                                                         <svg class="relative z-10 ml-2 w-4 h-4 transform group-hover:translate-x-1 transition-transform"
                                                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
