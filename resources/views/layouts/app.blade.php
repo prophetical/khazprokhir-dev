@@ -8,7 +8,7 @@
 
     <title>{{ config('app.name', 'Laravel') }}{{ isset($header) ? ' | ' . trim(strip_tags($header)) : '' }}</title>
 
-    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+    <link rel="icon" href="{{ asset('favicon.svg') }}?v=2" type="image/svg+xml">
 
     <!-- Font Lokal -->
     <link href="{{ asset('css/fonts.css') }}" rel="stylesheet" />

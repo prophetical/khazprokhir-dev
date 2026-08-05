@@ -17,7 +17,7 @@ class BatchTrackingService
         $page = $filters['page'] ?? 1;
 
         $query = HcsReceiving::select('batch', 'seri', 'pecahan')->distinct();
-        if ($search) $query->where(fn($q) => $q->where('batch', 'like', "%$search%")->orWhere('seri', 'like', "%$search%"));
+        if ($search) $query->where(fn($q) => $q->where('batch', 'ilike', "%$search%")->orWhere('seri', 'ilike', "%$search%"));
         if ($start) $query->whereDate('tanggal_penerimaan', '>=', $start);
         if ($end) $query->whereDate('tanggal_penerimaan', '<=', $end);
         if ($pecahan) $query->where('pecahan', $pecahan);

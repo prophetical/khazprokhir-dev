@@ -28,9 +28,9 @@ class HcsReceivingController extends Controller
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('nomor_bon', 'like', "%{$search}%")
-                    ->orWhere('batch', 'like', "%{$search}%")
-                    ->orWhere('seri', 'like', "%{$search}%");
+                $q->where('nomor_bon', 'ilike', "%{$search}%")
+                    ->orWhere('batch', 'ilike', "%{$search}%")
+                    ->orWhere('seri', 'ilike', "%{$search}%");
             });
         }
 

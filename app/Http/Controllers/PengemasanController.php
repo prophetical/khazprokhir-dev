@@ -50,10 +50,10 @@ class PengemasanController extends Controller
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                return $q->where('pecahan', 'like', "%{$search}%")
-                    ->orWhere('batch', 'like', "%{$search}%")
-                    ->orWhere('seri', 'like', "%{$search}%")
-                    ->orWhereHas('user', fn($u) => $u->where('name', 'like', "%{$search}%"));
+                return $q->where('pecahan', 'ilike', "%{$search}%")
+                    ->orWhere('batch', 'ilike', "%{$search}%")
+                    ->orWhere('seri', 'ilike', "%{$search}%")
+                    ->orWhereHas('user', fn($u) => $u->where('name', 'ilike', "%{$search}%"));
             });
         }
 
@@ -85,7 +85,7 @@ class PengemasanController extends Controller
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                return $q->where('pecahan', 'like', "%{$search}%")->orWhere('batch', 'like', "%{$search}%")->orWhere('seri', 'like', "%{$search}%")->orWhereHas('user', fn($u) => $u->where('name', 'like', "%{$search}%"));
+                return $q->where('pecahan', 'ilike', "%{$search}%")->orWhere('batch', 'ilike', "%{$search}%")->orWhere('seri', 'ilike', "%{$search}%")->orWhereHas('user', fn($u) => $u->where('name', 'ilike', "%{$search}%"));
             });
         }
         if ($request->filled('search_dus') && is_numeric($request->search_dus)) {
@@ -142,7 +142,7 @@ class PengemasanController extends Controller
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                return $q->where('pecahan', 'like', "%{$search}%")->orWhere('batch', 'like', "%{$search}%")->orWhere('seri', 'like', "%{$search}%")->orWhereHas('user', fn($u) => $u->where('name', 'like', "%{$search}%"));
+                return $q->where('pecahan', 'ilike', "%{$search}%")->orWhere('batch', 'ilike', "%{$search}%")->orWhere('seri', 'ilike', "%{$search}%")->orWhereHas('user', fn($u) => $u->where('name', 'ilike', "%{$search}%"));
             });
         }
         if ($request->filled('search_dus') && is_numeric($request->search_dus)) {

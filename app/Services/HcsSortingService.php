@@ -14,8 +14,8 @@ class HcsSortingService
     {
         $query = Pack::whereNull('hcs_sorting_id')->join('hcs_receivings', 'packs.hcs_receiving_id', '=', 'hcs_receivings.id');
         if (!empty($filters['pecahan'])) $query->where('hcs_receivings.pecahan', $filters['pecahan']);
-        if (!empty($filters['batch'])) $query->where('packs.batch', 'like', '%'.$filters['batch'].'%');
-        if (!empty($filters['seri'])) $query->where('packs.seri', 'like', '%'.$filters['seri'].'%');
+        if (!empty($filters['batch'])) $query->where('packs.batch', 'ilike', '%'.$filters['batch'].'%');
+        if (!empty($filters['seri'])) $query->where('packs.seri', 'ilike', '%'.$filters['seri'].'%');
         if (!empty($filters['tahun_anggaran'])) $query->where('hcs_receivings.tahun_anggaran', $filters['tahun_anggaran']);
         if (!empty($filters['emisi'])) $query->where('hcs_receivings.emisi', $filters['emisi']);
 

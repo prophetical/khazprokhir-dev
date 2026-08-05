@@ -21,8 +21,8 @@ class HctsReceivingService
 
         if (!empty($filters['search'])) {
             $s = $filters['search'];
-            $hcsSub->where(function ($q) use ($s) { $q->where('batch', 'like', "%{$s}%")->orWhere('seri', 'like', "%{$s}%"); });
-            $hctsSub->where(function ($q) use ($s) { $q->where('batch', 'like', "%{$s}%")->orWhere('seri', 'like', "%{$s}%"); });
+            $hcsSub->where(function ($q) use ($s) { $q->where('batch', 'ilike', "%{$s}%")->orWhere('seri', 'ilike', "%{$s}%"); });
+            $hctsSub->where(function ($q) use ($s) { $q->where('batch', 'ilike', "%{$s}%")->orWhere('seri', 'ilike', "%{$s}%"); });
         }
 
         return DB::table($hcsSub->unionAll($hctsSub), 'combined')

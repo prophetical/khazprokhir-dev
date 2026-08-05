@@ -42,8 +42,8 @@ class PengemasanService
         if (!empty($filters['search'])) {
             $s = $filters['search'];
             $rawQuery->where(function ($q) use ($s) {
-                $q->where('packs.batch', 'like', "%{$s}%")
-                    ->orWhere('packs.seri', 'like', "%{$s}%");
+                $q->where('packs.batch', 'ilike', "%{$s}%")
+                    ->orWhere('packs.seri', 'ilike', "%{$s}%");
             });
         }
 

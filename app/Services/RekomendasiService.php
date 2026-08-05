@@ -14,8 +14,8 @@ class RekomendasiService
             ->groupBy('pecahan', 'batch', 'seri', 'tahun_anggaran', 'emisi');
 
         if (!empty($filters['pecahan'])) $query->where('pecahan', $filters['pecahan']);
-        if (!empty($filters['batch'])) $query->where('batch', 'like', '%'.$filters['batch'].'%');
-        if (!empty($filters['seri'])) $query->where('seri', 'like', '%'.$filters['seri'].'%');
+        if (!empty($filters['batch'])) $query->where('batch', 'ilike', '%'.$filters['batch'].'%');
+        if (!empty($filters['seri'])) $query->where('seri', 'ilike', '%'.$filters['seri'].'%');
 
         return $query->get()->map(function ($item) {
             $unsorted = Pack::with('hcsReceiving')->where(['batch' => $item->batch, 'seri' => $item->seri])->whereNull('hcs_sorting_id')->get();

@@ -126,9 +126,9 @@ class HcsSortingReportController extends Controller
         if ($request->filled('tanggal_sampai'))
             $query->whereDate('tanggal_sortir', '<=', $request->tanggal_sampai);
         if ($request->filled('batch'))
-            $query->where('batch', 'like', '%' . $request->batch . '%');
+            $query->where('batch', 'ilike', '%' . $request->batch . '%');
         if ($request->filled('seri'))
-            $query->where('seri', 'like', '%' . $request->seri . '%');
+            $query->where('seri', 'ilike', '%' . $request->seri . '%');
         if ($request->filled('gilir'))
             $query->where('gilir', $request->gilir);
         if ($request->filled('pecahan'))

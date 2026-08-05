@@ -181,7 +181,7 @@ class HctsReceivingController extends Controller
         if ($request->filled('tahun_emisi')) $query->where('emisi', $request->tahun_emisi);
         if ($request->filled('search')) {
             $s = $request->search;
-            $query->where(function ($q) use ($s) { $q->where('nomor_bon', 'like', "%{$s}%")->orWhere('batch', 'like', "%{$s}%")->orWhere('seri', 'like', "%{$s}%"); });
+            $query->where(function ($q) use ($s) { $q->where('nomor_bon', 'ilike', "%{$s}%")->orWhere('batch', 'ilike', "%{$s}%")->orWhere('seri', 'ilike', "%{$s}%"); });
         }
     }
 
