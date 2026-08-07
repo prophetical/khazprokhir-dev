@@ -82,7 +82,7 @@ class ReportService
         $penyerahanHariIni = PenyerahanBi::whereIn('pecahan', $pecahanList)
             ->whereDate('tanggal_penyerahan', $tanggalLaporan)
             ->where('tahun_anggaran', $tahunAnggaran)
-            ->when($tahunEmisi, fn ($q) => $q->where('tahun_emisi', $tahunEmisi))
+            ->when($tahunEmisi, fn($q) => $q->where('tahun_emisi', $tahunEmisi))
             ->selectRaw('pecahan, SUM(jumlah_bilyet) as total')
             ->groupBy('pecahan')
             ->pluck('total', 'pecahan');
@@ -91,14 +91,14 @@ class ReportService
         $receivings = HcsReceiving::whereIn('pecahan', $pecahanList)
             ->whereDate('tanggal_penerimaan', '<=', $tanggalLaporan)
             ->where('tahun_anggaran', $tahunAnggaran)
-            ->when($tahunEmisi, fn ($q) => $q->where('emisi', $tahunEmisi))
+            ->when($tahunEmisi, fn($q) => $q->where('emisi', $tahunEmisi))
             ->selectRaw('pecahan, SUM(jumlah) as total')
             ->groupBy('pecahan')
             ->pluck('total', 'pecahan');
 
         $targets = TargetTahunan::whereIn('pecahan', $pecahanList)
             ->where('tahun_anggaran', $tahunAnggaran)
-            ->when($tahunEmisi, fn ($q) => $q->where('tahun_emisi', $tahunEmisi))
+            ->when($tahunEmisi, fn($q) => $q->where('tahun_emisi', $tahunEmisi))
             ->selectRaw('pecahan, SUM(target) as total')
             ->groupBy('pecahan')
             ->pluck('total', 'pecahan');
@@ -181,7 +181,7 @@ class ReportService
             ->join('hcs_receivings as r', 'p.hcs_receiving_id', '=', 'r.id')
             ->whereIn('r.pecahan', $pecahanList)
             ->where('r.tahun_anggaran', $ta)
-            ->when($te, fn ($q) => $q->where('r.emisi', $te))
+            ->when($te, fn($q) => $q->where('r.emisi', $te))
             ->whereDate('r.tanggal_penerimaan', '<=', $T)
             ->selectRaw('r.pecahan as pecahan, p.batch as batch, p.seri as seri, COALESCE(SUM(p.jumlah),0) as diterima')
             ->groupByRaw('r.pecahan, p.batch, p.seri')
@@ -192,7 +192,7 @@ class ReportService
         $dikemas = DB::table('pengemasans')
             ->whereIn('pecahan', $pecahanList)
             ->where('tahun_anggaran', $ta)
-            ->when($te, fn ($q) => $q->where('tahun_emisi', $te))
+            ->when($te, fn($q) => $q->where('tahun_emisi', $te))
             ->whereDate('tanggal_pengemasan', '<=', $T)
             ->selectRaw('pecahan, batch, seri, SUM(CASE WHEN total_bilyet IS NULL OR total_bilyet = 0 THEN jumlah_dus * 20000 ELSE total_bilyet END) as dikemas')
             ->groupByRaw('pecahan, batch, seri')
@@ -207,7 +207,7 @@ class ReportService
             ->join('pengemasans as p', 'dp.id_pengemasan', '=', 'p.id')
             ->whereIn('pb.pecahan', $pecahanList)
             ->where('pb.tahun_anggaran', $ta)
-            ->when($te, fn ($q) => $q->where('pb.tahun_emisi', $te))
+            ->when($te, fn($q) => $q->where('pb.tahun_emisi', $te))
             ->whereColumn('p.tahun_anggaran', 'pb.tahun_anggaran')
             ->whereColumn('p.tahun_emisi', 'pb.tahun_emisi')
             ->whereColumn('p.pecahan', 'pb.pecahan')
@@ -219,21 +219,25 @@ class ReportService
 
         $map = [];
         foreach ($diterima as $row) {
-            $map[$row->pecahan.'|'.$row->batch.'|'.$row->seri] = [
-                'pecahan' => $row->pecahan, 'batch' => $row->batch, 'seri' => $row->seri,
-                'diterima' => (int) $row->diterima, 'dikemas' => 0, 'diserahkan' => 0,
+            $map[$row->pecahan . '|' . $row->batch . '|' . $row->seri] = [
+                'pecahan' => $row->pecahan,
+                'batch' => $row->batch,
+                'seri' => $row->seri,
+                'diterima' => (int) $row->diterima,
+                'dikemas' => 0,
+                'diserahkan' => 0,
             ];
         }
         foreach ($dikemas as $row) {
-            $k = $row->pecahan.'|'.$row->batch.'|'.$row->seri;
-            if (! isset($map[$k])) {
+            $k = $row->pecahan . '|' . $row->batch . '|' . $row->seri;
+            if (!isset($map[$k])) {
                 $map[$k] = ['pecahan' => $row->pecahan, 'batch' => $row->batch, 'seri' => $row->seri, 'diterima' => 0, 'dikemas' => 0, 'diserahkan' => 0];
             }
             $map[$k]['dikemas'] = (int) $row->dikemas;
         }
         foreach ($diserahkan as $row) {
-            $k = $row->pecahan.'|'.$row->batch.'|'.$row->seri;
-            if (! isset($map[$k])) {
+            $k = $row->pecahan . '|' . $row->batch . '|' . $row->seri;
+            if (!isset($map[$k])) {
                 $map[$k] = ['pecahan' => $row->pecahan, 'batch' => $row->batch, 'seri' => $row->seri, 'diterima' => 0, 'dikemas' => 0, 'diserahkan' => 0];
             }
             $map[$k]['diserahkan'] = (int) $row->diserahkan;
@@ -256,7 +260,7 @@ class ReportService
     public function getPersediaanBreakdown(string $pecahan, array $filters, string $jenis): array
     {
         $validJenis = ['kemas' => 'siap_kemas', 'kirim' => 'siap_kirim', 'total' => 'total'];
-        if (! array_key_exists($jenis, $validJenis)) {
+        if (!array_key_exists($jenis, $validJenis)) {
             $jenis = 'total';
         }
 
@@ -272,11 +276,11 @@ class ReportService
                 'kirim' => (int) $b['siap_kirim'] > 0,
                 'total' => (int) $b['total'] > 0,
             };
-            if (! $relevant) {
+            if (!$relevant) {
                 continue;
             }
 
-            $key = $b['batch'].'|'.$b['seri'];
+            $key = $b['batch'] . '|' . $b['seri'];
             $pack = match ($jenis) {
                 'kemas' => $ranges['kemas'][$key] ?? '-',
                 'kirim' => $ranges['kirim'][$key] ?? '-',
@@ -329,7 +333,7 @@ class ReportService
             ->leftJoin('pengemasans as pg', 'p.id_pengemasan', '=', 'pg.id')
             ->where('r.pecahan', $pecahan)
             ->where('r.tahun_anggaran', $ta)
-            ->when($te, fn ($q) => $q->where('r.emisi', $te))
+            ->when($te, fn($q) => $q->where('r.emisi', $te))
             ->whereDate('r.tanggal_penerimaan', '<=', $T)
             ->select('p.batch', 'p.seri', 'p.pack_number', 'p.id_pengemasan', DB::raw('pg.tanggal_pengemasan as pg_tanggal'))
             ->get();
@@ -342,7 +346,7 @@ class ReportService
             ->join('pengemasans as p', 'dp.id_pengemasan', '=', 'p.id')
             ->where('pb.pecahan', $pecahan)
             ->where('pb.tahun_anggaran', $ta)
-            ->when($te, fn ($q) => $q->where('pb.tahun_emisi', $te))
+            ->when($te, fn($q) => $q->where('pb.tahun_emisi', $te))
             ->whereColumn('p.tahun_anggaran', 'pb.tahun_anggaran')
             ->whereColumn('p.tahun_emisi', 'pb.tahun_emisi')
             ->whereColumn('p.pecahan', 'pb.pecahan')
@@ -355,7 +359,7 @@ class ReportService
         $pgTotal = DB::table('pengemasans')
             ->where('pecahan', $pecahan)
             ->where('tahun_anggaran', $ta)
-            ->when($te, fn ($q) => $q->where('tahun_emisi', $te))
+            ->when($te, fn($q) => $q->where('tahun_emisi', $te))
             ->whereDate('tanggal_pengemasan', '<=', $T)
             ->selectRaw('id, CASE WHEN total_bilyet IS NULL OR total_bilyet = 0 THEN jumlah_dus * 20000 ELSE total_bilyet END as eff_total')
             ->pluck('eff_total', 'id');
@@ -363,7 +367,7 @@ class ReportService
         $kemas = [];
         $kirim = [];
         foreach ($packRows as $row) {
-            $key = $row->batch.'|'.$row->seri;
+            $key = $row->batch . '|' . $row->seri;
             $num = (int) $row->pack_number;
             if (empty($row->id_pengemasan)) {
                 $kemas[$key][] = $num;
@@ -372,7 +376,7 @@ class ReportService
             }
             $pgTanggal = $row->pg_tanggal;
             $packagedOnOrBeforeT = $pgTanggal !== null && substr($pgTanggal, 0, 10) <= $T;
-            if (! $packagedOnOrBeforeT) {
+            if (!$packagedOnOrBeforeT) {
                 // Belum dikemas per tanggal T → masuk siap kemas.
                 $kemas[$key][] = $num;
 
@@ -436,7 +440,7 @@ class ReportService
 
         $claimed = (int) PenyerahanBi::where('pecahan', $pecahan)
             ->where('tahun_anggaran', $ta)
-            ->when($te, fn ($q) => $q->where('tahun_emisi', $te))
+            ->when($te, fn($q) => $q->where('tahun_emisi', $te))
             ->whereDate('tanggal_penyerahan', '<=', $T)
             ->sum('jumlah_bilyet');
 
@@ -447,7 +451,7 @@ class ReportService
             ->join('pengemasans as p', 'dp.id_pengemasan', '=', 'p.id')
             ->where('pb.pecahan', $pecahan)
             ->where('pb.tahun_anggaran', $ta)
-            ->when($te, fn ($q) => $q->where('pb.tahun_emisi', $te))
+            ->when($te, fn($q) => $q->where('pb.tahun_emisi', $te))
             ->whereColumn('p.tahun_anggaran', 'pb.tahun_anggaran')
             ->whereColumn('p.tahun_emisi', 'pb.tahun_emisi')
             ->whereColumn('p.pecahan', 'pb.pecahan')
@@ -462,7 +466,7 @@ class ReportService
     {
         $tanggalLaporan = Carbon::parse($filters['tanggal_laporan']);
         $month = $tanggalLaporan->month;
-        $targetColumn = 'bulan_'.$month;
+        $targetColumn = 'bulan_' . $month;
         $sisaHariKerja = $this->calculateSisaHariKerja($tanggalLaporan);
 
         $rawData = $this->fetchSecondaryRawData($filters);
@@ -497,7 +501,7 @@ class ReportService
 
             'kemasGilir' => Pengemasan::whereIn('pecahan', $pecahanList)
                 ->where('tahun_anggaran', $tahunAnggaran)
-                ->when($tahunEmisi, fn ($q) => $q->where('tahun_emisi', $tahunEmisi))
+                ->when($tahunEmisi, fn($q) => $q->where('tahun_emisi', $tahunEmisi))
                 ->whereDate('tanggal_pengemasan', '>=', $startOfMonth)
                 ->whereDate('tanggal_pengemasan', '<=', $endDate)
                 ->selectRaw('pecahan, gilir, SUM(jumlah_dus * 20000) as total')
@@ -507,7 +511,7 @@ class ReportService
 
             'hcsSupplier' => HcsReceiving::whereIn('pecahan', $pecahanList)
                 ->where('tahun_anggaran', $tahunAnggaran)
-                ->when($tahunEmisi, fn ($q) => $q->where('emisi', $tahunEmisi))
+                ->when($tahunEmisi, fn($q) => $q->where('emisi', $tahunEmisi))
                 ->whereDate('tanggal_penerimaan', '>=', $startOfMonth)
                 ->whereDate('tanggal_penerimaan', '<=', $endDate)
                 ->selectRaw('pecahan, supplier, SUM(jumlah) as total')
@@ -601,7 +605,7 @@ class ReportService
 
         $penerimaanH1Map = HctsReceiving::whereIn('pecahan', $pecahanList)
             ->where('tahun_anggaran', $tahunAnggaran)
-            ->when($tahunEmisi, fn ($q) => $q->where('emisi', $tahunEmisi))
+            ->when($tahunEmisi, fn($q) => $q->where('emisi', $tahunEmisi))
             ->whereDate('tanggal_penerimaan', $previousDay)
             ->selectRaw('pecahan, SUM(jumlah) as total')
             ->groupBy('pecahan')
@@ -609,7 +613,7 @@ class ReportService
 
         $penyerahanHariIniMap = HctsSubmission::whereIn('pecahan', $pecahanList)
             ->where('tahun_anggaran', $tahunAnggaran)
-            ->when($tahunEmisi, fn ($q) => $q->where('tahun_emisi', $tahunEmisi))
+            ->when($tahunEmisi, fn($q) => $q->where('tahun_emisi', $tahunEmisi))
             ->whereDate('tanggal_penyerahan', $tanggalLaporan)
             ->selectRaw('pecahan, SUM(jumlah_bilyet) as total')
             ->groupBy('pecahan')
@@ -617,7 +621,7 @@ class ReportService
 
         $akumulasiTerimaMap = HctsReceiving::whereIn('pecahan', $pecahanList)
             ->where('tahun_anggaran', $tahunAnggaran)
-            ->when($tahunEmisi, fn ($q) => $q->where('emisi', $tahunEmisi))
+            ->when($tahunEmisi, fn($q) => $q->where('emisi', $tahunEmisi))
             ->whereDate('tanggal_penerimaan', '<=', $tanggalLaporan)
             ->selectRaw('pecahan, SUM(jumlah) as total')
             ->groupBy('pecahan')
@@ -625,7 +629,7 @@ class ReportService
 
         $akumulasiSerahMap = HctsSubmission::whereIn('pecahan', $pecahanList)
             ->where('tahun_anggaran', $tahunAnggaran)
-            ->when($tahunEmisi, fn ($q) => $q->where('tahun_emisi', $tahunEmisi))
+            ->when($tahunEmisi, fn($q) => $q->where('tahun_emisi', $tahunEmisi))
             ->whereDate('tanggal_penyerahan', '<=', $tanggalLaporan)
             ->selectRaw('pecahan, SUM(jumlah_bilyet) as total')
             ->groupBy('pecahan')
@@ -645,7 +649,7 @@ class ReportService
                 'akumulasi_penerimaan' => (int) $akumulasiTerima,
                 'akumulasi_penyerahan' => (int) $akumulasiSerah,
                 'persediaan' => (int) $persediaan,
-                'ct_siap_hitung' => (int) floor($persediaan / 3000000),
+                'ct_siap_hitung' => (int) floor($persediaan / 300000),
             ];
         }
 
@@ -714,7 +718,7 @@ class ReportService
         $tanggalLaporan = Carbon::parse($filters['tanggal_laporan']);
         $startOfMonth = $tanggalLaporan->copy()->startOfMonth()->toDateString();
         $currentDate = $tanggalLaporan->toDateString();
-        $targetColumn = 'bulan_'.$tanggalLaporan->month;
+        $targetColumn = 'bulan_' . $tanggalLaporan->month;
         $pecahanList = ['S', 'T', 'U', 'V', 'W', 'X', 'Y'];
 
         // --- Aggregated Queries ---

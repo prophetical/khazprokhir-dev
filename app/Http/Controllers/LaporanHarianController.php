@@ -205,7 +205,7 @@ class LaporanHarianController extends Controller
             ->where('tahun_anggaran', $filters['tahun_anggaran'])
             ->first();
 
-        $filename = 'laporan_harian_operasional_'.$filters['tanggal_laporan'].'.csv';
+        $filename = 'laporan_harian_operasional_' . $filters['tanggal_laporan'] . '.csv';
         $headers = [
             'Content-type' => 'text/csv',
             'Content-Disposition' => "attachment; filename=$filename",
@@ -388,7 +388,7 @@ class LaporanHarianController extends Controller
 
         $safeStart = preg_replace('/[^0-9A-Za-z_-]/', '', $startDate);
         $safeEnd = preg_replace('/[^0-9A-Za-z_-]/', '', $endDate);
-        $filename = 'rekonsiliasi_data_'.$safeStart.'_to_'.$safeEnd.'.csv';
+        $filename = 'rekonsiliasi_data_' . $safeStart . '_to_' . $safeEnd . '.csv';
         $headers = [
             'Content-type' => 'text/csv',
             'Content-Disposition' => "attachment; filename=$filename",
@@ -497,7 +497,7 @@ class LaporanHarianController extends Controller
 
     private function getFilters(Request $request, $tahunEmisiOptions = [])
     {
-        $defaultEmisi = ! empty($tahunEmisiOptions) ? $tahunEmisiOptions[0] : '2022';
+        $defaultEmisi = !empty($tahunEmisiOptions) ? $tahunEmisiOptions[0] : '2022';
 
         // ConvertEmptyStringsToNull mengubah input tanggal yang dikosongkan menjadi null,
         // sehingga $request->input(..., $default) tidak memakai default. Sanitasi manual
@@ -513,7 +513,7 @@ class LaporanHarianController extends Controller
         }
 
         $tahunAnggaran = $request->input('tahun_anggaran');
-        if (! $tahunAnggaran || ! ctype_digit((string) $tahunAnggaran)) {
+        if (!$tahunAnggaran || !ctype_digit((string) $tahunAnggaran)) {
             $tahunAnggaran = date('Y');
         }
 
@@ -559,7 +559,7 @@ class LaporanHarianController extends Controller
     public function verifikasiHarian(Request $request)
     {
         $user = auth()->user();
-        if (! in_array($user->role, ['tasil', 'admin'])) {
+        if (!in_array($user->role, ['tasil', 'admin'])) {
             abort(403, 'Anda tidak memiliki hak untuk memverifikasi laporan.');
         }
 
@@ -612,7 +612,7 @@ class LaporanHarianController extends Controller
     public function verifikasiRekonsiliasi(Request $request)
     {
         $user = auth()->user();
-        if (! in_array($user->role, ['tasil', 'admin'])) {
+        if (!in_array($user->role, ['tasil', 'admin'])) {
             abort(403, 'Anda tidak memiliki hak untuk memverifikasi laporan.');
         }
 
@@ -666,11 +666,11 @@ class LaporanHarianController extends Controller
         $query = VerifikasiLaporan::where('jenis_laporan', $validated['jenis_laporan'])
             ->where('tahun_anggaran', $validated['tahun_anggaran']);
 
-        if (! empty($validated['tanggal_mulai'])) {
+        if (!empty($validated['tanggal_mulai'])) {
             $query->where('tanggal_mulai', $validated['tanggal_mulai']);
         }
 
-        if (! empty($validated['tanggal_akhir'])) {
+        if (!empty($validated['tanggal_akhir'])) {
             $query->where('tanggal_akhir', $validated['tanggal_akhir']);
         }
 

@@ -128,45 +128,60 @@
         @endif
 
         <!-- Grup Laporan Harian -->
-        <div class="space-y-1">
-            <button @click="laporanOpen = !laporanOpen; if(sidebarCollapsed) sidebarCollapsed = false;"
-                class="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('laporan-harian.*') ? 'text-white font-semibold bg-white/20 shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
+        @if(!auth()->user()->role)
+            <a href="{{ route('laporan-harian.index') }}"
+                class="flex items-center py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('laporan-harian.*') ? 'bg-white/20 text-white font-semibold shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
                 title="Laporan Harian">
-                <div class="flex items-center">
-                    <div class="shrink-0 w-8 flex justify-center">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                    </div>
-                    <span x-show="!sidebarCollapsed" x-transition
-                        class="ml-3 text-sm font-medium whitespace-nowrap overflow-hidden">Laporan Harian</span>
+                <div class="shrink-0 w-8 flex justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
                 </div>
-                <svg x-show="!sidebarCollapsed" :class="laporanOpen ? 'rotate-180' : ''"
-                    class="w-3 h-3 transition-transform duration-200" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-            </button>
-
-            <!-- Item Sub-menu -->
-            <div x-show="laporanOpen && !sidebarCollapsed" x-transition:enter="transition ease-out duration-200"
-                x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
-                class="pl-11 space-y-1">
-                <a href="{{ route('laporan-harian.index') }}"
-                    class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('laporan-harian.index') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
-                    Laporan Harian
-                </a>
-                <a href="{{ route('laporan-harian.rekonsiliasi') }}"
-                    class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('laporan-harian.rekonsiliasi') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
-                    Rekonsiliasi Data
-                </a>
-                <a href="{{ route('laporan-harian.realtime') }}"
-                    class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('laporan-harian.realtime') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
-                    Laporan Harian Realtime
-                </a>
+                <span x-show="!sidebarCollapsed" x-transition
+                    class="ml-3 text-sm font-medium whitespace-nowrap overflow-hidden">Laporan Harian</span>
+            </a>
+        @else
+            <div class="space-y-1">
+                <button @click="laporanOpen = !laporanOpen; if(sidebarCollapsed) sidebarCollapsed = false;"
+                    class="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('laporan-harian.*') ? 'text-white font-semibold bg-white/20 shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
+                    title="Laporan Harian">
+                    <div class="flex items-center">
+                        <div class="shrink-0 w-8 flex justify-center">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                        <span x-show="!sidebarCollapsed" x-transition
+                            class="ml-3 text-sm font-medium whitespace-nowrap overflow-hidden">Laporan Harian</span>
+                    </div>
+                    <svg x-show="!sidebarCollapsed" :class="laporanOpen ? 'rotate-180' : ''"
+                        class="w-3 h-3 transition-transform duration-200" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+    
+                <!-- Item Sub-menu -->
+                <div x-show="laporanOpen && !sidebarCollapsed" x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+                    class="pl-11 space-y-1">
+                    <a href="{{ route('laporan-harian.index') }}"
+                        class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('laporan-harian.index') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                        Laporan Harian
+                    </a>
+                    <a href="{{ route('laporan-harian.rekonsiliasi') }}"
+                        class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('laporan-harian.rekonsiliasi') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                        Rekonsiliasi Data
+                    </a>
+                    <a href="{{ route('laporan-harian.realtime') }}"
+                        class="block py-2 text-[13px] transition-all duration-200 {{ request()->routeIs('laporan-harian.realtime') ? 'text-white font-bold' : 'text-white/60 hover:text-white' }}">
+                        Laporan Harian Realtime
+                    </a>
+                </div>
             </div>
-        </div>
+        @endif
 
         @if(auth()->user()->role)
             <!-- Grup Khazai (Registrasi HCS) -->

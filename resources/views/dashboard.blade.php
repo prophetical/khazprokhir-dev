@@ -954,6 +954,7 @@
 
             {{-- Bagian chart --}}
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                @if(auth()->user()->role)
                 {{-- Inschiet Card --}}
                 <div
                     class="lg:col-span-1 bg-white p-6 sm:p-10 rounded-[3rem] shadow-xl shadow-gray-200/20 border border-gray-100 relative overflow-hidden flex flex-col justify-between group hover:-translate-y-1 transition-all duration-300">
@@ -1008,10 +1009,11 @@
                         </div>
                     </div>
                 </div>
+                @endif
 
                 {{-- Ringkasan Analitik Produksi --}}
                 <div x-init="initAnalytics()"
-                    class="lg:col-span-3 bg-white px-6 sm:px-3 py-10 rounded-[3rem] shadow-xl shadow-gray-200/20 border border-gray-100 relative overflow-hidden">
+                    class="{{ auth()->user()->role ? 'lg:col-span-3' : 'lg:col-span-4' }} bg-white px-6 sm:px-3 py-10 rounded-[3rem] shadow-xl shadow-gray-200/20 border border-gray-100 relative overflow-hidden">
                     <div class="flex items-center gap-4 mb-12">
                         <div class="w-1.5 h-10 bg-indigo-600 rounded-full"></div>
                         <div>
@@ -1059,7 +1061,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
                 {{-- Kartu status sistem --}}
                 <div
-                    class="lg:col-span-1 bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-xl shadow-gray-200/20 dark:shadow-none border border-gray-100 dark:border-slate-800 flex flex-col justify-between overflow-hidden transition-colors duration-500">
+                    class="{{ auth()->user()->role ? 'lg:col-span-1' : 'lg:col-span-4 max-w-xl mx-auto w-full' }} bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-xl shadow-gray-200/20 dark:shadow-none border border-gray-100 dark:border-slate-800 flex flex-col justify-between overflow-hidden transition-colors duration-500">
                     <div
                         class="px-8 py-6 border-b border-gray-50 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50">
                         <h3 class="text-[10px] font-black text-gray-800 dark:text-gray-200 uppercase tracking-[0.2em]">
@@ -1125,6 +1127,7 @@
                     </div>
                 </div>
 
+                @if(auth()->user()->role)
                 {{-- Kartu Stock Bahan Penolong --}}
                 <div
                     class="lg:col-span-1 bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-xl shadow-gray-200/20 dark:shadow-none border border-gray-100 dark:border-slate-800 flex flex-col justify-between overflow-hidden transition-colors duration-500">
@@ -1258,10 +1261,10 @@
                                 <span
                                     class="text-xl font-black text-gray-900 dark:text-white tracking-tighter leading-none">{{ number_format(array_sum($todayHcsByPecahan)) }}</span>
                                 <span class="text-[9px] font-black text-gray-400 uppercase">Bilyet</span>
-                            </div>
                         </div>
                     </div>
                 </div>
+                @endif
             </div>
 
             {{-- Modal Fullscreen: Visualisasi Trends --}}

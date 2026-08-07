@@ -88,7 +88,12 @@ class RoleMiddleware
         // 7. Role Unassigned (User Baru): Terbatas pada Dashboard & Laporan Harian
         $allowedRoutes = [
             'dashboard',
-            'laporan-harian.*',
+            'laporan-harian.index',
+            'laporan-harian.persediaan-detail',
+            'laporan-harian.persediaan-detail-data',
+            'laporan-harian.export',
+            'laporan-harian.print',
+            'laporan-harian.export-json',
             'profile.*',
         ];
 
