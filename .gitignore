@@ -6,6 +6,7 @@
 /storage/*.key
 /vendor
 /docker
+/knowledge
 /docs
 /tests
 .env
@@ -54,12 +55,18 @@ Thumbs.db
 check_db.php
 test_query.php
 scratch*.php
+_*.php
+_check*.php
+_verify*.php
+_analyze*.php
+_schema_check*.php
+_list_*.php
 # Windows "Copy" backups (e.g. "database - Copy (2).sqlite")
 *Copy*
 *.bak
 *.tmp
-_analyze_dus.php
-_analyze_dus2.php
+implementation_plan.md
+README.md
 database/seeders/HcsPengemasanMigrationSeeder.php
 database/seeders/HcsSapMigrationSeeder.php
 database/seeders/HcsSortingMigrationSeeder.php

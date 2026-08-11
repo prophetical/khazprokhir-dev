@@ -28,7 +28,7 @@
                 <div x-data="{ 
                         selectedPecahan: '{{ $selectedPecahan }}',
                         themes: {{ json_encode($themeClasses) }},
-                        inputType: 'registration',
+                        inputType: 'direct',
                         get currentTheme() { return this.themes[this.selectedPecahan] || null }
                     }" class="border-t-8 transition-all duration-700" }"
                     class="border-t-8 transition-all duration-700 h-full overflow-hidden"
