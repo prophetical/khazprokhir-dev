@@ -29,9 +29,30 @@
                         selectedPecahan: '{{ $selectedPecahan }}',
                         themes: {{ json_encode($themeClasses) }},
                         inputType: 'direct',
-                        get currentTheme() { return this.themes[this.selectedPecahan] || null }
-                    }" class="border-t-8 transition-all duration-700" }"
-                    class="border-t-8 transition-all duration-700 h-full overflow-hidden"
+                        isManual: {{ old('is_manual') ? 'true' : 'false' }},
+                        packDisplay: 0,
+                        get currentTheme() { return this.themes[this.selectedPecahan] || null },
+                        $watch: {
+                            isManual(newVal) {
+                                const jumlahDisplay = document.getElementById('jumlah_display');
+                                const jumlahOriginal = parseInt(document.getElementById('jumlah_original').value, 10) || 0;
+                                const selectedPacks = {!! json_encode(array_map('intval', old('packs', []))) !!} || [];
+                                if (newVal && jumlahOriginal > 45000) {
+                                    Swal.fire({
+                                        title: 'Batas Terlampaui',
+                                        text: 'Untuk pack tidak full, jumlah bilyet tidak boleh melebihi 45.000.',
+                                        icon: 'warning',
+                                        confirmButtonColor: '#4f46e5'
+                                    });
+                                    document.getElementById('jumlah_original').value = 45000;
+                                    jumlahDisplay.value = '45.000';
+                                    if (selectedPacks.length > 1) {
+                                        selectedPacks.length = 1;
+                                    }
+                                }
+                            }
+                        }
+                    }" class="border-t-8 transition-all duration-700 h-full overflow-hidden"
                     :class="currentTheme ? currentTheme.border : 'border-indigo-500'">
                     <form id="hcs-form" action="{{ route('hcs-receiving.store') }}" method="POST"
                         class="h-full overflow-hidden">
@@ -158,14 +179,25 @@
                                         <label for="jumlah_display"
                                             class="block text-[8px] font-bold text-gray-400 uppercase tracking-widest ml-1">Jumlah
                                             Bilyet</label>
-                                        <div class="relative">
-                                            <input id="jumlah_display" type="tel"
-                                                class="block w-full py-1.5 px-3 text-right font-black text-sm pr-12 border-gray-200 rounded-lg bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 placeholder-gray-300"
-                                                :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
-                                                value="{{ old('jumlahDisplay') }}" placeholder="0" required />
-                                            <div
-                                                class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-300 font-bold text-[9px]">
-                                                Bilyet</div>
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <div class="relative">
+                                                <input id="jumlah_display" type="tel"
+                                                    class="block w-full py-1.5 px-3 text-right font-black text-sm pr-12 border-gray-200 rounded-lg bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 placeholder-gray-300"
+                                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
+                                                    value="{{ old('jumlahDisplay') }}" placeholder="0" required />
+                                                <div
+                                                    class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-300 font-bold text-[9px]">
+                                                    Bilyet</div>
+                                            </div>
+                                            <div class="relative" x-show="!isManual" x-cloak>
+                                                <input type="tel" id="pack_display"
+                                                    class="block w-full py-1.5 px-3 text-right font-black text-sm pr-12 border-gray-200 rounded-lg bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 focus:ring-4 placeholder-gray-300"
+                                                    :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
+                                                    placeholder="0" />
+                                                <div
+                                                    class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-300 font-bold text-[9px]">
+                                                    Pack</div>
+                                            </div>
                                         </div>
                                         <input type="hidden" id="jumlah_original" name="jumlah"
                                             value="{{ old('jumlah', 0) }}">
@@ -179,11 +211,11 @@
                                             :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
                                             required>
                                             <option value="">Pilih Gilir</option>
-                                            <option value="Gilir 1" {{ old('gilir') == 'Gilir 1' ? 'selected' : '' }}>
+                                            <option value="Gilir 1" {{ old('gilir', 'Gilir 1') == 'Gilir 1' ? 'selected' : '' }}>
                                                 Gilir 1</option>
-                                            <option value="Gilir 2" {{ old('gilir') == 'Gilir 2' ? 'selected' : '' }}>
+                                            <option value="Gilir 2" {{ old('gilir', 'Gilir 1') == 'Gilir 2' ? 'selected' : '' }}>
                                                 Gilir 2</option>
-                                            <option value="Gilir 3" {{ old('gilir') == 'Gilir 3' ? 'selected' : '' }}>
+                                            <option value="Gilir 3" {{ old('gilir', 'Gilir 1') == 'Gilir 3' ? 'selected' : '' }}>
                                                 Gilir 3</option>
                                         </select>
                                     </div>
@@ -205,9 +237,9 @@
                                             :class="currentTheme ? (currentTheme.focus + ' ' + currentTheme.ring.replace('focus:', '')) : 'focus:border-indigo-500 focus:ring-indigo-500/20'"
                                             required>
                                             <option value="">Pilih Supplier</option>
-                                            <option value="Cutpack" {{ old('supplier') == 'Cutpack' ? 'selected' : '' }}>
+                                            <option value="Cutpack" {{ old('supplier', 'Cutpack') == 'Cutpack' ? 'selected' : '' }}>
                                                 Cutpack</option>
-                                            <option value="Rikyet" {{ old('supplier') == 'Rikyet' ? 'selected' : '' }}>
+                                            <option value="Rikyet" {{ old('supplier', 'Cutpack') == 'Rikyet' ? 'selected' : '' }}>
                                                 Rikyet</option>
                                         </select>
                                     </div>
@@ -299,14 +331,13 @@
                                                 class="absolute -right-4 -top-4 w-20 h-20 bg-gray-50 rounded-full blur-2xl transition-all duration-700 group-hover:bg-indigo-50">
                                             </div>
 
-                                             <div class="flex flex-col gap-2 relative"
-                                                 x-data="{ isManual: {{ old('is_manual') ? 'true' : 'false' }} }">
+                                             <div class="flex flex-col gap-2 relative">
                                                 <div class="bg-white/50 border border-gray-200 rounded-xl p-3 shadow-sm">
                                                 <div class="flex flex-col sm:flex-row sm:items-center gap-3">
                                                     <label class="relative inline-flex items-center cursor-pointer gap-2 flex-shrink-0">
                                                         <input type="checkbox" id="is_manual" name="is_manual"
                                                             value="1" x-model="isManual"
-                                                            @change="handleToggleManual()" class="sr-only peer"
+                                                            class="sr-only peer"
                                                             {{ old('is_manual') ? 'checked' : '' }}>
                                                         <div
                                                             class="w-11 h-6 bg-gray-200 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-amber-300/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500 dark:peer-checked:bg-red-400">
@@ -506,6 +537,7 @@
             document.addEventListener('DOMContentLoaded', () => {
                 const inputJumlahDisplay = document.getElementById('jumlah_display');
                 const inputJumlahOriginal = document.getElementById('jumlah_original');
+                const inputPackDisplay = document.getElementById('pack_display');
                 const toggleManual = document.getElementById('is_manual');
                 const spanPacksNeededDisplay = document.getElementById('packs_needed_display');
                 const spanSelectedPacksLength = document.getElementById('selected_packs_length');
@@ -543,6 +575,8 @@
                     if (jumlahOriginal > 0) {
                         inputJumlahDisplay.value = jumlahOriginal.toLocaleString('id-ID');
                     }
+                    packDisplay = Math.floor(jumlahOriginal / 45000) || 0;
+                    inputPackDisplay.value = packDisplay > 0 ? packDisplay.toLocaleString('id-ID') : '';
                     updateCalculations(jumlahOriginal);
 
                     if (inputBatch.value.length === 7 && inputSeri.value.length > 0) {
@@ -595,8 +629,28 @@
                         e.target.value = '';
                     }
 
+                    packDisplay = Math.floor(number / 45000) || 0;
+                    inputPackDisplay.value = packDisplay > 0 ? packDisplay.toLocaleString('id-ID') : '';
+
                     updateCalculations(number);
                     debouncedRenderGrid(); // Tunda render grid sedikit agar lebih mulus
+                }
+
+                function handlePackInput(e) {
+                    let textValue = String(e.target.value);
+                    let rawDigits = textValue.replace(/\D/g, '');
+                    let packNumber = parseInt(rawDigits, 10) || 0;
+
+                    packDisplay = packNumber;
+                    inputPackDisplay.value = packNumber.toLocaleString('id-ID');
+
+                    let jumlah = packNumber * 45000;
+                    jumlahOriginal = jumlah;
+                    inputJumlahOriginal.value = jumlah;
+                    inputJumlahDisplay.value = jumlah.toLocaleString('id-ID');
+
+                    updateCalculations(jumlah);
+                    debouncedRenderGrid();
                 }
 
                 function updateCalculations(numVal) {
@@ -823,7 +877,7 @@
 
                 // Pasang Event Listener
                 inputJumlahDisplay.addEventListener('input', handleJumlahInput);
-                toggleManual.addEventListener('change', handleToggleManual);
+                inputPackDisplay.addEventListener('input', handlePackInput);
 
                 [inputBatch, selectPecahan, inputEmisi, selectTA].forEach(el => {
                     el.addEventListener('input', () => {

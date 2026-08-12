@@ -366,7 +366,7 @@ class HcsReceivingService
         }
     }
 
-    public function validateReceiving(array $data)
+    public function validateReceiving(array $data, ?int $excludeHcsId = null)
     {
         $isManual = $data['is_manual'] ?? false;
         $jumlah = $data['jumlah'];
@@ -385,11 +385,15 @@ class HcsReceivingService
         }
 
         // Cek apakah ada pack yang sudah terdaftar sebelumnya untuk mencegah Unique Violation
-        $existingPacks = Pack::where('batch', $data['batch'])
+        $query = Pack::where('batch', $data['batch'])
             ->where('seri', $data['seri'])
-            ->whereIn('pack_number', $data['packs'])
-            ->pluck('pack_number')
-            ->toArray();
+            ->whereIn('pack_number', $data['packs']);
+
+        if ($excludeHcsId !== null) {
+            $query->where('hcs_receiving_id', '!=', $excludeHcsId);
+        }
+
+        $existingPacks = $query->pluck('pack_number')->toArray();
 
         if (!empty($existingPacks)) {
             $duplicateList = implode(', ', $existingPacks);
@@ -399,7 +403,7 @@ class HcsReceivingService
 
     public function validateUpdate(HcsReceiving $hcs, array $data)
     {
-        $this->validateReceiving($data);
+        $this->validateReceiving($data, $hcs->id);
 
         if ($data['pecahan'] !== $hcs->pecahan || $data['batch'] !== $hcs->batch || $data['seri'] !== $hcs->seri || $data['emisi'] != $hcs->emisi || $data['tahun_anggaran'] != $hcs->tahun_anggaran) {
             throw new Exception('Tahun Anggaran, Emisi, Pecahan, Batch, dan Seri tidak boleh diubah.');
