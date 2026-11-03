@@ -564,7 +564,8 @@
                 </div>
             @endif
 
-            <!-- Grup Penyablonan -->
+            <!-- Grup Penyablonan (Dihilangkan) -->
+            @if(false)
             <div class="space-y-1 mt-2">
                 <button @click="penyablonanOpen = !penyablonanOpen; if(sidebarCollapsed) sidebarCollapsed = false;"
                     class="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('penyablonan.*') ? 'text-white font-semibold bg-white/20 shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
@@ -609,6 +610,7 @@
                     </a>
                 </div>
             </div>
+            @endif
 
             @if(in_array(auth()->user()->role, ['admin', 'sortir', 'kemas', 'supervisor']))
 
