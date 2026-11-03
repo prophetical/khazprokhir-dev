@@ -37,6 +37,10 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+Route::middleware('auth')->get('/api/idle-ping', function () {
+    return response()->json(['ok' => true]);
+})->name('idle-ping');
+
 Route::middleware(['auth', 'verified', RoleMiddleware::class])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 

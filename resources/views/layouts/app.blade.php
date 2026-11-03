@@ -29,6 +29,84 @@
         })();
     </script>
 
+    <script>
+        (function () {
+            const IDLE_TIMEOUT = 20 * 60 * 1000; // 20 minutes
+            const HEARTBEAT_INTERVAL = 5 * 60 * 1000; // 5 minutes
+            const PING_URL = '{{ route('idle-ping') }}';
+            const LOGOUT_URL = '{{ route('logout') }}';
+            const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')?.content || '';
+
+            let idleTimer;
+            let heartbeatTimer;
+            let isLoggingOut = false;
+
+            function resetIdleTimer() {
+                clearTimeout(idleTimer);
+                idleTimer = setTimeout(onIdleTimeout, IDLE_TIMEOUT);
+            }
+
+            function onIdleTimeout() {
+                if (isLoggingOut) return;
+                isLoggingOut = true;
+                clearInterval(heartbeatTimer);
+
+                try { localStorage.setItem('idle-logout', Date.now().toString()); } catch (e) {}
+
+                if (LOGOUT_URL && CSRF_TOKEN) {
+                    fetch(LOGOUT_URL, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': CSRF_TOKEN,
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                        },
+                        credentials: 'same-origin',
+                    }).finally(() => {
+                        window.location.href = '/login';
+                    });
+                } else {
+                    window.location.href = '/login';
+                }
+            }
+
+            function startHeartbeat() {
+                heartbeatTimer = setInterval(() => {
+                    fetch(PING_URL, {
+                        method: 'GET',
+                        headers: { 'Accept': 'application/json' },
+                        credentials: 'same-origin',
+                    }).catch(() => {});
+                }, HEARTBEAT_INTERVAL);
+            }
+
+            function init() {
+                const events = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
+                events.forEach(event => {
+                    document.addEventListener(event, resetIdleTimer, { passive: true });
+                });
+                resetIdleTimer();
+                startHeartbeat();
+            }
+
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'idle-logout') {
+                    if (isLoggingOut) return;
+                    isLoggingOut = true;
+                    clearInterval(heartbeatTimer);
+                    clearTimeout(idleTimer);
+                    window.location.href = '/login';
+                }
+            });
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+        })();
+    </script>
+
     <style>
         :root {
             --theme-bg-main: #f3f4f6;

@@ -2,7 +2,7 @@
 
     {{-- Greeting --}}
     <div class="mb-8">
-        <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight mb-1">Selamat Datang 👋</h1>
+        <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight mb-1">Selamat Datang</h1>
         <p class="text-sm text-gray-400 font-medium">Silakan masuk ke akun Anda untuk melanjutkan</p>
     </div>
 
